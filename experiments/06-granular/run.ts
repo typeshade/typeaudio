@@ -2,7 +2,7 @@
 // section 6).
 //
 //   bun run exp:06 [--tier cpu|webgpu|webgl2|all] [--blocks 1000] [--warmup 10] [--density 10000]
-//                  [--capacity 2048] [--seed 1] [--arms fenced,again,stream] [--out <file.json>]
+//                  [--capacity 2048] [--seed 1] [--arms fenced,again,stream,stamped] [--out <file.json>]
 //
 // It bundles the harness twice with Vite and the compiler's plugin: for Node, which it runs with
 // the Node on PATH (the CPU tier; `NODE_BINARY` names another), and for a page, which it opens in
@@ -169,12 +169,12 @@ console.log(`\nwrote ${outFile}`);
 function table(rows: readonly Row[]): string {
   const ms = (v: number | undefined): string => (v === undefined ? '' : v.toFixed(3));
   const lines = [
-    '| Arm | Tier | Blocks | Median (ms) | p99 (ms) | First (ms) | Max (ms) | Stream (ms/block) | GPU median (ms) | Alive (median) | Grains/s | Dispatches | Submissions | Device reads |',
-    '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |',
+    '| Arm | Tier | Blocks | Median (ms) | p99 (ms) | First (ms) | Max (ms) | Stream (ms/block) | GPU median (ms) | Alive (median) | Grains/s | Ordered | Dispatches | Submissions | Device reads |',
+    '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | --- | ---: |',
   ];
   for (const r of rows) {
     lines.push(
-      `| ${r.arm} | ${r.tier} | ${r.blocks} | ${ms(r.ms.median)} | ${ms(r.ms.p99)} | ${ms(r.firstMs)} | ${ms(r.ms.max)} | ${ms(r.streamMs)} | ${ms(r.gpuMs?.median)} | ${r.alive.median} | ${r.grainsPerSecond.toFixed(0)} | ${r.dispatches.join(', ')} | ${r.submissions.join(', ')} | ${r.deviceReads ?? ''} |`,
+      `| ${r.arm} | ${r.tier} | ${r.blocks} | ${ms(r.ms.median)} | ${ms(r.ms.p99)} | ${ms(r.firstMs)} | ${ms(r.ms.max)} | ${ms(r.streamMs)} | ${ms(r.gpuMs?.median)} | ${r.alive.median} | ${r.grainsPerSecond.toFixed(0)} | ${r.ordered ? 'yes' : 'no'} | ${r.dispatches.join(', ')} | ${r.submissions.join(', ')} | ${r.deviceReads ?? ''} |`,
     );
   }
   return lines.join('\n');

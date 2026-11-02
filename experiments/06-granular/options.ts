@@ -10,8 +10,11 @@
  * - `stream`: the blocks are submitted one after another with no fence and no read; the run is
  *   timed from the first timed block to one fence after the last. On WebGPU it runs on a device
  *   the harness requests without `timestamp-query`, so no plan maps its timestamps back.
+ * - `stamped`: `stream` on the tier's default device. On WebGPU that device has
+ *   `timestamp-query` where the adapter has it, and each plan maps its timestamps back before
+ *   `fuse` resolves. On the other tiers it is `stream` again, and the harness skips it.
  */
-export const ARMS = ['fenced', 'again', 'stream'] as const;
+export const ARMS = ['fenced', 'again', 'stream', 'stamped'] as const;
 export type Arm = (typeof ARMS)[number];
 
 /** The tiers of the experiment. On WebGL2 a call it cannot run falls to the CPU tier. */
@@ -99,6 +102,8 @@ export interface Row {
   readonly grainsPerSecond: number;
   /** The largest count of a list over every block, against its capacity. */
   readonly largest: number;
+  /** Whether the last list holds its grains in the order they started (`start` never falls). */
+  readonly ordered: boolean;
   /** The dispatches and submissions of each timed block's plan, the same for each block when one value. */
   readonly dispatches: readonly number[];
   readonly submissions: readonly number[];

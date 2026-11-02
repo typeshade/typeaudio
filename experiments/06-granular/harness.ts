@@ -98,7 +98,7 @@ export async function runArm(o: Options, arm: Arm, probes: Probes = {}): Promise
     const reports: FuseReport[] = [];
     const times: number[] = [];
     let streamMs: number | undefined;
-    if (arm === 'stream') {
+    if (arm === 'stream' || arm === 'stamped') {
       const t0 = performance.now();
       for (let b = o.warmup; b < total; b++) {
         at = performance.now();
@@ -136,6 +136,8 @@ export async function runArm(o: Options, arm: Arm, probes: Probes = {}): Promise
       alive.push(logValues[2 * b + 1]!);
     }
     const spawned = alive.map((a, i) => a - kept[i]!);
+    const held = (listValues as readonly GrainFields[]).slice(0, Math.min(countValues[0]!, o.capacity));
+    const ordered = held.every((g, i) => i === 0 || held[i - 1]!.start <= g.start);
     const timed = reports.filter((r) => r.groups.some((g) => g.gpuTime !== undefined));
     const gpu = timed.map((r) => r.groups.reduce((s, g) => s + (g.gpuTime ?? 0), 0) / 1e6);
     const lastReport = reports[reports.length - 1]!;
@@ -160,12 +162,16 @@ export async function runArm(o: Options, arm: Arm, probes: Probes = {}): Promise
       spawned: statsOf(spawned),
       grainsPerSecond: spawned.reduce((s, x) => s + x, 0) / ((o.blocks * o.block) / o.sr),
       largest,
+      ordered,
       dispatches: [...new Set(reports.map((r) => r.dispatches))].sort((a, b) => a - b),
       submissions: [...new Set(reports.map((r) => r.submissions))].sort((a, b) => a - b),
       readBytes,
       ...(deviceReads === undefined ? {} : { deviceReads }),
     };
     const count = Math.min(countValues[0]!, o.capacity);
+    const list = (listValues as readonly GrainFields[])
+      .slice(0, count)
+      .map(({ start, length, inc, peak }) => ({ start, length, inc, peak }));
     return {
       row,
       info: dev.info,
@@ -173,7 +179,7 @@ export async function runArm(o: Options, arm: Arm, probes: Probes = {}): Promise
       explain: explain(reports),
       tape: tapeValues,
       log: logValues,
-      list: (listValues as readonly GrainFields[]).slice(0, count).map(({ start, length, inc, peak }) => ({ start, length, inc, peak })),
+      list,
     };
   } finally {
     await dev.dispose();
@@ -201,7 +207,8 @@ export interface Result {
 /** Runs every arm of `o` and resolves to the tier's result; `progress` sees each row when it is done. */
 export async function measure(o: Options, probes: Probes = {}, progress: (row: Row) => void = () => {}): Promise<Result> {
   const results: ArmResult[] = [];
-  for (const arm of o.arms) {
+  // `stamped` differs from `stream` on WebGPU only (`options.ts`).
+  for (const arm of o.arms.filter((a) => a !== 'stamped' || o.tier === 'webgpu')) {
     const r = await runArm(o, arm, probes);
     progress(r.row);
     results.push(r);
