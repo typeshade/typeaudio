@@ -90,6 +90,8 @@ async function run(
   // `host`: the coefficients of each block, designed on the host and written before the scope.
   const designed = new Float32Array(P * 5);
   const coefficients: Resident<Float32Array> | undefined = variant === 'host' ? dev.array(P * 5, 'f32') : undefined;
+  // `resident`: the lanes on the device for the whole run, written again by every block.
+  const held: Resident<Float32Array> | undefined = variant === 'resident' ? dev.array(P * B, 'f32') : undefined;
   const total = o.warmup + o.blocks;
   const out = new Float32Array(total * B);
   const times: number[] = [];
@@ -102,7 +104,7 @@ async function run(
     const start = performance.now();
     if (coefficients !== undefined) coefficients.write(hostCoefficients(specs, sweep, designed));
     const report = await dev.fuse((scope) => {
-      const lanes = scope.scratch(P * B);
+      const lanes = held ?? scope.scratch(P * B);
       const mixed = scope.scratch(B);
       // At the pin the view spells a kernel's `array<Partial64>` with the fields of the struct, all
       // public, and the class `Partial64` with the `protected` coefficients of `Lowpass64`, a class of
@@ -162,6 +164,7 @@ async function run(
   );
   dev.release(master);
   if (coefficients !== undefined) dev.release(coefficients);
+  if (held !== undefined) dev.release(held);
   const last = reports[reports.length - 1]!;
   const gpu = reports.map((r) => r.groups.reduce((s, g) => s + (g.gpuTime ?? 0), 0));
   const measured = reports.every((r) => r.groups.some((g) => g.gpuTime !== undefined));

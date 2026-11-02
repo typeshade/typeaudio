@@ -19,6 +19,12 @@ export type Design = 'f32' | 'f64';
 /** The design a variant's partials use. */
 export const designOf = (variant: Variant): Design => (variant === 'host' || variant === 'f64' ? 'f64' : 'f32');
 
+/** The order a variant sums the lanes in: the tree of Rule 7.2, or one lane after another. */
+export const orderOf = (variant: Variant): 'tree' | 'lanes' => (variant === 'tree' || variant === 'scatter' ? 'tree' : 'lanes');
+
+/** The name of a variant's reference blocks: variants of one design and one order share them. */
+export const keyOf = (variant: Variant): string => `${designOf(variant)}-${orderOf(variant)}`;
+
 export class RefPartial {
   readonly osc = refSine();
   readonly env = new RefEnvelope();
@@ -112,7 +118,7 @@ export function refRender(
       const into = out[variant];
       for (let n = 0; n < frames; n++) {
         let s: number;
-        if (variant === 'tree' || variant === 'scatter') {
+        if (orderOf(variant) === 'tree') {
           for (let v = 0; v < ls.length; v++) column[v] = ls[v]![n]!;
           // `let s = 0.` then the loop's fold: the variable is combined with the tree's result.
           s = f(f(0) + treeSum(column));

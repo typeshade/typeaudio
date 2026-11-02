@@ -14,8 +14,14 @@
  *
  * - `host`: the host designs them in JavaScript doubles and writes them to the device each block;
  * - `f64`: the device designs them in the emulated `f64` of surface §39.
+ *
+ * The last differs from `gather` in where the lanes live:
+ *
+ * - `resident`: a `Resident` the device makes once and every block writes again, instead of a
+ *   scratch array of the scope, which a plan makes and frees each block when two of its groups
+ *   share it.
  */
-export const VARIANTS = ['gather', 'tree', 'scatter', 'host', 'f64'] as const;
+export const VARIANTS = ['gather', 'tree', 'scatter', 'host', 'f64', 'resident'] as const;
 export type Variant = (typeof VARIANTS)[number];
 
 /**

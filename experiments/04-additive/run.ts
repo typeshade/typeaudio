@@ -14,6 +14,7 @@
 // record is not a result: the record is `docs/records/`.
 
 import { execFileSync, spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
 import { loadavg } from 'node:os';
 import { delimiter, dirname, join } from 'node:path';
@@ -23,7 +24,7 @@ import { inPage } from '../../scripts/browser.ts';
 import { compare, fromBase64, type Comparison } from './compare.ts';
 import { lanesInput, spec, sweepAt, VARIANTS, type Options, type Row, type Variant } from './options.ts';
 import { coefficientErrors, type CoefficientErrors } from './design.ts';
-import { designOf, refSums } from './reference.ts';
+import { designOf, keyOf, refSums } from './reference.ts';
 
 const args = new Map<string, string>();
 for (let i = 2; i < process.argv.length; i += 2) {
@@ -79,41 +80,41 @@ const loads: Record<string, { before: number[]; after: number[] }> = {};
 record['load'] = loads;
 
 // Node first: the CPU tier, when asked, and the reference that every tier is held to. A run of the
-// GPU tiers alone reuses the reference an earlier run wrote for the same commit, with a clean tree,
-// the same bank and as many blocks (`reference.json` says which).
+// GPU tiers alone reuses the reference blocks an earlier run wrote for the same sources of the
+// reference, the same bank and as many blocks (`reference.json` says which), and has Node compute
+// only the ones it lacks. A run with the CPU tier computes every one, in the process that runs it.
 interface Stamp {
-  readonly commit: string;
+  readonly sources: string;
   readonly partials: number;
   readonly frames: number;
   readonly total: number;
-  readonly variants: readonly Variant[];
+  readonly keys: readonly string[];
 }
-const stamp: Stamp = {
-  commit: record['commit'] as string,
-  partials: options.partials,
-  frames: options.frames,
-  total: options.warmup + options.blocks,
-  variants,
-};
+const hash = createHash('sha256');
+for (const f of ['experiments/04-additive/reference.ts', 'experiments/04-additive/design.ts', 'experiments/04-additive/options.ts', 'test/reference.ts']) {
+  hash.update(await readFile(join(ROOT, f)));
+}
+const sources = hash.digest('hex');
 const earlier = (await readFile(join(dir, 'reference.json'), 'utf8').then(JSON.parse, () => undefined)) as Stamp | undefined;
-const reuse =
-  !tiers.includes('cpu') &&
-  record['dirty'] === false &&
+const valid =
   earlier !== undefined &&
-  earlier.commit === stamp.commit &&
-  earlier.partials === stamp.partials &&
-  earlier.frames === stamp.frames &&
-  earlier.total === stamp.total &&
-  variants.every((v) => earlier.variants.includes(v));
-if (reuse) {
-  record['reference'] = { reused: earlier };
-} else {
+  earlier.sources === sources &&
+  earlier.partials === options.partials &&
+  earlier.frames === options.frames &&
+  earlier.total === options.warmup + options.blocks;
+const missing = tiers.includes('cpu') || !valid ? variants : variants.filter((v) => !earlier!.keys.includes(keyOf(v)));
+record['reference'] = { sources, reused: variants.filter((v) => !missing.includes(v)), computed: missing };
+if (tiers.includes('cpu') || missing.length > 0) {
   const main = await bundle({ entry: 'experiments/04-additive/node.ts', outDir: 'experiments/04-additive/out/node', target: 'node' });
   const before = loadavg();
-  const cpu = JSON.parse(await runNode(await nodeBinary(), [main, JSON.stringify(options), dir, tiers.includes('cpu') ? 'cpu' : 'none']));
+  const cpu = JSON.parse(
+    await runNode(await nodeBinary(), [main, JSON.stringify(options), dir, tiers.includes('cpu') ? 'cpu' : 'none', JSON.stringify(missing)]),
+  );
   loads['node'] = { before, after: loadavg() };
-  record['reference'] = { ms: cpu.referenceMs };
+  (record['reference'] as Record<string, unknown>)['ms'] = cpu.referenceMs;
   if (tiers.includes('cpu')) record['cpu'] = cpu;
+  const keys = [...new Set([...(valid ? earlier!.keys : []), ...missing.map(keyOf)])];
+  const stamp: Stamp = { sources, partials: options.partials, frames: options.frames, total: options.warmup + options.blocks, keys };
   await writeFile(join(dir, 'reference.json'), `${JSON.stringify(stamp, null, 2)}\n`);
 }
 // The coefficients each bank holds at the end are the last block's: held to the design in doubles.
@@ -122,10 +123,9 @@ const lastSweep = sweepAt(options.warmup + options.blocks - 1);
 const refOut = new Map<Variant, Float32Array>();
 const refState = new Map<Variant, Float32Array>();
 for (const v of variants) {
-  refOut.set(v, await readF32(join(dir, `reference-${v}.f32`)));
+  refOut.set(v, await readF32(join(dir, `reference-${keyOf(v)}.f32`)));
   refState.set(v, await readF32(join(dir, `reference-state-${designOf(v)}.f32`)));
 }
-
 if (record['cpu'] !== undefined) {
   const cpu = record['cpu'] as { variants: Record<string, Record<string, unknown>> };
   for (const [variant, held] of Object.entries(cpu.variants)) {

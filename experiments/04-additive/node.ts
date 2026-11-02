@@ -11,12 +11,15 @@ import { join } from 'node:path';
 import { clockStep } from '../01-round-trip/clock.ts';
 import { compare } from './compare.ts';
 import { measure, sumCheck, tierProbe, type Result, type SumCheck } from './harness.ts';
-import { designOf, refRender, refState, refSums, type Design, type RefPartial } from './reference.ts';
+import { designOf, keyOf, refRender, refState, refSums, type Design, type RefPartial } from './reference.ts';
 import { lanesInput, SR, spec, sweepAt, type Options } from './options.ts';
 
 const options = JSON.parse(process.argv[2] ?? '{}') as Options;
 const dir = process.argv[3]!;
 const withCpu = process.argv[4] === 'cpu';
+// The variants whose reference to compute: every variant with the CPU tier, which is held to it
+// here; otherwise the ones the runner found no reference for.
+const refVariants = withCpu ? options.variants : (JSON.parse(process.argv[5] ?? '[]') as Options['variants']);
 const total = options.warmup + options.blocks;
 const every = Math.max(1, Math.round(total / 10));
 
@@ -35,7 +38,7 @@ if (withCpu && options.sums) {
 }
 
 const started = performance.now();
-const { out: ref, partials } = refRender(spec(options.partials), SR, options.frames, total, sweepAt, options.variants, (b) => {
+const { out: ref, partials } = refRender(spec(options.partials), SR, options.frames, total, sweepAt, refVariants, (b) => {
   if (b % every === 0 || b === total - 1) process.stderr.write(`reference block ${b}\n`);
 });
 const referenceMs = performance.now() - started;
@@ -44,8 +47,8 @@ for (const [design, refs] of Object.entries(partials) as [Design, RefPartial[]][
   states[design] = new Float32Array(refs.flatMap(refState));
   await writeFile(join(dir, `reference-state-${design}.f32`), new Uint8Array(states[design].buffer));
 }
-for (const variant of options.variants) {
-  await writeFile(join(dir, `reference-${variant}.f32`), new Uint8Array(ref[variant].buffer));
+for (const variant of refVariants) {
+  await writeFile(join(dir, `reference-${keyOf(variant)}.f32`), new Uint8Array(ref[variant].buffer));
 }
 
 const variants: Record<string, unknown> = {};
