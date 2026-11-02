@@ -1,3 +1,7 @@
+<p align="center">
+  <img height="112" src="assets/icon.png" alt="TypeAudio">
+</p>
+
 # TypeAudio
 
 **A GPU audio engine written in TypeScript, on [TypeShade](https://github.com/typeshade/typeshade).**
