@@ -27,6 +27,9 @@
 | Graphics | none | SwiftShader: vendor `google`, architecture `swiftshader`, a fallback adapter; features `core-features-and-limits`, `timestamp-query` | ANGLE on Vulkan 1.3.0, SwiftShader Device (Subzero) |
 | Clock step of `performance.now()` | 0.00005 ms | 0.005 ms (the page is cross-origin isolated) | 0.005 ms |
 
+The container is shared with other agent sessions, and the run did not reserve it. Their processes
+may have run during the run, so the medians and, more, the 99th percentiles may hold their load.
+
 ## The method
 
 - The kernel is `experiments/01-round-trip/partials.shade.ts`: 64 sine partials summed into each
@@ -194,6 +197,7 @@ These are inferences, not results.
 ## What this run does not measure
 
 - The owner's devices, on WebGPU and on WebGL2: one record per device, `01-round-trip-<device>.md`.
+- A machine with no other load: the container is shared (section "The devices").
 - A real GPU's queue and its fences: SwiftShader runs the GPU's work on the host's CPU.
 - The way to the audio thread: a ring of blocks and an AudioWorklet (`docs/architecture.md`,
   section 8, "Real time").
