@@ -27,10 +27,12 @@ face"), and one the fuse report that `explain` reads.
 
 | Id   | Proposal                            | What it gives TypeAudio                                                                                                                                                                                                                | Status on 2026-11-02                                                                                                                                                                                                                                                                                                                                         |
 | ---- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0108 | `changes/0108-host-view-jsdoc.md`   | The host view carries the author's JSDoc verbatim, so a unit's documentation reaches the editor through the host face.                                                                                                                 | Implemented: items 1 to 3 by #887 (`77ced44`, 2026-11-02), the inherited-field deviation closed by its record; Amendment 1 accepted (#915, `bb82036b`) and item 4, the members of an exported class carry their comments (decision D4), implemented by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, approved 2026-11-02, merge pending) drops the static field from item 4's list, since the view declares none.                                                                                |
+| 0108 | `changes/0108-host-view-jsdoc.md`   | The host view carries the author's JSDoc verbatim, so a unit's documentation reaches the editor through the host face.                                                                                                                 | Implemented: items 1 to 3 by #887 (`77ced44`, 2026-11-02), the inherited-field deviation closed by its record; Amendment 1 accepted (#915, `bb82036b`) and item 4, the members of an exported class carry their comments (decision D4), implemented by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, `a80551b4`, 2026-11-02) drops the static field from item 4's list, since the view declares none.                                                                                |
 | 0109 | `changes/0109-host-classes.md`      | An exported class is a value of the host face: `new` and the methods run on the CPU tier, an instance is the struct's host value, a struct result is an instance. The engine's `new OnePole(0.1)` on the host rests on it.             | Implemented (#890, squash commit `9dbc298`, 2026-11-02). Two deviations open in the proposal's record: the view's flat declaration where TypeScript refuses an override; a mixin's members untested. Amendment 1 approved (#960, `376f8927`, 2026-11-02, decision D5): item 6, a `Resident` made from instances keeps their classes and `read()` returns instances (ask N); its implementation is not started.                                                                                                                                                         |
 | 0110 | `changes/0110-class-consistency.md` | Rule 8.29: a class is its struct and its functions in every place a struct or a function can be. The class arm of the differential gate holds a method to one result in a compute entry, a kernel loop, the host class and the oracle. | Implemented (#883, `bef6574`, 2026-11-02), with the host leg of the class arm on the host class of 0109; the deferral deviation is closed by its record.                                                                                                                                                                                                     |
-| 0116 | `changes/0116-host-type-family.md`  | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                       | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, \1| 0118 | `changes/0118-fuse-group-tier.md` | Each group of a `FuseReport` carries the tier it ran on, and a group below its plan's tier says why in its `why`, so `explain` reads where each node ran instead of inferring it (ask P). | Accepted (#959, `6c1799ec`, 2026-11-02) with D1 to D3 as drafted: `tier` on every group; the reason in `why`; the call layer's own text. Its implementation is not started. |\n
+| 0116 | `changes/0116-host-type-family.md`  | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                       | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, a matrix carries its name, and item 4 names its exceptions. |
+| 0118 | `changes/0118-fuse-group-tier.md` | Each group of a `FuseReport` carries the tier it ran on, and a group below its plan's tier says why in its `why`, so `explain` reads where each node ran instead of inferring it (ask P). | Accepted (#959, `6c1799ec`, 2026-11-02) with D1 to D3 as drafted: `tier` on every group; the reason in `why`; the call layer's own text. Its implementation is not started. |
+
 At the first compiler pin, `145666068ca5d6ecfba32aa0ea4289cf0fc3b762` (pull request #5), the
 proposals' `status` lines read: 0108 `accepted`, 0109 `implemented`, 0110 `implemented`, 0116
 `accepted`. The implementation of 0116 (#918, `9822490f`) came after the pin. So did 0108's item 4 (#937,
@@ -91,7 +93,10 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   to 1.34e-7). Twiddles from `sin` and `cos` of an emulated double (§39) reproduce the table's on
   WebGPU, except two near 0, and do not run on WebGL2 at the pin (the record's section "Refusals,
   and calls that did not return"). The workaround for the FFT is the table; the oscillator rows of
-  experiment 4 stay to be measured\1 Compiler issue #969 (a\n  bounded-error `sin`/`cos` for the device) records the ask.\n\n### D. `f64` transcendentals on the device
+  experiment 4 stay to be measured. Compiler issue #969 (a
+  bounded-error `sin`/`cos` for the device) records the ask.
+
+### D. `f64` transcendentals on the device
 
 - Pressure: the emulated double (§39) has `sin`, `cos`, `sqrt`, `floor`, `fract`, `mix` and the
   comparisons, and no `exp`, `tan`, `log`, `pow` or `atan2`. Coefficient design, a biquad from a
@@ -118,7 +123,10 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   transform of the same block reads its subnormal tail as 0 there, and is off by up to 249 ULPs at
   its peak (relative RMS error about 2.5e-5). At full scale no output holds a subnormal: an `f32`
   transform's error floor is about 2^-24 of its peak, so only a block that is all below about 2^-102
-  gives subnormals. The determinism report names no flush. Experiment 5 measures a reverb's tail\1 Compiler issue #968 (a\n  determinism row for the flush) records the ask.\n\n### F. A worklet build of the CPU tier
+  gives subnormals. The determinism report names no flush. Experiment 5 measures a reverb's tail. Compiler issue #968 (a
+  determinism row for the flush) records the ask.
+
+### F. A worklet build of the CPU tier
 
 - Pressure: the `AudioWorkletGlobalScope` has no WebGPU, no dynamic `import()`, no
   `structuredClone` and no `performance`. `process()` hands its output arrays back when it
@@ -171,7 +179,12 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   memory. Inference, for the owner's decision: the entry lives in layer 1 here first, as the
   workaround, and the issue for `typeshade/fft` follows the device runs. It would carry the twiddles
   from a table or an emulated double, a storage form past workgroup memory, and the CPU tier of
-  change 0092\1 Compiler issues #966 (WebGL2 does\n  not bind the `_fp64` guard of an `f64` entry, so variant C never returns), #970 (an `f64` across\n  a barrier on WebGL2) and #967 (an `f64` module constant, and the TS8022 that follows its\n  refusal) record variant C's findings.\n\n### H. GPU time
+  change 0092. Compiler issues #966 (WebGL2 does
+  not bind the `_fp64` guard of an `f64` entry, so variant C never returns), #970 (an `f64` across
+  a barrier on WebGL2) and #967 (an `f64` module constant, and the TS8022 that follows its
+  refusal) record variant C's findings.
+
+### H. GPU time
 
 - Pressure: `explain` reports where a block's time goes, per node, as GPU time and not as host
   wall time that includes the queue's wait.
@@ -314,9 +327,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   comments (its decision D4). Not a new ask.
 - Workaround: none. The comments stay in the `.shade.ts` files until the pin moves past item 4.
 - Measured by: the views `tshc sync` writes at the pin `14566606`.
-- Status: proposal 0108 implemented: item 4 by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978)
-  drops the static field from item 4's list, approved, merge pending. The comments reach the view
-  when the pin moves past #937.
+- Status: proposal 0108 implemented: item 4 by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978,
+  `a80551b4`) drops the static field from item 4's list. The comments reach the view when the pin
+  moves past #937.
 
 ### S. The cost of the CPU tier's generated code
 
