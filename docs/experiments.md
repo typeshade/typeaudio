@@ -3,9 +3,8 @@
 The experiments decide the first implementation. Measurement comes before any proposal
 (`docs/vision.md`, section 11). They run in order, because a later one builds on an earlier one's
 numbers. Each experiment has one question, the decision its answer supports, a method and a
-record. On 2026-11-02 experiments 1, 2 and 3 each have a harness and a run on the container of a
-Claude Code session, recorded as reference numbers; no experiment has run on the owner's devices
-yet.
+record. On 2026-11-02 experiments 1, 2, 3 and 7 each have a harness and a run on the container of
+an agent session, recorded as reference numbers; no experiment has run on the owner's devices yet.
 
 ## Status
 
@@ -17,7 +16,7 @@ yet.
 | 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
-| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | in progress (branch `claude/exp-07-sound-match`)                                                       |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -228,5 +227,26 @@ need for ask L, reverse mode.
 4. Measure the time per step against the parameter count: 3, 10, 30, 100.
 5. Write the record.
 
-**Status.** In progress, on the branch `claude/exp-07-sound-match`: the harness and its run on the
-container, as reference numbers.
+**Status.** Harness ready: `experiments/07-sound-match/`, run by `bun run exp:07`. The run on the
+container of an agent session is recorded in `docs/records/07-sound-match-container.md`, as
+reference numbers: the CPU tier in Node, the compiler's oracle in Bun, and WebGPU and WebGL2 on
+SwiftShader. The device runs are pending: one record per device,
+`docs/records/07-sound-match-<device>.md`. The run is at the compiler pin `14566606`, where change
+0056 is accepted and its steps 1, 1b and 2a are implemented: `grad` has a function-level reverse
+mode as well.
+
+The harness departs from the method in five places, each recorded in the record's section "What
+departs from the method":
+
+- The loss takes 16 bins of a 1,024-point DFT by one Goertzel recurrence per bin inside the frame
+  loop, not the FFT of experiment 3. `grad` refuses an entry and a value kept in an array
+  (`SD0118`). The FFT of experiment 3 holds the loss's bins and measures the match over 512 bins.
+- Beside forward mode per parameter, the harness takes the gradient in three more forms: forward
+  mode along a direction given as an argument, reverse mode, and a probe that rewrites reverse
+  mode's loop headers, which the CPU tier's code generator refuses at the pin.
+- At the pin a derivative reaches neither the host face nor the manifest (change 0056, step 4). The
+  CPU tier runs the derivatives through `compileModuleJs`, the host face's code generator, and the
+  GPU tiers through a packed program whose placeholders take the bodies `grad` builds.
+- The descent uses Adam. Plain gradient descent, also run, ends farther from the known answer.
+- The GPU tiers also time a render with one invocation for each frame, beside the render by one
+  invocation that the CPU arms time.

@@ -54,8 +54,8 @@ export function timingOf(runs: readonly number[]): Timing {
 /**
  * How often each measure runs. It runs untimed until it has run `warmup` times and for `warmupMs`
  * milliseconds, then `runs` times timed. A JavaScript engine compiles a function again, faster, after
- * it has run for a while: on Bun the loss of 3 parameters took 1.1 ms in its first 5 calls and
- * 0.13 ms from its 20th call on (`docs/records/07-sound-match-container.md`, "The method").
+ * it has run for a while, so a measure's first calls are slower than its later ones; each derivative
+ * function of forward mode per parameter is a function of its own and warms up on its own.
  */
 export interface Repeats {
   readonly warmup: number;

@@ -5,7 +5,7 @@
 // compiled, so the host face of a `.shade.ts` file never holds one at the pin (change 0056, step 4,
 // is not implemented): `compileModuleJs` of `grad`'s module is the nearest form of the CPU tier.
 
-import { compile, compileModuleJs, grad, gradCheck, type GradCheckResult, type ModuleDecl } from 'typeshade';
+import { compile, compileModule, compileModuleJs, grad, gradCheck, type GradCheckResult, type ModuleDecl } from 'typeshade';
 import { Adam, gradientDistance, timed, withLoopInitsHoisted, type Repeats, type Timing } from './match.ts';
 import { namesOf, startOf, truthOf } from './patch.ts';
 
@@ -27,6 +27,8 @@ export interface Prepared {
   readonly render: Fn;
   readonly loss: Fn;
   readonly gradient: Readonly<Record<Form, (params: readonly number[]) => number[]>>;
+  /** Forward mode's gradient on the oracle at `f64` precision: the reference each form is held to. */
+  readonly reference: (params: readonly number[]) => number[];
   /** What building the derivatives cost, and what they are. */
   readonly codegen: Codegen;
 }
@@ -78,6 +80,8 @@ export function prepare(source: string, count: number, given?: readonly number[]
   const forward = compileModuleJs(fm, { precision: 'f32' });
   compileMs.forward = now() - t;
   const forwardFns = perParameter.map((n) => forward.fns[n] as Fn);
+  const exact = compileModuleJs(fm, { precision: 'f64' });
+  const exactFns = perParameter.map((n) => exact.fns[n] as Fn);
 
   // Forward mode along a direction given as an argument: one function, one call for each parameter.
   t = now();
@@ -120,6 +124,7 @@ export function prepare(source: string, count: number, given?: readonly number[]
     ownTarget,
     render: base.fns['render'] as Fn,
     loss: base.fns['loss'] as Fn,
+    reference: (q) => exactFns.map((f) => f(...q, ...target) as number),
     gradient: {
       forward: (q) => forwardFns.map((f) => f(...q, ...target) as number),
       along: (q) => units.map((u) => alongFn(0, ...q, ...u, ...target) as number),
@@ -150,6 +155,11 @@ export interface CountResult {
   /** Each form's gradient at the start, and how far it is from forward mode's. */
   readonly gradients: Readonly<Partial<Record<Form, number[]>>>;
   readonly agreement: Readonly<Partial<Record<Form, { relative: number; differ: number }>>>;
+  /** The probe's gradient against reverse mode's, which it must equal bit for bit. */
+  readonly probeAgainstReverse?: { relative: number; differ: number };
+  /** Forward mode's gradient at the start on the oracle at `f64`, and how far each form's is from it. */
+  readonly reference: number[];
+  readonly againstReference: Readonly<Partial<Record<Form, { relative: number; differ: number }>>>;
 }
 
 /** Times the render, the loss and a step of each form in `forms`, as `repeats` says. */
@@ -178,6 +188,9 @@ export function measure(
   for (const form of forms) {
     if (gradients.forward !== undefined) agreement[form] = gradientDistance(gradients.forward, gradients[form]!);
   }
+  const reference = prep.reference(start);
+  const againstReference: Partial<Record<Form, { relative: number; differ: number }>> = {};
+  for (const form of forms) againstReference[form] = gradientDistance(reference, gradients[form]!);
   return {
     count: prep.count,
     codegen: prep.codegen,
@@ -187,11 +200,17 @@ export function measure(
     lossAtStart: prep.loss(...start, ...prep.target) as number,
     gradients,
     agreement,
+    reference,
+    againstReference,
+    ...(gradients.probe !== undefined && gradients.reverse !== undefined
+      ? { probeAgainstReverse: gradientDistance(gradients.reverse, gradients.probe) }
+      : {}),
   };
 }
 
-/** The descent of the method, step 3: Adam on forward mode's gradient from the start. */
+/** The descent of the method, step 3: Adam, or plain gradient descent, on forward mode's gradient from the start. */
 export interface Descent {
+  readonly optimizer: 'adam' | 'plain';
   readonly iterations: number;
   readonly rate: number;
   readonly start: readonly number[];
@@ -202,29 +221,90 @@ export interface Descent {
   readonly final: readonly number[];
 }
 
-export function descend(prep: Prepared, iterations: number, form: Form = 'forward', rate = 0.01): Descent {
+export function descend(prep: Prepared, iterations: number, optimizer: 'adam' | 'plain' = 'adam', rate = 0.01, form: Form = 'forward'): Descent {
   const start = startOf(prep.count);
   const params = [...start];
   const adam = new Adam(prep.count, rate);
   const losses: number[] = [];
   for (let i = 0; i < iterations; i++) {
     losses.push(prep.loss(...params, ...prep.target) as number);
-    adam.step(params, prep.gradient[form](params));
+    const g = prep.gradient[form](params);
+    if (optimizer === 'adam') adam.step(params, g);
+    else for (let j = 0; j < params.length; j++) params[j] = params[j]! - rate * g[j]!;
   }
   losses.push(prep.loss(...params, ...prep.target) as number);
-  return { iterations, rate, start, truth: truthOf(prep.count), losses, final: params };
+  return { optimizer, iterations, rate, start, truth: truthOf(prep.count), losses, final: params };
 }
 
-/** `gradCheck` of the loss in both modes, at the start and halfway to the known answer. */
-export function checks(prep: Prepared): { at: number[][]; forward: GradCheckResult; reverse: GradCheckResult } {
+/** How a derivative stands against a central difference, as `gradCheck` measures it. */
+export interface Agreement {
+  /** The largest |derivative − difference| / max(1, |difference|) over the points and parameters. */
+  readonly worst: number;
+  readonly param: string;
+  readonly point: number;
+  readonly derivative: number;
+  readonly difference: number;
+}
+
+/**
+ * `gradCheck` of the loss in both modes, at the start and halfway to the known answer, with its
+ * defaults: a central difference of step 1e-5 on the `f64` oracle, and a pass within 1e-4 of
+ * max(1, |difference|). `gradCheck` returns no numbers when it passes, so the same comparison is made
+ * here as well, on the same oracle, and its worst case is kept.
+ */
+export function checks(prep: Prepared): {
+  at: number[][];
+  forward: GradCheckResult;
+  reverse: GradCheckResult;
+  agreement: { forward: Agreement; reverse: Agreement };
+} {
   const start = startOf(prep.count);
   const truth = truthOf(prep.count);
   const half = start.map((s, i) => (s + truth[i]!) / 2);
   const at = [start, half];
   const points = at.map((p) => [...p, ...prep.target]);
+  const h = 1e-5;
+  const names = [...prep.names];
+  let fm = prep.module;
+  const perParameter: string[] = [];
+  for (const w of names) {
+    const d = grad(fm, 'loss', w);
+    fm = d.module;
+    perParameter.push(d.name);
+  }
+  const forward = compileModule(fm);
+  const r = grad(prep.module, 'loss', names, { mode: 'reverse' });
+  const reverse = compileModule(r.module);
+  const loss = forward.fns['loss'] as Fn;
+  const differences = at.map((p) =>
+    names.map((_, i) => {
+      const moved = (s: number): number[] => p.map((v, j) => (j === i ? v + s : v));
+      return ((loss(...moved(h), ...prep.target) as number) - (loss(...moved(-h), ...prep.target) as number)) / (2 * h);
+    }),
+  );
+  const worstOf = (derivatives: number[][]): Agreement => {
+    let worst: Agreement = { worst: -1, param: '', point: 0, derivative: 0, difference: 0 };
+    derivatives.forEach((ds, point) =>
+      ds.forEach((derivative, i) => {
+        const difference = differences[point]![i]!;
+        const e = Math.abs(derivative - difference) / Math.max(1, Math.abs(difference));
+        if (e > worst.worst) worst = { worst: e, param: names[i]!, point, derivative, difference };
+      }),
+    );
+    return worst;
+  };
   return {
     at,
-    forward: gradCheck(prep.module, 'loss', { wrt: [...prep.names], at: points, mode: 'forward' }),
-    reverse: gradCheck(prep.module, 'loss', { wrt: [...prep.names], at: points, mode: 'reverse' }),
+    forward: gradCheck(prep.module, 'loss', { wrt: names, at: points, mode: 'forward' }),
+    reverse: gradCheck(prep.module, 'loss', { wrt: names, at: points, mode: 'reverse' }),
+    agreement: {
+      forward: worstOf(at.map((p) => perParameter.map((n) => (forward.fns[n] as Fn)(...p, ...prep.target) as number))),
+      reverse: worstOf(
+        at.map((p) => {
+          const o = (reverse.fns[r.name] as Fn)(...p, ...prep.target, 1) as Record<string, number>;
+          return names.map((n) => o[r.adjoints![n]!]!);
+        }),
+      ),
+    },
   };
 }

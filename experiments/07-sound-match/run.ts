@@ -50,6 +50,7 @@ import { gradientDistance, type Repeats, type Timing } from './match.ts';
 import type { NodeCount, NodeOptions } from './node.ts';
 import { BINS, COUNTS, EPS, FRAMES, LOSS_BINS, namesOf, patchSource, startOf, truthOf } from './patch.ts';
 import { buildProgram, checkProgram, type Program, type ProgramCheck } from './program.ts';
+import { probeRefusals, type RefusalResult } from './refusals.ts';
 
 const ARMS = ['cpu', 'oracle', 'webgpu', 'webgl2'] as const;
 type Arm = (typeof ARMS)[number];
@@ -154,16 +155,22 @@ if (arms.includes('cpu')) {
 }
 
 let descent: Descent | undefined;
+let plainDescent: Descent | undefined;
 let gradChecks: ReturnType<typeof checks> | undefined;
 let fftChecks: Record<string, unknown> | undefined;
+let refusals: RefusalResult[] | undefined;
 if (arms.includes('oracle')) {
   const before = loadavg();
+  refusals = probeRefusals();
   const measured: CountResult[] = [];
   for (const count of counts) {
     const prep = prepare(sources.get(count)!, count, targets[String(count)]);
     measured.push(measure(prep, repeats, forms, (line) => console.error(`oracle ${line}`)));
     if (count === 3) {
-      if (iterations > 0) descent = descend(prep, iterations);
+      if (iterations > 0) {
+        descent = descend(prep, iterations, 'adam', 0.01);
+        plainDescent = descend(prep, iterations, 'plain', 0.002);
+      }
       gradChecks = checks(prep);
       fftChecks = holdToFft(await readFile(join(ROOT, 'experiments/03-fft/fft.shade.ts'), 'utf8'), prep.render as (...a: number[]) => ArrayLike<number>, descent);
     }
@@ -231,7 +238,9 @@ if (pageTiers.length > 0) {
     } finally {
       clearTimeout(timer);
     }
-    record[`console-${tier}`] = [...seen].filter(([, n]) => n > 1).map(([line, count]) => ({ line, count }));
+    // Every distinct line of the page's console, with how often it came: the page's own progress
+    // lines, and what Chromium and the runtime printed.
+    record[`console-${tier}`] = [...seen].map(([line, count]) => ({ line, count }));
     loads[tier] = { before, after: loadavg() };
   }
 }
@@ -270,6 +279,8 @@ const gpuAgreement = pageTiers.flatMap((tier) =>
       lossAtStart: c.lossAtStart === undefined || o === undefined ? undefined : { gpu: c.lossAtStart, oracle: o.lossAtStart },
       forward: c.forwardGradient === undefined || o?.gradients.forward === undefined ? undefined : gradientDistance(o.gradients.forward, c.forwardGradient),
       reverse: c.reverseGradient === undefined || o?.gradients.forward === undefined ? undefined : gradientDistance(o.gradients.forward, c.reverseGradient),
+      forwardAgainstReference: c.forwardGradient === undefined || o === undefined ? undefined : gradientDistance(o.reference, c.forwardGradient),
+      reverseAgainstReference: c.reverseGradient === undefined || o === undefined ? undefined : gradientDistance(o.reference, c.reverseGradient),
     };
   }),
 );
@@ -286,8 +297,10 @@ record['programs'] = programs.map((p) => ({ count: p.count, tapeBytes: p.tapeByt
 record['programChecks'] = programChecks;
 record['gpuAgreement'] = gpuAgreement;
 record['descent'] = descent;
+record['plainDescent'] = plainDescent;
 record['gradCheck'] = gradChecks;
 record['fft'] = fftChecks;
+record['refusals'] = refusals;
 record['seconds'] = (Date.now() - began) / 1000;
 
 await mkdir(dirname(outFile), { recursive: true });
@@ -363,12 +376,22 @@ table(
   ]),
 );
 table(
-  'Each form\'s gradient at the start against forward mode\'s: largest difference over the largest magnitude; values whose f32 bits differ',
+  'Each form\'s gradient at the start against forward mode\'s on the oracle at f64: largest difference over the largest magnitude',
   ['Arm', 'Params', ...FORMS],
   [...(results.cpu?.counts.map((c) => ['cpu', c] as const) ?? []), ...(results.oracle?.counts.map((c) => ['oracle', c] as const) ?? [])].map(([arm, c]) => [
     arm,
     String(c.count),
+    ...FORMS.map((f) => (c.againstReference[f] === undefined ? 'n/a' : c.againstReference[f]!.relative.toExponential(1))),
+  ]),
+);
+table(
+  'Each form\'s gradient at the start against forward mode\'s: largest difference over the largest magnitude; values whose f32 bits differ; the probe against reverse mode',
+  ['Arm', 'Params', ...FORMS, 'probe / reverse'],
+  [...(results.cpu?.counts.map((c) => ['cpu', c] as const) ?? []), ...(results.oracle?.counts.map((c) => ['oracle', c] as const) ?? [])].map(([arm, c]) => [
+    arm,
+    String(c.count),
     ...FORMS.map((f) => (c.agreement[f] === undefined ? 'n/a' : `${c.agreement[f]!.relative.toExponential(1)}; ${c.agreement[f]!.differ} of ${c.count}`)),
+    c.probeAgainstReverse === undefined ? 'n/a' : `${c.probeAgainstReverse.differ} of ${c.count} differ`,
   ]),
 );
 if (programs.length > 0) {
@@ -383,7 +406,7 @@ if (programs.length > 0) {
     programChecks.map((c) => [String(c.count), String(c.render), String(c.frames), String(c.loss), String(c.forward), String(c.reverse)]),
   );
   table(
-    'The GPU tiers against the oracle: frames whose bits differ (largest difference), by one invocation and by one per frame; loss at the start; gradients against forward mode on the oracle',
+    'The GPU tiers against the oracle: frames whose bits differ (largest difference), by one invocation and by one per frame; loss at the start; gradients against forward mode on the oracle at f32, and at f64 in brackets',
     ['Tier', 'Params', 'Frames (one)', 'Frames (each)', 'Loss (GPU / oracle)', 'Forward', 'Reverse'],
     gpuAgreement.map((g) => [
       g.tier,
@@ -391,8 +414,8 @@ if (programs.length > 0) {
       g.frames === undefined ? 'n/a' : `${g.frames.differ} of ${g.frames.of} (${g.frames.largest.toExponential(1)})`,
       g.framesEntry === undefined ? 'n/a' : `${g.framesEntry.differ} of ${g.framesEntry.of} (${g.framesEntry.largest.toExponential(1)})`,
       g.lossAtStart === undefined ? 'n/a' : `${g.lossAtStart.gpu.toPrecision(6)} / ${g.lossAtStart.oracle.toPrecision(6)}`,
-      g.forward === undefined ? 'n/a' : g.forward.relative.toExponential(1),
-      g.reverse === undefined ? 'n/a' : g.reverse.relative.toExponential(1),
+      g.forward === undefined ? 'n/a' : `${g.forward.relative.toExponential(1)} (${g.forwardAgainstReference?.relative.toExponential(1) ?? 'n/a'})`,
+      g.reverse === undefined ? 'n/a' : `${g.reverse.relative.toExponential(1)} (${g.reverseAgainstReference?.relative.toExponential(1) ?? 'n/a'})`,
     ]),
   );
   const refused = pageTiers.flatMap((t) => (pages[t]?.counts ?? []).filter((c) => c.refused !== undefined || c.unfinished !== undefined).map((c) => `- ${t} ${c.count}: ${c.refused ?? c.unfinished}`));
@@ -400,9 +423,10 @@ if (programs.length > 0) {
 }
 const curve = (losses: readonly number[]): string =>
   [0, 10, 50, 100, 200, losses.length - 1].filter((i) => i < losses.length).map((i) => `${i}: ${losses[i]!.toExponential(2)}`).join(', ');
-if (descent !== undefined) {
-  lines.push('', `The descent of 3 parameters on the oracle (Adam, rate ${descent.rate}): loss ${curve(descent.losses)}`);
-  lines.push(`  final ${descent.final.map((v) => v.toFixed(5)).join(', ')}; known answer ${descent.truth.join(', ')}; start ${descent.start.join(', ')}`);
+for (const d of [descent, plainDescent]) {
+  if (d === undefined) continue;
+  lines.push('', `The descent of 3 parameters on the oracle (${d.optimizer}, rate ${d.rate}): loss ${curve(d.losses)}`);
+  lines.push(`  final ${d.final.map((v) => v.toFixed(5)).join(', ')}; known answer ${d.truth.join(', ')}; start ${d.start.join(', ')}`);
 }
 for (const tier of pageTiers) {
   const d = pages[tier]?.counts.find((c) => c.count === 3)?.descent;
@@ -410,8 +434,13 @@ for (const tier of pageTiers) {
 }
 if (gradChecks !== undefined) {
   lines.push('', `gradCheck at ${gradChecks.at.map((p) => `(${p.map((v) => v.toFixed(3)).join(', ')})`).join(' and ')}: forward ${JSON.stringify(gradChecks.forward)}; reverse ${JSON.stringify(gradChecks.reverse)}`);
+  lines.push(`  the worst |derivative - difference| / max(1, |difference|): forward ${JSON.stringify(gradChecks.agreement.forward)}; reverse ${JSON.stringify(gradChecks.agreement.reverse)}`);
 }
 if (fftChecks !== undefined) lines.push('', `The FFT checks: ${JSON.stringify(fftChecks)}`);
+if (refusals !== undefined) {
+  lines.push('', 'What grad does with the forms the method asks for');
+  for (const r of refusals) lines.push(`- ${r.name} (${r.why}), ${r.mode}: ${r.outcome}${r.sentence === undefined ? '' : `: ${r.sentence.split('\n')[0]}`}`);
+}
 for (const [arm, sentence] of Object.entries(failures)) lines.push('', `${arm} failed: ${sentence}`);
 const load = Object.entries(loads).map(([arm, l]) => `${arm}: ${l.before.map((x) => x.toFixed(2)).join(', ')} -> ${l.after.map((x) => x.toFixed(2)).join(', ')}`);
 lines.push('', `Load average before -> after: ${load.join('; ')}`, `Seconds: ${String(record['seconds'])}`);
