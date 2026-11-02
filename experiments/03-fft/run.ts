@@ -180,15 +180,16 @@ if (pageTiers.length > 0) {
     // yielding. The browser is closed on either way out.
     const calls = options.sizes.length * options.variants.length * DIRECTIONS.length;
     const limit = options.timeoutMs * (calls * options.repeats + 4);
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       results[tier] = await inPage(
         dirname(page),
         (p) =>
           Promise.race([
             p.evaluate((o) => (globalThis as unknown as Page).runFft(o), { ...options, tier }),
-            new Promise<never>((_, fail) =>
-              setTimeout(() => fail(new Error(`the page did not return within ${String(limit / 1000)} s`)), limit),
-            ),
+            new Promise<never>((_, fail) => {
+              timer = setTimeout(() => fail(new Error(`the page did not return within ${String(limit / 1000)} s`)), limit);
+            }),
           ]),
         (line) => {
           const n = (seen.get(line) ?? 0) + 1;
@@ -199,6 +200,8 @@ if (pageTiers.length > 0) {
     } catch (e) {
       failures[tier] = String(e);
       console.error(`${tier}: ${String(e)}`);
+    } finally {
+      clearTimeout(timer);
     }
     consoles[tier] = [...seen].filter(([, n]) => n > 1).map(([line, count]) => ({ line, count }));
     loads[tier] = { before, after: loadavg() };
