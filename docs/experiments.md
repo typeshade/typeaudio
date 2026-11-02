@@ -3,15 +3,15 @@
 The experiments decide the first implementation. Measurement comes before any proposal
 (`docs/vision.md`, section 11). They run in order, because a later one builds on an earlier one's
 numbers. Each experiment has one question, the decision its answer supports, a method and a
-record. On 2026-11-02 experiment 1 has a harness and a run on the container of a Claude Code
-session, recorded as reference numbers; no experiment has run on the owner's devices yet.
+record. On 2026-11-02 experiments 1 and 2 have a harness and a run on the container of a Claude
+Code session, recorded as reference numbers; no experiment has run on the owner's devices yet.
 
 ## Status
 
 | #   | Experiment                                                 | Decides                                                   | Status                                                                                                 |
 | --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
-| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | in progress (branch `claude/exp-02-worklet`)                                                           |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending    |
 | 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | not started                                                                                            |
 | 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
@@ -94,8 +94,13 @@ beat.
 5. Raise the voice count until the quantum overruns. Record the last count that did not.
 6. Write the record per device and browser.
 
-**Status.** In progress, on the branch `claude/exp-02-worklet`: the harness and the run on the
-container of a Claude Code session.
+**Status.** Harness ready: `experiments/02-worklet/`, run by `bun run exp:02`. It loads four
+worklet bundles with `audioWorklet.addModule`. It times five ways of filling a quantum, in an
+`OfflineAudioContext` and in a real-time `AudioContext`. `docs/records/02-worklet-container.md`,
+section "The method", says how. The run on the container of a Claude Code session is recorded
+there, as reference numbers. The voice of that run is the engine's `Voice`, a `Saw` into a
+`Lowpass`, and not a `Phasor` into a `OnePole` (the record's deviation 1). The device runs are
+pending: one record per device and browser, `docs/records/02-worklet-<device>.md`.
 
 ## 3. The FFT entry held to the oracle on three tiers
 
