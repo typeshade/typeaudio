@@ -76,9 +76,13 @@ async function runCount(o: PageOptions, count: number): Promise<PageCount & { re
     if (rt.tier !== o.tier) return { count, refused: `the runtime made ${rt.tier}, not ${o.tier}` };
     const gl = rt.device as WebGL2RenderingContext;
     const info = (rt.device as { adapterInfo?: { description?: string; vendor?: string; architecture?: string } }).adapterInfo;
+    const unmasked = (): string => {
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      return String(ext !== null ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    };
     const renderer =
       rt.tier === 'webgl2'
-        ? String(gl.getParameter(gl.RENDERER))
+        ? unmasked()
         : [info?.vendor, info?.architecture, info?.description].filter((x) => x !== undefined && x !== '').join(', ') || 'WebGPU adapter';
     const program = rt.load(pack);
     const limit = o.timeoutMs;
