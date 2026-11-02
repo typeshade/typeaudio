@@ -2,14 +2,8 @@
 
 // The oscillators. The phase and its step are shared, so they live in the abstract base, and each
 // concrete class supplies the one thing that differs, the wave of a phase (surface §26: `abstract`,
-// `extends`, `protected`, a `this`-returning method).
-//
-// Workaround: the static builder is written on each concrete class. Its one generic form on the
-// base, `static at<C extends Oscillator>(this: { new (): C }, f: f32, sr: f32): C`, which plain
-// TypeScript accepts for an abstract class, is refused by the compiler at its `new this()` (TS8035,
-// "Oscillator" is abstract, so there is no instance of it to build), although TypeScript lets no
-// call reach it on the abstract class itself. The compiler ask is `docs/compiler-asks.md`, M:
-// issue typeshade/typeshade#944.
+// `extends`, `protected`, a `this`-returning method). The static builder is shared too: it lives in
+// the base and builds the class it is called on (surface §26, `new this()` in a static, Rule 8.13).
 
 /** One full turn of the phase, in radians. */
 const TAU: f32 = 6.283185307179586;
@@ -39,15 +33,19 @@ export abstract class Oscillator {
 
   /** The sample at the phase `p`, in [-1, 1]. */
   protected abstract wave(p: f32): f32;
+
+  /**
+   * An oscillator of the class this is called on, at `f` hertz and the sample rate `sr`:
+   * `Saw.at(110, sr)` builds a `Saw`, and `Sine.at(110, sr)` a `Sine`. `Oscillator.at` is not
+   * called, since an abstract class has no instance to build.
+   */
+  static at<C extends Oscillator>(this: { new (): C }, f: f32, sr: f32): C {
+    return new this().hz(f, sr);
+  }
 }
 
 /** A sine oscillator. */
 export class Sine extends Oscillator {
-  /** A sine at `f` hertz and the sample rate `sr`. */
-  static at(f: f32, sr: f32): Sine {
-    return new Sine().hz(f, sr);
-  }
-
   protected wave(p: f32): f32 {
     return sin(p * TAU);
   }
@@ -55,11 +53,6 @@ export class Sine extends Oscillator {
 
 /** A naive sawtooth oscillator: it rises from -1 to 1 over each cycle, with no band limit. */
 export class Saw extends Oscillator {
-  /** A sawtooth at `f` hertz and the sample rate `sr`. */
-  static at(f: f32, sr: f32): Saw {
-    return new Saw().hz(f, sr);
-  }
-
   protected wave(p: f32): f32 {
     return p * 2. - 1.;
   }
