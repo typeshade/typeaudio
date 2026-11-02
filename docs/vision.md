@@ -267,6 +267,9 @@ arm holds every exported unit class to one result on every tier, on the host and
 
 ## 8. The architecture
 
+`docs/architecture.md` is the detail of this section: the loop shapes, the block plan, the
+banks, the buses, the events, the transports and the decisions the owner takes.
+
 ### Layers
 
 | Layer          | Owns                                                                                                   |
