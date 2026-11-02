@@ -6,16 +6,24 @@
 
 **A GPU audio engine written in TypeScript, on [TypeShade](https://github.com/typeshade/typeshade).**
 
-TypeAudio is in its design phase. This repository holds the design, the record of what the
-engine asks of the compiler, and the experiments that decide the first implementation. There is
-no library code yet, and nothing to install.
+TypeAudio is in its first code. This repository holds the design, the record of what the engine
+asks of the compiler, the experiments that decide the implementation, and the first units, kernels
+and render, tested on the CPU tier of the compiler. Nothing is published to npm yet.
+
+To work on it:
+
+1. Install [Bun](https://bun.sh).
+2. Clone the repository.
+3. Run `bun install`. It installs the pinned compiler and writes the host views.
+4. Run `bun run check` and `bun run test`.
 
 - [`docs/vision.md`](docs/vision.md): what a developer writes, sees and never has to know; the
   principles and the bar they are measured by; what the engine does for a sound designer; the
   architecture; the honest boundaries; the first experiments.
 - [`docs/compiler-asks.md`](docs/compiler-asks.md): the compiler proposals TypeAudio rests on and
   the ones it asks for, each with its status.
-- [`docs/experiments.md`](docs/experiments.md): the experiments, in order, with their status.
+- [`docs/experiments.md`](docs/experiments.md): the experiments, in order, with their status;
+  [`docs/records/`](docs/records/) holds the record of each run.
 - [`compiler-changes.md`](compiler-changes.md): the proposals of the compiler this repository
   has handled, recorded when the compiler pin moves.
 - [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md): the operating rules and the map, for

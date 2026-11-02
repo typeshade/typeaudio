@@ -1,0 +1,29 @@
+name: CI
+
+# One job: install with Bun, which runs the compiler's TypeScript sources from the pinned tarball
+# (CLAUDE.md, "The compiler pin"), then the checks of AGENTS.md, "Checks", on the CPU tier of the
+# compiler, with no device. The browser check (`bun run test:gpu`) and the experiments need a
+# browser with WebGPU, and are not in CI.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: typecheck + unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      # `prepare` writes the host views (`tshc sync`) that `tsc` reads.
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run test
