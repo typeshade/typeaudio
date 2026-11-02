@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="112" src="assets/icon.png" alt="TypeAudio">
+  <img height="112" src="assets/icon-256.png" alt="TypeAudio">
 </p>
 
 # TypeAudio
