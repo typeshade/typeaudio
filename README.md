@@ -13,6 +13,9 @@ no library code yet, and nothing to install.
 - [`docs/vision.md`](docs/vision.md): what a developer writes, sees and never has to know; the
   principles and the bar they are measured by; what the engine does for a sound designer; the
   architecture; the honest boundaries; the first experiments.
+- [`docs/architecture.md`](docs/architecture.md): the architecture in detail: the loop shapes,
+  one block as one `fuse` plan, banks and buses on the device, events, the transports, and the
+  decisions the owner takes.
 - [`docs/compiler-asks.md`](docs/compiler-asks.md): the compiler proposals TypeAudio rests on and
   the ones it asks for, each with its status.
 - [`docs/experiments.md`](docs/experiments.md): the experiments, in order, with their status.

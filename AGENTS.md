@@ -41,6 +41,7 @@ Design phase. The repository holds documents and no library code. The first expe
 | Document                  | What it is                                                                                      |
 | ------------------------- | ----------------------------------------------------------------------------------------------- |
 | `docs/vision.md`          | The developer-experience contract, the catalog of what the engine does, the architecture, the boundaries, the experiments |
+| `docs/architecture.md`    | The detail of the architecture: the loop shapes, the block plan, banks, buses, events, transports |
 | `docs/compiler-asks.md`   | The compiler proposals this engine rests on and asks for, each with its status                  |
 | `docs/experiments.md`     | The experiments in order, with their status and what each decides                               |
 | `compiler-changes.md`     | The compiler proposals this repository has handled, recorded when the pin moves                 |

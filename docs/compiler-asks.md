@@ -47,7 +47,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: `out` as an array of structs, one struct with a fixed array of frames per lane, so
   each lane writes one element at its own index.
 - Measured by: experiment 4.
-- Status: candidate. Whether the proof refuses the form is not observed yet.
+- Status: to confirm. Surface §65, rule R3, admits a write at `i*W + x` over a nested loop of `x`
+  below a loop-invariant `W`, which is this form; `docs/architecture.md` builds on it, and
+  experiment 4 confirms it with a runtime `block`.
 
 ### B. A metadata channel from a class to the host
 
@@ -122,7 +124,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   tier).
 - Workaround: `performance.now()` around the `await` of a block's read, labelled as host time.
 - Measured by: experiment 1.
-- Status: issue #542 open (raised by typeshade/radiance).
+- Status: partly satisfied. The fuse report carries `gpuTime` per group when the device has
+  `timestamp-query` (§71, change 0066), so `explain` reports GPU time per group today. The rest
+  of issue #542, a timing outside a scope and on WebGL2, stays open (raised by typeshade/radiance).
 
 ### I. The cost of many dispatches
 
