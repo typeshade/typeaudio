@@ -17,7 +17,7 @@ yet.
 | 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
-| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | not started                                                                                            |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | in progress (branch `claude/exp-07-sound-match`)                                                       |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -228,4 +228,5 @@ need for ask L, reverse mode.
 4. Measure the time per step against the parameter count: 3, 10, 30, 100.
 5. Write the record.
 
-**Status.** Not started.
+**Status.** In progress, on the branch `claude/exp-07-sound-match`: the harness and its run on the
+container, as reference numbers.
