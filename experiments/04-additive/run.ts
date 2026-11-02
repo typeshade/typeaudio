@@ -2,8 +2,8 @@
 // section 4).
 //
 //   bun run exp:04 [--tier cpu|webgpu|webgl2|all] [--partials 10000] [--frames 1024]
-//                  [--blocks 1000] [--warmup 10] [--variants gather,tree,scatter,host,f64] [--sums yes|no]
-//                  [--out <file.json>]
+//                  [--blocks 1000] [--warmup 10] [--variants gather,tree,scatter,host,f64,resident]
+//                  [--sums yes|no] [--out <file.json>]
 //
 // It bundles the harness twice with Vite and the compiler's plugin, as experiment 1 does: for Node,
 // which runs the CPU tier (when the tiers include it) and then the plain-JavaScript reference over

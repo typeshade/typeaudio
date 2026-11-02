@@ -9,9 +9,10 @@
 //   gain(master, mixed, MASTER)           shape F
 //   peak(master)                          shape R, a reduction at the end of the scope
 //
-// `lanes` and `mixed` are scratch arrays of the scope; the master is a `Resident`, read once per
-// block. A block is timed with `performance.now()` from the `fuse` call to the host's read of the
-// master and of the peak. The bank of partials stays on the device for the whole run.
+// `lanes` and `mixed` are scratch arrays of the scope (`resident` keeps the lanes in a `Resident`
+// the device makes once); the master is a `Resident`, read once per block. A block is timed with
+// `performance.now()` from the `fuse` call to the host's read of the master and of the peak. The
+// bank of partials stays on the device for the whole run.
 
 import { createDevice, type Device, type DeviceInfo, type FuseReport, type Resident } from 'typeshade/runtime';
 import { bank } from '../../src/bank.ts';
