@@ -61,11 +61,12 @@ compliance or certification.
 
 ## The compiler pin
 
-The compiler is pinned at a commit, as TypeNN and TypeCV pin it (a git submodule at
-`vendor/typeshade`, once code exists here). A pull request that moves the pin past a compiler
-proposal that names `typeaudio` in its `downstream` entry records the proposal's id in
-`compiler-changes.md`, with the pull request that did the work, and the compiler's
-`scripts/downstream-impact.ts` fails the pull request until it does.
+The compiler is pinned at a commit. The site, the editor and Radiance pin it as a git submodule.
+TypeNN and TypeCV install it from a source tarball (compiler proposal 0071, decision D6). This
+repository chooses one of the two forms with its first code, and records the choice here. A pull
+request that moves the pin past a compiler proposal that names `typeaudio` in its `downstream`
+entry records the proposal's id in `compiler-changes.md`, with the pull request that did the work,
+and the compiler's `scripts/downstream-impact.ts` fails the pull request until it does.
 
 ## Running sub-agents
 
