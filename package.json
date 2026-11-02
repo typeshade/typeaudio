@@ -14,7 +14,8 @@
     "check": "tshc sync --check && tshc check src experiments && tsc -p tsconfig.json && tsc -p tsconfig.node.json",
     "test": "vitest run",
     "test:gpu": "bun test/browser/run.ts",
-    "exp:01": "bun experiments/01-round-trip/run.ts"
+    "exp:01": "bun experiments/01-round-trip/run.ts",
+    "exp:04": "bun experiments/04-additive/run.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
