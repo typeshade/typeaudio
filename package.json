@@ -15,6 +15,7 @@
     "test": "vitest run",
     "test:gpu": "bun test/browser/run.ts",
     "exp:01": "bun experiments/01-round-trip/run.ts",
+    "exp:02": "bun experiments/02-worklet/run.ts",
     "exp:04": "bun experiments/04-additive/run.ts"
   },
   "devDependencies": {
