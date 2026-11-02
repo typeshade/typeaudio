@@ -90,6 +90,8 @@ describe('the fuse report of each block', () => {
       // The CPU tier fuses nothing and says nothing of why (compiler surface §71).
       expect(report.groups.every((g) => !g.fused && g.why === undefined)).toBe(true);
       expect(report.groups.every((g) => g.workgroupShapes === undefined)).toBe(true);
+      // Each group names the tier it ran on (compiler change 0118).
+      expect(report.groups.every((g) => g.tier === 'cpu')).toBe(true);
     }
   });
 
