@@ -243,6 +243,25 @@ if (pageTiers.length > 0) {
 
 const h = impulseResponse();
 const padded = paddedPartitions(h);
+{
+  // What the impulse response is: its largest magnitude and where, and the level of its last second.
+  let peak = 0;
+  let peakAt = 0;
+  for (let n = 0; n < h.length; n++) {
+    if (Math.abs(h[n]!) > peak) {
+      peak = Math.abs(h[n]!);
+      peakAt = n;
+    }
+  }
+  const last = h.subarray(h.length - (TAIL_END - TAIL_START));
+  let lastPeak = 0;
+  let lastSquares = 0;
+  for (const v of last) {
+    lastPeak = Math.max(lastPeak, Math.abs(v));
+    lastSquares += v * v;
+  }
+  record['impulseResponse'] = { frames: h.length, peak, peakAt, lastSecondPeak: lastPeak, lastSecondRms: Math.sqrt(lastSquares / last.length) };
+}
 let oracleChecks: Record<string, Float32Array> | undefined;
 let determinism: unknown;
 if (arms.includes('oracle')) {
