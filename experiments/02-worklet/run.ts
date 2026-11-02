@@ -114,20 +114,35 @@ await inPage(
     await p.exposeFunction('exp02Cpu', (label: 'start' | 'end') => {
       snaps[label] = snapshot();
     });
-    /** `run`, with the CPU time of its timed part over `per` of its result, in milliseconds. */
-    const withCpu = async <R extends { cpu?: Cpu }>(run: () => Promise<R>, per: (r: R) => number | undefined): Promise<R> => {
+    /** `run`, with the CPU time of its timed part over `per` of its result, in milliseconds. The
+     *  render thread is the busiest whose name matches `thread`: in `/proc`, which keeps 15
+     *  characters of a name, Chromium's worklet threads read "Offline AudioWo" and "Realtime
+     *  AudioW". */
+    const withCpu = async <R extends { cpu?: Cpu }>(
+      run: () => Promise<R>,
+      per: (r: R) => number | undefined,
+      thread: RegExp,
+    ): Promise<R> => {
       delete snaps.start;
       delete snaps.end;
       const r = await run();
       const denominator = per(r);
-      const t = snaps.start === undefined || snaps.end === undefined ? undefined : busiest(snaps.start, snaps.end, /AudioW/);
+      const t = snaps.start === undefined || snaps.end === undefined ? undefined : busiest(snaps.start, snaps.end, thread);
       if (t === undefined || denominator === undefined) return r;
       return { ...r, cpu: { thread: t.name, threadMs: t.ms, allMs: t.allMs, ratio: t.ms / denominator } };
     };
     const offline = (s: OfflineSpec): Promise<OfflineResult> =>
-      withCpu(() => p.evaluate((spec) => (globalThis as unknown as Exp02).exp02.offline(spec), s), (r) => r.timedAudioMs);
+      withCpu(
+        () => p.evaluate((spec) => (globalThis as unknown as Exp02).exp02.offline(spec), s),
+        (r) => r.timedAudioMs,
+        /^Offline AudioW/,
+      );
     const realtime = (s: RealtimeSpec): Promise<RealtimeResult> =>
-      withCpu(() => p.evaluate((spec) => (globalThis as unknown as Exp02).exp02.realtime(spec), s), (r) => r.wallMs);
+      withCpu(
+        () => p.evaluate((spec) => (globalThis as unknown as Exp02).exp02.realtime(spec), s),
+        (r) => r.wallMs,
+        /^Realtime AudioW/,
+      );
     record['browser'] = { userAgent: await p.evaluate(() => navigator.userAgent), version: p.context().browser()?.version() };
 
     if (parts.includes('load')) {
@@ -148,7 +163,7 @@ await inPage(
       // The reference the outputs are held to.
       await offline({ bundle: 'kernel', variant: 'plain', voices: 8, tiers: 'cpu', seconds: 0.5, warmup: 0 });
       for (const r of runs) {
-        const row = await offline({ ...r, voices: 8, seconds: 0.5, warmup: 0 });
+        const row = await offline({ ...r, voices: 8, seconds: 0.5, warmup: 0, census: true });
         loadRows.push(row);
         console.error(`load ${r.bundle} ${r.variant} tiers ${r.tiers}${r.polyfill === undefined ? '' : ` polyfill ${r.polyfill}`}: ${row.loadError ?? (row.errors.join('; ') || 'ran')}`);
       }

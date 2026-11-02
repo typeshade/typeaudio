@@ -98,6 +98,8 @@ export interface OfflineResult {
   readonly loadError?: string;
   /** The processor's constructor, in milliseconds by `Date.now()`, as it reported it. */
   readonly setupMs?: number;
+  /** `census`: what the scope has, as the bundle read it when it was evaluated. */
+  readonly census?: Census;
   /** The wall time of the warm-up seconds and of the timed seconds after them, by the page's
    *  `performance.now()`, and the real-time ratio of each: render time over audio time. */
   readonly warmupMs?: number;

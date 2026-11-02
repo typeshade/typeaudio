@@ -27,6 +27,8 @@ export interface OfflineSpec {
   /** The first seconds, timed apart: the processor's code is compiled while they render. */
   readonly warmup: number;
   readonly polyfill?: boolean;
+  /** Return the census the processor reported. */
+  readonly census?: boolean;
 }
 
 export interface RealtimeSpec {
@@ -185,6 +187,7 @@ async function offline(spec: OfflineSpec): Promise<OfflineResult> {
     ...base,
     addModuleMs,
     ...(ready === undefined ? {} : { setupMs: ready.setupMs }),
+    ...(ready === undefined || spec.census !== true ? {} : { census: ready.census }),
     ...(warm === 0 || from === undefined ? {} : { warmupMs: from - start, warmupRatio: (from - start) / (warm * 1000) }),
     timedMs,
     timedAudioMs,
