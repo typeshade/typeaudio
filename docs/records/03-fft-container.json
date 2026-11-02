@@ -1,0 +1,5213 @@
+{
+  "experiment": "03-fft",
+  "date": "2026-11-02T15:48:25.831Z",
+  "commit": "18ed76a935de248bb34707a7b9f45d94e86253a4",
+  "dirty": false,
+  "pin": "https://github.com/typeshade/typeshade/archive/145666068ca5d6ecfba32aa0ea4289cf0fc3b762.tar.gz",
+  "compiler": {
+    "version": "0.1.0",
+    "revision": null
+  },
+  "tools": {
+    "bun": "1.4.4",
+    "vite": "7.3.7",
+    "playwright-core": "1.64.1"
+  },
+  "options": {
+    "sizes": [
+      1024,
+      4096
+    ],
+    "variants": [
+      "device",
+      "table",
+      "double"
+    ],
+    "repeats": 3,
+    "timeoutMs": 60000
+  },
+  "load": {
+    "cpu": {
+      "before": [
+        4.84,
+        4.7,
+        4.42
+      ],
+      "after": [
+        4.84,
+        4.7,
+        4.42
+      ]
+    },
+    "oracle": {
+      "before": [
+        4.84,
+        4.7,
+        4.42
+      ],
+      "after": [
+        4.48,
+        4.59,
+        4.39
+      ]
+    },
+    "webgpu": {
+      "before": [
+        4.36,
+        4.56,
+        4.39
+      ],
+      "after": [
+        4.36,
+        4.56,
+        4.39
+      ]
+    },
+    "webgl2": {
+      "before": [
+        4.36,
+        4.56,
+        4.39
+      ],
+      "after": [
+        11.37,
+        6.63,
+        5.12
+      ]
+    }
+  },
+  "determinism": {
+    "fft.shade.ts": [
+      {
+        "op": "cos",
+        "elem": "f32",
+        "kind": "absolute",
+        "accuracy": "2^-11 absolute error for x in [-π, π]",
+        "count": 1,
+        "where": [
+          "onDevice"
+        ]
+      },
+      {
+        "op": "sin",
+        "elem": "f32",
+        "kind": "absolute",
+        "accuracy": "2^-11 absolute error for x in [-π, π]",
+        "count": 1,
+        "where": [
+          "onDevice"
+        ]
+      },
+      {
+        "op": "*",
+        "elem": "f64",
+        "kind": "emulated",
+        "accuracy": "emulated double: f32 pairs whose error terms hold while the driver neither reassociates nor fuses them, which WGSL §15.7.5 allows and the _fp64 guard texture prevents",
+        "count": 1,
+        "where": [
+          "inDouble"
+        ]
+      },
+      {
+        "op": "cos",
+        "elem": "f64",
+        "kind": "emulated",
+        "accuracy": "emulated double: f32 pairs whose error terms hold while the driver neither reassociates nor fuses them, which WGSL §15.7.5 allows and the _fp64 guard texture prevents",
+        "count": 1,
+        "where": [
+          "inDouble"
+        ]
+      },
+      {
+        "op": "sin",
+        "elem": "f64",
+        "kind": "emulated",
+        "accuracy": "emulated double: f32 pairs whose error terms hold while the driver neither reassociates nor fuses them, which WGSL §15.7.5 allows and the _fp64 guard texture prevents",
+        "count": 1,
+        "where": [
+          "inDouble"
+        ]
+      }
+    ],
+    "probes.shade.ts": []
+  },
+  "consoles": {
+    "webgpu": [],
+    "webgl2": [
+      {
+        "line": "[.WebGL-0x2e14001dea00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "count": 3
+      },
+      {
+        "line": "performance warning: READ-usage buffer was written, then fenced, but written again before being read back. This discarded the shadow copy that was created to accelerate readback.",
+        "count": 252
+      }
+    ]
+  },
+  "failures": {},
+  "environments": {
+    "cpu": {
+      "environment": {
+        "node": "v22.23.4",
+        "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+        "cores": 4,
+        "os": "linux 6.18.44-fc-v185"
+      },
+      "info": {
+        "build": {
+          "version": "0.1.0",
+          "revision": null
+        },
+        "tier": "cpu",
+        "webgpu": null,
+        "webgl": null
+      }
+    },
+    "oracle": {
+      "environment": {
+        "bun": "1.4.4",
+        "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+        "cores": 4,
+        "os": "linux 6.18.44-fc-v185"
+      }
+    },
+    "webgpu": {
+      "environment": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36"
+      },
+      "info": {
+        "build": {
+          "version": "0.1.0",
+          "revision": null
+        },
+        "tier": "webgpu",
+        "webgpu": {
+          "provenance": "device",
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": null,
+          "description": null,
+          "fallback": true,
+          "features": [
+            "core-features-and-limits",
+            "timestamp-query"
+          ],
+          "limits": {
+            "maxTextureDimension1D": 8192,
+            "maxTextureDimension2D": 8192,
+            "maxTextureDimension3D": 2048,
+            "maxTextureArrayLayers": 256,
+            "maxBindGroups": 4,
+            "maxBindGroupsPlusVertexBuffers": 24,
+            "maxBindingsPerBindGroup": 1000,
+            "maxDynamicUniformBuffersPerPipelineLayout": 8,
+            "maxDynamicStorageBuffersPerPipelineLayout": 4,
+            "maxSampledTexturesPerShaderStage": 16,
+            "maxSamplersPerShaderStage": 16,
+            "maxStorageBuffersPerShaderStage": 8,
+            "maxStorageTexturesPerShaderStage": 4,
+            "maxUniformBuffersPerShaderStage": 12,
+            "maxUniformBufferBindingSize": 65536,
+            "maxStorageBufferBindingSize": 134217728,
+            "minUniformBufferOffsetAlignment": 256,
+            "minStorageBufferOffsetAlignment": 256,
+            "maxVertexBuffers": 8,
+            "maxBufferSize": 268435456,
+            "maxVertexAttributes": 16,
+            "maxVertexBufferArrayStride": 2048,
+            "maxInterStageShaderVariables": 16,
+            "maxColorAttachments": 8,
+            "maxColorAttachmentBytesPerSample": 32,
+            "maxComputeWorkgroupStorageSize": 16384,
+            "maxComputeInvocationsPerWorkgroup": 256,
+            "maxComputeWorkgroupSizeX": 256,
+            "maxComputeWorkgroupSizeY": 256,
+            "maxComputeWorkgroupSizeZ": 64,
+            "maxComputeWorkgroupsPerDimension": 65535,
+            "maxImmediateSize": 64,
+            "maxStorageBuffersInFragmentStage": 8,
+            "maxStorageTexturesInFragmentStage": 4,
+            "maxStorageBuffersInVertexStage": 8,
+            "maxStorageTexturesInVertexStage": 4
+          }
+        },
+        "webgl": null
+      }
+    },
+    "webgl2": {
+      "environment": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36"
+      },
+      "info": {
+        "build": {
+          "version": "0.1.0",
+          "revision": null
+        },
+        "tier": "webgl2",
+        "webgpu": null,
+        "webgl": {
+          "vendor": "WebKit",
+          "renderer": "WebKit WebGL",
+          "unmaskedVendor": "Google Inc. (Google)",
+          "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+        }
+      }
+    }
+  },
+  "probeInputs": {
+    "subnormal": [
+      1.401298464324817e-45,
+      7.174648137343064e-43,
+      7.346839692639297e-40,
+      5.877471754111438e-39,
+      -2.2958874039497803e-41,
+      4.203895392974451e-45
+    ],
+    "normal": [
+      7.703719777548943e-34,
+      1.925929944387236e-34,
+      2.407412430484045e-35,
+      -3.0814879110195774e-33,
+      1.1555579666323415e-33,
+      2.465190328815662e-32
+    ],
+    "wrap": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "refusals": [
+    {
+      "arm": "cpu",
+      "entry": "fftSmallDevice",
+      "direction": "forward",
+      "kind": "refused",
+      "sentence": "TypeError: fftSmallDevice() needs WebGPU: it reaches workgroupBarrier() at fft.shade.ts:157, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftSmallDevice",
+      "direction": "inverse",
+      "kind": "refused",
+      "sentence": "TypeError: fftSmallDevice() needs WebGPU: it reaches workgroupBarrier() at fft.shade.ts:157, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftLargeDevice",
+      "direction": "forward",
+      "kind": "refused",
+      "sentence": "TypeError: fftLargeDevice() needs WebGPU: it reaches storageBarrier() at fft.shade.ts:174, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftLargeDevice",
+      "direction": "inverse",
+      "kind": "refused",
+      "sentence": "TypeError: fftLargeDevice() needs WebGPU: it reaches storageBarrier() at fft.shade.ts:174, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftSmallTable",
+      "direction": "forward",
+      "kind": "refused",
+      "sentence": "TypeError: fftSmallTable() needs WebGPU: it reaches workgroupBarrier() at fft.shade.ts:157, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftSmallTable",
+      "direction": "inverse",
+      "kind": "refused",
+      "sentence": "TypeError: fftSmallTable() needs WebGPU: it reaches workgroupBarrier() at fft.shade.ts:157, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftLargeTable",
+      "direction": "forward",
+      "kind": "refused",
+      "sentence": "TypeError: fftLargeTable() needs WebGPU: it reaches storageBarrier() at fft.shade.ts:174, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftLargeTable",
+      "direction": "inverse",
+      "kind": "refused",
+      "sentence": "TypeError: fftLargeTable() needs WebGPU: it reaches storageBarrier() at fft.shade.ts:174, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftSmallDouble",
+      "direction": "forward",
+      "kind": "refused",
+      "sentence": "TypeError: fftSmallDouble() needs WebGPU: it reaches workgroupBarrier() at fft.shade.ts:157, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftSmallDouble",
+      "direction": "inverse",
+      "kind": "refused",
+      "sentence": "TypeError: fftSmallDouble() needs WebGPU: it reaches workgroupBarrier() at fft.shade.ts:157, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftLargeDouble",
+      "direction": "forward",
+      "kind": "refused",
+      "sentence": "TypeError: fftLargeDouble() needs WebGPU: it reaches storageBarrier() at fft.shade.ts:174, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "cpu",
+      "entry": "fftLargeDouble",
+      "direction": "inverse",
+      "kind": "refused",
+      "sentence": "TypeError: fftLargeDouble() needs WebGPU: it reaches storageBarrier() at fft.shade.ts:174, and a barrier has no CPU tier."
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftSmallDouble",
+      "direction": "forward",
+      "kind": "unfinished",
+      "sentence": "did not return within 60 s"
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftSmallDouble",
+      "direction": "inverse",
+      "kind": "unfinished",
+      "sentence": "not run: fftSmallDouble forward on this tier did not return within 60 s"
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftLargeDouble",
+      "direction": "forward",
+      "kind": "unfinished",
+      "sentence": "not run: fftSmallDouble forward on this tier did not return within 60 s"
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftLargeDouble",
+      "direction": "inverse",
+      "kind": "unfinished",
+      "sentence": "not run: fftSmallDouble forward on this tier did not return within 60 s"
+    }
+  ],
+  "probes": [
+    {
+      "arm": "cpu",
+      "name": "scaleProbe",
+      "factor": 1048576,
+      "values": 6,
+      "wrong": 0,
+      "zeros": 0,
+      "output": [
+        1.4693679385278594e-39,
+        7.52316384526264e-37,
+        7.703719777548943e-34,
+        6.162975822039155e-33,
+        -2.407412430484045e-35,
+        4.408103815583578e-39
+      ]
+    },
+    {
+      "arm": "cpu",
+      "name": "scaleProbe",
+      "factor": 9.5367431640625e-7,
+      "values": 6,
+      "wrong": 0,
+      "zeros": 0,
+      "output": [
+        7.346839692639297e-40,
+        1.8367099231598242e-40,
+        2.2958874039497803e-41,
+        -2.938735877055719e-39,
+        1.1020259538958945e-39,
+        2.350988701644575e-38
+      ]
+    },
+    {
+      "arm": "cpu",
+      "name": "wrapProbe",
+      "values": 12,
+      "wrong": 0,
+      "zeros": 0,
+      "output": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "webgpu",
+      "name": "scaleProbe",
+      "factor": 1048576,
+      "values": 6,
+      "wrong": 6,
+      "zeros": 6,
+      "output": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "arm": "webgpu",
+      "name": "scaleProbe",
+      "factor": 9.5367431640625e-7,
+      "values": 6,
+      "wrong": 5,
+      "zeros": 5,
+      "output": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2.350988701644575e-38
+      ]
+    },
+    {
+      "arm": "webgpu",
+      "name": "wrapProbe",
+      "values": 12,
+      "wrong": 0,
+      "zeros": 0,
+      "output": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        2
+      ]
+    },
+    {
+      "arm": "webgl2",
+      "name": "scaleProbe",
+      "factor": 1048576,
+      "values": 6,
+      "wrong": 6,
+      "zeros": 6,
+      "output": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "arm": "webgl2",
+      "name": "scaleProbe",
+      "factor": 9.5367431640625e-7,
+      "values": 6,
+      "wrong": 5,
+      "zeros": 5,
+      "output": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2.350988701644575e-38
+      ]
+    },
+    {
+      "arm": "webgl2",
+      "name": "wrapProbe",
+      "refused": "Error: typeshade/webgl2: wrapProbe's pass program did not compile: ERROR: 0:97: '_phx_len_xs' : undeclared identifier\nERROR: 0:97: '_urem' : no matching overloaded function found\nERROR: 0:97: '_phLoad' : no matching overloaded function found\nERROR: 0:97: 'uintBitsToFloat' : no matching overloaded function found\n"
+    }
+  ],
+  "timing": [
+    {
+      "arm": "oracle",
+      "entry": "fftSmallDevice",
+      "direction": "forward",
+      "ms": [
+        1874.2105030000002
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftSmallDevice",
+      "direction": "inverse",
+      "ms": [
+        1589.6407710000003
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftSmallTable",
+      "direction": "forward",
+      "ms": [
+        1723.431232
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftSmallTable",
+      "direction": "inverse",
+      "ms": [
+        1766.480195
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftSmallDouble",
+      "direction": "forward",
+      "ms": [
+        1862.945783000001
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftSmallDouble",
+      "direction": "inverse",
+      "ms": [
+        1821.2564460000012
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftLargeDevice",
+      "direction": "forward",
+      "ms": [
+        7508.876069
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftLargeDevice",
+      "direction": "inverse",
+      "ms": [
+        7924.816375000002
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftLargeTable",
+      "direction": "forward",
+      "ms": [
+        6841.449962000002
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftLargeTable",
+      "direction": "inverse",
+      "ms": [
+        6812.155718999995
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftLargeDouble",
+      "direction": "forward",
+      "ms": [
+        7720.398706
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "oracle",
+      "entry": "fftLargeDouble",
+      "direction": "inverse",
+      "ms": [
+        8343.138731
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftSmallDevice",
+      "direction": "forward",
+      "ms": [
+        654.3250000011176,
+        9.259999999776483,
+        11.780000001192093
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftSmallDevice",
+      "direction": "inverse",
+      "ms": [
+        11.33500000089407,
+        6.564999999478459,
+        8.574999999254942
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftLargeDevice",
+      "direction": "forward",
+      "ms": [
+        30.894999999552965,
+        7.875,
+        6.399999998509884
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftLargeDevice",
+      "direction": "inverse",
+      "ms": [
+        4.759999999776483,
+        5,
+        4.900000000372529
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftSmallTable",
+      "direction": "forward",
+      "ms": [
+        601.730000000447,
+        10.5,
+        6.950000001117587
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftSmallTable",
+      "direction": "inverse",
+      "ms": [
+        17.93999999947846,
+        5.2650000005960464,
+        6.439999999478459
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftLargeTable",
+      "direction": "forward",
+      "ms": [
+        39.75999999977648,
+        6.404999999329448,
+        6.380000000819564
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftLargeTable",
+      "direction": "inverse",
+      "ms": [
+        6.449999999254942,
+        6.530000001192093,
+        6.380000000819564
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftSmallDouble",
+      "direction": "forward",
+      "ms": [
+        819.0250000003725,
+        11.41499999910593,
+        11.179999999701977
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftSmallDouble",
+      "direction": "inverse",
+      "ms": [
+        22.095000000670552,
+        18.510000001639128,
+        12.349999999627471
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftLargeDouble",
+      "direction": "forward",
+      "ms": [
+        189.9199999999255,
+        29.15000000037253,
+        19.58999999985099
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgpu",
+      "entry": "fftLargeDouble",
+      "direction": "inverse",
+      "ms": [
+        18.81000000052154,
+        21.25,
+        20.820000000298023
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftSmallDevice",
+      "direction": "forward",
+      "ms": [
+        888.8499999996275,
+        578.3000000007451,
+        460.39499999955297
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftSmallDevice",
+      "direction": "inverse",
+      "ms": [
+        478.6349999997765,
+        505.035000000149,
+        492.90000000037253
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftLargeDevice",
+      "direction": "forward",
+      "ms": [
+        1967.554999999702,
+        1645.0299999993294,
+        1689.589999999851
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftLargeDevice",
+      "direction": "inverse",
+      "ms": [
+        1928.125,
+        1898.6850000005215,
+        1813.4900000002235
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftSmallTable",
+      "direction": "forward",
+      "ms": [
+        926.8650000002235,
+        535.0950000006706,
+        276.09999999962747
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftSmallTable",
+      "direction": "inverse",
+      "ms": [
+        474.785000000149,
+        265.5,
+        261.0499999988824
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftLargeTable",
+      "direction": "forward",
+      "ms": [
+        1547.394999999553,
+        1249.2200000006706,
+        1134.089999999851
+      ],
+      "unstable": 0
+    },
+    {
+      "arm": "webgl2",
+      "entry": "fftLargeTable",
+      "direction": "inverse",
+      "ms": [
+        1065.535000000149,
+        1452.0050000008196,
+        2091.9399999994785
+      ],
+      "unstable": 0
+    }
+  ],
+  "rows": [
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 2.7932064450578764,
+        "meanPeakUlp": 0.4246451583500743,
+        "maxAbs": 0.000021310473976576816,
+        "relRms": 2.3316670862739308e-7,
+        "exact": 265,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.7056305017322302,
+        "meanPeakUlp": 0.2932035114581495,
+        "maxAbs": 2.0332700034764173e-7,
+        "relRms": 7.118692071286339e-8,
+        "exact": 1098,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 2.2290114373899996,
+        "meanPeakUlp": 0.11837023368064514,
+        "maxAbs": 0.000004251501917629241,
+        "relRms": 1.7938914105537655e-7,
+        "exact": 132,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 2.229009922593832,
+        "meanPeakUlp": 0.11826159610228282,
+        "maxAbs": 3.2752357149198424e-39,
+        "relRms": 1.7935953078319615e-7,
+        "exact": 134,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 2,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 3060.341956133023,
+        "meanPeakUlp": 435.07425827627975,
+        "maxAbs": 0.023348556183876212,
+        "relRms": 0.00024414286271174154,
+        "exact": 3,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1587.4131650114432,
+        "meanPeakUlp": 444.0701551684573,
+        "maxAbs": 0.00018923439562457123,
+        "relRms": 0.0001092252886250979,
+        "exact": 6,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 2018.9220648147166,
+        "meanPeakUlp": 112.44217400447198,
+        "maxAbs": 0.003850788240079339,
+        "relRms": 0.00020814839967200685,
+        "exact": 3,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 2079.229031553492,
+        "meanPeakUlp": 114.35786458215627,
+        "maxAbs": 3.055152475821032e-36,
+        "relRms": 0.00020841581248318397,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6
+      },
+      "flushed": 2
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 3060.341956133023,
+        "meanPeakUlp": 435.07425827627975,
+        "maxAbs": 0.023348556183876212,
+        "relRms": 0.00024414286271174154,
+        "exact": 3,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 1587.4131650114432,
+        "meanPeakUlp": 444.0701551684573,
+        "maxAbs": 0.00018923439562457123,
+        "relRms": 0.0001092252886250979,
+        "exact": 6,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 2018.9220648147166,
+        "meanPeakUlp": 112.44217400447198,
+        "maxAbs": 0.003850788240079339,
+        "relRms": 0.00020814839967200685,
+        "exact": 3,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 2079.229031553492,
+        "meanPeakUlp": 114.35786458215627,
+        "maxAbs": 3.055152475821032e-36,
+        "relRms": 0.00020841581248318397,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6
+      },
+      "flushed": 2
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.3052862449549139,
+        "meanPeakUlp": 0.21605782192443712,
+        "maxAbs": 0.000009958543738974868,
+        "relRms": 1.1404747003260483e-7,
+        "exact": 458,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.24993690568953753,
+        "meanPeakUlp": 0.10012768953247075,
+        "maxAbs": 2.9794800959770384e-8,
+        "relRms": 2.079071503633486e-8,
+        "exact": 2048,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7023864667862654,
+        "meanPeakUlp": 0.08320072129706002,
+        "maxAbs": 0.0000013396958671307857,
+        "relRms": 1.0447913696161691e-7,
+        "exact": 179,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7023917939513922,
+        "meanPeakUlp": 0.08319187971096897,
+        "maxAbs": 1.0320719823172421e-39,
+        "relRms": 1.0446364392180845e-7,
+        "exact": 179,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 2,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.3052862449549139,
+        "meanPeakUlp": 0.21605782192443712,
+        "maxAbs": 0.000009958543738974868,
+        "relRms": 1.1404747003260483e-7,
+        "exact": 458,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.24993690568953753,
+        "meanPeakUlp": 0.10012768953247075,
+        "maxAbs": 2.9794800959770384e-8,
+        "relRms": 2.079071503633486e-8,
+        "exact": 2048,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.7023864667862654,
+        "meanPeakUlp": 0.08320072129706002,
+        "maxAbs": 0.0000013396958671307857,
+        "relRms": 1.0447913696161691e-7,
+        "exact": 179,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 239.07792411744595,
+        "meanPeakUlp": 16.342518180872183,
+        "maxAbs": 3.5129343650797155e-37,
+        "relRms": 0.00002469126094649865,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 1.3052862449549139,
+        "meanPeakUlp": 0.21605782192443712,
+        "maxAbs": 0.000009958543738974868,
+        "relRms": 1.1404747003260483e-7,
+        "exact": 458,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 0.24993690568953753,
+        "meanPeakUlp": 0.10012768953247075,
+        "maxAbs": 2.9794800959770384e-8,
+        "relRms": 2.079071503633486e-8,
+        "exact": 2048,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 0.7023864667862654,
+        "meanPeakUlp": 0.08320072129706002,
+        "maxAbs": 0.0000013396958671307857,
+        "relRms": 1.0447913696161691e-7,
+        "exact": 179,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 239.07792411744595,
+        "meanPeakUlp": 16.342518180872183,
+        "maxAbs": 3.5129343650797155e-37,
+        "relRms": 0.00002469126094649865,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.3052862449549139,
+        "meanPeakUlp": 0.21605782192443712,
+        "maxAbs": 0.000009958543738974868,
+        "relRms": 1.1404747003260483e-7,
+        "exact": 458,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.24993690568953753,
+        "meanPeakUlp": 0.10012768953247075,
+        "maxAbs": 2.9794800959770384e-8,
+        "relRms": 2.079071503633486e-8,
+        "exact": 2048,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7023864667862654,
+        "meanPeakUlp": 0.08320072129706002,
+        "maxAbs": 0.0000013396958671307857,
+        "relRms": 1.0447913696161691e-7,
+        "exact": 179,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7023917939513922,
+        "meanPeakUlp": 0.08319187971096897,
+        "maxAbs": 1.0320719823172421e-39,
+        "relRms": 1.0446364392180845e-7,
+        "exact": 179,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 2,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.3052862449549139,
+        "meanPeakUlp": 0.21605782192443712,
+        "maxAbs": 0.000009958543738974868,
+        "relRms": 1.1404747003260483e-7,
+        "exact": 458,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.24993690568953753,
+        "meanPeakUlp": 0.10012768953297237,
+        "maxAbs": 2.9794800959770384e-8,
+        "relRms": 2.079071503633486e-8,
+        "exact": 2046,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.7023864667862654,
+        "meanPeakUlp": 0.08320072129706002,
+        "maxAbs": 0.0000013396958671307857,
+        "relRms": 1.0447913696161691e-7,
+        "exact": 179,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 239.07792411744595,
+        "meanPeakUlp": 16.342518180872183,
+        "maxAbs": 3.5129343650797155e-37,
+        "relRms": 0.00002469126094649865,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 9.674436587840319,
+        "meanPeakUlp": 1.6897474316657508,
+        "maxAbs": 5.766413562202644e-7,
+        "relRms": 2.2904461248023692e-7,
+        "exact": 319,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7592448005416372,
+        "meanPeakUlp": 0.010442094063080463,
+        "maxAbs": 4.5254516633846595e-8,
+        "relRms": 9.397112126642007e-8,
+        "exact": 1025,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1025
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.93799698437307,
+        "meanPeakUlp": 0.11710601244491585,
+        "maxAbs": 1.1551362182933509e-7,
+        "relRms": 1.803671984252815e-7,
+        "exact": 37,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 3
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.9379882819494136,
+        "meanPeakUlp": 0.11710648614357652,
+        "maxAbs": 8.898805771059868e-41,
+        "relRms": 1.8036760889935213e-7,
+        "exact": 37,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 1658,
+        "zero": 3
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 10179.588094482198,
+        "meanPeakUlp": 1714.1138213684183,
+        "maxAbs": 0.000606750732331407,
+        "relRms": 0.00023462001625529109,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4834.981710270047,
+        "meanPeakUlp": 12.250896848117858,
+        "maxAbs": 0.0002881873673361568,
+        "relRms": 0.00032422973206240835,
+        "exact": 1024,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1280
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4231.892459757626,
+        "meanPeakUlp": 133.846033342296,
+        "maxAbs": 0.00025224044679150737,
+        "relRms": 0.0002914234821172359,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 8
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4231.892469748855,
+        "meanPeakUlp": 98.57080437358036,
+        "maxAbs": 1.9431897232332644e-37,
+        "relRms": 0.00028549245914536906,
+        "exact": 422,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1462
+      },
+      "flushed": 1459
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 10179.588094482198,
+        "meanPeakUlp": 1714.1138213684183,
+        "maxAbs": 0.000606750732331407,
+        "relRms": 0.00023462001625529109,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 4834.981710270047,
+        "meanPeakUlp": 12.250896848117858,
+        "maxAbs": 0.0002881873673361568,
+        "relRms": 0.00032422973206240835,
+        "exact": 1024,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1280
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 4231.892459757626,
+        "meanPeakUlp": 133.846033342296,
+        "maxAbs": 0.00025224044679150737,
+        "relRms": 0.0002914234821172359,
+        "exact": 2,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 8
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 4231.892469748855,
+        "meanPeakUlp": 98.57080437358036,
+        "maxAbs": 1.9431897232332644e-37,
+        "relRms": 0.00028549245914536906,
+        "exact": 422,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1462
+      },
+      "flushed": 1459
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 4.140721939504147,
+        "meanPeakUlp": 0.8745155712828137,
+        "maxAbs": 2.4680626031781117e-7,
+        "relRms": 1.1758341432768168e-7,
+        "exact": 525,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.33771059152331767,
+        "meanPeakUlp": 0.00885182892296192,
+        "maxAbs": 2.0129119844634394e-8,
+        "relRms": 7.672172952024577e-8,
+        "exact": 1025,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1537
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.048750502988696,
+        "meanPeakUlp": 0.08719629618793108,
+        "maxAbs": 6.251040118865347e-8,
+        "relRms": 1.1938040518465171e-7,
+        "exact": 51,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 9
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.0487675350159407,
+        "meanPeakUlp": 0.08719622634109592,
+        "maxAbs": 4.815704346629117e-41,
+        "relRms": 1.193804522428915e-7,
+        "exact": 59,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 1642,
+        "zero": 19
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4.140721939504147,
+        "meanPeakUlp": 0.8745155712828137,
+        "maxAbs": 2.4680626031781117e-7,
+        "relRms": 1.1758341432768168e-7,
+        "exact": 525,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.33771059152331767,
+        "meanPeakUlp": 0.00885182892296192,
+        "maxAbs": 2.0129119844634394e-8,
+        "relRms": 7.672172952024577e-8,
+        "exact": 1025,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1537
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.048750502988696,
+        "meanPeakUlp": 0.08719629618793108,
+        "maxAbs": 6.251040118865347e-8,
+        "relRms": 1.1938040518465171e-7,
+        "exact": 51,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 9
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 244.1532797397343,
+        "meanPeakUlp": 4.600648320395346,
+        "maxAbs": 1.1210968791749661e-38,
+        "relRms": 0.000021374371437865822,
+        "exact": 535,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1661
+      },
+      "flushed": 1642
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 4.140721939504147,
+        "meanPeakUlp": 0.8745155712828137,
+        "maxAbs": 2.4680626031781117e-7,
+        "relRms": 1.1758341432768168e-7,
+        "exact": 525,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 0.33771059152331767,
+        "meanPeakUlp": 0.00885182892296192,
+        "maxAbs": 2.0129119844634394e-8,
+        "relRms": 7.672172952024577e-8,
+        "exact": 1025,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1537
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 1.048750502988696,
+        "meanPeakUlp": 0.08719629618793108,
+        "maxAbs": 6.251040118865347e-8,
+        "relRms": 1.1938040518465171e-7,
+        "exact": 51,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 9
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 244.1532797397343,
+        "meanPeakUlp": 4.600648320395346,
+        "maxAbs": 1.1210968791749661e-38,
+        "relRms": 0.000021374371437865822,
+        "exact": 535,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1661
+      },
+      "flushed": 1642
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 4.140721939504147,
+        "meanPeakUlp": 0.8745155712828137,
+        "maxAbs": 2.4680626031781117e-7,
+        "relRms": 1.1758341432768168e-7,
+        "exact": 525,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.33771059152331767,
+        "meanPeakUlp": 0.00885182892296192,
+        "maxAbs": 2.0129119844634394e-8,
+        "relRms": 7.672172952024577e-8,
+        "exact": 1025,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1537
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.048750502988696,
+        "meanPeakUlp": 0.08719629618793108,
+        "maxAbs": 6.251040118865347e-8,
+        "relRms": 1.1938040518465171e-7,
+        "exact": 51,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 9
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.0487675350159407,
+        "meanPeakUlp": 0.08719622634109592,
+        "maxAbs": 4.815704346629117e-41,
+        "relRms": 1.193804522428915e-7,
+        "exact": 59,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 1642,
+        "zero": 19
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4.140721939504147,
+        "meanPeakUlp": 0.8745155712828137,
+        "maxAbs": 2.4680626031781117e-7,
+        "relRms": 1.1758341432768168e-7,
+        "exact": 525,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.33771059152331767,
+        "meanPeakUlp": 0.008851828923212785,
+        "maxAbs": 2.0129119844634394e-8,
+        "relRms": 7.672172952024577e-8,
+        "exact": 1025,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1281
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.048750502988696,
+        "meanPeakUlp": 0.0871962961879321,
+        "maxAbs": 6.251040118865347e-8,
+        "relRms": 1.1938040518465171e-7,
+        "exact": 51,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 19
+      },
+      "flushed": 0
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 244.1532797397343,
+        "meanPeakUlp": 4.600648320395346,
+        "maxAbs": 1.1210968791749661e-38,
+        "relRms": 0.000021374371437865822,
+        "exact": 535,
+        "count": 2048
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1661
+      },
+      "flushed": 1642
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 3.3468535433057696,
+        "meanPeakUlp": 0.5121715532174846,
+        "maxAbs": 0.00005106893224038345,
+        "relRms": 2.7820357407500406e-7,
+        "exact": 942,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.7056305017322302,
+        "meanPeakUlp": 0.2945593559615373,
+        "maxAbs": 2.0332700034764173e-7,
+        "relRms": 7.101969708880038e-8,
+        "exact": 4292,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 2.5563272528816015,
+        "meanPeakUlp": 0.05874747257372019,
+        "maxAbs": 0.000019503229163220226,
+        "relRms": 2.2048874607830464e-7,
+        "exact": 295,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 2.556322880787775,
+        "meanPeakUlp": 0.05871767484170988,
+        "maxAbs": 1.5024715526218927e-38,
+        "relRms": 2.2044803908617213e-7,
+        "exact": 294,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 57,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 3398.4604931939393,
+        "meanPeakUlp": 549.4783226181547,
+        "maxAbs": 0.05185639180288604,
+        "relRms": 0.0003005640221235819,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1587.6653576018289,
+        "meanPeakUlp": 444.1089576778356,
+        "maxAbs": 0.00018926445932410108,
+        "relRms": 0.00010922500104532524,
+        "exact": 8,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 2239.385868281126,
+        "meanPeakUlp": 52.39186174262898,
+        "maxAbs": 0.017085158296822556,
+        "relRms": 0.000266819671475814,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 2245.2634029928595,
+        "meanPeakUlp": 53.04165524419266,
+        "maxAbs": 1.3196472231630657e-35,
+        "relRms": 0.0002673727897133734,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 59
+      },
+      "flushed": 6
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 3398.4604931939393,
+        "meanPeakUlp": 549.4783226181547,
+        "maxAbs": 0.05185639180288604,
+        "relRms": 0.0003005640221235819,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 1587.6653576018289,
+        "meanPeakUlp": 444.1089576778356,
+        "maxAbs": 0.00018926445932410108,
+        "relRms": 0.00010922500104532524,
+        "exact": 8,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 2239.385868281126,
+        "meanPeakUlp": 52.39186174262898,
+        "maxAbs": 0.017085158296822556,
+        "relRms": 0.000266819671475814,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 2245.2634029928595,
+        "meanPeakUlp": 53.04165524419266,
+        "maxAbs": 1.3196472231630657e-35,
+        "relRms": 0.0002673727897133734,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 59
+      },
+      "flushed": 6
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.6107226992025971,
+        "meanPeakUlp": 0.24534253395645678,
+        "maxAbs": 0.000024577677905313067,
+        "relRms": 1.291668631209538e-7,
+        "exact": 1606,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.24996443558484316,
+        "meanPeakUlp": 0.10173556573793885,
+        "maxAbs": 2.9798082779031176e-8,
+        "relRms": 2.12498103571527e-8,
+        "exact": 8192,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7626835070550442,
+        "meanPeakUlp": 0.043189500664244956,
+        "maxAbs": 0.000005818813377800325,
+        "relRms": 1.1665502023889622e-7,
+        "exact": 416,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7626840341836214,
+        "meanPeakUlp": 0.043178204384799634,
+        "maxAbs": 4.482653868225997e-39,
+        "relRms": 1.1662624165540883e-7,
+        "exact": 416,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 56,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.6107226992025971,
+        "meanPeakUlp": 0.24534253395645678,
+        "maxAbs": 0.000024577677905313067,
+        "relRms": 1.291668631209538e-7,
+        "exact": 1606,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.24996443558484316,
+        "meanPeakUlp": 0.10173556573793885,
+        "maxAbs": 2.9798082779031176e-8,
+        "relRms": 2.12498103571527e-8,
+        "exact": 8192,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.7626835070550442,
+        "meanPeakUlp": 0.043189500664244956,
+        "maxAbs": 0.000005818813377800325,
+        "relRms": 1.1665502023889622e-7,
+        "exact": 416,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 249.43132288078777,
+        "meanPeakUlp": 5.838721706811398,
+        "maxAbs": 1.46602555482248e-36,
+        "relRms": 0.00002448400390941623,
+        "exact": 8,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 78
+      },
+      "flushed": 36
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 1.6107226992025971,
+        "meanPeakUlp": 0.24534253395645678,
+        "maxAbs": 0.000024577677905313067,
+        "relRms": 1.291668631209538e-7,
+        "exact": 1606,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 0.24996443558484316,
+        "meanPeakUlp": 0.10173556573793885,
+        "maxAbs": 2.9798082779031176e-8,
+        "relRms": 2.12498103571527e-8,
+        "exact": 8192,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 0.7626835070550442,
+        "meanPeakUlp": 0.043189500664244956,
+        "maxAbs": 0.000005818813377800325,
+        "relRms": 1.1665502023889622e-7,
+        "exact": 416,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 249.43132288078777,
+        "meanPeakUlp": 5.838721706811398,
+        "maxAbs": 1.46602555482248e-36,
+        "relRms": 0.00002448400390941623,
+        "exact": 8,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 78
+      },
+      "flushed": 36
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.6107226992025971,
+        "meanPeakUlp": 0.24534253395645678,
+        "maxAbs": 0.000024577677905313067,
+        "relRms": 1.291668631209538e-7,
+        "exact": 1606,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.24996443558484316,
+        "meanPeakUlp": 0.10173556573793885,
+        "maxAbs": 2.9798082779031176e-8,
+        "relRms": 2.12498103571527e-8,
+        "exact": 8192,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7626835070550442,
+        "meanPeakUlp": 0.043189500664244956,
+        "maxAbs": 0.000005818813377800325,
+        "relRms": 1.1665502023889622e-7,
+        "exact": 416,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7626840341836214,
+        "meanPeakUlp": 0.043178204384799634,
+        "maxAbs": 4.482653868225997e-39,
+        "relRms": 1.1662624165540883e-7,
+        "exact": 416,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 56,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.6107226992025971,
+        "meanPeakUlp": 0.24534253395645678,
+        "maxAbs": 0.000024577677905313067,
+        "relRms": 1.291668631209538e-7,
+        "exact": 1606,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.24996443558484316,
+        "meanPeakUlp": 0.10173556573806425,
+        "maxAbs": 2.9798082779031176e-8,
+        "relRms": 2.12498103571527e-8,
+        "exact": 8190,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.7626835070550442,
+        "meanPeakUlp": 0.043189500664244956,
+        "maxAbs": 0.000005818813377800325,
+        "relRms": 1.1665502023889622e-7,
+        "exact": 416,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 249.43132288078777,
+        "meanPeakUlp": 5.838721706811398,
+        "maxAbs": 1.46602555482248e-36,
+        "relRms": 0.00002448400390941623,
+        "exact": 8,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 78
+      },
+      "flushed": 36
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 10.87176879774779,
+        "meanPeakUlp": 2.1475933074364626,
+        "maxAbs": 6.480079172699327e-7,
+        "relRms": 2.835922217575691e-7,
+        "exact": 1014,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.7777018556162147,
+        "meanPeakUlp": 0.005022029013480677,
+        "maxAbs": 4.635464284516661e-8,
+        "relRms": 1.0055256568204489e-7,
+        "exact": 4097,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4096
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 3.246094232228189,
+        "meanPeakUlp": 0.1415853305623773,
+        "maxAbs": 1.9348229361940556e-7,
+        "relRms": 2.2513730312988726e-7,
+        "exact": 121,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 13
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 3.2460937558075793,
+        "meanPeakUlp": 0.1415857961394886,
+        "maxAbs": 1.490533153199731e-40,
+        "relRms": 2.2513711560104246e-7,
+        "exact": 121,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 6651,
+        "zero": 15
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 11043.102311369032,
+        "meanPeakUlp": 2304.949349838231,
+        "maxAbs": 0.0006582201904874463,
+        "relRms": 0.00030242169468151336,
+        "exact": 3,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4937.962249554694,
+        "meanPeakUlp": 3.759406109532125,
+        "maxAbs": 0.0002943254857989963,
+        "relRms": 0.00032971205302981856,
+        "exact": 4096,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 5120
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4918.97594296746,
+        "meanPeakUlp": 170.53882013575216,
+        "maxAbs": 0.00029319381373926756,
+        "relRms": 0.0003585747676751663,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 8
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 4917.97617956996,
+        "meanPeakUlp": 129.3962849530645,
+        "maxAbs": 2.2582239127199466e-37,
+        "relRms": 0.00035271933699072713,
+        "exact": 1663,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 5611
+      },
+      "flushed": 5595
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 11043.102311369032,
+        "meanPeakUlp": 2304.949349838231,
+        "maxAbs": 0.0006582201904874463,
+        "relRms": 0.00030242169468151336,
+        "exact": 3,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 4937.962249554694,
+        "meanPeakUlp": 3.759406109532125,
+        "maxAbs": 0.0002943254857989963,
+        "relRms": 0.00032971205302981856,
+        "exact": 4096,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 5120
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 4918.97594296746,
+        "meanPeakUlp": 170.53882013575216,
+        "maxAbs": 0.00029319381373926756,
+        "relRms": 0.0003585747676751663,
+        "exact": 2,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 8
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 4917.97617956996,
+        "meanPeakUlp": 129.3962849530645,
+        "maxAbs": 2.2582239127199466e-37,
+        "relRms": 0.00035271933699072713,
+        "exact": 1663,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 5611
+      },
+      "flushed": 5595
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 5.144200416281819,
+        "meanPeakUlp": 1.0169925610119073,
+        "maxAbs": 3.066182384658944e-7,
+        "relRms": 1.3438026378188663e-7,
+        "exact": 1921,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.49487273395061493,
+        "meanPeakUlp": 0.004253631817690625,
+        "maxAbs": 2.9496713516152795e-8,
+        "relRms": 8.040170851855891e-8,
+        "exact": 4097,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6144
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.6654989086091518,
+        "meanPeakUlp": 0.09735077870426291,
+        "maxAbs": 9.927147082144927e-8,
+        "relRms": 1.3024887727411362e-7,
+        "exact": 184,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 17
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.6654340215027332,
+        "meanPeakUlp": 0.09737420138193638,
+        "maxAbs": 7.647297984155106e-41,
+        "relRms": 1.3025191831814093e-7,
+        "exact": 193,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 6640,
+        "zero": 27
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 5.144200416281819,
+        "meanPeakUlp": 1.0169925610119073,
+        "maxAbs": 3.066182384658944e-7,
+        "relRms": 1.3438026378188663e-7,
+        "exact": 1921,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.49487273395061493,
+        "meanPeakUlp": 0.004253631817690625,
+        "maxAbs": 2.9496713516152795e-8,
+        "relRms": 8.040170851855891e-8,
+        "exact": 4097,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6144
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.6654989086091518,
+        "meanPeakUlp": 0.09735077870426291,
+        "maxAbs": 9.927147082144927e-8,
+        "relRms": 1.3024887727411362e-7,
+        "exact": 184,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 17
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 254.2102611564513,
+        "meanPeakUlp": 4.756570119475802,
+        "maxAbs": 1.1672762730877613e-38,
+        "relRms": 0.000021405502617320796,
+        "exact": 2008,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6666
+      },
+      "flushed": 6639
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 5.144200416281819,
+        "meanPeakUlp": 1.0169925610119073,
+        "maxAbs": 3.066182384658944e-7,
+        "relRms": 1.3438026378188663e-7,
+        "exact": 1921,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 0.49487273395061493,
+        "meanPeakUlp": 0.004253631817690625,
+        "maxAbs": 2.9496713516152795e-8,
+        "relRms": 8.040170851855891e-8,
+        "exact": 4097,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6144
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 1.6654989086091518,
+        "meanPeakUlp": 0.09735077870426291,
+        "maxAbs": 9.927147082144927e-8,
+        "relRms": 1.3024887727411362e-7,
+        "exact": 184,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 17
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgl2",
+      "accuracy": {
+        "maxPeakUlp": 254.2102611564513,
+        "meanPeakUlp": 4.756570119475802,
+        "maxAbs": 1.1672762730877613e-38,
+        "relRms": 0.000021405502617320796,
+        "exact": 2008,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6666
+      },
+      "flushed": 6639
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 5.144200416281819,
+        "meanPeakUlp": 1.0169925610119073,
+        "maxAbs": 3.066182384658944e-7,
+        "relRms": 1.3438026378188663e-7,
+        "exact": 1921,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 0.49487273395061493,
+        "meanPeakUlp": 0.004253631817690625,
+        "maxAbs": 2.9496713516152795e-8,
+        "relRms": 8.040170851855891e-8,
+        "exact": 4097,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6144
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.6654989086091518,
+        "meanPeakUlp": 0.09735077870426291,
+        "maxAbs": 9.927147082144927e-8,
+        "relRms": 1.3024887727411362e-7,
+        "exact": 184,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 17
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "oracle",
+      "accuracy": {
+        "maxPeakUlp": 1.6654340215027332,
+        "meanPeakUlp": 0.09737420138193638,
+        "maxAbs": 7.647297984155106e-41,
+        "relRms": 1.3025191831814093e-7,
+        "exact": 193,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 6640,
+        "zero": 27
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "noise",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 5.144200416281819,
+        "meanPeakUlp": 1.0169925610119073,
+        "maxAbs": 3.066182384658944e-7,
+        "relRms": 1.3438026378188663e-7,
+        "exact": 1921,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 0.49487273395061493,
+        "meanPeakUlp": 0.004253631817753295,
+        "maxAbs": 2.9496713516152795e-8,
+        "relRms": 8.040170851855891e-8,
+        "exact": 4097,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 5120
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "decay",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 1.6654989086091518,
+        "meanPeakUlp": 0.09735077870426441,
+        "maxAbs": 9.927147082144927e-8,
+        "relRms": 1.3024887727411362e-7,
+        "exact": 184,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 27
+      },
+      "flushed": 0
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arm": "webgpu",
+      "accuracy": {
+        "maxPeakUlp": 254.2102611564513,
+        "meanPeakUlp": 4.756570119475802,
+        "maxAbs": 1.1672762730877613e-38,
+        "relRms": 0.000021405502617320796,
+        "exact": 2008,
+        "count": 8192
+      },
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 6666
+      },
+      "flushed": 6639
+    }
+  ],
+  "pairs": [
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2042,
+        "maxPeakUlp": 3060,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2042,
+        "maxPeakUlp": 1587.5,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2038,
+        "maxPeakUlp": 2020,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2046,
+        "maxPeakUlp": 2080.5,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2042,
+        "maxPeakUlp": 3060,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2042,
+        "maxPeakUlp": 1587.5,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2038,
+        "maxPeakUlp": 2020,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2046,
+        "maxPeakUlp": 2080.5,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2046,
+        "maxPeakUlp": 239,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2046,
+        "maxPeakUlp": 239,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2,
+        "maxPeakUlp": 5.13654119238538e-10,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2046,
+        "maxPeakUlp": 239,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2040,
+        "maxPeakUlp": 10177,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 1024,
+        "maxPeakUlp": 4835,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2042,
+        "maxPeakUlp": 4232,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2046,
+        "maxPeakUlp": 4232,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2040,
+        "maxPeakUlp": 10177,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 1024,
+        "maxPeakUlp": 4835,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2042,
+        "maxPeakUlp": 4232,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 2046,
+        "maxPeakUlp": 4232,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 1979,
+        "maxPeakUlp": 244.11215209960938,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 1979,
+        "maxPeakUlp": 244.11215209960938,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 256,
+        "maxPeakUlp": 2.006461403275539e-12,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 10,
+        "maxPeakUlp": 8.314648340494724e-13,
+        "count": 2048
+      }
+    },
+    {
+      "size": 1024,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 1979,
+        "maxPeakUlp": 244.11215209960938,
+        "count": 2048
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8186,
+        "maxPeakUlp": 3398.5,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 1588,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 2240,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8190,
+        "maxPeakUlp": 2245,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8186,
+        "maxPeakUlp": 3398.5,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 1588,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 2240,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8190,
+        "maxPeakUlp": 2245,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8180,
+        "maxPeakUlp": 249.5,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8180,
+        "maxPeakUlp": 249.5,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 2,
+        "maxPeakUlp": 5.13654119238538e-10,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "forward",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8180,
+        "maxPeakUlp": 249.5,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 11042,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 4096,
+        "maxPeakUlp": 4938,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8186,
+        "maxPeakUlp": 4920,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 4919,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 11042,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 4096,
+        "maxPeakUlp": 4938,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8186,
+        "maxPeakUlp": 4920,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8184,
+        "maxPeakUlp": 4919,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "device",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8044,
+        "maxPeakUlp": 254.35836791992188,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 8044,
+        "maxPeakUlp": 254.35836791992188,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "table",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "webgpu",
+        "webgl2"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "noise",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 0,
+        "maxPeakUlp": 0,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "impulse",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 1024,
+        "maxPeakUlp": 5.016153508188848e-13,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "decay",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 10,
+        "maxPeakUlp": 3.3218226346692914e-12,
+        "count": 8192
+      }
+    },
+    {
+      "size": 4096,
+      "variant": "double",
+      "direction": "inverse",
+      "signal": "quiet",
+      "arms": [
+        "oracle",
+        "webgpu"
+      ],
+      "agreement": {
+        "differ": 8044,
+        "maxPeakUlp": 254.35836791992188,
+        "count": 8192
+      }
+    }
+  ],
+  "references": [
+    {
+      "size": 1024,
+      "direction": "forward",
+      "signal": "noise",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "direction": "forward",
+      "signal": "impulse",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "direction": "forward",
+      "signal": "decay",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "direction": "forward",
+      "signal": "quiet",
+      "subnormals": {
+        "subnormal": 2,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "direction": "inverse",
+      "signal": "noise",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 1024,
+      "direction": "inverse",
+      "signal": "impulse",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 1024
+      }
+    },
+    {
+      "size": 1024,
+      "direction": "inverse",
+      "signal": "decay",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 1024,
+      "direction": "inverse",
+      "signal": "quiet",
+      "subnormals": {
+        "subnormal": 637,
+        "zero": 1024
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "forward",
+      "signal": "noise",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "forward",
+      "signal": "impulse",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "forward",
+      "signal": "decay",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "forward",
+      "signal": "quiet",
+      "subnormals": {
+        "subnormal": 56,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "inverse",
+      "signal": "noise",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 0
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "inverse",
+      "signal": "impulse",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 4096
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "inverse",
+      "signal": "decay",
+      "subnormals": {
+        "subnormal": 0,
+        "zero": 2
+      }
+    },
+    {
+      "size": 4096,
+      "direction": "inverse",
+      "signal": "quiet",
+      "subnormals": {
+        "subnormal": 2570,
+        "zero": 4096
+      }
+    }
+  ]
+}

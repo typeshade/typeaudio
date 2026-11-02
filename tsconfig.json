@@ -14,5 +14,11 @@
     "moduleSuffixes": [".typeshade", ""]
   },
   "include": ["src/**/*.ts", "test/**/*.ts", "experiments/**/*.ts"],
-  "exclude": ["**/*.shade.ts", "experiments/**/run.ts", "experiments/**/node.ts", "test/browser/run.ts"]
+  "exclude": [
+    "**/*.shade.ts",
+    "experiments/**/run.ts",
+    "experiments/**/node.ts",
+    "test/browser/run.ts",
+    "test/fft.test.ts"
+  ]
 }

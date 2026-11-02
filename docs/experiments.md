@@ -3,8 +3,9 @@
 The experiments decide the first implementation. Measurement comes before any proposal
 (`docs/vision.md`, section 11). They run in order, because a later one builds on an earlier one's
 numbers. Each experiment has one question, the decision its answer supports, a method and a
-record. On 2026-11-02 experiments 1 and 2 have a harness and a run on the container of a Claude
-Code session, recorded as reference numbers; no experiment has run on the owner's devices yet.
+record. On 2026-11-02 experiments 1, 2 and 3 each have a harness and a run on the container of a
+Claude Code session, recorded as reference numbers; no experiment has run on the owner's devices
+yet.
 
 ## Status
 
@@ -12,7 +13,7 @@ Code session, recorded as reference numbers; no experiment has run on the owner'
 | --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
 | 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending    |
-| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | not started                                                                                            |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending        |
 | 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
@@ -106,7 +107,8 @@ pending: one record per device and browser, `docs/records/02-worklet-<device>.md
 
 **Question.** A radix-2 FFT of 1,024 and of 4,096 points, as a `@compute` entry with barriers:
 how far is each tier from an `f64` reference, and do the three tiers agree bit for bit? WebGL2
-runs the entry as passes cut at barriers (change 0054); the CPU tier runs it since change 0092.
+runs the entry as passes cut at barriers (change 0054); the host's CPU tier runs it once change
+0092, accepted at the compiler pin and not implemented there, is implemented.
 
 **Decides.** Where the FFT lives (ask G). The size of ask C, the twiddles' precision, and of
 ask E, the subnormals in the tail of an inverse transform of a decaying signal. The WebGL2 arm
@@ -123,7 +125,24 @@ measures ask J where the entry reads a length inside an index.
 6. Read the entry's rows of `compile().determinism`.
 7. Write the record.
 
-**Status.** Not started.
+**Status.** Harness ready: `experiments/03-fft/`, run by `bun run exp:03`. The run on the
+container of a Claude Code session is recorded in `docs/records/03-fft-container.md`, as reference
+numbers: WebGPU and WebGL2 on SwiftShader, and the CPU arms in Node and Bun. The device runs are
+pending: one record per device, `docs/records/03-fft-<device>.md`. `test/fft.test.ts` holds the
+1,024-point entry to the reference on the CPU in `bun run test`.
+
+The harness departs from the method in four places, each recorded in the record's section "What
+departs from the method":
+
+- The 4,096-point transform works in a storage array with `storageBarrier()`. Its 4,096 complex
+  points need 32 KiB of workgroup memory, and WebGPU guarantees 16 KiB.
+- A third variant computes the twiddles with `sin` and `cos` of an emulated double (compiler
+  surface §39), after the first run showed the device's `sin` and `cos` far from the table.
+- At the compiler pin the host's CPU tier refuses an entry that reaches a barrier (change 0092 is
+  accepted, not implemented). The CPU answer is the compiler's oracle, `dispatch` at `f32`
+  precision, which runs the passes the WebGL2 tier runs.
+- The error is counted in ULPs at the transform's largest magnitude, since an FFT's rounding error
+  scales with the transform and not with each value.
 
 ## 4. A 10,000-partial additive render with the fuse report read
 
