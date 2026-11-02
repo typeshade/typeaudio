@@ -27,8 +27,11 @@
 | Graphics | none | SwiftShader: vendor `google`, architecture `swiftshader`, a fallback adapter; features `core-features-and-limits`, `timestamp-query` | ANGLE on Vulkan 1.3.0, SwiftShader Device (Subzero) |
 | Clock step of `performance.now()` | 0.00005 ms | 0.005 ms (the page is cross-origin isolated) | 0.005 ms |
 
-The container is shared with other agent sessions, and the run did not reserve it. Their processes
-may have run during the run, so the medians and, more, the 99th percentiles may hold their load.
+The container is shared with other agent sessions, and the run did not reserve it. At 13:50 UTC,
+eight minutes after the run, `uptime` gave a load average of 8.36, 8.72 and 7.77 over 1, 5 and 15
+minutes, on 4 cores. Other processes very likely ran during the run, so the medians and, more, the
+99th percentiles hold their load. The runner records the load average around each arm from the
+commit after this run on (`load` in the JSON).
 
 ## The method
 

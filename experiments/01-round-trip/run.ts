@@ -12,6 +12,7 @@
 
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
+import { loadavg } from 'node:os';
 import { delimiter, dirname, join } from 'node:path';
 import { bundle, ROOT } from '../../scripts/bundle.ts';
 import { inPage } from '../../scripts/browser.ts';
@@ -58,9 +59,16 @@ const record: Record<string, unknown> = {
   options,
 };
 
+// The machine's load average over 1, 5 and 15 minutes, before and after each arm: another
+// process that shares the machine shows here, and its load is in the numbers.
+const loads: Record<string, { before: number[]; after: number[] }> = {};
+record['load'] = loads;
+
 if (tiers.includes('cpu')) {
   const main = await bundle({ entry: 'experiments/01-round-trip/node.ts', outDir: 'experiments/01-round-trip/out/node', target: 'node' });
+  const before = loadavg();
   record['cpu'] = JSON.parse(await runNode(await nodeBinary(), [main, JSON.stringify(options)]));
+  loads['cpu'] = { before, after: loadavg() };
 }
 const pageTiers = tiers.filter((t): t is 'webgpu' | 'webgl2' => t !== 'cpu');
 if (pageTiers.length > 0) {
@@ -68,9 +76,11 @@ if (pageTiers.length > 0) {
   // `browser.ts` sets `runExperiment` on the page's global object.
   type Page = { runExperiment(o: Options): Promise<unknown> };
   for (const tier of pageTiers) {
+    const before = loadavg();
     record[tier] = await inPage(dirname(page), (p) =>
       p.evaluate((o) => (globalThis as unknown as Page).runExperiment(o), { ...options, tier }),
     );
+    loads[tier] = { before, after: loadavg() };
   }
 }
 
@@ -78,7 +88,8 @@ await mkdir(dirname(outFile), { recursive: true });
 await writeFile(outFile, `${JSON.stringify(record, null, 2)}\n`);
 for (const tier of tiers) {
   const result = record[tier] as { rows: Row[] };
-  console.log(`\n${tier}\n\n${table(result.rows)}`);
+  const load = loads[tier]!;
+  console.log(`\n${tier} (load average before ${load.before.map((x) => x.toFixed(2)).join(', ')}; after ${load.after.map((x) => x.toFixed(2)).join(', ')})\n\n${table(result.rows)}`);
 }
 console.log(`\nwrote ${outFile}`);
 
