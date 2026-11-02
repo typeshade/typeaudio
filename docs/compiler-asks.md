@@ -288,8 +288,8 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   tests, for the same `f32` math. At 512 voices a quantum costs 5.02 ms against 1.46 ms (record
   02). The generated code returns the `inout` values of each method call in a new array
   (`$.inout.values = [...]`). `Voice.tick` makes three such calls per voice and per sample. The
-  browser's other threads spent 89 ms of CPU time a second of audio at 512 voices. For the plain
-  loop they spent 5 ms (inference: the garbage collector).
+  other threads of the browser spent 89 ms of CPU time a second of audio at 512 voices. For the
+  plain loop they spent 5 ms (inference: the garbage collector).
 - Compiler: the CPU tier's code generator (Rule 11.7, surface §64): `inout` values without an
   allocation per call.
 - Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).

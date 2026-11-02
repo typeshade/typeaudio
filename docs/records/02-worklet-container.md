@@ -227,8 +227,8 @@ No real-time run reported an error.
 
 ### What else the run counted
 
-The CPU time of the browser's other threads during the timed part, in milliseconds a second of
-audio. It is the sum over every thread but the render thread.
+The CPU time of the other threads during the timed part, in milliseconds a second of audio. It
+is the sum over every thread of the browser and of the runner, but the render thread.
 
 | Voices | `plain` | `kernel` (a) | `engine` | `host` (b) |
 | -----: | ------: | -----------: | -------: | ---------: |
@@ -291,9 +291,9 @@ These are facts of this run.
 10. From 32 voices up, the median CPU ratio of the render thread is within 5 % of the median
     real-time ratio. So the waits for a CPU added little to these runs. At 1 and 8 voices the
     difference is up to 13 %.
-11. During the timed part, the browser's other threads spent CPU time as well. In milliseconds a
-    second of audio, they spent 89 during `kernel` and 146 during `engine` at 512 voices. They
-    spent 181 during `host` at 256 voices, and 5 during `plain` at 512.
+11. During the timed part, the other threads of the browser and of the runner spent CPU time as
+    well. In milliseconds a second of audio, they spent 89 during `kernel` and 146 during `engine`
+    at 512 voices. They spent 181 during `host` at 256 voices, and 5 during `plain` at 512.
 12. The generated code returns the `inout` values of each method call in a new array:
     `e.inout.values = [...]` in the bundle. `Voice.tick` makes three such calls a sample.
 13. In real time, the audio clock kept pace with the wall clock (0.989 to 1.009) where the CPU of

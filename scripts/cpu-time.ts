@@ -1,8 +1,9 @@
-// The CPU time of the threads of the processes this one started (a browser), read from Linux's
-// `/proc`: the time each thread spent on a CPU, the first field of `/proc/<pid>/task/<tid>/schedstat`,
-// in nanoseconds. On a shared machine the wall time of a piece of work holds the time its thread
-// waited for a CPU, and the thread's own CPU time does not. Experiment 2 reads it while an offline
-// render is suspended. Elsewhere than on Linux a snapshot is empty.
+// The CPU time of the threads of this process and of the processes it started (a browser), read
+// from Linux's `/proc`: the time each thread spent on a CPU, the first field of
+// `/proc/<pid>/task/<tid>/schedstat`, in nanoseconds. On a shared machine the wall time of a piece
+// of work holds the time its thread waited for a CPU, and the thread's own CPU time does not.
+// Experiment 2 reads it while an offline render is suspended. Elsewhere than on Linux a snapshot is
+// empty.
 
 import { readdirSync, readFileSync } from 'node:fs';
 
@@ -73,7 +74,8 @@ export function busiest(
     const ms = (after.ns - (a.get(key)?.ns ?? 0)) / 1e6;
     all += ms;
     if (best === undefined || ms > best.ms) best = { name: after.name, ms };
-    if (prefer?.test(after.name) === true && (bestPreferred === undefined || ms > bestPreferred.ms)) {
+    const preferred = prefer?.test(after.name) === true;
+    if (preferred && (bestPreferred === undefined || ms > bestPreferred.ms)) {
       bestPreferred = { name: after.name, ms };
     }
   }

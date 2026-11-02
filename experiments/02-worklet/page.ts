@@ -17,6 +17,7 @@ import {
   type Tiers,
   type Variant,
 } from './options.ts';
+import { CUTOFF, pitchOf, QUALITY } from './scope.ts';
 
 export interface OfflineSpec {
   readonly bundle: BundleName;
@@ -177,7 +178,7 @@ async function offline(spec: OfflineSpec): Promise<OfflineResult> {
   if (spec.variant === 'plain') {
     plainOutputs.set(spec.voices, out.slice());
   } else if (spec.variant === 'engine') {
-    const refs = Array.from({ length: spec.voices }, (_, v) => new RefVoice(110 * (1 + v / 8), 2400, 0.7, SR));
+    const refs = Array.from({ length: spec.voices }, (_, v) => new RefVoice(pitchOf(v), CUTOFF, QUALITY, SR));
     reference = check('refRender', out, refRender(refs, frames, QUANTUM, 1, 1 / spec.voices));
   } else if (spec.variant !== 'empty') {
     const plain = plainOutputs.get(spec.voices);
