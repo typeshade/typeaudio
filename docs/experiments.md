@@ -11,7 +11,7 @@ session, recorded as reference numbers; no experiment has run on the owner's dev
 | #   | Experiment                                                 | Decides                                                   | Status                                                                                                 |
 | --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
-| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | not started                                                                                            |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | in progress (branch `claude/exp-02-worklet`)                                                           |
 | 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | not started                                                                                            |
 | 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
@@ -94,7 +94,8 @@ beat.
 5. Raise the voice count until the quantum overruns. Record the last count that did not.
 6. Write the record per device and browser.
 
-**Status.** Not started.
+**Status.** In progress, on the branch `claude/exp-02-worklet`: the harness and the run on the
+container of a Claude Code session.
 
 ## 3. The FFT entry held to the oracle on three tiers
 
