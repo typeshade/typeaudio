@@ -1,0 +1,14 @@
+dist/
+*.tsbuildinfo
+/coverage/
+/.cache/
+/artifacts/
+node_modules
+__pycache__/
+.claude/*
+!.claude/settings.json
+!.claude/skills/
+.codebase-memory/
+# Host views `tshc sync` and the Vite plugin write beside a shader module (compiler surface §64).
+*.shade.typeshade.ts
+.vitest/
