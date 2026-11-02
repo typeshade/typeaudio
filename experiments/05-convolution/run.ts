@@ -306,22 +306,32 @@ if (arms.includes('oracle')) {
   // The kernel check on the oracle: the same seeded inputs as the tiers'.
   const i = checkInputs();
   const checks: Record<string, Float32Array> = {};
+  // The time of each call through `fns`, its arrays already in the oracle's own form.
+  const checkMs: Record<string, number> = {};
+  const timedCall = (name: string, ...a: unknown[]): void => {
+    const start = performance.now();
+    oracle.call(name, ...a);
+    checkMs[name] = performance.now() - start;
+  };
   {
     const p = pairs(new Float32Array(POINTS * 2));
-    oracle.call('pad', p, Array.from(i.input));
+    timedCall('pad', p, Array.from(i.input));
     checks['pad'] = Float32Array.from(p.flat());
     const line = pairs(i.line);
-    oracle.call('store', line, pairs(i.spectrum), CHECK_SLOT);
+    timedCall('store', line, pairs(i.spectrum), CHECK_SLOT);
     checks['store'] = Float32Array.from(line.slice(CHECK_SLOT * POINTS, (CHECK_SLOT + 1) * POINTS).flat());
     const sum = pairs(new Float32Array(POINTS * 2));
-    oracle.call('accumulate', sum, pairs(i.line), pairs(i.spectra), CHECK_HEAD, PARTITIONS);
+    const spectraPairs = pairs(i.spectra);
+    const linePairs = pairs(i.line);
+    timedCall('accumulate', sum, linePairs, spectraPairs, CHECK_HEAD, PARTITIONS);
     checks['accumulate'] = Float32Array.from(sum.flat());
     const out = new Array<number>(FRAMES).fill(0);
     const tail = Array.from(i.tail);
-    oracle.call('overlapAdd', out, tail, pairs(i.block));
+    timedCall('overlapAdd', out, tail, pairs(i.block));
     checks['overlapAdd'] = Float32Array.from([...out, ...tail]);
   }
   oracleChecks = checks;
+  record['oracleCheckMs'] = checkMs;
   const cpu = cpus();
   results.oracle = {
     tier: 'cpu',
