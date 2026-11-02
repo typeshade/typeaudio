@@ -1,0 +1,6496 @@
+{
+  "experiment": "02-worklet",
+  "date": "2026-11-02T14:48:01.815Z",
+  "commit": "a6da873a227bb988d3ba28e6ec159f54554e5026",
+  "dirty": false,
+  "pin": "https://github.com/typeshade/typeshade/archive/145666068ca5d6ecfba32aa0ea4289cf0fc3b762.tar.gz",
+  "host": {
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 4,
+    "os": "linux 6.18.44-fc-v185",
+    "bun": "1.4.4"
+  },
+  "options": {
+    "parts": [
+      "load",
+      "offline",
+      "realtime"
+    ],
+    "voices": [
+      1,
+      8,
+      32,
+      64,
+      128,
+      256,
+      512
+    ],
+    "variants": [
+      "empty",
+      "plain",
+      "host",
+      "kernel",
+      "engine"
+    ],
+    "seconds": 4,
+    "warmup": 1,
+    "repeat": 3,
+    "realtimeSeconds": 3,
+    "maxRun": 120
+  },
+  "load": {
+    "load": {
+      "before": [
+        4.47,
+        4.6,
+        5.89
+      ],
+      "after": [
+        4.47,
+        4.6,
+        5.89
+      ]
+    },
+    "offline": {
+      "before": [
+        4.47,
+        4.6,
+        5.89
+      ],
+      "after": [
+        1.57,
+        2.42,
+        4.48
+      ]
+    },
+    "realtime": {
+      "before": [
+        1.57,
+        2.42,
+        4.48
+      ],
+      "after": [
+        0.96,
+        2,
+        4.14
+      ]
+    }
+  },
+  "bundles": {
+    "kernel": {
+      "entry": "experiments/02-worklet/processor.ts",
+      "split": false,
+      "files": {
+        "processor.js": {
+          "bytes": 200488,
+          "dynamicImports": 0,
+          "staticImports": 0,
+          "structuredClone": 1,
+          "navigator": 6,
+          "OffscreenCanvas": 4,
+          "document": 3,
+          "MessageChannel": 1
+        }
+      }
+    },
+    "kernel-split": {
+      "entry": "experiments/02-worklet/processor.ts",
+      "split": true,
+      "files": {
+        "processor.js": {
+          "bytes": 200488,
+          "dynamicImports": 0,
+          "staticImports": 0,
+          "structuredClone": 1,
+          "navigator": 6,
+          "OffscreenCanvas": 4,
+          "document": 3,
+          "MessageChannel": 1
+        }
+      }
+    },
+    "engine": {
+      "entry": "experiments/02-worklet/engine.ts",
+      "split": false,
+      "files": {
+        "processor.js": {
+          "bytes": 663993,
+          "dynamicImports": 0,
+          "staticImports": 0,
+          "structuredClone": 4,
+          "navigator": 7,
+          "OffscreenCanvas": 4,
+          "document": 3,
+          "MessageChannel": 1
+        }
+      }
+    },
+    "engine-split": {
+      "entry": "experiments/02-worklet/engine.ts",
+      "split": true,
+      "files": {
+        "processor.js": {
+          "bytes": 76,
+          "dynamicImports": 0,
+          "staticImports": 1,
+          "structuredClone": 0,
+          "navigator": 0,
+          "OffscreenCanvas": 0,
+          "document": 0,
+          "MessageChannel": 0
+        },
+        "engine-GpWI9Qsl.js": {
+          "bytes": 284672,
+          "dynamicImports": 1,
+          "staticImports": 0,
+          "structuredClone": 4,
+          "navigator": 6,
+          "OffscreenCanvas": 4,
+          "document": 3,
+          "MessageChannel": 1
+        },
+        "fuse-plan-Dmlm_fGn.js": {
+          "bytes": 379630,
+          "dynamicImports": 0,
+          "staticImports": 2,
+          "structuredClone": 0,
+          "navigator": 1,
+          "OffscreenCanvas": 0,
+          "document": 0,
+          "MessageChannel": 0
+        }
+      }
+    }
+  },
+  "browser": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+    "version": "153.0.8010.12"
+  },
+  "loadRuns": [
+    {
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 8,
+      "tiers": "default",
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 6.705000000074506,
+      "setupMs": 1,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 42.100000001490116,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.0846514745338273,
+      "quantumMs": 0.2257372654235395,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 38,
+        "steps": [
+          153,
+          34,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 24000,
+        "same": 24000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.0258519649505615,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 37.938672,
+        "allMs": 93.06739,
+        "ratio": 0.0762841930294906
+      }
+    },
+    {
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 6.230000000447035,
+      "setupMs": 1,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 32.21499999985099,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.06477546916860118,
+      "quantumMs": 0.17273458444960316,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 32,
+        "steps": [
+          157,
+          30,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 24000,
+        "same": 24000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.0258519649505615,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 31.02782,
+        "allMs": 85.529007,
+        "ratio": 0.06238837801608578
+      }
+    },
+    {
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 8,
+      "tiers": "webgpu",
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 5.995000001043081,
+      "setupMs": 0,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 11.474999999627471,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.023073056299519043,
+      "quantumMs": 0.061528150132050784,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 10,
+        "steps": [
+          179,
+          8,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0,
+        "error": "synth: Error: synth(): no tier it may use can run it (webgpu: there is no WebGPU device)."
+      },
+      "errors": [
+        "synth: Error: synth(): no tier it may use can run it (webgpu: there is no WebGPU device)."
+      ],
+      "check": {
+        "reference": "plain",
+        "frames": 24000,
+        "same": 0,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 1.0258519649505615
+      },
+      "peak": 0,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 10.257554,
+        "allMs": 21.925236,
+        "ratio": 0.02062510857908847
+      }
+    },
+    {
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 8,
+      "tiers": "default",
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 6.685000000521541,
+      "setupMs": 0,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 333.42500000074506,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.6704256032186562,
+      "quantumMs": 1.7878016085830835,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 334,
+        "steps": [
+          0,
+          62,
+          108,
+          17,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 24000,
+        "same": 24000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.0258519649505615,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 330.557986,
+        "allMs": 397.94710200000003,
+        "ratio": 0.6646608297587131
+      }
+    },
+    {
+      "bundle": "kernel-split",
+      "variant": "kernel",
+      "voices": 8,
+      "tiers": "default",
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 16.465000001713634,
+      "setupMs": 1,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 37.93500000052154,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.0762768096525232,
+      "quantumMs": 0.20340482574006188,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 37,
+        "steps": [
+          156,
+          31,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 24000,
+        "same": 24000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.0258519649505615,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 36.744016,
+        "allMs": 91.03886,
+        "ratio": 0.07388206970509384
+      }
+    },
+    {
+      "bundle": "engine-split",
+      "variant": "engine",
+      "voices": 8,
+      "tiers": "cpu",
+      "polyfill": false,
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 23.949999999254942,
+      "setupMs": 3,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 1.2300000004470348,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.0024731903494243325,
+      "quantumMs": 0.006595174265131554,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 0,
+        "steps": [
+          188,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0,
+        "error": "setup: ReferenceError: structuredClone is not defined"
+      },
+      "errors": [
+        "setup: ReferenceError: structuredClone is not defined"
+      ],
+      "check": {
+        "reference": "refRender",
+        "frames": 24000,
+        "same": 0,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0.1249999850988388
+      },
+      "peak": 0,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1.098801,
+        "allMs": 8.552917,
+        "ratio": 0.002209385388739946
+      }
+    },
+    {
+      "bundle": "engine-split",
+      "variant": "engine",
+      "voices": 8,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 10.619999999180436,
+      "setupMs": 1,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 17.40000000037253,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.034986595175011785,
+      "quantumMs": 0.09329758713336476,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 17,
+        "steps": [
+          174,
+          12,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0,
+        "error": "render: TypeError: import() is disallowed on WorkletGlobalScope."
+      },
+      "errors": [
+        "render: TypeError: import() is disallowed on WorkletGlobalScope."
+      ],
+      "check": {
+        "reference": "refRender",
+        "frames": 24000,
+        "same": 0,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0.1249999850988388
+      },
+      "peak": 0,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 16.299436,
+        "allMs": 37.034883,
+        "ratio": 0.03277366487935657
+      }
+    },
+    {
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 8,
+      "tiers": "cpu",
+      "polyfill": false,
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 42.625,
+      "setupMs": 2,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 1,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.0020107238605898124,
+      "quantumMs": 0.005361930294906166,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 0,
+        "steps": [
+          188,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0,
+        "error": "setup: ReferenceError: structuredClone is not defined"
+      },
+      "errors": [
+        "setup: ReferenceError: structuredClone is not defined"
+      ],
+      "check": {
+        "reference": "refRender",
+        "frames": 24000,
+        "same": 0,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0.1249999850988388
+      },
+      "peak": 0,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 0.798728,
+        "allMs": 8.960182999999999,
+        "ratio": 0.0016060214477211796
+      }
+    },
+    {
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 8,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 0.5,
+      "warmupSeconds": 0,
+      "addModuleMs": 21.175000000745058,
+      "setupMs": 1,
+      "census": {
+        "navigator": "undefined",
+        "document": "undefined",
+        "window": "undefined",
+        "self": "undefined",
+        "OffscreenCanvas": "undefined",
+        "performance": "undefined",
+        "TextDecoder": "undefined",
+        "TextEncoder": "undefined",
+        "queueMicrotask": "undefined",
+        "setTimeout": "undefined",
+        "structuredClone": "undefined",
+        "fetch": "undefined",
+        "MessageChannel": "undefined",
+        "crypto": "undefined",
+        "URL": "undefined",
+        "WebAssembly": "object",
+        "SharedArrayBuffer": "function",
+        "Atomics": "object",
+        "Date": "function",
+        "navigator.gpu": "undefined"
+      },
+      "timedMs": 121.94499999843538,
+      "timedAudioMs": 497.33333333333337,
+      "ratio": 0.24519772117647862,
+      "quantumMs": 0.653860589803943,
+      "stats": {
+        "quanta": 188,
+        "busyMs": 117,
+        "steps": [
+          92,
+          89,
+          4,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 24000,
+        "same": 24000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.1249999850988388,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 118.053504,
+        "allMs": 221.99204200000003,
+        "ratio": 0.23737299731903483
+      }
+    }
+  ],
+  "offline": [
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 8.355000000447035,
+      "setupMs": 0,
+      "warmupMs": 12.230000000447035,
+      "warmupRatio": 0.012230000000447034,
+      "timedMs": 7.66499999910593,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.00255727313137431,
+      "quantumMs": 0.006819395016998159,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 10,
+        "steps": [
+          1490,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 7.133583,
+        "allMs": 20.334309,
+        "ratio": 0.002379976534697509
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 10.28999999910593,
+      "setupMs": 0,
+      "warmupMs": 10.005000000819564,
+      "warmupRatio": 0.010005000000819563,
+      "timedMs": 9.970000000670552,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.0033262900358109054,
+      "quantumMs": 0.008870106762162412,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 10,
+        "steps": [
+          1490,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 9.772602,
+        "allMs": 19.004148,
+        "ratio": 0.0032604321619217084
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.900000000372529,
+      "setupMs": 0,
+      "warmupMs": 11.610000001266599,
+      "warmupRatio": 0.011610000001266598,
+      "timedMs": 10.490000000223517,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.003499777580145747,
+      "quantumMs": 0.00933274021372199,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 9,
+        "steps": [
+          1491,
+          9,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 10.284229,
+        "allMs": 20.713167,
+        "ratio": 0.0034311262233096087
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "empty",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 10.745000001043081,
+      "setupMs": 0,
+      "warmupMs": 5.939999999478459,
+      "warmupRatio": 0.00593999999947846,
+      "timedMs": 3.0649999994784594,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.0010225756226017993,
+      "quantumMs": 0.002726868326938131,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1,
+        "steps": [
+          1499,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 2.963824,
+        "allMs": 9.280079999999998,
+        "ratio": 0.000988820284697509
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "empty",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.435000000521541,
+      "setupMs": 0,
+      "warmupMs": 4.780000001192093,
+      "warmupRatio": 0.004780000001192093,
+      "timedMs": 2.8049999997019768,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.0009358318504343784,
+      "quantumMs": 0.0024955516011583422,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1,
+        "steps": [
+          1499,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 2.734128,
+        "allMs": 8.003494,
+        "ratio": 0.0009121868327402136
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "empty",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 5.785000000149012,
+      "setupMs": 0,
+      "warmupMs": 5.990000000223517,
+      "warmupRatio": 0.005990000000223517,
+      "timedMs": 3.5049999989569187,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.0011693727754527087,
+      "quantumMs": 0.003118327401207223,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 0,
+        "steps": [
+          1500,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 3.398444,
+        "allMs": 8.07592,
+        "ratio": 0.0011338225088967974
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.134999999776483,
+      "setupMs": 0,
+      "warmupMs": 88.33500000089407,
+      "warmupRatio": 0.08833500000089407,
+      "timedMs": 299.1349999997765,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.09980037811380445,
+      "quantumMs": 0.2661343416368118,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 373,
+        "steps": [
+          1130,
+          367,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 296.119349,
+        "allMs": 328.88845399999997,
+        "ratio": 0.09879426679270463
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 9.150000000372529,
+      "setupMs": 1,
+      "warmupMs": 85.52000000141561,
+      "warmupRatio": 0.08552000000141562,
+      "timedMs": 192.33499999903142,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.0641687055156911,
+      "quantumMs": 0.1711165480418429,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 266,
+        "steps": [
+          1242,
+          253,
+          4,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 188.301065,
+        "allMs": 206.497888,
+        "ratio": 0.06282286421263346
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 5.634999999776483,
+      "setupMs": 0,
+      "warmupMs": 80.26500000059605,
+      "warmupRatio": 0.08026500000059604,
+      "timedMs": 182.92999999970198,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.061030916370007335,
+      "quantumMs": 0.16274911032001954,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 246,
+        "steps": [
+          1256,
+          242,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 179.015316,
+        "allMs": 190.109303,
+        "ratio": 0.059724860765124566
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.235000001266599,
+      "setupMs": 0,
+      "warmupMs": 22.505000000819564,
+      "warmupRatio": 0.022505000000819564,
+      "timedMs": 36.83999999985099,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.012290925266854201,
+      "quantumMs": 0.0327758007116112,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 42,
+        "steps": [
+          1458,
+          42,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 35.716723,
+        "allMs": 67.226872,
+        "ratio": 0.011916166481316728
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.570000000298023,
+      "setupMs": 1,
+      "warmupMs": 22.425000000745058,
+      "warmupRatio": 0.022425000000745057,
+      "timedMs": 30.554999999701977,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.010194061387800928,
+      "quantumMs": 0.02718416370080247,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 39,
+        "steps": [
+          1462,
+          37,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 27.377715,
+        "allMs": 59.136835000000005,
+        "ratio": 0.009134024132562278
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 1,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.530000001192093,
+      "setupMs": 0,
+      "warmupMs": 20.91499999910593,
+      "warmupRatio": 0.02091499999910593,
+      "timedMs": 31.52500000037253,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.010517682384465925,
+      "quantumMs": 0.028047153025242463,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 40,
+        "steps": [
+          1460,
+          40,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.043524980545044,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 26.674642,
+        "allMs": 64.89186699999999,
+        "ratio": 0.008899457962633452
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 1,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 16.555000001564622,
+      "setupMs": 0,
+      "warmupMs": 106.71499999985099,
+      "warmupRatio": 0.10671499999985098,
+      "timedMs": 168.16499999910593,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.056104870996142996,
+      "quantumMs": 0.14961298932304798,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 263,
+        "steps": [
+          1251,
+          237,
+          11,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.7792762517929077,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 154.480732,
+        "allMs": 271.940926,
+        "ratio": 0.05153939012455516
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 1,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 26.294999999925494,
+      "setupMs": 1,
+      "warmupMs": 153.7949999999255,
+      "warmupRatio": 0.1537949999999255,
+      "timedMs": 128.44999999925494,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.0428547597862283,
+      "quantumMs": 0.11427935942994212,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 264,
+        "steps": [
+          1284,
+          197,
+          8,
+          5,
+          0,
+          3,
+          2,
+          0,
+          0,
+          1,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.7792762517929077,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 103.776002,
+        "allMs": 139.377352,
+        "ratio": 0.03462277646797154
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 1,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 14.549999998882413,
+      "setupMs": 0,
+      "warmupMs": 111.90000000037253,
+      "warmupRatio": 0.11190000000037253,
+      "timedMs": 151.32499999925494,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.05048654359405748,
+      "quantumMs": 0.1346307829174866,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 251,
+        "steps": [
+          1291,
+          197,
+          4,
+          2,
+          2,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.7792762517929077,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 131.903619,
+        "allMs": 174.58393,
+        "ratio": 0.0440069903247331
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.21000000089407,
+      "setupMs": 0,
+      "warmupMs": 21.33500000089407,
+      "warmupRatio": 0.02133500000089407,
+      "timedMs": 28.109999999403954,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.009378336298733527,
+      "quantumMs": 0.025008896796622736,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 41,
+        "steps": [
+          1460,
+          39,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 27.24912,
+        "allMs": 37.421198000000004,
+        "ratio": 0.009091120996441283
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.349999999627471,
+      "setupMs": 1,
+      "warmupMs": 21.27500000037253,
+      "warmupRatio": 0.02127500000037253,
+      "timedMs": 30.5,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.010175711743772242,
+      "quantumMs": 0.027135231316725978,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 39,
+        "steps": [
+          1461,
+          39,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 28.382113,
+        "allMs": 36.3906,
+        "ratio": 0.009469121330071176
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.169999999925494,
+      "setupMs": 0,
+      "warmupMs": 17.924999998882413,
+      "warmupRatio": 0.01792499999888241,
+      "timedMs": 30.62000000104308,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.010215747331308858,
+      "quantumMs": 0.027241992883490287,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 33,
+        "steps": [
+          1467,
+          33,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 30.301249,
+        "allMs": 40.974663,
+        "ratio": 0.01010940246886121
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 5.685000000521541,
+      "setupMs": 0,
+      "warmupMs": 605.1349999997765,
+      "warmupRatio": 0.6051349999997765,
+      "timedMs": 1685.5,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5623331850533808,
+      "quantumMs": 1.4995551601423487,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2263,
+        "steps": [
+          0,
+          799,
+          659,
+          36,
+          1,
+          1,
+          1,
+          1,
+          2,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1681.754429,
+        "allMs": 1713.738816,
+        "ratio": 0.5610835506005339
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 9.195000000298023,
+      "setupMs": 1,
+      "warmupMs": 574.320000000298,
+      "warmupRatio": 0.574320000000298,
+      "timedMs": 1573.9500000011176,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5251167704630063,
+      "quantumMs": 1.4003113879013502,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2122,
+        "steps": [
+          0,
+          961,
+          464,
+          72,
+          2,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1555.278639,
+        "allMs": 1584.4941170000002,
+        "ratio": 0.5188874462855873
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 9.18500000052154,
+      "setupMs": 1,
+      "warmupMs": 604.6899999994785,
+      "warmupRatio": 0.6046899999994785,
+      "timedMs": 1573.304999999702,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5249015791813952,
+      "quantumMs": 1.3997375444837206,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2138,
+        "steps": [
+          0,
+          922,
+          537,
+          39,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1541.51927,
+        "allMs": 1562.33612,
+        "ratio": 0.514296909475089
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 10.849999999627471,
+      "setupMs": 0,
+      "warmupMs": 77.16500000096858,
+      "warmupRatio": 0.07716500000096857,
+      "timedMs": 100.32000000029802,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.033469750889779146,
+      "quantumMs": 0.08925266903941105,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 160,
+        "steps": [
+          1344,
+          154,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 96.321359,
+        "allMs": 115.94672800000001,
+        "ratio": 0.032135684719750895
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 5.945000000298023,
+      "setupMs": 0,
+      "warmupMs": 47.2649999987334,
+      "warmupRatio": 0.047264999998733404,
+      "timedMs": 94.11500000022352,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.031399577402209805,
+      "quantumMs": 0.08373220640589281,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 129,
+        "steps": [
+          1371,
+          129,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 92.157329,
+        "allMs": 103.727804,
+        "ratio": 0.030746439835409256
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 8,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.669999999925494,
+      "setupMs": 1,
+      "warmupMs": 59.6100000012666,
+      "warmupRatio": 0.0596100000012666,
+      "timedMs": 110.76999999955297,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.03695618327387221,
+      "quantumMs": 0.09854982206365923,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 157,
+        "steps": [
+          1346,
+          152,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 1.025923728942871,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 110.547654,
+        "allMs": 120.00114599999999,
+        "ratio": 0.03688200200177936
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 8,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 22.755000000819564,
+      "setupMs": 0,
+      "warmupMs": 155.2800000011921,
+      "warmupRatio": 0.1552800000011921,
+      "timedMs": 232.7649999987334,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.07765736209922156,
+      "quantumMs": 0.20708629893125746,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 372,
+        "steps": [
+          1182,
+          297,
+          11,
+          4,
+          2,
+          2,
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.1249999850988388,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 218.479844,
+        "allMs": 254.139271,
+        "ratio": 0.07289140702846976
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 8,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 14.290000000968575,
+      "setupMs": 1,
+      "warmupMs": 150.27499999850988,
+      "warmupRatio": 0.15027499999850988,
+      "timedMs": 201.8950000014156,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.06735820729584596,
+      "quantumMs": 0.17962188612225588,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 334,
+        "steps": [
+          1207,
+          270,
+          15,
+          2,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.1249999850988388,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 195.38541,
+        "allMs": 266.791377,
+        "ratio": 0.06518641347864769
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 8,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 13.169999999925494,
+      "setupMs": 0,
+      "warmupMs": 115.85999999940395,
+      "warmupRatio": 0.11585999999940395,
+      "timedMs": 200.48499999940395,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.06688778914570861,
+      "quantumMs": 0.17836743772188965,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 309,
+        "steps": [
+          1224,
+          258,
+          13,
+          1,
+          0,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.1249999850988388,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 192.633142,
+        "allMs": 237.26088,
+        "ratio": 0.06426817459964414
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.1400000005960464,
+      "setupMs": 0,
+      "warmupMs": 47.07000000029802,
+      "warmupRatio": 0.047070000000298026,
+      "timedMs": 106.375,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.03548987989323844,
+      "quantumMs": 0.09463967971530249,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 142,
+        "steps": [
+          1358,
+          142,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 105.316786,
+        "allMs": 122.49615299999999,
+        "ratio": 0.03513682806939502
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.919999999925494,
+      "setupMs": 1,
+      "warmupMs": 40.09999999962747,
+      "warmupRatio": 0.04009999999962747,
+      "timedMs": 97.64499999955297,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.03257729092511776,
+      "quantumMs": 0.08687277580031402,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 129,
+        "steps": [
+          1371,
+          129,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 96.372982,
+        "allMs": 106.309659,
+        "ratio": 0.03215290769572954
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.070000000298023,
+      "setupMs": 0,
+      "warmupMs": 38.169999999925494,
+      "warmupRatio": 0.03816999999992549,
+      "timedMs": 98.01500000059605,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.03270073398596399,
+      "quantumMs": 0.08720195729590395,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 126,
+        "steps": [
+          1374,
+          126,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 96.907652,
+        "allMs": 103.382848,
+        "ratio": 0.03233128959074733
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 5.074999999254942,
+      "setupMs": 0,
+      "warmupMs": 1992.2000000011176,
+      "warmupRatio": 1.9922000000011175,
+      "timedMs": 6469.2599999997765,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 2.158338523131598,
+      "quantumMs": 5.755569395017595,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 8415,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          94,
+          887,
+          319,
+          75,
+          30,
+          64,
+          31
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 6421.62909,
+        "allMs": 6577.314335,
+        "ratio": 2.1424474277135235
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.519999999552965,
+      "setupMs": 0,
+      "warmupMs": 2009.2799999993294,
+      "warmupRatio": 2.0092799999993294,
+      "timedMs": 6397.86999999918,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 2.1345206850531078,
+      "quantumMs": 5.69205516014162,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 8362,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          84,
+          879,
+          350,
+          67,
+          60,
+          38,
+          22
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 6276.31612,
+        "allMs": 6373.879221,
+        "ratio": 2.0939666770462635
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.925000000745058,
+      "setupMs": 1,
+      "warmupMs": 2370.0299999993294,
+      "warmupRatio": 2.3700299999993293,
+      "timedMs": 6283.160000000149,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 2.09625000000005,
+      "quantumMs": 5.590000000000132,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 8613,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          156,
+          823,
+          243,
+          71,
+          61,
+          67,
+          79
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 6197.192112,
+        "allMs": 6251.740099,
+        "ratio": 2.0675685427046266
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 11.390000000596046,
+      "setupMs": 0,
+      "warmupMs": 123.0149999987334,
+      "warmupRatio": 0.1230149999987334,
+      "timedMs": 316.3150000013411,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.10553213968016274,
+      "quantumMs": 0.28141903914710065,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 426,
+        "steps": [
+          1076,
+          423,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 314.314598,
+        "allMs": 327.481609,
+        "ratio": 0.10486474577402136
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.339999999850988,
+      "setupMs": 1,
+      "warmupMs": 150.4050000011921,
+      "warmupRatio": 0.15040500000119209,
+      "timedMs": 331.3849999997765,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.11055994217074394,
+      "quantumMs": 0.29482651245531716,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 472,
+        "steps": [
+          1038,
+          456,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 324.64495,
+        "allMs": 337.858562,
+        "ratio": 0.1083112600088968
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 32,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 8.66499999910593,
+      "setupMs": 0,
+      "warmupMs": 134.13000000081956,
+      "warmupRatio": 0.13413000000081957,
+      "timedMs": 323,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.10776245551601425,
+      "quantumMs": 0.2873665480427046,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 444,
+        "steps": [
+          1059,
+          440,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.9678018689155579,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 321.734072,
+        "allMs": 351.506275,
+        "ratio": 0.10734010409252671
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 32,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 18.320000000298023,
+      "setupMs": 1,
+      "warmupMs": 268.1849999986589,
+      "warmupRatio": 0.2681849999986589,
+      "timedMs": 504.6150000002235,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.16835464857658705,
+      "quantumMs": 0.4489457295375654,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 744,
+        "steps": [
+          799,
+          668,
+          27,
+          4,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.03125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 495.310906,
+        "allMs": 564.416286,
+        "ratio": 0.16525052468861212
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 32,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 15.790000000968575,
+      "setupMs": 1,
+      "warmupMs": 249.84999999962747,
+      "warmupRatio": 0.24984999999962748,
+      "timedMs": 576.0099999997765,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.19217415480419592,
+      "quantumMs": 0.512464412811189,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 790,
+        "steps": [
+          780,
+          682,
+          28,
+          4,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          2
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.03125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 562.168373,
+        "allMs": 633.150958,
+        "ratio": 0.18755617426601426
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 32,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 14.309999998658895,
+      "setupMs": 1,
+      "warmupMs": 232.2949999999255,
+      "warmupRatio": 0.2322949999999255,
+      "timedMs": 520.7799999993294,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.17374777580048806,
+      "quantumMs": 0.46332740213463475,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 725,
+        "steps": [
+          817,
+          652,
+          22,
+          7,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.03125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 495.416147,
+        "allMs": 556.784898,
+        "ratio": 0.16528563623220643
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.669999999925494,
+      "setupMs": 1,
+      "warmupMs": 78.13000000081956,
+      "warmupRatio": 0.07813000000081956,
+      "timedMs": 204.0149999987334,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.06806550266861658,
+      "quantumMs": 0.18150800711631085,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 270,
+        "steps": [
+          1231,
+          268,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 202.545333,
+        "allMs": 211.013578,
+        "ratio": 0.0675751778247331
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.0849999990314245,
+      "setupMs": 0,
+      "warmupMs": 81.7199999988079,
+      "warmupRatio": 0.08171999999880791,
+      "timedMs": 228.39499999955297,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.07619939946604304,
+      "quantumMs": 0.20319839857611474,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 293,
+        "steps": [
+          1208,
+          291,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 223.864036,
+        "allMs": 234.946492,
+        "ratio": 0.07468773443060499
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.839999999850988,
+      "setupMs": 1,
+      "warmupMs": 80.13499999977648,
+      "warmupRatio": 0.08013499999977648,
+      "timedMs": 210.40000000037253,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.07019572953749084,
+      "quantumMs": 0.18718861209997556,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 272,
+        "steps": [
+          1230,
+          268,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 206.148126,
+        "allMs": 220.131375,
+        "ratio": 0.06877717726868328
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.740000000223517,
+      "setupMs": 1,
+      "warmupMs": 4195.470000000671,
+      "warmupRatio": 4.195470000000671,
+      "timedMs": 13848.560000000522,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 4.620293594306224,
+      "quantumMs": 12.32078291814993,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 18007,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          36,
+          1464
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 13669.73151,
+        "allMs": 13820.669125999999,
+        "ratio": 4.5606310642793595
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.4849999994039536,
+      "setupMs": 1,
+      "warmupMs": 4103.444999998435,
+      "warmupRatio": 4.103444999998436,
+      "timedMs": 12695.150000000373,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 4.235481539146032,
+      "quantumMs": 11.294617437722751,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 16758,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          17,
+          380,
+          1103
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 12565.921344,
+        "allMs": 12661.146048,
+        "ratio": 4.192366996441281
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.7650000005960464,
+      "setupMs": 1,
+      "warmupMs": 4329.660000000149,
+      "warmupRatio": 4.329660000000149,
+      "timedMs": 12364.34500000067,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 4.125115102313392,
+      "quantumMs": 11.000306939502376,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 16651,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          139,
+          1360
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 12197.827209,
+        "allMs": 12322.766517999999,
+        "ratio": 4.069559789479538
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 8.884999999776483,
+      "setupMs": 1,
+      "warmupMs": 288.48000000044703,
+      "warmupRatio": 0.28848000000044705,
+      "timedMs": 626.5449999999255,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.2090341414590499,
+      "quantumMs": 0.557424377224133,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 900,
+        "steps": [
+          617,
+          874,
+          6,
+          1,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 623.989052,
+        "allMs": 636.027231,
+        "ratio": 0.20818140080071176
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 9.56499999947846,
+      "setupMs": 1,
+      "warmupMs": 267.4150000009686,
+      "warmupRatio": 0.2674150000009686,
+      "timedMs": 659.5249999985099,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.22003725533758117,
+      "quantumMs": 0.5867660142335497,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 900,
+        "steps": [
+          623,
+          860,
+          15,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 652.762333,
+        "allMs": 663.591056,
+        "ratio": 0.21778102746886124
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 64,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.02000000141561,
+      "setupMs": 1,
+      "warmupMs": 227.48999999836087,
+      "warmupRatio": 0.22748999999836086,
+      "timedMs": 651.5300000011921,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.21736988434203475,
+      "quantumMs": 0.5796530249120926,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 863,
+        "steps": [
+          657,
+          832,
+          5,
+          4,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8983054757118225,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 633.274253,
+        "allMs": 647.596768,
+        "ratio": 0.21127922141903918
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 64,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 14.455000000074506,
+      "setupMs": 1,
+      "warmupMs": 359.8999999985099,
+      "warmupRatio": 0.35989999999850986,
+      "timedMs": 912.2700000014156,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.30436054270509866,
+      "quantumMs": 0.811628113880263,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1243,
+        "steps": [
+          348,
+          1075,
+          70,
+          4,
+          1,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.015625,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 890.882934,
+        "allMs": 957.3547580000001,
+        "ratio": 0.297225178158363
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 64,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 15.06000000052154,
+      "setupMs": 1,
+      "warmupMs": 393.9050000011921,
+      "warmupRatio": 0.3939050000011921,
+      "timedMs": 951.859999999404,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.3175689501777371,
+      "quantumMs": 0.8468505338072989,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1314,
+        "steps": [
+          361,
+          1001,
+          121,
+          12,
+          1,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.015625,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 944.223728,
+        "allMs": 1008.6662180000001,
+        "ratio": 0.3150212615658364
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 64,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 18.7649999987334,
+      "setupMs": 1,
+      "warmupMs": 413.5200000014156,
+      "warmupRatio": 0.4135200000014156,
+      "timedMs": 918.4900000002235,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.306435720640644,
+      "quantumMs": 0.8171619217083839,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1297,
+        "steps": [
+          357,
+          1046,
+          79,
+          9,
+          4,
+          0,
+          0,
+          2,
+          0,
+          2,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.015625,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 894.923406,
+        "allMs": 957.77542,
+        "ratio": 0.2985732004003559
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 128,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.9849999994039536,
+      "setupMs": 1,
+      "warmupMs": 156.46000000089407,
+      "warmupRatio": 0.15646000000089408,
+      "timedMs": 429.81499999947846,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.1433991325621036,
+      "quantumMs": 0.3823976868322762,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 571,
+        "steps": [
+          941,
+          548,
+          10,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.8113516569137573,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 412.33244,
+        "allMs": 424.36241800000005,
+        "ratio": 0.1375664279359431
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 128,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.0150000005960464,
+      "setupMs": 0,
+      "warmupMs": 128.06999999843538,
+      "warmupRatio": 0.12806999999843538,
+      "timedMs": 385.4500000011176,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.12859764234912732,
+      "quantumMs": 0.3429270462643395,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 505,
+        "steps": [
+          996,
+          503,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.8113516569137573,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 382.964356,
+        "allMs": 390.925363,
+        "ratio": 0.1277683572064057
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 128,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.105000000447035,
+      "setupMs": 1,
+      "warmupMs": 136.47500000149012,
+      "warmupRatio": 0.13647500000149013,
+      "timedMs": 373.10999999940395,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.12448064946599333,
+      "quantumMs": 0.3319483985759822,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 498,
+        "steps": [
+          1004,
+          494,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.8113516569137573,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 370.823356,
+        "allMs": 380.15680199999997,
+        "ratio": 0.12371775667259788
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 128,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 5.614999998360872,
+      "setupMs": 1,
+      "warmupMs": 8235.410000000149,
+      "warmupRatio": 8.235410000000149,
+      "timedMs": 25891.949999999255,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 8.638328514234628,
+      "quantumMs": 23.035542704625673,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 34068,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1500
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8113516569137573,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 25615.405651,
+        "allMs": 26051.276532000003,
+        "ratio": 8.546065052602314
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 128,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.58500000089407,
+      "setupMs": 2,
+      "warmupMs": 478.25500000081956,
+      "warmupRatio": 0.47825500000081955,
+      "timedMs": 1525.0250000003725,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5087939279360674,
+      "quantumMs": 1.356783807829513,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1966,
+        "steps": [
+          0,
+          1050,
+          442,
+          5,
+          2,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8113516569137573,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1512.289249,
+        "allMs": 1537.4713840000002,
+        "ratio": 0.5045449006895018
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 128,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.775000000372529,
+      "setupMs": 1,
+      "warmupMs": 482.3099999986589,
+      "warmupRatio": 0.4823099999986589,
+      "timedMs": 1437.4900000002235,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.47958963523139136,
+      "quantumMs": 1.278905693950377,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1868,
+        "steps": [
+          2,
+          1141,
+          351,
+          4,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8113516569137573,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1426.670267,
+        "allMs": 1448.083749,
+        "ratio": 0.4759798488656584
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 128,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.419999999925494,
+      "setupMs": 1,
+      "warmupMs": 450.47499999962747,
+      "warmupRatio": 0.4504749999996275,
+      "timedMs": 1543.4000000003725,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5149243772243236,
+      "quantumMs": 1.3731316725981961,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1962,
+        "steps": [
+          0,
+          1106,
+          368,
+          15,
+          3,
+          5,
+          1,
+          0,
+          0,
+          0,
+          2
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.8113516569137573,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1523.741907,
+        "allMs": 1681.475572,
+        "ratio": 0.5083658497553382
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 128,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 16.640000000596046,
+      "setupMs": 2,
+      "warmupMs": 665.285000000149,
+      "warmupRatio": 0.665285000000149,
+      "timedMs": 1653.589999999851,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5516870551600926,
+      "quantumMs": 1.4711654804269136,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2286,
+        "steps": [
+          0,
+          801,
+          647,
+          37,
+          10,
+          1,
+          1,
+          1,
+          0,
+          0,
+          2
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.0078125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1630.25176,
+        "allMs": 1701.1892380000002,
+        "ratio": 0.5439007206405695
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 128,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 14.410000000149012,
+      "setupMs": 2,
+      "warmupMs": 678.4949999991804,
+      "warmupRatio": 0.6784949999991804,
+      "timedMs": 1821.6500000003725,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.607756895017918,
+      "quantumMs": 1.6206850533811143,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2456,
+        "steps": [
+          0,
+          674,
+          731,
+          78,
+          11,
+          3,
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.0078125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1785.269069,
+        "allMs": 1845.088555,
+        "ratio": 0.5956191288923488
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 128,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 17.919999999925494,
+      "setupMs": 2,
+      "warmupMs": 610.9900000002235,
+      "warmupRatio": 0.6109900000002235,
+      "timedMs": 1620.245000001043,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5405621663704548,
+      "quantumMs": 1.4414991103212127,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2210,
+        "steps": [
+          0,
+          841,
+          628,
+          23,
+          5,
+          2,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.0078125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1603.062585,
+        "allMs": 1668.612751,
+        "ratio": 0.5348295990880784
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 256,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 11.445000000298023,
+      "setupMs": 1,
+      "warmupMs": 286.464999999851,
+      "warmupRatio": 0.286464999999851,
+      "timedMs": 860.7249999996275,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.287163589857527,
+      "quantumMs": 0.7657695729534052,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1133,
+        "steps": [
+          381,
+          1109,
+          8,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.6579819321632385,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 857.591162,
+        "allMs": 872.123673,
+        "ratio": 0.28611804782028477
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 256,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.78999999910593,
+      "setupMs": 0,
+      "warmupMs": 285.02999999932945,
+      "warmupRatio": 0.28502999999932943,
+      "timedMs": 915.1699999999255,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.30532806939499296,
+      "quantumMs": 0.8142081850533145,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1179,
+        "steps": [
+          386,
+          1082,
+          16,
+          10,
+          3,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.6579819321632385,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 895.967541,
+        "allMs": 908.8907869999999,
+        "ratio": 0.2989215550489324
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 256,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 8.644999999552965,
+      "setupMs": 1,
+      "warmupMs": 291.18999999947846,
+      "warmupRatio": 0.2911899999994785,
+      "timedMs": 837.6549999993294,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.2794667482204169,
+      "quantumMs": 0.7452446619211116,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 1115,
+        "steps": [
+          398,
+          1093,
+          7,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.6579819321632385,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 834.570888,
+        "allMs": 846.223703,
+        "ratio": 0.2784377962633452
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "host",
+      "voices": 256,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.925000000745058,
+      "setupMs": 1,
+      "warmupMs": 16780.759999999776,
+      "warmupRatio": 16.780759999999777,
+      "timedMs": 51223.99000000022,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 17.089854314946695,
+      "quantumMs": 45.57294483985785,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 67942,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1500
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.6579819321632385,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 50424.114325,
+        "allMs": 50966.933144,
+        "ratio": 16.822991878892353
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 256,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 9.575000001117587,
+      "setupMs": 2,
+      "warmupMs": 863.910000000149,
+      "warmupRatio": 0.8639100000001491,
+      "timedMs": 2710.464999999851,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.9042921485764628,
+      "quantumMs": 2.411445729537234,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 3544,
+        "steps": [
+          0,
+          27,
+          1020,
+          384,
+          51,
+          9,
+          4,
+          2,
+          0,
+          1,
+          2
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.6579819321632385,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 2647.503342,
+        "allMs": 2685.6792140000002,
+        "ratio": 0.8832862573398578
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 256,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 55.144999999552965,
+      "setupMs": 2,
+      "warmupMs": 982.2200000006706,
+      "warmupRatio": 0.9822200000006706,
+      "timedMs": 2979.7400000002235,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.9941303380783665,
+      "quantumMs": 2.651014234875644,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 3916,
+        "steps": [
+          0,
+          4,
+          824,
+          475,
+          163,
+          29,
+          3,
+          0,
+          0,
+          1,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.6579819321632385,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 2958.037898,
+        "allMs": 2999.6176150000006,
+        "ratio": 0.9868898681049824
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 256,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 6.235000001266599,
+      "setupMs": 2,
+      "warmupMs": 863.554999999702,
+      "warmupRatio": 0.863554999999702,
+      "timedMs": 2543.015000000596,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.8484258229539356,
+      "quantumMs": 2.2624688612104946,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 3373,
+        "steps": [
+          0,
+          24,
+          1146,
+          276,
+          49,
+          4,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.6579819321632385,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 2518.43739,
+        "allMs": 2562.665038,
+        "ratio": 0.8402259975533809
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 256,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 19.27500000037253,
+      "setupMs": 3,
+      "warmupMs": 1104.7900000009686,
+      "warmupRatio": 1.1047900000009685,
+      "timedMs": 3294.2599999997765,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 1.0990636120995696,
+      "quantumMs": 2.9308362989321854,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 4373,
+        "steps": [
+          0,
+          0,
+          484,
+          745,
+          233,
+          28,
+          4,
+          2,
+          1,
+          0,
+          3
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.00390625,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 3239.918633,
+        "allMs": 3324.5599850000003,
+        "ratio": 1.0809337076290038
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 256,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 16.019999999552965,
+      "setupMs": 3,
+      "warmupMs": 1061.0600000005215,
+      "warmupRatio": 1.0610600000005215,
+      "timedMs": 3005.1500000003725,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 1.0026078736656048,
+      "quantumMs": 2.6736209964416124,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 4034,
+        "steps": [
+          0,
+          0,
+          621,
+          758,
+          108,
+          10,
+          0,
+          1,
+          0,
+          0,
+          2
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.00390625,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 2991.479203,
+        "allMs": 3066.598717,
+        "ratio": 0.9980468871218862
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 256,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 13.859999999403954,
+      "setupMs": 4,
+      "warmupMs": 1139.934999998659,
+      "warmupRatio": 1.139934999998659,
+      "timedMs": 3079.980000000447,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 1.0275733985766617,
+      "quantumMs": 2.7401957295377644,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 4193,
+        "steps": [
+          0,
+          0,
+          537,
+          786,
+          153,
+          16,
+          3,
+          1,
+          2,
+          1,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.00390625,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 3050.184712,
+        "allMs": 3130.4413280000003,
+        "ratio": 1.0176327998220642
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 512,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 13.780000001192093,
+      "setupMs": 1,
+      "warmupMs": 575.2599999997765,
+      "warmupRatio": 0.5752599999997765,
+      "timedMs": 1558.2249999996275,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5198704403913348,
+      "quantumMs": 1.3863211743768928,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2119,
+        "steps": [
+          0,
+          894,
+          596,
+          7,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.46578148007392883,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1550.33745,
+        "allMs": 1560.7791339999999,
+        "ratio": 0.5172389179270463
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 512,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.4849999994039536,
+      "setupMs": 0,
+      "warmupMs": 517.144999999553,
+      "warmupRatio": 0.517144999999553,
+      "timedMs": 1676.359999999404,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5592838078289827,
+      "quantumMs": 1.4914234875439536,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2178,
+        "steps": [
+          0,
+          843,
+          639,
+          15,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.46578148007392883,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1654.403665,
+        "allMs": 1674.88641,
+        "ratio": 0.5519585181272243
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "plain",
+      "voices": 512,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 8.780000001192093,
+      "setupMs": 0,
+      "warmupMs": 561.2550000008196,
+      "warmupRatio": 0.5612550000008195,
+      "timedMs": 1637.539999999106,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 0.5463322953733672,
+      "quantumMs": 1.4568861209956459,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 2172,
+        "steps": [
+          0,
+          844,
+          647,
+          5,
+          3,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "peak": 0.46578148007392883,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 1619.311695,
+        "allMs": 1634.785824,
+        "ratio": 0.540250787922598
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 512,
+      "skipped": "not run: the ratio at 256 voices predicts 137 s of render, past --max-run 120"
+    },
+    {
+      "repetition": 1,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 512,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 7.230000000447035,
+      "setupMs": 3,
+      "warmupMs": 1926.269999999553,
+      "warmupRatio": 1.926269999999553,
+      "timedMs": 5954.530000001192,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 1.9866092081854514,
+      "quantumMs": 5.297624555161203,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 7836,
+        "steps": [
+          0,
+          0,
+          0,
+          21,
+          612,
+          347,
+          260,
+          181,
+          58,
+          8,
+          13
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.46578148007392883,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 5802.073238,
+        "allMs": 6029.7739759999995,
+        "ratio": 1.9357450749555163
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 512,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 8.89500000141561,
+      "setupMs": 4,
+      "warmupMs": 1840.3450000006706,
+      "warmupRatio": 1.8403450000006705,
+      "timedMs": 5365.095000000671,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 1.7899560720642809,
+      "quantumMs": 4.773216192171415,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 7160,
+        "steps": [
+          0,
+          0,
+          0,
+          13,
+          779,
+          473,
+          119,
+          81,
+          27,
+          1,
+          7
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.46578148007392883,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 5309.414818,
+        "allMs": 5577.202388,
+        "ratio": 1.7713794988879006
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "kernel",
+      "variant": "kernel",
+      "voices": 512,
+      "tiers": "cpu",
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 8.735000001266599,
+      "setupMs": 4,
+      "warmupMs": 1930.890000000596,
+      "warmupRatio": 1.930890000000596,
+      "timedMs": 5647.4900000002235,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 1.8841714857651992,
+      "quantumMs": 5.024457295373864,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 7540,
+        "steps": [
+          0,
+          0,
+          0,
+          20,
+          754,
+          353,
+          118,
+          152,
+          67,
+          27,
+          9
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "plain",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 0,
+        "largestDifference": 0
+      },
+      "peak": 0.46578148007392883,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 5612.625108,
+        "allMs": 5899.928440000001,
+        "ratio": 1.8725395155693954
+      }
+    },
+    {
+      "repetition": 1,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 512,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 21.384999999776483,
+      "setupMs": 5,
+      "warmupMs": 2295,
+      "warmupRatio": 2.295,
+      "timedMs": 6420.770000001416,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 2.1421608096090132,
+      "quantumMs": 5.712428825624035,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 8674,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          163,
+          679,
+          332,
+          161,
+          91,
+          45,
+          29
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 27,
+        "largestDifference": 0
+      },
+      "peak": 0.001953125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 6323.103877,
+        "allMs": 6760.249405,
+        "ratio": 2.109576471419039
+      }
+    },
+    {
+      "repetition": 2,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 512,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 15.18500000052154,
+      "setupMs": 4,
+      "warmupMs": 2112.245000001043,
+      "warmupRatio": 2.112245000001043,
+      "timedMs": 6409.0800000000745,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 2.1382606761566088,
+      "quantumMs": 5.702028469750956,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 8488,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          239,
+          678,
+          264,
+          172,
+          89,
+          39,
+          19
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 27,
+        "largestDifference": 0
+      },
+      "peak": 0.001953125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 6356.376773,
+        "allMs": 6765.102451,
+        "ratio": 2.120677304159253
+      }
+    },
+    {
+      "repetition": 3,
+      "bundle": "engine",
+      "variant": "engine",
+      "voices": 512,
+      "tiers": "cpu",
+      "polyfill": true,
+      "seconds": 4,
+      "warmupSeconds": 1,
+      "addModuleMs": 16.22499999962747,
+      "setupMs": 9,
+      "warmupMs": 2497.820000000298,
+      "warmupRatio": 2.497820000000298,
+      "timedMs": 7510.64999999851,
+      "timedAudioMs": 2997.333333333333,
+      "ratio": 2.5057773576507487,
+      "quantumMs": 6.682072953735329,
+      "stats": {
+        "quanta": 1500,
+        "busyMs": 9967,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          84,
+          387,
+          275,
+          327,
+          274,
+          106,
+          47
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "errors": [],
+      "check": {
+        "reference": "refRender",
+        "frames": 192000,
+        "same": 192000,
+        "sameOneQuantumLate": 27,
+        "largestDifference": 0
+      },
+      "peak": 0.001953125,
+      "cpu": {
+        "thread": "Offline AudioWo",
+        "threadMs": 7400.701678,
+        "allMs": 7840.777529,
+        "ratio": 2.469095310720641
+      }
+    }
+  ],
+  "realtime": [
+    {
+      "variant": "plain",
+      "voices": 1,
+      "seconds": 3,
+      "wallMs": 3000.190000001341,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.9990478380809193,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.03924,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1138,
+        "busyMs": 11,
+        "steps": [
+          1127,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 33.014322,
+        "allMs": 517.399573,
+        "ratio": 0.011004077075113658
+      }
+    },
+    {
+      "variant": "kernel",
+      "voices": 1,
+      "seconds": 3,
+      "wallMs": 3000.2200000006706,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.9990378483353431,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.028576,
+          "averageLatency": 0.031113,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 54,
+        "steps": [
+          1082,
+          52,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 100.968965,
+        "allMs": 238.43191900000002,
+        "ratio": 0.033653853717386537
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 1,
+      "seconds": 3,
+      "wallMs": 3000.219999998808,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0043707905868673,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.03924,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 286,
+        "steps": [
+          850,
+          284,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 335.404827,
+        "allMs": 514.3074340000001,
+        "ratio": 0.11179341081658455
+      }
+    },
+    {
+      "variant": "engine",
+      "voices": 1,
+      "seconds": 3,
+      "wallMs": 3000.199999999255,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.9892673821747674,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.01002,
+          "underrunEvents": 1,
+          "totalDuration": 3.030598,
+          "averageLatency": 0.031138,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1127,
+        "busyMs": 240,
+        "steps": [
+          896,
+          228,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 282.586154,
+        "allMs": 531.0800360000001,
+        "ratio": 0.0941891053929972
+      }
+    },
+    {
+      "variant": "plain",
+      "voices": 8,
+      "seconds": 3,
+      "wallMs": 3000.269999999553,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0052428614759503,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.03924,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 39,
+        "steps": [
+          1096,
+          39,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 68.468097,
+        "allMs": 176.33015,
+        "ratio": 0.022820645141940626
+      }
+    },
+    {
+      "variant": "kernel",
+      "voices": 8,
+      "seconds": 3,
+      "wallMs": 3000.2200000006706,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.005259614294727,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.028576,
+          "averageLatency": 0.031113,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 202,
+        "steps": [
+          939,
+          193,
+          2,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 256.111908,
+        "allMs": 431.489137,
+        "ratio": 0.0853643759457449
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 8,
+      "seconds": 3,
+      "wallMs": 3000.230000000447,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.004367442940336,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.02004,
+          "underrunEvents": 2,
+          "totalDuration": 3.051282,
+          "averageLatency": 0.031112,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 2029,
+        "steps": [
+          0,
+          404,
+          580,
+          146,
+          2,
+          0,
+          2,
+          1,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2030.558734,
+        "allMs": 2217.22808,
+        "ratio": 0.676801023254783
+      }
+    },
+    {
+      "variant": "engine",
+      "voices": 8,
+      "seconds": 3,
+      "wallMs": 3000.210000000894,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.005262964925489,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.03006,
+          "underrunEvents": 3,
+          "totalDuration": 3.0693,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 333,
+        "steps": [
+          822,
+          307,
+          4,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 405.54719,
+        "allMs": 678.028038,
+        "ratio": 0.1351729345612071
+      }
+    },
+    {
+      "variant": "plain",
+      "voices": 32,
+      "seconds": 3,
+      "wallMs": 3000.25,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0016943032525067,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.03924,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 121,
+        "steps": [
+          1015,
+          119,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 146.452292,
+        "allMs": 231.188616,
+        "ratio": 0.04881336288642613
+      }
+    },
+    {
+      "variant": "kernel",
+      "voices": 32,
+      "seconds": 3,
+      "wallMs": 3000.2249999996275,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0061467612152561,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.03006,
+          "underrunEvents": 3,
+          "totalDuration": 3.058636,
+          "averageLatency": 0.031113,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1142,
+        "busyMs": 532,
+        "steps": [
+          636,
+          493,
+          10,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 557.905037,
+        "allMs": 697.351588,
+        "ratio": 0.18595439908675826
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 32,
+      "seconds": 3,
+      "wallMs": 3000.2099999990314,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.48974349573323456,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 2.93586,
+          "underrunEvents": 293,
+          "totalDuration": 4.439484,
+          "averageLatency": 0.030892,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 556,
+        "busyMs": 2976,
+        "steps": [
+          0,
+          0,
+          0,
+          2,
+          164,
+          275,
+          38,
+          23,
+          17,
+          21,
+          16
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2891.786319,
+        "allMs": 3072.031113,
+        "ratio": 0.9638613027091215
+      }
+    },
+    {
+      "variant": "engine",
+      "voices": 32,
+      "seconds": 3,
+      "wallMs": 3000.179999999702,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0017176747173941,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.01002,
+          "underrunEvents": 1,
+          "totalDuration": 3.038596,
+          "averageLatency": 0.031113,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1131,
+        "busyMs": 733,
+        "steps": [
+          440,
+          666,
+          21,
+          2,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 789.384112,
+        "allMs": 1087.282583,
+        "ratio": 0.26311225059832355
+      }
+    },
+    {
+      "variant": "plain",
+      "voices": 64,
+      "seconds": 3,
+      "wallMs": 3000.405000001192,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0043088627475745,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.03924,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 222,
+        "steps": [
+          915,
+          218,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 256.440293,
+        "allMs": 338.80724599999996,
+        "ratio": 0.0854685594111122
+      }
+    },
+    {
+      "variant": "kernel",
+      "voices": 64,
+      "seconds": 3,
+      "wallMs": 3000.234999999404,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0052545883907757,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.02004,
+          "underrunEvents": 2,
+          "totalDuration": 3.048616,
+          "averageLatency": 0.031113,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 889,
+        "steps": [
+          303,
+          796,
+          26,
+          7,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 910.330209,
+        "allMs": 1102.8378859999998,
+        "ratio": 0.30341963512864184
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 64,
+      "seconds": 3,
+      "wallMs": 3000.8300000000745,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.19283553772344728,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 2.92584,
+          "underrunEvents": 292,
+          "totalDuration": 3.53902,
+          "averageLatency": 0.030271,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 221,
+        "busyMs": 3017,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          44,
+          171
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2879.033262,
+        "allMs": 3077.9753299999998,
+        "ratio": 0.9594123165923856
+      }
+    },
+    {
+      "variant": "engine",
+      "voices": 64,
+      "seconds": 3,
+      "wallMs": 3000.2350000012666,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.008809865449003,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.11022,
+          "underrunEvents": 11,
+          "totalDuration": 3.138796,
+          "averageLatency": 0.031113,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1139,
+        "busyMs": 1234,
+        "steps": [
+          132,
+          839,
+          151,
+          8,
+          5,
+          1,
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 1255.124956,
+        "allMs": 1584.908674,
+        "ratio": 0.4183422151929666
+      }
+    },
+    {
+      "variant": "plain",
+      "voices": 128,
+      "seconds": 3,
+      "wallMs": 3000.2050000000745,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.005264640249558,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.03924,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 439,
+        "steps": [
+          699,
+          434,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 461.570228,
+        "allMs": 553.472641,
+        "ratio": 0.15384622984095706
+      }
+    },
+    {
+      "variant": "kernel",
+      "voices": 128,
+      "seconds": 3,
+      "wallMs": 3000.1699999999255,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0052763676725236,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.04008,
+          "underrunEvents": 4,
+          "totalDuration": 3.07932,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 1583,
+        "steps": [
+          1,
+          762,
+          333,
+          29,
+          2,
+          4,
+          0,
+          0,
+          2,
+          0,
+          2
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 1581.458064,
+        "allMs": 1760.8901329999999,
+        "ratio": 0.5271228177070096
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 128,
+      "seconds": 3,
+      "wallMs": 3000.230000000447,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.08177150862877072,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 1.93386,
+          "underrunEvents": 193,
+          "totalDuration": 2.13381,
+          "averageLatency": 0.028126,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032644
+        }
+      },
+      "stats": {
+        "quanta": 94,
+        "busyMs": 3089,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          94
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2892.321212,
+        "allMs": 3068.1825649999996,
+        "ratio": 0.9640331614574779
+      }
+    },
+    {
+      "variant": "engine",
+      "voices": 128,
+      "seconds": 3,
+      "wallMs": 3000.190000001341,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0017143358693916,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0.0501,
+          "underrunEvents": 5,
+          "totalDuration": 3.07601,
+          "averageLatency": 0.03114,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1131,
+        "busyMs": 2017,
+        "steps": [
+          0,
+          390,
+          638,
+          89,
+          5,
+          2,
+          5,
+          1,
+          0,
+          0,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2041.243873,
+        "allMs": 2376.6440399999997,
+        "ratio": 0.6803715341358673
+      }
+    },
+    {
+      "variant": "plain",
+      "voices": 256,
+      "seconds": 3,
+      "wallMs": 3000.239999998361,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0025864597504346,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.028576,
+          "averageLatency": 0.031139,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1134,
+        "busyMs": 854,
+        "steps": [
+          305,
+          810,
+          15,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 886.542846,
+        "allMs": 976.826185,
+        "ratio": 0.2954906427487416
+      }
+    },
+    {
+      "variant": "kernel",
+      "voices": 256,
+      "seconds": 3,
+      "wallMs": 3000.25,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0079160069994169,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 1.38276,
+          "underrunEvents": 138,
+          "totalDuration": 4.403338,
+          "averageLatency": 0.031111,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1146,
+        "busyMs": 2706,
+        "steps": [
+          0,
+          4,
+          816,
+          292,
+          23,
+          0,
+          0,
+          6,
+          3,
+          1,
+          1
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2795.793054,
+        "allMs": 3139.807549,
+        "ratio": 0.9318533635530373
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 256,
+      "seconds": 3,
+      "wallMs": 3000.289999999106,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.05954979907499606,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 1.89378,
+          "underrunEvents": 189,
+          "totalDuration": 2.045742,
+          "averageLatency": 0.0271,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032644
+        }
+      },
+      "stats": {
+        "quanta": 71,
+        "busyMs": 3140,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          71
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2877.59807,
+        "allMs": 3145.8369869999997,
+        "ratio": 0.9591066430247934
+      }
+    },
+    {
+      "variant": "engine",
+      "voices": 256,
+      "seconds": 3,
+      "wallMs": 3000.190000001341,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.911942243657494,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 2.91582,
+          "underrunEvents": 291,
+          "totalDuration": 5.613812,
+          "averageLatency": 0.031113,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1029,
+        "busyMs": 2959,
+        "steps": [
+          0,
+          0,
+          379,
+          542,
+          84,
+          10,
+          3,
+          2,
+          2,
+          0,
+          7
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2873.97373,
+        "allMs": 3211.3205600000006,
+        "ratio": 0.9579305743965267
+      }
+    },
+    {
+      "variant": "plain",
+      "voices": 512,
+      "seconds": 3,
+      "wallMs": 3000.269999999553,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 1.0052428614759503,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 3.031242,
+          "averageLatency": 0.031112,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 1135,
+        "busyMs": 1735,
+        "steps": [
+          0,
+          561,
+          561,
+          7,
+          4,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 1723.497433,
+        "allMs": 1812.290421,
+        "ratio": 0.5744474440634533
+      }
+    },
+    {
+      "variant": "kernel",
+      "voices": 512,
+      "seconds": 3,
+      "wallMs": 3000.2350000012666,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.4977387882391556,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 2.94588,
+          "underrunEvents": 294,
+          "totalDuration": 4.444172,
+          "averageLatency": 0.030894,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 563,
+        "busyMs": 2989,
+        "steps": [
+          0,
+          0,
+          0,
+          4,
+          260,
+          139,
+          61,
+          61,
+          21,
+          4,
+          13
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2894.429967,
+        "allMs": 3139.71736,
+        "ratio": 0.9647344181368387
+      }
+    },
+    {
+      "variant": "host",
+      "voices": 512,
+      "seconds": 3,
+      "wallMs": 3000.25,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.02933088909257562,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 2.02404,
+          "underrunEvents": 202,
+          "totalDuration": 2.11735,
+          "averageLatency": 0.024496,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032644
+        }
+      },
+      "stats": {
+        "quanta": 34,
+        "busyMs": 3109,
+        "steps": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          34
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2870.307497,
+        "allMs": 3037.273377,
+        "ratio": 0.9566894415465377
+      }
+    },
+    {
+      "variant": "engine",
+      "voices": 512,
+      "seconds": 3,
+      "wallMs": 3000.210000000894,
+      "state": "running",
+      "baseLatency": 0.010020833333333333,
+      "outputLatency": 0.032,
+      "clockRatio": 0.5101865091664285,
+      "playbackStats": {
+        "before": {
+          "underrunDuration": 0,
+          "underrunEvents": 0,
+          "totalDuration": 0.002666,
+          "averageLatency": 0,
+          "minimumLatency": 0,
+          "maximumLatency": 0
+        },
+        "after": {
+          "underrunDuration": 2.91582,
+          "underrunEvents": 291,
+          "totalDuration": 4.486094,
+          "averageLatency": 0.030907,
+          "minimumLatency": 0,
+          "maximumLatency": 0.032706
+        }
+      },
+      "stats": {
+        "quanta": 582,
+        "busyMs": 3054,
+        "steps": [
+          0,
+          0,
+          0,
+          3,
+          220,
+          251,
+          60,
+          13,
+          11,
+          6,
+          18
+        ],
+        "filledOnReturn": 0,
+        "unfinished": 0
+      },
+      "cpu": {
+        "thread": "Realtime AudioW",
+        "threadMs": 2858.516486,
+        "allMs": 3120.0779439999997,
+        "ratio": 0.9527721346169595
+      }
+    }
+  ],
+  "summary": [
+    {
+      "variant": "plain",
+      "rows": [
+        {
+          "voices": 1,
+          "runs": 3,
+          "ratio": 0.0033262900358109054,
+          "cpuRatio": 0.0032604321619217084,
+          "quantumMs": 0.008870106762162412
+        },
+        {
+          "voices": 8,
+          "runs": 3,
+          "ratio": 0.010175711743772242,
+          "cpuRatio": 0.009469121330071176,
+          "quantumMs": 0.027135231316725978
+        },
+        {
+          "voices": 32,
+          "runs": 3,
+          "ratio": 0.03270073398596399,
+          "cpuRatio": 0.03233128959074733,
+          "quantumMs": 0.08720195729590395
+        },
+        {
+          "voices": 64,
+          "runs": 3,
+          "ratio": 0.07019572953749084,
+          "cpuRatio": 0.06877717726868328,
+          "quantumMs": 0.18718861209997556
+        },
+        {
+          "voices": 128,
+          "runs": 3,
+          "ratio": 0.12859764234912732,
+          "cpuRatio": 0.1277683572064057,
+          "quantumMs": 0.3429270462643395
+        },
+        {
+          "voices": 256,
+          "runs": 3,
+          "ratio": 0.287163589857527,
+          "cpuRatio": 0.28611804782028477,
+          "quantumMs": 0.7657695729534052
+        },
+        {
+          "voices": 512,
+          "runs": 3,
+          "ratio": 0.5463322953733672,
+          "cpuRatio": 0.540250787922598,
+          "quantumMs": 1.4568861209956459
+        }
+      ],
+      "crossing": {
+        "ratio1": "above 512 (0.546 there)",
+        "ratio05": "466 (between 256 and 512)",
+        "cpu1": "above 512 (0.540 there)",
+        "cpu05": "471 (between 256 and 512)"
+      }
+    },
+    {
+      "variant": "empty",
+      "rows": [
+        {
+          "voices": 1,
+          "runs": 3,
+          "ratio": 0.0010225756226017993,
+          "cpuRatio": 0.000988820284697509,
+          "quantumMs": 0.002726868326938131
+        }
+      ],
+      "crossing": {
+        "ratio1": "above 1 (0.001 there)",
+        "ratio05": "above 1 (0.001 there)",
+        "cpu1": "above 1 (0.001 there)",
+        "cpu05": "above 1 (0.001 there)"
+      }
+    },
+    {
+      "variant": "host",
+      "rows": [
+        {
+          "voices": 1,
+          "runs": 3,
+          "ratio": 0.0641687055156911,
+          "cpuRatio": 0.06282286421263346,
+          "quantumMs": 0.1711165480418429
+        },
+        {
+          "voices": 8,
+          "runs": 3,
+          "ratio": 0.5251167704630063,
+          "cpuRatio": 0.5188874462855873,
+          "quantumMs": 1.4003113879013502
+        },
+        {
+          "voices": 32,
+          "runs": 3,
+          "ratio": 2.1345206850531078,
+          "cpuRatio": 2.0939666770462635,
+          "quantumMs": 5.69205516014162
+        },
+        {
+          "voices": 64,
+          "runs": 3,
+          "ratio": 4.235481539146032,
+          "cpuRatio": 4.192366996441281,
+          "quantumMs": 11.294617437722751
+        },
+        {
+          "voices": 128,
+          "runs": 1,
+          "ratio": 8.638328514234628,
+          "cpuRatio": 8.546065052602314,
+          "quantumMs": 23.035542704625673
+        },
+        {
+          "voices": 256,
+          "runs": 1,
+          "ratio": 17.089854314946695,
+          "cpuRatio": 16.822991878892353,
+          "quantumMs": 45.57294483985785
+        }
+      ],
+      "crossing": {
+        "ratio1": "15 (between 8 and 32)",
+        "ratio05": "8 (between 1 and 8)",
+        "cpu1": "15 (between 8 and 32)",
+        "cpu05": "8 (between 1 and 8)"
+      }
+    },
+    {
+      "variant": "kernel",
+      "rows": [
+        {
+          "voices": 1,
+          "runs": 3,
+          "ratio": 0.010517682384465925,
+          "cpuRatio": 0.009134024132562278,
+          "quantumMs": 0.028047153025242463
+        },
+        {
+          "voices": 8,
+          "runs": 3,
+          "ratio": 0.033469750889779146,
+          "cpuRatio": 0.032135684719750895,
+          "quantumMs": 0.08925266903941105
+        },
+        {
+          "voices": 32,
+          "runs": 3,
+          "ratio": 0.10776245551601425,
+          "cpuRatio": 0.10734010409252671,
+          "quantumMs": 0.2873665480427046
+        },
+        {
+          "voices": 64,
+          "runs": 3,
+          "ratio": 0.21736988434203475,
+          "cpuRatio": 0.21127922141903918,
+          "quantumMs": 0.5796530249120926
+        },
+        {
+          "voices": 128,
+          "runs": 3,
+          "ratio": 0.5087939279360674,
+          "cpuRatio": 0.5045449006895018,
+          "quantumMs": 1.356783807829513
+        },
+        {
+          "voices": 256,
+          "runs": 3,
+          "ratio": 0.9042921485764628,
+          "cpuRatio": 0.8832862573398578,
+          "quantumMs": 2.411445729537234
+        },
+        {
+          "voices": 512,
+          "runs": 3,
+          "ratio": 1.8841714857651992,
+          "cpuRatio": 1.8725395155693954,
+          "quantumMs": 5.024457295373864
+        }
+      ],
+      "crossing": {
+        "ratio1": "281 (between 256 and 512)",
+        "ratio05": "126 (between 64 and 128)",
+        "cpu1": "286 (between 256 and 512)",
+        "cpu05": "127 (between 64 and 128)"
+      }
+    },
+    {
+      "variant": "engine",
+      "rows": [
+        {
+          "voices": 1,
+          "runs": 3,
+          "ratio": 0.05048654359405748,
+          "cpuRatio": 0.0440069903247331,
+          "quantumMs": 0.1346307829174866
+        },
+        {
+          "voices": 8,
+          "runs": 3,
+          "ratio": 0.06735820729584596,
+          "cpuRatio": 0.06518641347864769,
+          "quantumMs": 0.17962188612225588
+        },
+        {
+          "voices": 32,
+          "runs": 3,
+          "ratio": 0.17374777580048806,
+          "cpuRatio": 0.16528563623220643,
+          "quantumMs": 0.46332740213463475
+        },
+        {
+          "voices": 64,
+          "runs": 3,
+          "ratio": 0.306435720640644,
+          "cpuRatio": 0.2985732004003559,
+          "quantumMs": 0.8171619217083839
+        },
+        {
+          "voices": 128,
+          "runs": 3,
+          "ratio": 0.5516870551600926,
+          "cpuRatio": 0.5439007206405695,
+          "quantumMs": 1.4711654804269136
+        },
+        {
+          "voices": 256,
+          "runs": 3,
+          "ratio": 1.0275733985766617,
+          "cpuRatio": 1.0176327998220642,
+          "quantumMs": 2.7401957295377644
+        },
+        {
+          "voices": 512,
+          "runs": 3,
+          "ratio": 2.1421608096090132,
+          "cpuRatio": 2.120677304159253,
+          "quantumMs": 5.712428825624035
+        }
+      ],
+      "crossing": {
+        "ratio1": "249 (between 128 and 256)",
+        "ratio05": "115 (between 64 and 128)",
+        "cpu1": "251 (between 128 and 256)",
+        "cpu05": "117 (between 64 and 128)"
+      }
+    }
+  ]
+}

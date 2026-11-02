@@ -28,13 +28,14 @@ const TYPES: Record<string, string> = {
 
 /**
  * Serves `dir` on 127.0.0.1, opens its `index.html` in headless Chromium and resolves to what
- * `run` resolves to. The page's console lines go to `log`. The browser and the server are closed
- * on every path out, a failure included.
+ * `run` resolves to. The page's console lines go to `log`. `args` adds flags to the browser's
+ * own. The browser and the server are closed on every path out, a failure included.
  */
 export async function inPage<T>(
   dir: string,
   run: (page: Page) => Promise<T>,
   log: (line: string) => void = (line) => console.error(line),
+  args: readonly string[] = [],
 ): Promise<T> {
   const server = createServer((request, response) => {
     const path = normalize(decodeURIComponent((request.url ?? '/').split('?')[0]!));
@@ -60,7 +61,7 @@ export async function inPage<T>(
   const port = typeof address === 'object' && address !== null ? address.port : 0;
   const browser = await chromium.launch({
     executablePath: process.env['TYPESHADE_CHROMIUM'] || undefined,
-    args: SOFTWARE_GPU_FLAGS,
+    args: [...SOFTWARE_GPU_FLAGS, ...args],
   });
   try {
     const page = await browser.newPage();
