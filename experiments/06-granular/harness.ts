@@ -31,7 +31,7 @@ export interface Probes {
   /** The reads of the device so far, where the host can count them (a page can). */
   readonly deviceReads?: () => number;
   /** The device of the `stream` arm, where it is not the tier's default: on WebGPU, one without
-   *  `timestamp-query`, so that a plan maps nothing back. `release` frees what `open` made. */
+   *  `timestamp-query`, so that a plan maps nothing back. `release` frees what it made. */
   readonly streamDevice?: () => Promise<{ readonly dev: Device; readonly release: () => void }>;
 }
 
@@ -136,8 +136,10 @@ export async function runArm(o: Options, arm: Arm, probes: Probes = {}): Promise
       alive.push(logValues[2 * b + 1]!);
     }
     const spawned = alive.map((a, i) => a - kept[i]!);
-    const held = (listValues as readonly GrainFields[]).slice(0, Math.min(countValues[0]!, o.capacity));
-    const ordered = held.every((g, i) => i === 0 || held[i - 1]!.start <= g.start);
+    const list = (listValues as readonly GrainFields[])
+      .slice(0, Math.min(countValues[0]!, o.capacity))
+      .map(({ start, length, inc, peak }) => ({ start, length, inc, peak }));
+    const ordered = list.every((g, i) => i === 0 || list[i - 1]!.start <= g.start);
     const timed = reports.filter((r) => r.groups.some((g) => g.gpuTime !== undefined));
     const gpu = timed.map((r) => r.groups.reduce((s, g) => s + (g.gpuTime ?? 0), 0) / 1e6);
     const lastReport = reports[reports.length - 1]!;
@@ -168,10 +170,6 @@ export async function runArm(o: Options, arm: Arm, probes: Probes = {}): Promise
       readBytes,
       ...(deviceReads === undefined ? {} : { deviceReads }),
     };
-    const count = Math.min(countValues[0]!, o.capacity);
-    const list = (listValues as readonly GrainFields[])
-      .slice(0, count)
-      .map(({ start, length, inc, peak }) => ({ start, length, inc, peak }));
     return {
       row,
       info: dev.info,
