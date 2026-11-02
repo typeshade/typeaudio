@@ -3,7 +3,7 @@
 //   bun run exp:07 [--tier all|cpu,oracle,webgpu,webgl2] [--counts 3,10,30,100]
 //                  [--forms forward,along,reverse,probe] [--warmup 30] [--warmup-ms 2000]
 //                  [--runs 30] [--gpu-warmup 5] [--gpu-warmup-ms 1000] [--gpu-runs 20]
-//                  [--timeout 300] [--iterations 300] [--out <file.json>]
+//                  [--timeout 300] [--iterations 300] [--out <file.json>] [--raw <file.json>]
 //   bun run exp:07 --write      writes patch-3/10/30/100.shade.ts from patch.ts, and nothing else
 //
 // The patch is a two-operator FM voice whose parameters are the ratio, the index and the levels of
@@ -32,8 +32,9 @@
 //   render, the loss, forward mode as one dispatch of one invocation per parameter, and reverse mode
 //   in one invocation, and the descent of 3 parameters.
 //
-// It writes the result as JSON (`--out`) and prints the tables. A number without its record is not
-// a result: the record is `docs/records/`.
+// It writes the result as JSON (`--out`), the outputs themselves to `--raw` (the frames each GPU tier
+// read back, as base64 of their `f32`s, and every gradient the comparisons read), and prints the
+// tables. A number without its record is not a result: the record is `docs/records/`.
 
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
@@ -43,7 +44,7 @@ import { buildInfo, compile, compileModuleJs } from 'typeshade';
 import { bundle, ROOT } from '../../scripts/bundle.ts';
 import { inPage } from '../../scripts/browser.ts';
 import { oracleOf } from '../03-fft/oracle.ts';
-import { fft64, twiddleTable } from '../03-fft/signals.ts';
+import { fft64, toBase64, twiddleTable } from '../03-fft/signals.ts';
 import type { PageOptions, PageResult } from './browser.ts';
 import { checks, descend, FORMS, measure, prepare, type CountResult, type Descent, type Form } from './cpu.ts';
 import { gradientDistance, type Repeats, type Timing } from './match.ts';
@@ -94,6 +95,7 @@ const gpuRepeats: Repeats = { warmup: whole('gpu-warmup', 5), warmupMs: whole('g
 const timeoutMs = whole('timeout', 300) * 1000;
 const iterations = whole('iterations', 300, 0);
 const outFile = args.get('out') ?? join(ROOT, HERE, 'out/result.json');
+const rawFile = args.get('raw') ?? join(ROOT, HERE, 'out/raw.json');
 
 // The modules in the tree must be the ones `patch.ts` writes: the record names the commit, and the
 // commit holds the programs that ran.
@@ -285,14 +287,61 @@ const gpuAgreement = pageTiers.flatMap((tier) =>
   }),
 );
 
+// WebGL2 against WebGPU, value by value: the outputs whose `f32` bits differ.
+const bitsDiffer = (a: readonly number[] | undefined, b: readonly number[] | undefined): number | undefined =>
+  a === undefined || b === undefined ? undefined : a.filter((v, i) => !Object.is(Math.fround(v), Math.fround(b[i]!))).length;
+record['tiersAgainstEachOther'] = counts.map((count) => {
+  const a = pages.webgpu?.counts.find((c) => c.count === count);
+  const b = pages.webgl2?.counts.find((c) => c.count === count);
+  return {
+    count,
+    render: bitsDiffer(a?.renderOutput, b?.renderOutput),
+    frames: bitsDiffer(a?.framesOutput, b?.framesOutput),
+    lossAtStart: a?.lossAtStart === undefined || b?.lossAtStart === undefined ? undefined : bitsDiffer([a.lossAtStart], [b.lossAtStart]),
+    forward: bitsDiffer(a?.forwardGradient, b?.forwardGradient),
+    reverse: bitsDiffer(a?.reverseGradient, b?.reverseGradient),
+    descent: bitsDiffer(a?.descent?.losses, b?.descent?.losses),
+  };
+});
+
 record['environments'] = {
   cpu: results.cpu?.environment,
   oracle: results.oracle?.environment,
   ...Object.fromEntries(pageTiers.map((t) => [t, { renderer: pages[t]?.renderer, userAgent: pages[t]?.userAgent }])),
 };
-record['cpu'] = results.cpu?.counts;
-record['oracle'] = results.oracle?.counts;
-record['pages'] = pages;
+// The outputs go to `--raw`; the record keeps what was measured of them.
+const raw: Record<string, unknown> = {};
+const asBits = (xs: readonly number[] | undefined): string | undefined => (xs === undefined ? undefined : toBase64(Float32Array.from(xs)));
+const measured = <C extends CountResult>(arm: string, cs: readonly C[] | undefined) =>
+  cs?.map((c) => {
+    raw[`${arm} ${c.count}`] = { gradients: c.gradients, reference: c.reference };
+    const { gradients: _g, reference: _r, ...kept } = c;
+    return kept;
+  });
+record['cpu'] = measured('cpu', results.cpu?.counts);
+record['oracle'] = measured('oracle', results.oracle?.counts);
+record['pages'] = Object.fromEntries(
+  pageTiers.map((tier) => {
+    const page = pages[tier];
+    if (page === undefined) return [tier, undefined];
+    return [
+      tier,
+      {
+        ...page,
+        counts: page.counts.map((c) => {
+          raw[`${tier} ${c.count}`] = {
+            renderOutput: asBits(c.renderOutput),
+            framesOutput: asBits(c.framesOutput),
+            forwardGradient: c.forwardGradient,
+            reverseGradient: c.reverseGradient,
+          };
+          const { renderOutput: _a, framesOutput: _b, forwardGradient: _c, reverseGradient: _d, ...kept } = c;
+          return kept;
+        }),
+      },
+    ];
+  }),
+);
 record['programs'] = programs.map((p) => ({ count: p.count, tapeBytes: p.tapeBytes, wgslChars: p.wgslChars, glComputes: p.glComputes, ms: p.ms }));
 record['programChecks'] = programChecks;
 record['gpuAgreement'] = gpuAgreement;
@@ -305,6 +354,8 @@ record['seconds'] = (Date.now() - began) / 1000;
 
 await mkdir(dirname(outFile), { recursive: true });
 await writeFile(outFile, `${JSON.stringify(record, null, 2)}\n`);
+await mkdir(dirname(rawFile), { recursive: true });
+await writeFile(rawFile, `${JSON.stringify(raw)}\n`);
 
 // ---- The tables ----
 
@@ -445,7 +496,7 @@ for (const [arm, sentence] of Object.entries(failures)) lines.push('', `${arm} f
 const load = Object.entries(loads).map(([arm, l]) => `${arm}: ${l.before.map((x) => x.toFixed(2)).join(', ')} -> ${l.after.map((x) => x.toFixed(2)).join(', ')}`);
 lines.push('', `Load average before -> after: ${load.join('; ')}`, `Seconds: ${String(record['seconds'])}`);
 console.log(lines.join('\n'));
-console.log(`\nwrote ${outFile}`);
+console.log(`\nwrote ${outFile} and ${rawFile}`);
 
 /**
  * Holds the loss's bins and the match to experiment 3's FFT: `fftSmallTable`, the 1,024-point entry
