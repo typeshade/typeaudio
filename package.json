@@ -2,11 +2,22 @@
   "name": "typeaudio",
   "version": "0.0.0",
   "private": true,
-  "description": "A GPU audio engine written in TypeScript, on TypeShade. Design phase.",
+  "description": "A GPU audio engine written in TypeScript, on TypeShade.",
   "license": "Apache-2.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/typeshade/typeaudio"
+  },
+  "scripts": {
+    "prepare": "bun --bun tshc sync",
+    "check": "tshc sync --check && tshc check src && tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "5.6.3",
+    "typeshade": "https://github.com/typeshade/typeshade/archive/145666068ca5d6ecfba32aa0ea4289cf0fc3b762.tar.gz",
+    "vite": "7.3.7",
+    "vitest": "5.0.5"
   }
 }
