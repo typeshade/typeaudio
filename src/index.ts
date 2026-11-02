@@ -3,7 +3,14 @@
 // the kernels over a bank of instances, one `fuse` plan per block (docs/architecture.md).
 
 export { bank, type Bank, type State } from './bank.ts';
-export { plan, render, type Plan, type PlanOptions, type RenderOptions } from './render.ts';
+export {
+  DEFAULT_BLOCK,
+  plan,
+  render,
+  type Plan,
+  type PlanOptions,
+  type RenderOptions,
+} from './render.ts';
 export { explain } from './explain.ts';
 export { Oscillator, Saw, Sine } from './units/oscillator.shade.ts';
 export { OnePole } from './units/one-pole.shade.ts';

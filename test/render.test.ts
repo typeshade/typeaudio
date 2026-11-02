@@ -51,6 +51,13 @@ describe('render on the CPU tier', () => {
     expect(after.some((v) => v instanceof Voice)).toBe(false);
   });
 
+  test('a block holds 1024 frames when the render names none', async () => {
+    const p = plan(bank(dev, voicesOf()));
+    const out = await render(p, { frames: 2500 });
+    expect(out).toEqual(refRender(refVoicesOf(), 2500, 1024, 1, 1));
+    expect(p.reports).toHaveLength(3);
+  });
+
   test('refuses a size that is not a whole number of frames', async () => {
     const p = plan(bank(dev, voicesOf()));
     await expect(render(p, { frames: 0, block: 64 })).rejects.toThrow(

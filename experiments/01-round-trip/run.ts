@@ -1,11 +1,12 @@
 // Experiment 1, the round trip per block size (docs/experiments.md, section 1).
 //
-//   bun run exp:01 [--tier cpu|webgpu|all] [--blocks 1000] [--warmup 10] [--budget 20]
+//   bun run exp:01 [--tier cpu|webgpu|webgl2|all] [--blocks 1000] [--warmup 10] [--budget 20]
 //                  [--voices 64] [--out <file.json>]
 //
 // It bundles the harness twice with Vite and the compiler's plugin: for Node, which it runs with
 // the Node on PATH (the CPU tier; `NODE_BINARY` names another), and for a page, which it opens in
-// headless Chromium with WebGPU on SwiftShader (`TYPESHADE_CHROMIUM` names the binary). It writes
+// headless Chromium with WebGPU and WebGL2 on SwiftShader (`TYPESHADE_CHROMIUM` names the binary),
+// a fresh browser for each of the two tiers. It writes
 // the result as JSON, with the commit, the compiler pin and each device, and prints a table for
 // each tier. A number without its record is not a result: the record is `docs/records/`.
 
@@ -30,7 +31,10 @@ const whole = (name: string, fallback: number): number => {
   if (!Number.isInteger(v) || v < 1) throw new Error(`run.ts: --${name} takes a whole number of 1 or more.`);
   return v;
 };
-const tiers = (args.get('tier') ?? 'all') === 'all' ? ['cpu', 'webgpu'] : [args.get('tier')!];
+const tiers = (args.get('tier') ?? 'all') === 'all' ? ['cpu', 'webgpu', 'webgl2'] : [args.get('tier')!];
+for (const tier of tiers) {
+  if (!['cpu', 'webgpu', 'webgl2'].includes(tier)) throw new Error(`run.ts: --tier takes cpu, webgpu, webgl2 or all; got "${tier}".`);
+}
 const options: Omit<Options, 'tier'> = {
   blocks: whole('blocks', 1000),
   warmup: whole('warmup', 10),
@@ -58,13 +62,16 @@ if (tiers.includes('cpu')) {
   const main = await bundle({ entry: 'experiments/01-round-trip/node.ts', outDir: 'experiments/01-round-trip/out/node', target: 'node' });
   record['cpu'] = JSON.parse(await runNode(await nodeBinary(), [main, JSON.stringify(options)]));
 }
-if (tiers.includes('webgpu')) {
+const pageTiers = tiers.filter((t): t is 'webgpu' | 'webgl2' => t !== 'cpu');
+if (pageTiers.length > 0) {
   const page = await bundle({ entry: 'experiments/01-round-trip/browser.ts', outDir: 'experiments/01-round-trip/out/web', target: 'web' });
   // `browser.ts` sets `runExperiment` on the page's global object.
-  type Page = { runExperiment(o: Omit<Options, 'tier'>): Promise<unknown> };
-  record['webgpu'] = await inPage(dirname(page), (p) =>
-    p.evaluate((o) => (globalThis as unknown as Page).runExperiment(o), options),
-  );
+  type Page = { runExperiment(o: Options): Promise<unknown> };
+  for (const tier of pageTiers) {
+    record[tier] = await inPage(dirname(page), (p) =>
+      p.evaluate((o) => (globalThis as unknown as Page).runExperiment(o), { ...options, tier }),
+    );
+  }
 }
 
 await mkdir(dirname(outFile), { recursive: true });

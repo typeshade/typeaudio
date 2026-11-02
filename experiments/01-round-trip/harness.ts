@@ -7,12 +7,15 @@
 // - `budget`: as `resident`, on a device made with `createDevice({ timeBudgetMs })`, the call run as
 //   one chunk, `dev.fuse(body, { chunk })`, which the device fences, times and learns a rate from;
 // - `engine`: the engine's own block, `render()` of a bank of voices, one `fuse` plan per block.
+//
+// On WebGL2 a call that tier cannot run falls to the CPU tier: the voices' loop writes at
+// `v * block + n` and the meter reduces, and WebGL2 runs neither (compiler surface §65).
 
 import { configure, createDevice, type DeviceInfo, type FuseReport } from 'typeshade/runtime';
 import { partials } from './partials.shade.ts';
 import { bank, plan, render } from '../../src/index.ts';
 import { Voice } from '../../src/kernels/synth.shade.ts';
-import type { Options, Row, Variant } from './options.ts';
+import { tiersOf, type Options, type Row, type Variant } from './options.ts';
 
 export { SIZES, VARIANTS, type Options, type Row, type Variant } from './options.ts';
 
@@ -28,13 +31,14 @@ const F0 = 110;
 
 /** Runs the experiment and resolves to its rows; `progress` sees each row when it is done. */
 export async function measure(o: Options, progress: (row: Row) => void = () => {}): Promise<Result> {
-  configure({ prefer: [o.tier] });
+  const prefer = tiersOf(o.tier);
+  configure({ prefer });
   const rows: Row[] = [];
   const add = (row: Row): void => {
     rows.push(row);
     progress(row);
   };
-  const probe = await createDevice({ prefer: [o.tier] });
+  const probe = await createDevice({ prefer });
   const info = probe.info;
   await probe.dispose();
   let report: FuseReport | undefined;
@@ -49,12 +53,13 @@ export async function measure(o: Options, progress: (row: Row) => void = () => {
       }
     } else if (variant === 'resident' || variant === 'budget') {
       const dev = await createDevice(
-        variant === 'budget' ? { prefer: [o.tier], timeBudgetMs: o.budgetMs } : { prefer: [o.tier] },
+        variant === 'budget' ? { prefer, timeBudgetMs: o.budgetMs } : { prefer },
       );
       try {
         for (const n of o.sizes) {
           const out = dev.array(n, 'f32');
           const key = `partials-${n}`;
+          let ran: string = dev.tier;
           const t = await time(
             o,
             variant === 'resident'
@@ -63,18 +68,19 @@ export async function measure(o: Options, progress: (row: Row) => void = () => {
                   await out.read();
                 }
               : async (i) => {
-                  await dev.fuse(
+                  const chunk = await dev.fuse(
                     () => {
                       partials(out, i * n, F0, SR);
                     },
                     { chunk: { key, units: n } },
                   );
+                  ran = chunk.tier;
                   await out.read();
                 },
           );
           const rate = dev.chunkRates[key];
           add({
-            ...row(variant, dev.tier, n, t),
+            ...row(variant, ran, n, t),
             ...(variant === 'budget' && rate !== undefined ? { chunkMs: rate.msPerUnit * n } : {}),
           });
           dev.release(out);
@@ -83,7 +89,7 @@ export async function measure(o: Options, progress: (row: Row) => void = () => {
         await dev.dispose();
       }
     } else {
-      const dev = await createDevice({ prefer: [o.tier] });
+      const dev = await createDevice({ prefer });
       try {
         const voices = bank(
           dev,

@@ -38,6 +38,28 @@ test('explain leaves the GPU time out where the device measured none', () => {
   expect(explain([webgpu(false)]).split('\n')[2]).toBe('  1. synth: 1 dispatch');
 });
 
+test('explain on WebGL2 counts draws and claims no tier the report does not give', () => {
+  const webgl2: FuseReport = {
+    tier: 'webgl2',
+    dispatches: 3,
+    submissions: 0,
+    groups: [
+      { calls: ['synth'], fused: false },
+      { calls: ['mixdown'], fused: false, why: 'WebGL2 runs the calls apart' },
+    ],
+  };
+  expect(explain([webgl2])).toBe(
+    [
+      '1 block on WebGL2, each block one fuse plan',
+      'the last block: 3 draws, 0 submissions',
+      '  1. synth: on WebGL2 or the CPU tier',
+      '  2. mixdown: on WebGL2 or the CPU tier',
+      '     WebGL2 runs the calls apart',
+      'all blocks: 3 draws, 0 submissions',
+    ].join('\n'),
+  );
+});
+
 test('explain of no report says what to do', () => {
   expect(explain([])).toBe('Nothing has run yet: render a plan, then explain its reports.');
 });

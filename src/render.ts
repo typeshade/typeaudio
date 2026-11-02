@@ -44,9 +44,15 @@ interface PlanState {
 export interface RenderOptions {
   /** How many frames to render. */
   readonly frames: number;
-  /** How many frames one block holds. Each block runs as one `fuse` plan; the last may be shorter. */
-  readonly block: number;
+  /**
+   * How many frames one block holds. Each block runs as one `fuse` plan; the last may be shorter.
+   * 1024 by default, decision D5 of `docs/architecture.md`, until experiment 1 replaces it.
+   */
+  readonly block?: number;
 }
+
+/** The frames of a block when a render names none (decision D5). */
+export const DEFAULT_BLOCK = 1024;
 
 /** A plan of `voices` with the settings of `options`. */
 export function plan(voices: Bank<Voice>, options: PlanOptions = {}): Plan {
@@ -72,7 +78,7 @@ export function plan(voices: Bank<Voice>, options: PlanOptions = {}): Plan {
  */
 export async function render(plan: Plan, options: RenderOptions): Promise<Float32Array> {
   const frames = whole('render()', 'frames', options.frames);
-  const block = whole('render()', 'block', options.block);
+  const block = whole('render()', 'block', options.block ?? DEFAULT_BLOCK);
   const state = plan as PlanState;
   const { voices } = state;
   const dev = voices.device;

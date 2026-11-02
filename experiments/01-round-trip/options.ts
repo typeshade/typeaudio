@@ -5,8 +5,14 @@ export const SIZES = [128, 256, 512, 1024, 2048, 4096] as const;
 export const VARIANTS = ['call', 'resident', 'budget', 'engine'] as const;
 export type Variant = (typeof VARIANTS)[number];
 
+/** The tiers of the experiment. On WebGL2 a call it cannot run falls to the CPU tier. */
+export type Tier = 'webgpu' | 'webgl2' | 'cpu';
+
+/** The tiers a run on `tier` may use, in order (compiler surface §65, "The tiers"). */
+export const tiersOf = (tier: Tier): Tier[] => (tier === 'webgl2' ? ['webgl2', 'cpu'] : [tier]);
+
 export interface Options {
-  readonly tier: 'webgpu' | 'cpu';
+  readonly tier: Tier;
   /** The timed blocks of each size. */
   readonly blocks: number;
   /** The blocks run before the timed ones, the first among them timed apart as `firstMs`. */
@@ -21,7 +27,7 @@ export interface Options {
 
 export interface Row {
   readonly variant: Variant;
-  /** The tier the call ran on: the device's tier, or the report's for `engine`. */
+  /** The tier the calls ran on: the device's, or the fuse report's for `budget` and `engine`. */
   readonly tier: string;
   readonly frames: number;
   readonly blocks: number;
