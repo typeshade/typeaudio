@@ -1,7 +1,7 @@
 // Experiment 5, a 10-second partitioned convolution (docs/experiments.md, section 5).
 //
 //   bun run exp:05 [--tier all|cpu,oracle,webgpu,webgl2]
-//                  [--blocks webgpu=1000,webgl2=50,oracle=3]
+//                  [--blocks webgpu=1000,webgl2=10,oracle=3]
 //                  [--tails webgpu=full+jump,webgl2=jump,oracle=jump]
 //                  [--levels full,quiet] [--timeout 60] [--prepare-timeout 900]
 //                  [--spectra yes|no] [--out <file.json>] [--raw <file.json>]
@@ -21,7 +21,9 @@
 //   about 1.4 seconds, so it runs fewer blocks than the page arms.
 // - `webgpu` and `webgl2`: the harness bundled for a page, opened in headless Chromium with WebGPU
 //   and WebGL2 on SwiftShader (`TYPESHADE_CHROMIUM` names the binary), a fresh browser for each.
-//   Each block is one `dev.fuse` plan.
+//   Each block is one `dev.fuse` plan. On WebGPU the transform and the noise run again on a device
+//   with no `timestamp-query` (`browser.ts`). On WebGL2 a call that tier cannot run falls to the CPU
+//   tier, and the kernel check, on WebGL2 alone, records why.
 //
 // `--blocks` sets the noise blocks each arm times, from the first: `arm=n` pairs, or one number for
 // every arm. `--tails` sets how each arm runs the impulses' tails: `full`, every one of the 469
@@ -116,7 +118,7 @@ const whole = (name: string, min: number) => (v: string): number => {
   return n;
 };
 const arms = listOf<Arm>('tier', ARMS);
-const blocks = perArm('blocks', { cpu: 0, oracle: 3, webgpu: 1000, webgl2: 50 }, whole('blocks', 0));
+const blocks = perArm('blocks', { cpu: 0, oracle: 3, webgpu: 1000, webgl2: 10 }, whole('blocks', 0));
 const tails = perArm<Tail[]>('tails', { cpu: [], oracle: ['jump'], webgpu: ['full', 'jump'], webgl2: ['jump'] }, (v) => {
   const modes = v.split('+') as Tail[];
   for (const m of modes) if (!TAILS.includes(m)) throw new Error(`run.ts: --tails takes full, jump or full+jump; got "${v}".`);
@@ -491,6 +493,16 @@ for (const [arm, t] of timed) {
   });
 }
 record['timing'] = timingRows;
+// Every block's host time and GPU time, rounded to microseconds, for a reader who wants more than the statistics.
+record['blocks'] = Object.fromEntries(
+  timed.map(([arm, t]) => [
+    arm,
+    {
+      ms: t.map((b) => Math.round(b.ms * 1000) / 1000),
+      gpuMs: t.map((b) => (b.gpu === undefined || b.gpu.some((g) => g === null) ? null : Math.round(b.gpu.reduce<number>((s, g) => s + (g as number), 0) / 1000) / 1000)),
+    },
+  ]),
+);
 record['prepare'] = present.map((arm) => ({ arm, ms: results[arm]!.prepare?.ms, ...(results[arm]!.bare?.prepareMs === undefined ? {} : { bareMs: results[arm]!.bare!.prepareMs }) }));
 record['plans'] = present.map((arm) => ({ arm, plan: results[arm]!.plan, reports: results[arm]!.reports }));
 record['bare'] = present
