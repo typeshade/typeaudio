@@ -15,7 +15,7 @@ session, recorded as reference numbers; no experiment has run on the owner's dev
 | 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | not started                                                                                            |
 | 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
-| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | in progress (branch `claude/exp-06-granular`)                                                          |
 | 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | not started                                                                                            |
 
 The asks are the rows of `docs/compiler-asks.md`.
@@ -183,7 +183,8 @@ order needs a stable sort (issue #539).
 4. Run the same on WebGL2, and record what it refuses.
 5. Write the record.
 
-**Status.** Not started.
+**Status.** In progress, on the branch `claude/exp-06-granular`: the harness and the run on the
+container of a Claude Code session.
 
 ## 7. A sound match with function-level `grad`
 
