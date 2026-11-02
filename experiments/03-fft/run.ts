@@ -1,7 +1,8 @@
 // Experiment 3, the FFT entry held to the oracle on three tiers (docs/experiments.md, section 3).
 //
 //   bun run exp:03 [--tier all|cpu,oracle,webgpu,webgl2] [--sizes 1024,4096]
-//                  [--variants device,table] [--repeats 3] [--out <file.json>] [--raw <file.json>]
+//                  [--variants device,table,double] [--repeats 3] [--timeout 60]
+//                  [--out <file.json>] [--raw <file.json>]
 //
 // Four arms, each transforming the same `f32` inputs (`signals.ts`):
 //
@@ -76,10 +77,13 @@ const listOf = <T extends string | number>(name: string, all: readonly T[]): T[]
 const arms = listOf<Arm>('tier', ARMS);
 const repeats = Number(args.get('repeats') ?? 3);
 if (!Number.isInteger(repeats) || repeats < 1) throw new Error('run.ts: --repeats takes a whole number of 1 or more.');
+const timeout = Number(args.get('timeout') ?? 60);
+if (!Number.isInteger(timeout) || timeout < 1) throw new Error('run.ts: --timeout takes a whole number of seconds, 1 or more.');
 const options: Omit<Options, 'tier'> = {
   sizes: listOf<Size>('sizes', SIZES),
   variants: listOf<Variant>('variants', VARIANTS),
   repeats,
+  timeoutMs: timeout * 1000,
 };
 const outFile = args.get('out') ?? join(ROOT, 'experiments/03-fft/out/result.json');
 const rawFile = args.get('raw') ?? join(ROOT, 'experiments/03-fft/out/raw.json');
@@ -122,6 +126,9 @@ const results: Partial<Record<Arm, Result & { environment?: unknown }>> = {};
 /** The page's console lines that repeated, with their counts. */
 const consoles: Record<string, { line: string; count: number }[]> = {};
 record['consoles'] = consoles;
+/** An arm whose run failed as a whole, with the sentence. */
+const failures: Record<string, string> = {};
+record['failures'] = failures;
 
 if (arms.includes('cpu')) {
   const main = await bundle({ entry: 'experiments/03-fft/node.ts', outDir: 'experiments/03-fft/out/node', target: 'node' });
@@ -169,15 +176,30 @@ if (pageTiers.length > 0) {
     // The page's console, each distinct line printed once and counted: the WebGL2 tier's read-backs
     // draw Chromium's performance warning on every pass.
     const seen = new Map<string, number>();
-    results[tier] = await inPage(
-      dirname(page),
-      (p) => p.evaluate((o) => (globalThis as unknown as Page).runFft(o), { ...options, tier }),
-      (line) => {
-        const n = (seen.get(line) ?? 0) + 1;
-        seen.set(line, n);
-        if (n === 1) console.error(line);
-      },
-    );
+    // The page bounds each call (`timeoutMs`); this bounds the page, in case its script stops
+    // yielding. The browser is closed on either way out.
+    const calls = options.sizes.length * options.variants.length * DIRECTIONS.length;
+    const limit = options.timeoutMs * (calls * options.repeats + 4);
+    try {
+      results[tier] = await inPage(
+        dirname(page),
+        (p) =>
+          Promise.race([
+            p.evaluate((o) => (globalThis as unknown as Page).runFft(o), { ...options, tier }),
+            new Promise<never>((_, fail) =>
+              setTimeout(() => fail(new Error(`the page did not return within ${String(limit / 1000)} s`)), limit),
+            ),
+          ]),
+        (line) => {
+          const n = (seen.get(line) ?? 0) + 1;
+          seen.set(line, n);
+          if (n === 1) console.error(line);
+        },
+      );
+    } catch (e) {
+      failures[tier] = String(e);
+      console.error(`${tier}: ${String(e)}`);
+    }
     consoles[tier] = [...seen].filter(([, n]) => n > 1).map(([line, count]) => ({ line, count }));
     loads[tier] = { before, after: loadavg() };
   }
@@ -216,7 +238,7 @@ interface Reference {
 const rows: Row[] = [];
 const pairs: Pair[] = [];
 const references: Reference[] = [];
-const refusals: { arm: Arm; entry: string; direction: Direction; sentence: string }[] = [];
+const refusals: { arm: Arm; entry: string; direction: Direction; kind: 'refused' | 'unfinished'; sentence: string }[] = [];
 const raw: Record<string, unknown> = {};
 const outputOf = (arm: Arm, size: Size, variant: Variant, direction: Direction): Float32Array | undefined => {
   const c = results[arm]?.calls.find((x) => x.size === size && x.variant === variant && x.direction === direction);
@@ -224,7 +246,8 @@ const outputOf = (arm: Arm, size: Size, variant: Variant, direction: Direction):
 };
 for (const arm of arms) {
   for (const c of results[arm]?.calls ?? []) {
-    if (c.refused !== undefined) refusals.push({ arm, entry: c.entry, direction: c.direction, sentence: c.refused });
+    if (c.refused !== undefined) refusals.push({ arm, entry: c.entry, direction: c.direction, kind: 'refused', sentence: c.refused });
+    if (c.unfinished !== undefined) refusals.push({ arm, entry: c.entry, direction: c.direction, kind: 'unfinished', sentence: c.unfinished });
   }
 }
 for (const size of options.sizes) {
@@ -271,7 +294,11 @@ for (const size of options.sizes) {
               direction,
               signal,
               arms: [present[a]!, present[b]!],
-              agreement: agreement(ya.subarray(i * span, (i + 1) * span), yb.subarray(i * span, (i + 1) * span)),
+              agreement: agreement(
+                ya.subarray(i * span, (i + 1) * span),
+                yb.subarray(i * span, (i + 1) * span),
+                reference.subarray(i * span, (i + 1) * span),
+              ),
             });
           });
         }
@@ -360,14 +387,14 @@ table(
 const pairNames = [...new Set(pairs.map((p) => p.arms.join('-')))];
 for (const [title, signals] of GROUPS) {
   table(
-    `Values whose bits differ between two arms, ${title} (largest ULP distance between them)`,
+    `Values whose bits differ between two arms, ${title} (largest difference, in f32 ULPs at the transform's peak)`,
     ['Size', 'Variant', 'Direction', ...pairNames],
     keys.map((k) => [String(k.size), k.variant, k.direction, ...pairNames.map((name) => {
       const ps = pairs.filter((p) => p.size === k.size && p.variant === k.variant && p.direction === k.direction && p.arms.join('-') === name && signals.includes(p.signal));
       if (ps.length === 0) return 'n/a';
       const differ = ps.reduce((sum, p) => sum + p.agreement.differ, 0);
       const count = ps.reduce((sum, p) => sum + p.agreement.count, 0);
-      return `${differ} of ${count} (${Math.max(...ps.map((p) => p.agreement.maxUlp))})`;
+      return `${differ} of ${count} (${fixed(Math.max(...ps.map((p) => p.agreement.maxPeakUlp)))})`;
     })]),
   );
 }
@@ -398,8 +425,8 @@ table(
   }),
 );
 if (refusals.length > 0) {
-  lines.push('', 'Refusals', '');
-  for (const r of refusals) lines.push(`- ${r.arm} ${r.entry} ${r.direction}: ${r.sentence}`);
+  lines.push('', 'Refused, or not finished', '');
+  for (const r of refusals) lines.push(`- ${r.arm} ${r.entry} ${r.direction} (${r.kind}): ${r.sentence}`);
 }
 const load = Object.entries(loads).map(([arm, l]) => `${arm}: ${l.before.map((x) => x.toFixed(2)).join(', ')} -> ${l.after.map((x) => x.toFixed(2)).join(', ')}`);
 lines.push('', `Load average before -> after: ${load.join('; ')}`);

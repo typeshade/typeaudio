@@ -4,7 +4,14 @@
 // where the pin refuses an entry that reaches a barrier (change 0092 is accepted, not implemented).
 
 import { configure, createDevice, type DeviceInfo } from 'typeshade/runtime';
-import { fftLargeDevice, fftLargeTable, fftSmallDevice, fftSmallTable } from './fft.shade.ts';
+import {
+  fftLargeDevice,
+  fftLargeDouble,
+  fftLargeTable,
+  fftSmallDevice,
+  fftSmallDouble,
+  fftSmallTable,
+} from './fft.shade.ts';
 import { scaleProbe, wrapProbe } from './probes.shade.ts';
 import {
   DIRECTIONS,
@@ -28,6 +35,11 @@ export interface Options {
   readonly variants: readonly Variant[];
   /** How many times each call runs; the runs are held to one another bit for bit. */
   readonly repeats: number;
+  /**
+   * How long one call may take, in milliseconds. A call that does not return in time is recorded
+   * as unfinished, and the calls after it on the tier are not run: they would queue behind it.
+   */
+  readonly timeoutMs: number;
 }
 
 /** One call of one entry: its output's bits, or the sentence the tier refused it with. */
@@ -43,6 +55,8 @@ export interface Call {
   /** The host time of each run, from the call to the end of its read-back, in milliseconds. */
   readonly ms?: number[];
   readonly refused?: string;
+  /** Why the call has no output although the tier did not refuse it: it did not return in time. */
+  readonly unfinished?: string;
 }
 
 /** A probe's output, or the sentence the tier refused it with. */
@@ -74,9 +88,11 @@ async function call(
   const workgroups = SIGNALS.length;
   if (size === 1024) {
     if (variant === 'device') await fftSmallDevice({ transform, src, dst }, workgroups);
-    else await fftSmallTable({ transform, src, dst, twiddles }, workgroups);
+    else if (variant === 'table') await fftSmallTable({ transform, src, dst, twiddles }, workgroups);
+    else await fftSmallDouble({ transform, src, dst }, workgroups);
   } else if (variant === 'device') await fftLargeDevice({ transform, src, dst }, workgroups);
-  else await fftLargeTable({ transform, src, dst, twiddles }, workgroups);
+  else if (variant === 'table') await fftLargeTable({ transform, src, dst, twiddles }, workgroups);
+  else await fftLargeDouble({ transform, src, dst }, workgroups);
 }
 
 async function probes(): Promise<Probe[]> {
@@ -104,7 +120,25 @@ async function probes(): Promise<Probe[]> {
   return out;
 }
 
-/** Runs every call and probe on `o.tier`; `progress` sees a line for each call. */
+/** `p`, or a rejection once `ms` milliseconds pass without it. */
+function within<T>(p: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const late = new Promise<never>((_, fail) => {
+    timer = setTimeout(() => fail(new Timeout(ms)), ms);
+  });
+  return Promise.race([p, late]).finally(() => clearTimeout(timer));
+}
+
+class Timeout extends Error {
+  constructor(ms: number) {
+    super(`did not return within ${String(ms / 1000)} s`);
+  }
+}
+
+/**
+ * Runs every probe, then every call, on `o.tier`; `progress` sees a line for each call. The calls
+ * run variant by variant, so that a variant whose call does not return leaves the others measured.
+ */
 export async function runTier(o: Options, progress: (line: string) => void = () => {}): Promise<Result> {
   const prefer = [o.tier];
   configure({ prefer });
@@ -116,30 +150,45 @@ export async function runTier(o: Options, progress: (line: string) => void = () 
   } catch (e) {
     progress(`${o.tier}: no device (${String(e)})`);
   }
+  const probed = await probes();
   const calls: Call[] = [];
-  for (const size of o.sizes) {
-    const twiddles = twiddleTable(size);
-    for (const variant of o.variants) {
+  let stuck: string | undefined;
+  for (const variant of o.variants) {
+    for (const size of o.sizes) {
+      const twiddles = twiddleTable(size);
       for (const direction of DIRECTIONS) {
         const entry = ENTRIES[size][variant];
+        if (stuck !== undefined) {
+          calls.push({ size, variant, direction, entry, unfinished: `not run: ${stuck}` });
+          continue;
+        }
         const src = inputOf(size, direction);
         const outputs: Float32Array[] = [];
         const ms: number[] = [];
         let refused: string | undefined;
-        for (let r = 0; r < o.repeats && refused === undefined; r++) {
+        let unfinished: string | undefined;
+        for (let r = 0; r < o.repeats && refused === undefined && unfinished === undefined; r++) {
           const dst = new Float32Array(src.length);
           const start = performance.now();
           try {
-            await call(size, variant, direction, src, dst, twiddles);
+            await within(call(size, variant, direction, src, dst, twiddles), o.timeoutMs);
             ms.push(performance.now() - start);
             outputs.push(dst);
           } catch (e) {
-            refused = String(e);
+            if (e instanceof Timeout) unfinished = e.message;
+            else refused = String(e);
           }
         }
-        if (refused !== undefined) {
-          progress(`${o.tier} ${entry} ${direction}: refused: ${refused}`);
-          calls.push({ size, variant, direction, entry, refused });
+        if (refused !== undefined || unfinished !== undefined) {
+          progress(`${o.tier} ${entry} ${direction}: ${refused !== undefined ? `refused: ${refused}` : unfinished}`);
+          if (unfinished !== undefined) stuck = `${entry} ${direction} on this tier ${unfinished}`;
+          calls.push({
+            size,
+            variant,
+            direction,
+            entry,
+            ...(refused !== undefined ? { refused } : { unfinished: unfinished! }),
+          });
           continue;
         }
         const first = new Uint32Array(outputs[0]!.buffer);
@@ -152,7 +201,6 @@ export async function runTier(o: Options, progress: (line: string) => void = () 
       }
     }
   }
-  const probed = await probes();
-  configure({});
+  if (stuck === undefined) configure({});
   return { tier: o.tier, ...(info === undefined ? {} : { info }), calls, probes: probed };
 }

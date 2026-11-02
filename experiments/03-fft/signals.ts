@@ -10,8 +10,11 @@ import { generator } from 'typeshade/random';
 export const SIZES = [1024, 4096] as const;
 export type Size = (typeof SIZES)[number];
 
-/** The twiddles: computed with `sin` and `cos` on the device (variant A), or read from a table (B). */
-export const VARIANTS = ['device', 'table'] as const;
+/**
+ * Where the twiddles come from: `sin` and `cos` of an `f32` on the device (variant A), a table the
+ * host computes in doubles (B), or `sin` and `cos` of an emulated double on the device (C).
+ */
+export const VARIANTS = ['device', 'table', 'double'] as const;
 export type Variant = (typeof VARIANTS)[number];
 
 export const DIRECTIONS = ['forward', 'inverse'] as const;
@@ -38,8 +41,8 @@ export const SMALLEST_NORMAL = 2 ** -126;
 
 /** The entry of each size and variant, by its name in `fft.shade.ts`. */
 export const ENTRIES = {
-  1024: { device: 'fftSmallDevice', table: 'fftSmallTable' },
-  4096: { device: 'fftLargeDevice', table: 'fftLargeTable' },
+  1024: { device: 'fftSmallDevice', table: 'fftSmallTable', double: 'fftSmallDouble' },
+  4096: { device: 'fftLargeDevice', table: 'fftLargeTable', double: 'fftLargeDouble' },
 } as const;
 export type EntryName = (typeof ENTRIES)[Size][Variant];
 
@@ -200,32 +203,30 @@ export function accuracy(y: ArrayLike<number>, r: ArrayLike<number>): Accuracy {
   };
 }
 
-/** The bits of an `f32` as an integer ordered as the values are: the ULP distance is a difference. */
-function ordered(v: number): number {
-  word.setFloat32(0, v);
-  const bits = word.getUint32(0);
-  return bits & 0x80000000 ? -(bits & 0x7fffffff) : bits;
-}
-
-/** How two tiers' outputs differ: the values whose bits differ, and the largest ULP distance. */
+/** How two tiers' outputs differ: the values whose bits differ, and how far apart they are. */
 export interface Agreement {
+  /** The values whose bits differ, -0 against 0 included. */
   readonly differ: number;
-  readonly maxUlp: number;
+  /** The largest difference, in units of the `f32` ULP at the largest magnitude of the reference. */
+  readonly maxPeakUlp: number;
   readonly count: number;
 }
 
-export function agreement(a: Float32Array, b: Float32Array): Agreement {
+/** `a` against `b`, value by value; `r` is the reference both transformed, for the unit. */
+export function agreement(a: Float32Array, b: Float32Array, r: ArrayLike<number>): Agreement {
   const ua = new Uint32Array(a.buffer, a.byteOffset, a.length);
   const ub = new Uint32Array(b.buffer, b.byteOffset, b.length);
+  let peak = 0;
+  for (let i = 0; i < r.length; i++) peak = Math.max(peak, Math.abs(r[i]!));
   let differ = 0;
-  let maxUlp = 0;
+  let largest = 0;
   for (let i = 0; i < a.length; i++) {
     if (ua[i] !== ub[i]) {
       differ++;
-      maxUlp = Math.max(maxUlp, Math.abs(ordered(a[i]!) - ordered(b[i]!)));
+      largest = Math.max(largest, Math.abs(a[i]! - b[i]!));
     }
   }
-  return { differ, maxUlp, count: a.length };
+  return { differ, maxPeakUlp: largest / ulp32(peak), count: a.length };
 }
 
 /** The subnormal and zero values of an output, and of the reference rounded to `f32`. */

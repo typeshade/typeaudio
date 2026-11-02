@@ -11,10 +11,13 @@
 // - The large transform, 4,096 points, needs 32 KiB, over that default, so it works in the output
 //   array, a storage binding, with `storageBarrier()` between its stages.
 //
-// Two variants of each: `Device`, the twiddles computed on the device with `sin` and `cos`
-// (variant A), and `Table`, the twiddles read from a table the host computes in doubles and
-// uploads (variant B). The sizes are module constants: the entries read no `.length` inside an
-// index, the form the WebGL2 pass program at the pin does not declare (docs/compiler-asks.md, J).
+// Three variants of each, by where the twiddles come from: `Device`, `sin` and `cos` of an `f32`
+// angle on the device (variant A); `Table`, a table the host computes in doubles and uploads
+// (variant B); `Double`, `sin` and `cos` of an emulated double on the device (surface §39),
+// narrowed to `f32` (variant C). The sizes are module constants: the entries read no `.length`
+// inside an index, the form the WebGL2 pass program at the pin leaves undeclared
+// (docs/compiler-asks.md, J; compiler issue #900). A module constant cannot be an `f64` at the pin
+// ("must be f32, i32, u32, or bool for now"), so variant C writes 2π as an `f64` literal.
 
 /** One full turn, in radians. */
 const TAU: f32 = 6.283185307179586;
@@ -27,6 +30,8 @@ const SMALL: u32 = 1024;
 const SMALL_STAGES: u32 = 10;
 /** The angle of one twiddle step of the small transform, in radians: 2π / 1,024. */
 const SMALL_STEP: f32 = TAU / 1024.;
+/** One twiddle step of the small transform, in turns: 1 / 1,024. */
+const SMALL_TURN: f32 = 1. / 1024.;
 
 /** The points of the large transform. */
 const LARGE: u32 = 4096;
@@ -34,6 +39,8 @@ const LARGE: u32 = 4096;
 const LARGE_STAGES: u32 = 12;
 /** The angle of one twiddle step of the large transform, in radians: 2π / 4,096. */
 const LARGE_STEP: f32 = TAU / 4096.;
+/** One twiddle step of the large transform, in turns: 1 / 4,096. */
+const LARGE_TURN: f32 = 1. / 4096.;
 
 /** The direction of a call and the scale of its output. */
 interface Transform {
@@ -77,6 +84,17 @@ function cmul(a: vec2, b: vec2): vec2 {
 function onDevice(t: u32, step: f32): vec2 {
   const angle = f32(t) * step;
   return vec2(cos(angle), sin(angle));
+}
+
+/**
+ * Variant C: the twiddle at `t` times `turn` of a full turn, from `cos` and `sin` of an emulated
+ * double, narrowed to `f32`. `t * turn` is exact in `f32`, since `turn` is ±1 / N; the double starts
+ * here and ends here, so no `f64` is live across a barrier, which the WebGL2 pass program cannot
+ * keep in an invocation's state at the pin ("a f64 cannot be kept in state").
+ */
+function inDouble(t: u32, turn: f32): vec2 {
+  const angle = f64(f32(t) * turn) * f64(6.283185307179586);
+  return vec2(f32(cos(angle)), f32(sin(angle)));
 }
 
 /** Variant B: the twiddle `t` of the host's table, conjugated by `sign` for the forward transform. */
@@ -188,6 +206,18 @@ export const fftSmallTable = compute([THREADS], function fftSmallTable(
   smallStore(lid.x, base);
 });
 
+/** The 1,024-point transform of each workgroup's points, the twiddles from `sin` and `cos` of a double (variant C). */
+export const fftSmallDouble = compute([THREADS], function fftSmallDouble(
+  lid: builtin<"local_invocation_id", vec3u>,
+  wid: builtin<"workgroup_id", vec3u>,
+) {
+  const base = wid.x * SMALL;
+  const turn = transform.sign * SMALL_TURN;
+  smallLoad(lid.x, base);
+  smallStages(lid.x, (t) => inDouble(t, turn));
+  smallStore(lid.x, base);
+});
+
 /** The 4,096-point transform of each workgroup's points, the twiddles from `sin` and `cos` (variant A). */
 export const fftLargeDevice = compute([THREADS], function fftLargeDevice(
   lid: builtin<"local_invocation_id", vec3u>,
@@ -209,5 +239,17 @@ export const fftLargeTable = compute([THREADS], function fftLargeTable(
   const sign = transform.sign;
   largeLoad(lid.x, base);
   largeStages(lid.x, base, (t) => fromTable(t, sign));
+  largeScale(lid.x, base);
+});
+
+/** The 4,096-point transform of each workgroup's points, the twiddles from `sin` and `cos` of a double (variant C). */
+export const fftLargeDouble = compute([THREADS], function fftLargeDouble(
+  lid: builtin<"local_invocation_id", vec3u>,
+  wid: builtin<"workgroup_id", vec3u>,
+) {
+  const base = wid.x * LARGE;
+  const turn = transform.sign * LARGE_TURN;
+  largeLoad(lid.x, base);
+  largeStages(lid.x, base, (t) => inDouble(t, turn));
   largeScale(lid.x, base);
 });
