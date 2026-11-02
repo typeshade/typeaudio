@@ -22,7 +22,7 @@
     "@types/node": "25.6.0",
     "playwright-core": "1.64.1",
     "typescript": "5.6.3",
-    "typeshade": "https://github.com/typeshade/typeshade/archive/145666068ca5d6ecfba32aa0ea4289cf0fc3b762.tar.gz",
+    "typeshade": "https://github.com/typeshade/typeshade/archive/87af4eb0d9d15f02b66b8341b72cab0944290472.tar.gz",
     "vite": "7.3.7",
     "vitest": "5.0.5"
   }
