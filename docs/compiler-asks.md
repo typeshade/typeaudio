@@ -123,14 +123,38 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 ### F. A worklet build of the CPU tier
 
-- Pressure: the `AudioWorkletGlobalScope` has no WebGPU and no dynamic `import`. The runtime
-  imports its WebGL2 tier dynamically (`src/runtime/runtime.ts`), so the generated module does
-  not load there today.
-- Compiler: a build of the CPU tier with no dynamic import, as a subpath of `typeshade/runtime`
-  or an option of the Vite plugin.
-- Workaround: a bundler build that inlines the dynamic import, loaded with `addModule`.
+- Pressure: the `AudioWorkletGlobalScope` has no WebGPU, no dynamic `import()`, no
+  `structuredClone` and no `performance`. `process()` hands its output arrays back when it
+  returns, and a kernel call is asynchronous from the start (surface §65). Before experiment 2,
+  this row said that the generated module does not load in the scope. Its reason was the dynamic
+  import of the WebGL2 tier (`src/runtime/runtime.ts`). Record 02 shows otherwise:
+  - The generated module loads and runs unchanged. It imports `typeshade/runtime/internal`, and no
+    module that it imports holds a dynamic `import()`. `synth` falls to the CPU tier with the
+    tiers left as they are. No bundle holds the WebGL2 tier's import.
+  - The engine's `render()` does not run as it is. `fuse()` loads its planner with a dynamic
+    `import()` (`src/core/fuse-record.ts`), and the scope refuses it. `dev.array()` copies an
+    array of objects, a bank, with `structuredClone` (`src/core/resident.ts`), and the scope has
+    none.
+  - A kernel call never fills its arrays before it returns: the CPU tier runs it in a microtask.
+    In Chromium 153 the samples still land in their own quantum, because the browser reads the
+    output arrays after the microtask checkpoint that follows `process()`.
+  - The Web Audio API specification (§2.6) copies the outputs when `process()` returns, before
+    that checkpoint. So a browser that follows it plays the samples one quantum late.
+- Compiler: a worklet form of the CPU tier, as a subpath of `typeshade/runtime` or an option of
+  the Vite plugin. It needs three things:
+  1. no dynamic `import()` on the paths a worklet reaches, the planner of `fuse()` included;
+  2. no `structuredClone` in `resident()` and `dev.array()`;
+  3. a call on the CPU tier that fills its arrays before it returns, for a kernel function and
+     for a `fuse` plan.
+- Workaround: three parts, in `experiments/02-worklet/`:
+  - a bundler build that inlines the dynamic imports (`scripts/bundle.ts`, target `worklet`),
+    loaded with `addModule`;
+  - a copy of plain data installed as the scope's `structuredClone` (`cloneData`, `engine.ts`);
+  - the lanes mixed into the output array when the call settles.
 - Measured by: experiment 2.
-- Status: candidate. Experiment 2 decides whether the path exists at all.
+- Status: measured (`docs/records/02-worklet-container.md`, the container, 2026-11-02, pin
+  `14566606`). Every call ran on the CPU tier, and each output had the reference's bits in its
+  own quantum. The device runs, and a browser other than Chromium, are pending.
 
 ### G. An FFT as a common module
 
@@ -193,6 +217,14 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: issue #459 (the design issue) and change 0042 (opened as a draft with the issue).
 - Workaround: none. TypeAudio measures the CPU tier first.
 - Measured by: experiment 2, which gives the number the tier would have to beat.
+- The number to beat (`docs/records/02-worklet-container.md`, one core of the container, a
+  reference and not a device result). It counts voices of the engine's `Voice`, a `Saw` into a
+  `Lowpass`, in one quantum of 128 frames at 48 kHz:
+  - The CPU tier's kernel call reaches the quantum at about 280 voices, and half of it at about
+    125. At 512 voices a quantum costs 5.02 ms.
+  - A plain JavaScript loop of the same `f32` math costs 1.46 ms a quantum at 512 voices. It
+    reaches half the quantum at about 465 voices.
+  - A tier, or a faster CPU tier (ask S), is measured against both.
 - Status: design issue open.
 
 ### L. Reverse-mode `grad`
@@ -281,6 +313,21 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: none. The comments stay in the `.shade.ts` files until the pin moves past item 4.
 - Measured by: the views `tshc sync` writes at the pin `14566606`.
 - Status: proposal 0108 (accepted): Amendment 1 accepted (#915), item 4 in progress (#937).
+
+### S. The cost of the CPU tier's generated code
+
+- Pressure: in a worklet, the CPU tier is the latency-critical path (F), so its speed sets the
+  voice count. The kernel call takes 3.4 times as long as the plain-JavaScript reference of the
+  tests, for the same `f32` math. At 512 voices a quantum costs 5.02 ms against 1.46 ms (record
+  02). The generated code returns the `inout` values of each method call in a new array
+  (`$.inout.values = [...]`). `Voice.tick` makes three such calls per voice and per sample. The
+  other threads of the browser spent 89 ms of CPU time a second of audio at 512 voices. For the
+  plain loop they spent 5 ms (inference: the garbage collector).
+- Compiler: the CPU tier's code generator (Rule 11.7, surface §64): `inout` values without an
+  allocation per call.
+- Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
+- Measured by: experiment 2.
+- Status: candidate. Measured on the container only (`docs/records/02-worklet-container.md`).
 
 ## 3. Issues raised on the compiler
 
