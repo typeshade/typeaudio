@@ -38,20 +38,20 @@ Design phase. The repository holds documents and no library code. The first expe
 
 ## Documents
 
-| Document                  | What it is                                                                                      |
-| ------------------------- | ----------------------------------------------------------------------------------------------- |
-| `docs/vision.md`          | The developer-experience contract, the catalog of what the engine does, the architecture, the boundaries, the experiments |
-| `docs/architecture.md`    | The detail of the architecture: the loop shapes, the block plan, banks, buses, events, transports |
-| `docs/compiler-asks.md`   | The compiler proposals this engine rests on and asks for, each with its status                  |
-| `docs/experiments.md`     | The experiments in order, with their status and what each decides                               |
-| `compiler-changes.md`     | The compiler proposals this repository has handled, recorded when the pin moves                 |
+| Document                | What it is                                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `docs/vision.md`        | The developer-experience contract, the catalog of what the engine does, the architecture, the boundaries, the experiments |
+| `docs/architecture.md`  | The detail of the architecture: the loop shapes, the block plan, banks, buses, events, transports                         |
+| `docs/compiler-asks.md` | The compiler proposals this engine rests on and asks for, each with its status                                            |
+| `docs/experiments.md`   | The experiments in order, with their status and what each decides                                                         |
+| `compiler-changes.md`   | The compiler proposals this repository has handled, recorded when the pin moves                                           |
 
 ## Baselines
 
-- Compiler: `typeshade/typeshade` `main` at `9dbc2985` (2026-11-02), which holds proposals 0108,
-  0110 and 0116 as `accepted` and 0109 as `implemented` (pull request #890). `docs/compiler-asks.md`
-  records each proposal's status. No pin exists here yet; the first pin is set with the first
-  code.
+- Compiler: `typeshade/typeshade` `main` at `9822490f` (2026-11-02), which holds proposals 0109,
+  0110 and 0116 as `implemented` and 0108 as `accepted`, with items 1 to 3 implemented and item 4
+  (Amendment 1) in progress. `docs/compiler-asks.md` records each proposal's status. The first
+  pin is set with the first code (pull request #5).
 - This repository: the head of `main` is the baseline. A pull request names the commit it starts
   from; the merged pull requests (#1, the design; #2, the icon) are its history.
 

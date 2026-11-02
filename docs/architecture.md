@@ -10,22 +10,22 @@ document says which.
 
 ## 1. What the engine stands on
 
-| Compiler piece                                              | Where                             | What the engine does with it                                                                                                                   |
-| ----------------------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| An exported class is a host value: `new`, methods, instances | §64, Rules 8.20, 8.21 (0109)     | A unit is a class. The host builds it with `new`, tests it on the CPU tier, and passes instances to kernels.                                   |
-| A class is its struct and its functions everywhere           | Rule 8.29, the class arm (0110)  | The same `tick` gives the same bits in a compute entry, a kernel loop, the host class and the oracle. The engine adds no second implementation. |
-| Kernel functions and the loop proof R1 to R6                 | §65, Rule 8.22                    | Every kernel is a loop and nothing else. `voices[v].tick()` is a write at `v` (Rule 8.29). `out[v * B + n]` over `n < B` is a write R3 admits. |
-| `fuse`: a plan of recorded calls, facts F1 to F7             | §71                               | One block is one plan. Chains of per-frame kernels become one dispatch. The report is `explain`.                                               |
-| Scratch arrays of a scope                                    | §71                               | Intermediates nobody reads cost no buffer: a fused group holds them as locals.                                                                 |
-| A reduction at the end of a scope                            | §65, §71                          | Meters (`peak`, `rms`) fold in the tree order, the same bits on every tier.                                                                   |
-| `gpuTime` per group, `chunk` timing                          | §71 (0066, 0074)                  | `explain` reports GPU time per group and milliseconds per block.                                                                               |
-| Residents, a device owner, the pool, the queue               | §65, §69, Rule 11.8               | Banks and buses live on the device between blocks. The host reads only at the transport.                                                       |
-| `Map<K, V>` and `Set<K>` as kernel parameters                | §74 (0080)                        | Note events of a block, keyed by frame.                                                                                                        |
-| `push`, device-resident counts, indirect dispatch            | 0078, 0094, 0075                  | Grains and other device-side schedules.                                                                                                        |
-| `Record` over a key type, optional values, defaults          | §75, §76, §14                     | Parameter objects that read as TypeScript.                                                                                                     |
-| The common modules                                           | §72, §73 (0072, 0076)             | Scans, fills, hashes and noise without writing them again.                                                                                     |
-| The host view: JSDoc, the type family                        | §64 (0108, 0116)                  | The editor shows the author's words and the shader's names.                                                                                    |
-| The determinism report, `f64`                                | §38, §39                          | What may differ by driver is listed; coefficient math that needs a double has one.                                                             |
+| Compiler piece                                               | Where                           | What the engine does with it                                                                                                                    |
+| ------------------------------------------------------------ | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| An exported class is a host value: `new`, methods, instances | §64, Rules 8.20, 8.21 (0109)    | A unit is a class. The host builds it with `new`, tests it on the CPU tier, and passes instances to kernels.                                    |
+| A class is its struct and its functions everywhere           | Rule 8.29, the class arm (0110) | The same `tick` gives the same bits in a compute entry, a kernel loop, the host class and the oracle. The engine adds no second implementation. |
+| Kernel functions and the loop proof R1 to R6                 | §65, Rule 8.22                  | Every kernel is a loop and nothing else. `voices[v].tick()` is a write at `v` (Rule 8.29). `out[v * B + n]` over `n < B` is a write R3 admits.  |
+| `fuse`: a plan of recorded calls, facts F1 to F7             | §71                             | One block is one plan. Chains of per-frame kernels become one dispatch. The report is `explain`.                                                |
+| Scratch arrays of a scope                                    | §71                             | Intermediates nobody reads cost no buffer: a fused group holds them as locals.                                                                  |
+| A reduction at the end of a scope                            | §65, §71                        | Meters (`peak`, `rms`) fold in the tree order, the same bits on every tier.                                                                     |
+| `gpuTime` per group, `chunk` timing                          | §71 (0066, 0074)                | `explain` reports GPU time per group and milliseconds per block.                                                                                |
+| Residents, a device owner, the pool, the queue               | §65, §69, Rule 11.8             | Banks and buses live on the device between blocks. The host reads only at the transport.                                                        |
+| `Map<K, V>` and `Set<K>` as kernel parameters                | §74 (0080)                      | Note events of a block, keyed by frame.                                                                                                         |
+| `push`, device-resident counts, indirect dispatch            | 0078, 0094, 0075                | Grains and other device-side schedules.                                                                                                         |
+| `Record` over a key type, optional values, defaults          | §75, §76, §14                   | Parameter objects that read as TypeScript.                                                                                                      |
+| The common modules                                           | §72, §73 (0072, 0076)           | Scans, fills, hashes and noise without writing them again.                                                                                      |
+| The host view: JSDoc, the type family                        | §64 (0108, 0116)                | The editor shows the author's words and the shader's names.                                                                                     |
+| The determinism report, `f64`                                | §38, §39                        | What may differ by driver is listed; coefficient math that needs a double has one.                                                              |
 
 ## 2. The four loop shapes
 
@@ -33,12 +33,12 @@ A kernel's loop has a range and a write pattern. The planner fuses calls whose l
 same range (F2) and that read and write at the loop's counter (F3). The engine therefore writes
 every kernel in one of four shapes, and knows before it runs which ones fuse.
 
-| Shape | The loop runs over | The body                                                 | Fuses with                                                                 |
-| ----- | ------------------ | -------------------------------------------------------- | -------------------------------------------------------------------------- |
-| V     | the lanes (voices, channels, grains) | `tick` of the lane's unit over the block, written to `out[v * B + n]` | another shape V call over the same lanes that reads and writes at `v` only |
-| F     | the frames of a block | one frame of a bus: `out[n] = f(a[n], b[n], p)`        | the shape F calls before it, as long as F1 to F5 hold: one dispatch per chain |
-| R     | the frames, folding | a meter: `s = max(s, abs(x[n]))`, `s += x[n] * x[n]`    | the shape F calls before it, as the last call of the scope (F6)            |
-| G     | the frames, gathering | a read at another index: a mixdown over lanes, a delay line, an FFT entry | nothing; it stands in a group of its own, and the report says why          |
+| Shape | The loop runs over                   | The body                                                                  | Fuses with                                                                    |
+| ----- | ------------------------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| V     | the lanes (voices, channels, grains) | `tick` of the lane's unit over the block, written to `out[v * B + n]`     | another shape V call over the same lanes that reads and writes at `v` only    |
+| F     | the frames of a block                | one frame of a bus: `out[n] = f(a[n], b[n], p)`                           | the shape F calls before it, as long as F1 to F5 hold: one dispatch per chain |
+| R     | the frames, folding                  | a meter: `s = max(s, abs(x[n]))`, `s += x[n] * x[n]`                      | the shape F calls before it, as the last call of the scope (F6)               |
+| G     | the frames, gathering                | a read at another index: a mixdown over lanes, a delay line, an FFT entry | nothing; it stands in a group of its own, and the report says why             |
 
 Facts behind the table. A nested loop of `n` below `B` writing `out[v * B + n]` is the form R3
 admits, with `B` loop-invariant; a kernel parameter is. A method call on an element is a write
@@ -58,15 +58,15 @@ this order, and the planner groups them:
 
 ```ts
 const report = await dev.fuse((scope) => {
-  const lanes = scope.scratch(voices.length * B);     // never read by the host
-  synth(lanes, voices, B);                             // V: the bank's dispatch
-  mixdown(bus, lanes, voices.length, B);               // G: a gather over lanes, apart
+  const lanes = scope.scratch(voices.length * B); // never read by the host
+  synth(lanes, voices, B); // V: the bank's dispatch
+  mixdown(bus, lanes, voices.length, B); // G: a gather over lanes, apart
   const a = scope.scratch(B);
   const b = scope.scratch(B);
-  lowpassBlock(a, bus, coeffs);                        // F: the chain starts
-  drive(b, a, amount);                                 // F: joins the group (F1 to F5)
-  gain(master, b, level);                              // F: one dispatch for the three
-  peak = maxAbs(master);                               // R: folds inside the chain's dispatch
+  lowpassBlock(a, bus, coeffs); // F: the chain starts
+  drive(b, a, amount); // F: joins the group (F1 to F5)
+  gain(master, b, level); // F: one dispatch for the three
+  peak = maxAbs(master); // R: folds inside the chain's dispatch
 });
 ```
 
@@ -181,7 +181,10 @@ the last block, group by group, with the `why` of each unfused group in the deve
   committed and checked with `tshc sync --check`. A developer's kernels compile the same way in
   their project.
 
-## 11. Decisions for the owner
+## 11. Decisions
+
+**Decided 2026-11-02.** The owner approved D1 to D6 as proposed ("승인", pull request #4). Each
+item keeps its alternative for the record; the proposal in each is the decision.
 
 - **D1. Lane buffer layout.** Flat `out[v * B + n]` (the proposal; R3 admits it), or one struct
   per lane with a fixed array of frames. Experiment 4 confirms the flat form lowers with a runtime
