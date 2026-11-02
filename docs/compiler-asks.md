@@ -123,8 +123,16 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   transform of the same block reads its subnormal tail as 0 there, and is off by up to 249 ULPs at
   its peak (relative RMS error about 2.5e-5). At full scale no output holds a subnormal: an `f32`
   transform's error floor is about 2^-24 of its peak, so only a block that is all below about 2^-102
-  gives subnormals. The determinism report names no flush. Experiment 5 measures a reverb's tail. Compiler issue #968 (a
-  determinism row for the flush) records the ask.
+  gives subnormals. The determinism report names no flush. Experiment 5 measured a reverb's tail,
+  on the container only (`docs/records/05-convolution-container.md`, 2026-11-02, reference numbers;
+  the owner's devices pending): at full scale the last second of a 10-second convolution's tail
+  holds no subnormal on any arm, and the oracle, WebGPU and WebGL2 give the same bits. For an
+  impulse at 2^-112, whose tail lies across 2^-126, the oracle holds 4,216 subnormal values in the
+  last second, as the reference does, and both GPU tiers none: they hold 0 where the oracle holds a
+  subnormal in 4,209 (WebGPU) and 4,213 (WebGL2) values, and differ from the oracle in 48,000 and
+  47,997 of the 48,000 values (relative RMS of the difference 2.46e-2). Inference: a convolution
+  reverb at audible levels needs no anti-denormal; a recursive filter's state is where the engine
+  meets subnormals. Compiler issue #968 (a determinism row for the flush) records the ask.
 
 ### F. A worklet build of the CPU tier
 
@@ -182,7 +190,17 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   change 0092. Compiler issues #966 (WebGL2 does
   not bind the `_fp64` guard of an `f64` entry, so variant C never returns), #970 (an `f64` across
   a barrier on WebGL2) and #967 (an `f64` module constant, and the TS8022 that follows its
-  refusal) record variant C's findings.
+  refusal) record variant C's findings. Experiment 5, on the container only
+  (`docs/records/05-convolution-container.md`, 2026-11-02, reference numbers), adds a 2,048-point
+  entry in workgroup memory, 16 KiB, with the host's table, and runs it on a 10-second impulse
+  response's 469 partitions and twice a block: the oracle, WebGPU and WebGL2 give the same bits for
+  the 1,921,024 values of the partitions' spectra (3.09 ULPs at a transform's peak at most, relative
+  RMS error 1.21e-7), and for the convolution's full-scale tail. On WebGPU on SwiftShader the two
+  transforms take 4.0 and 4.7 ms of a block's 31.0 ms of GPU time at the median, the
+  multiply-accumulate 18.8 ms. On WebGL2 the report counts 146 draws a block, the kernel functions on
+  the CPU tier. The host's CPU tier refuses the entry, as in experiment 3. Inference: the common
+  module would also carry a real-input form, which halves a convolution's spectra and delay line
+  (14.66 MiB at these sizes).
 
 ### H. GPU time
 
