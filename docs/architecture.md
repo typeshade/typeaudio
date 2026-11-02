@@ -33,23 +33,28 @@ A kernel's loop has a range and a write pattern. The planner fuses calls whose l
 same range (F2) and that read and write at the loop's counter (F3). The engine therefore writes
 every kernel in one of four shapes, and knows before it runs which ones fuse.
 
-| Shape | The loop runs over                   | The body                                                                  | Fuses with                                                                    |
-| ----- | ------------------------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| V     | the lanes (voices, channels, grains) | `tick` of the lane's unit over the block, written to `out[v * B + n]`     | another shape V call over the same lanes that reads and writes at `v` only    |
-| F     | the frames of a block                | one frame of a bus: `out[n] = f(a[n], b[n], p)`                           | the shape F calls before it, as long as F1 to F5 hold: one dispatch per chain |
-| R     | the frames, folding                  | a meter: `s = max(s, abs(x[n]))`, `s += x[n] * x[n]`                      | the shape F calls before it, as the last call of the scope (F6)               |
-| G     | the frames, gathering                | a read at another index: a mixdown over lanes, a delay line, an FFT entry | nothing; it stands in a group of its own, and the report says why             |
+| Shape | The loop runs over                   | The body                                                                  | Fuses with                                                                                                                                                                                                                                              |
+| ----- | ------------------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| V     | the lanes (voices, channels, grains) | `tick` of the lane's unit over the block, written to `out[v * B + n]`     | another shape V call over the same lanes that reads and writes at `v` only                                                                                                                                                                              |
+| F     | the frames of a block                | one frame of a bus: `out[n] = f(a[n], b[n], p)`                           | the shape F calls before it, as long as F1 to F5 hold: one dispatch per chain                                                                                                                                                                           |
+| R     | the frames, folding                  | a meter: `s = max(s, abs(x[n]))`, `s += x[n] * x[n]`                      | the shape F calls before it, as the last call of the scope (F6)                                                                                                                                                                                         |
+| G     | the frames, gathering                | a read at another index: a mixdown over lanes, a delay line, an FFT entry | the shape F calls after it, when every array it gathers from was written by an earlier group or by the host (F3 binds only the arrays a call of the group writes); a gather from an array the group itself writes stands apart, and the report says why |
 
 Facts behind the table. A nested loop of `n` below `B` writing `out[v * B + n]` is the form R3
 admits, with `B` loop-invariant; a kernel parameter is. A method call on an element is a write
 at that element's index (Rule 8.29). A fused group holds one loop per call, so a shape V kernel
 with its nested block loop is one call with one top-level loop (F1). A call that writes an array
 another call of the group reads or writes starts a new group (F4), so the engine never processes
-in place: a chain writes fresh scratch arrays, and the planner turns them into locals.
+in place: a chain writes fresh scratch arrays, and the planner turns them into locals. F3 binds
+only the arrays a call of the group writes, so a gather from an array written by an earlier group
+or by the host joins the group that follows it.
 
-Inference, confirmed by experiment 4: a shape V kernel with a runtime `B` lowers and runs as one
-dispatch. The fallback, if the proof refuses it, is one struct per lane holding a fixed array of
-frames.
+Confirmed by the first code (pull request #5, `src/kernels/synth.shade.ts`): a shape V kernel
+with a runtime `B` lowers and runs as one dispatch on WebGPU and on the CPU tier. Observed in the
+same code (`docs/records/01-round-trip-container.md`, observation 8): on WebGPU the shape G
+`mixdown` heads the fused group with the shape F chain and the meter, because `lanes` was written
+by the synth group, and the one group boundary is between `synth` and `mixdown` (F2: 64 and 4096
+iterations).
 
 ## 3. One block is one plan
 
@@ -60,7 +65,7 @@ this order, and the planner groups them:
 const report = await dev.fuse((scope) => {
   const lanes = scope.scratch(voices.length * B); // never read by the host
   synth(lanes, voices, B); // V: the bank's dispatch
-  mixdown(bus, lanes, voices.length, B); // G: a gather over lanes, apart
+  mixdown(bus, lanes, voices.length, B); // G: heads the chain below; lanes came from the group before
   const a = scope.scratch(B);
   const b = scope.scratch(B);
   lowpassBlock(a, bus, coeffs); // F: the chain starts
@@ -85,9 +90,8 @@ per block are the arguments: the scalar parameters, the automation arrays and th
 ```
 block 1024 frames (21.3 ms), lookahead 3 blocks, webgpu
   synth            1 dispatch   64 lanes     0.21 ms gpu
-  mixdown          1 dispatch   gather over lanes
-  lowpass+drive+gain+peak   1 dispatch   fused (F1-F6), scratch a, b as locals
-  3 dispatches, 1 submission, 0.37 ms gpu, 0.9 ms host per block
+  mixdown+lowpass+drive+gain+peak   1 dispatch   fused (F1-F6), scratch a, b as locals
+  2 dispatches, 1 submission, 0.37 ms gpu, 0.9 ms host per block
 ```
 
 ## 4. Units, banks and state
@@ -121,8 +125,9 @@ of ten effects costs one dispatch and no buffer. A bus the host reads (the maste
 §65), reused block after block.
 
 A delay line, a reverb's feedback and a lookahead limiter keep their state in Residents too, and
-their kernels are shape G: they read at `n - d`. They stand in their own groups, and `explain`
-says so.
+their kernels are shape G: they read at `n - d`. A gather from a state Resident written in an
+earlier block or an earlier group joins the chain after it; one from an array the group itself
+writes stands apart, and `explain` says so.
 
 ## 6. Time and events
 
