@@ -54,7 +54,10 @@ export type EntryName = (typeof ENTRIES)[Size][Variant];
 export const inputOf = (n: Size, direction: Direction): Float32Array =>
   direction === 'forward' ? batch(n) : Float32Array.from(fft64(batch(n), n, 'forward'));
 
-/** The inputs of the probes: subnormals for the factor 2^20, normal values for 2^-20, and a short array to wrap. */
+/**
+ * The inputs of the probes: six subnormals for the factor 2^20, four of whose products are normal;
+ * six normal values for 2^-20, five of whose products are subnormal; and a short array to wrap.
+ */
 export const PROBE_INPUTS = {
   subnormal: [2 ** -149, 2 ** -140, 2 ** -130, 2 ** -127, -(2 ** -135), 3 * 2 ** -149],
   normal: [2 ** -110, 2 ** -112, 2 ** -115, -(2 ** -108), 1.5 * 2 ** -110, 2 ** -105],

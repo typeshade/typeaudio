@@ -13,9 +13,10 @@ declare const xs: storage<array<f32>>;
 declare const ys: storage<array<f32>, "read_write">;
 
 /**
- * Subnormals (docs/compiler-asks.md, E): `ys[i] = xs[i] * factor`. A subnormal input times 2^20
- * is a normal result, which is 0 only where the tier flushes a subnormal it reads; a normal input
- * times 2^-20 is a subnormal result, which is 0 only where the tier flushes a subnormal it writes.
+ * Subnormals (docs/compiler-asks.md, E): `ys[i] = xs[i] * factor`. A subnormal input of 2^-146 or
+ * more times 2^20 is a normal result, which is 0 only where the tier flushes a subnormal it reads;
+ * a normal input below 2^-106 times 2^-20 is a subnormal result, which is 0 only where the tier
+ * flushes a subnormal it writes.
  */
 export const scaleProbe = compute([64], function scaleProbe(
   gid: builtin<"global_invocation_id", vec3u>,

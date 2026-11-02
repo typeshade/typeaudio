@@ -15,11 +15,12 @@ graph, the transports, and the unit and channel types. The design is `docs/visio
 ## Status
 
 First code (pull request #5). The units, the kernels in the four loop shapes, a bank, `render` and
-`explain` exist, with unit tests on the CPU tier and a browser check on WebGPU. Experiment 1's
-harness is ready, and its container run is recorded as reference numbers; its device runs are
-pending. The code builds on decisions D1 to D6 of `docs/architecture.md`, which the owner approved
-on 2026-11-02: D1, D2 and the block of D5 are built; D3, D4, the lookahead of D5 and the device the
-engine makes (D6) wait for later pull requests. Nothing here is published to npm.
+`explain` exist, with unit tests on the CPU tier and a browser check on WebGPU. The harnesses of
+experiments 1 and 3 are ready, and their container runs are recorded as reference numbers; their
+device runs are pending. The code builds on decisions D1 to D6 of `docs/architecture.md`, which
+the owner approved on 2026-11-02: D1, D2 and the block of D5 are built; D3, D4, the lookahead of D5
+and the device the engine makes (D6) wait for later pull requests. Nothing here is published to
+npm.
 
 ## The design in one screen
 
@@ -60,6 +61,7 @@ engine makes (D6) wait for later pull requests. Nothing here is published to npm
 | `src/bank.ts`, `src/render.ts`, `src/explain.ts` | The host API, exported by `src/index.ts`: `bank`, `plan`, `render` (one `fuse` plan per block) and `explain`                           |
 | `test/`                                          | The unit tests and their plain-JavaScript reference (`test/reference.ts`); `test/browser/`, the browser check                          |
 | `experiments/01-round-trip/`                     | Experiment 1: its kernel, its harness and its runner                                                                                   |
+| `experiments/03-fft/`                            | Experiment 3: the FFT entry in three twiddle variants, two probes, the `f64` reference, the harness and its runner                     |
 | `scripts/`                                       | The Vite build and the headless Chromium that the browser check and the experiments share                                              |
 
 ## Baselines
@@ -79,12 +81,16 @@ engine makes (D6) wait for later pull requests. Nothing here is published to npm
 - `bun install` installs the pinned compiler and writes the host views (`prepare`: `tshc sync`).
 - `bun run check`: the host views are up to date (`tshc sync --check`), the shader modules check
   as the editor checks them (`tshc check src experiments`), and both TypeScript projects check
-  (`tsconfig.json`, the host code; `tsconfig.node.json`, the scripts).
+  (`tsconfig.json`, the host code; `tsconfig.node.json`, the files that run on Node's API).
 - `bun run test`: the unit tests, Vitest on the CPU tier of the compiler, with no device.
+  `test/fft.test.ts` runs experiment 3's entry on the compiler's oracle.
 - `bun run test:gpu`: the browser check, `render` on WebGPU against the CPU tier in headless
   Chromium on SwiftShader. `TYPESHADE_CHROMIUM` names the Chromium binary. CI does not run it.
 - `bun run exp:01`: experiment 1 on the CPU tier in Node, and on WebGPU and WebGL2 in headless
   Chromium. It writes the result as JSON (`--out`); its records are in `docs/records/`.
+- `bun run exp:03`: experiment 3 on the CPU tier in Node, on the compiler's oracle in Bun, and on
+  WebGPU and WebGL2 in headless Chromium. It writes the result as JSON (`--out`) and the outputs'
+  bits (`--raw`); its records are in `docs/records/`.
 
 CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
 and `bun run test`. Every claim of a result names the command, the date, the commit and the

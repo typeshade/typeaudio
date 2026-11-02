@@ -72,14 +72,25 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 ### C. The precision of the transcendentals
 
-- Pressure: a GPU's `sin`, `cos`, `exp` and `pow` differ by driver within 32 ULP (§38). An
-  oscillator's phase and a filter's coefficient need a bound the engine can state.
+- Pressure: a GPU's `sin`, `cos`, `exp` and `pow` differ by driver (§38): `sin` and `cos` by up to
+  2^-11 absolute for x in [-π, π], which is about 8,000 ULPs of a value near 1. An oscillator's
+  phase, a filter's coefficient and an FFT's twiddles need a bound the engine can state.
 - Compiler: the determinism report (§38); a common module with bounded-error forms (Rule 11.20,
   as `typeshade/algorithms` in change 0072).
 - Workaround: a shader package of TypeAudio with polynomial `sin` and `cos` on a wrapped phase,
   held to the oracle.
 - Measured by: experiment 3 (the FFT's twiddles) and the oscillator rows of experiment 4.
-- Status: candidate.
+- Status: measured for the FFT's twiddles, on the container only
+  (`docs/records/03-fft-container.md`, 2026-11-02, reference numbers; the owner's devices pending).
+  On WebGPU and WebGL2 on SwiftShader, twiddles from `sin` and `cos` of an `f32` angle are off by up
+  to 1.89e-4 (2^-12.4): inside the report's 2^-11, and about 3,200 ULPs of a value near 1. The
+  transform is then off by up to 3,060 to 11,043 ULPs at its peak (relative RMS error 2.44e-4 to
+  3.59e-4). With twiddles from a table computed in doubles on the host, the oracle, WebGPU and
+  WebGL2 give the same bits, off by up to 1.31 to 5.14 ULPs at the peak (relative RMS error 1.14e-7
+  to 1.34e-7). Twiddles from `sin` and `cos` of an emulated double (§39) reproduce the table's on
+  WebGPU, except two near 0, and do not run on WebGL2 at the pin (the record's section "Refusals,
+  and calls that did not return"). The workaround for the FFT is the table; the oscillator rows of
+  experiment 4 stay to be measured.
 
 ### D. `f64` transcendentals on the device
 
@@ -100,7 +111,15 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   oracle too.
 - Workaround: the classic anti-denormal in each unit: a tiny DC offset, or a floor on the state.
 - Measured by: experiments 3 and 5, on their tails, across three tiers.
-- Status: candidate.
+- Status: measured by experiment 3, on the container only (`docs/records/03-fft-container.md`,
+  2026-11-02, reference numbers; the owner's devices pending). SwiftShader flushes subnormals on
+  WebGPU and on WebGL2, where it reads them and where it writes them; the oracle and the CPU tier
+  keep them. In the inverse transform of a block at 2^-110, the oracle holds 1,642 to 6,651
+  subnormal values and both GPU tiers none: they flush 1,459 to 6,639 of them to 0. The forward
+  transform of the same block reads its subnormal tail as 0 there, and is off by up to 249 ULPs at
+  its peak (relative RMS error about 2.5e-5). At full scale no output holds a subnormal: an `f32`
+  transform's error floor is about 2^-24 of its peak, so only a block that is all below about 2^-102
+  gives subnormals. The determinism report names no flush. Experiment 5 measures a reverb's tail.
 
 ### F. A worklet build of the CPU tier
 
@@ -121,7 +140,17 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   precedent).
 - Workaround: the FFT entry lives in this repository's layer 1.
 - Measured by: experiments 3 and 5.
-- Status: candidate. The decision follows experiment 3.
+- Status: measured by experiment 3, on the container only (`docs/records/03-fft-container.md`,
+  2026-11-02, reference numbers; the owner's devices pending). The entry,
+  `experiments/03-fft/fft.shade.ts`, runs on WebGPU and on WebGL2, and with the host's twiddle table
+  it gives the oracle's bits for every full-scale input at 1,024 and 4,096 points, forward and
+  inverse. The host's CPU tier refuses it at the pin: change 0092 is accepted and not implemented,
+  so the CPU answer is the oracle's `dispatch`, 1.6 to 8.3 seconds a call. 4,096 complex points need
+  32 KiB of workgroup memory, over WebGPU's 16 KiB, so the 4,096-point entry works in storage
+  memory. Inference, for the owner's decision: the entry lives in layer 1 here first, as the
+  workaround, and the issue for `typeshade/fft` follows the device runs. It would carry the twiddles
+  from a table or an emulated double, a storage form past workgroup memory, and the CPU tier of
+  change 0092.
 
 ### H. GPU time
 
@@ -151,7 +180,11 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   tier) and issue #900 (the WebGL2 pass program drops the length declaration inside an index).
 - Workaround: the length is a `u32` parameter, and the position stays inside the table.
 - Measured by: the WebGL2 arm of experiment 3.
-- Status: issues #689 and #900 open. #900 is a bug fix that needs no proposal.
+- Status: measured at the pin (`docs/records/03-fft-container.md`, 2026-11-02). The probe
+  `ys[i] = xs[i % xs.length]` runs on WebGPU and on the CPU tier, and on WebGL2 its pass program
+  does not compile: `'_phx_len_xs' : undeclared identifier`. The FFT entries read no length, since
+  their sizes are module constants, and run on WebGL2. #900 is fixed on the compiler's `main` by
+  #939 (`b3bf0af8`), after the pin; the workaround stays until the pin moves past it. #689 is open.
 
 ### K. The WebAssembly tier
 
@@ -256,7 +289,7 @@ code raised (pull request #5, asks M, N, P and Q), and the earlier issues the as
 
 | Issue | Title, shortened                                                                 | Bears on                                         | Status                                 |
 | ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------- |
-| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index | J                                                | Open; a bug fix that needs no proposal |
+| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index | J                                                | Fixed on `main` by #939, after the pin |
 | #901  | The commit-msg hook reads a merge against its first parent                       | The implementing pull requests, not the engine   | Open                                   |
 | #908  | TS8070 names a static function by its emitted name                               | The refusal's wording for a unit's static helper | Open; a bug fix that needs no proposal |
 | #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier            | J                                                | Open                                   |
