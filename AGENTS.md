@@ -51,7 +51,8 @@ Design phase. The repository holds documents and no library code. The first expe
   0110 and 0116 as `accepted` and 0109 as `implemented` (pull request #890). `docs/compiler-asks.md`
   records each proposal's status. No pin exists here yet; the first pin is set with the first
   code.
-- This repository: `main` at the initial commit.
+- This repository: the head of `main` is the baseline. A pull request names the commit it starts
+  from; the merged pull requests (#1, the design; #2, the icon) are its history.
 
 ## Checks
 
