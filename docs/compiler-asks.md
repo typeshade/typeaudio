@@ -21,20 +21,21 @@ its letter.
 
 ## 1. The proposals this engine rests on
 
-Four proposals were drafted and accepted on 2026-11-02, in the session that wrote the design.
-They shape the host face a unit shows the developer (`docs/vision.md`, section 8, "The host
-face").
+Five proposals were drafted and accepted on 2026-11-02, in the session that wrote the design.
+Four shape the host face a unit shows the developer (`docs/vision.md`, section 8, "The host
+face"), and one the fuse report that `explain` reads.
 
 | Id   | Proposal                            | What it gives TypeAudio                                                                                                                                                                                                                | Status on 2026-11-02                                                                                                                                                                                                                                                                                                                                         |
 | ---- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0108 | `changes/0108-host-view-jsdoc.md`   | The host view carries the author's JSDoc verbatim, so a unit's documentation reaches the editor through the host face.                                                                                                                 | Items 1 to 3 implemented (#887, `77ced44`, 2026-11-02); the inherited-field deviation is closed by its record. Amendment 1 accepted (#915, `bb82036b`): item 4, the members of an exported class carry their comments, decision D4; its implementation is in progress (#937).                                                                                |
-| 0109 | `changes/0109-host-classes.md`      | An exported class is a value of the host face: `new` and the methods run on the CPU tier, an instance is the struct's host value, a struct result is an instance. The engine's `new OnePole(0.1)` on the host rests on it.             | Implemented (#890, squash commit `9dbc298`, 2026-11-02). Two deviations open in the proposal's record: the view's flat declaration where TypeScript refuses an override; a mixin's members untested.                                                                                                                                                         |
+| 0108 | `changes/0108-host-view-jsdoc.md`   | The host view carries the author's JSDoc verbatim, so a unit's documentation reaches the editor through the host face.                                                                                                                 | Implemented: items 1 to 3 by #887 (`77ced44`, 2026-11-02), the inherited-field deviation closed by its record; Amendment 1 accepted (#915, `bb82036b`) and item 4, the members of an exported class carry their comments (decision D4), implemented by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, approved 2026-11-02, merge pending) drops the static field from item 4's list, since the view declares none.                                                                                |
+| 0109 | `changes/0109-host-classes.md`      | An exported class is a value of the host face: `new` and the methods run on the CPU tier, an instance is the struct's host value, a struct result is an instance. The engine's `new OnePole(0.1)` on the host rests on it.             | Implemented (#890, squash commit `9dbc298`, 2026-11-02). Two deviations open in the proposal's record: the view's flat declaration where TypeScript refuses an override; a mixin's members untested. Amendment 1 approved (#960, `376f8927`, 2026-11-02, decision D5): item 6, a `Resident` made from instances keeps their classes and `read()` returns instances (ask N); its implementation is not started.                                                                                                                                                         |
 | 0110 | `changes/0110-class-consistency.md` | Rule 8.29: a class is its struct and its functions in every place a struct or a function can be. The class arm of the differential gate holds a method to one result in a compute entry, a kernel loop, the host class and the oracle. | Implemented (#883, `bef6574`, 2026-11-02), with the host leg of the class arm on the host class of 0109; the deferral deviation is closed by its record.                                                                                                                                                                                                     |
-| 0116 | `changes/0116-host-type-family.md`  | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                       | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, a matrix carries its name, and item 4 names its exceptions. |
-
+| 0116 | `changes/0116-host-type-family.md`  | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                       | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, \1| 0118 | `changes/0118-fuse-group-tier.md` | Each group of a `FuseReport` carries the tier it ran on, and a group below its plan's tier says why in its `why`, so `explain` reads where each node ran instead of inferring it (ask P). | Accepted (#959, `6c1799ec`, 2026-11-02) with D1 to D3 as drafted: `tier` on every group; the reason in `why`; the call layer's own text. Its implementation is not started. |\n
 At the first compiler pin, `145666068ca5d6ecfba32aa0ea4289cf0fc3b762` (pull request #5), the
 proposals' `status` lines read: 0108 `accepted`, 0109 `implemented`, 0110 `implemented`, 0116
-`accepted`. The implementation of 0116 (#918, `9822490f`) came after the pin.
+`accepted`. The implementation of 0116 (#918, `9822490f`) came after the pin. So did 0108's item 4 (#937,
+`f4f4b7d2`), the fixes #953, #962 and #964, and the acceptance of 0118 (#959) and of 0109's
+Amendment 1 (#960).
 
 ## 2. The asks
 
@@ -90,9 +91,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   to 1.34e-7). Twiddles from `sin` and `cos` of an emulated double (§39) reproduce the table's on
   WebGPU, except two near 0, and do not run on WebGL2 at the pin (the record's section "Refusals,
   and calls that did not return"). The workaround for the FFT is the table; the oscillator rows of
-  experiment 4 stay to be measured.
-
-### D. `f64` transcendentals on the device
+  experiment 4 stay to be measured\1 Compiler issue #969 (a\n  bounded-error `sin`/`cos` for the device) records the ask.\n\n### D. `f64` transcendentals on the device
 
 - Pressure: the emulated double (§39) has `sin`, `cos`, `sqrt`, `floor`, `fract`, `mix` and the
   comparisons, and no `exp`, `tan`, `log`, `pow` or `atan2`. Coefficient design, a biquad from a
@@ -119,9 +118,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   transform of the same block reads its subnormal tail as 0 there, and is off by up to 249 ULPs at
   its peak (relative RMS error about 2.5e-5). At full scale no output holds a subnormal: an `f32`
   transform's error floor is about 2^-24 of its peak, so only a block that is all below about 2^-102
-  gives subnormals. The determinism report names no flush. Experiment 5 measures a reverb's tail.
-
-### F. A worklet build of the CPU tier
+  gives subnormals. The determinism report names no flush. Experiment 5 measures a reverb's tail\1 Compiler issue #968 (a\n  determinism row for the flush) records the ask.\n\n### F. A worklet build of the CPU tier
 
 - Pressure: the `AudioWorkletGlobalScope` has no WebGPU, no dynamic `import()`, no
   `structuredClone` and no `performance`. `process()` hands its output arrays back when it
@@ -174,9 +171,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   memory. Inference, for the owner's decision: the entry lives in layer 1 here first, as the
   workaround, and the issue for `typeshade/fft` follows the device runs. It would carry the twiddles
   from a table or an emulated double, a storage form past workgroup memory, and the CPU tier of
-  change 0092.
-
-### H. GPU time
+  change 0092\1 Compiler issues #966 (WebGL2 does\n  not bind the `_fp64` guard of an `f64` entry, so variant C never returns), #970 (an `f64` across\n  a barrier on WebGL2) and #967 (an `f64` module constant, and the TS8022 that follows its\n  refusal) record variant C's findings.\n\n### H. GPU time
 
 - Pressure: `explain` reports where a block's time goes, per node, as GPU time and not as host
   wall time that includes the queue's wait.
@@ -250,7 +245,10 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   also leaves its local unbound, and each later use adds a TS8022 (Rule 12.4).
 - Workaround: a non-generic `static at(f, sr)` on each concrete class (`src/units/oscillator.shade.ts`).
 - Measured by: `tshc check` at the pin `14566606`. No device applies.
-- Status: issue #944. The workaround stays until the pin moves past the fix.
+- Status: fixed on the compiler's `main` by #962 (squash commit `20759ec9`, 2026-11-02): `new
+  this()` in a static of an abstract class builds each class that extends it, and a call through
+  the abstract class is refused with TS8035 on the call. The workaround stays until the pin moves
+  past it.
 
 ### N. A `Resident` of class instances reads back as objects of their fields
 
@@ -262,7 +260,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   its type could say the fields.
 - Workaround: `Bank.read()`, typed as `State<T>[]`, the fields without the methods (`src/bank.ts`).
 - Measured by: `test/render.test.ts`, on the CPU tier.
-- Status: issue #945. The workaround stays until the pin moves past the fix.
+- Status: issue #945; proposal 0109, Amendment 1 (#960, `376f8927`, 2026-11-02, decision D5): a
+  `Resident` keeps the classes of the value it was given, and `read()` returns instances. Its
+  implementation is not started. The workaround stays until the pin moves past it.
 
 ### O. A composed unit keeps its class on the host only in its own file
 
@@ -287,7 +287,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: `explain` says "on WebGL2 or the CPU tier" for such a group (`src/explain.ts`).
 - Measured by: `docs/records/01-round-trip-container.md`: on WebGL2, `synth` and `peak` fall to the
   CPU tier, and the report does not say so.
-- Status: issue #946. The workaround stays until the pin moves past the fix.
+- Status: issue #946; proposal 0118 accepted (#959, `6c1799ec`, 2026-11-02, D1 to D3): each group
+  carries `tier`, and a group below its plan's tier says why in `why`. Its implementation is not
+  started. The workaround stays until the pin moves past it.
 
 ### Q. A pin that Node loads
 
@@ -312,7 +314,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   comments (its decision D4). Not a new ask.
 - Workaround: none. The comments stay in the `.shade.ts` files until the pin moves past item 4.
 - Measured by: the views `tshc sync` writes at the pin `14566606`.
-- Status: proposal 0108 (accepted): Amendment 1 accepted (#915), item 4 in progress (#937).
+- Status: proposal 0108 implemented: item 4 by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978)
+  drops the static field from item 4's list, approved, merge pending. The comments reach the view
+  when the pin moves past #937.
 
 ### S. The cost of the CPU tier's generated code
 
@@ -327,28 +331,35 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   allocation per call.
 - Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
 - Measured by: experiment 2.
-- Status: candidate. Measured on the container only (`docs/records/02-worklet-container.md`).
+- Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`).
 
 ## 3. Issues raised on the compiler
 
-The issues found while the four proposals were implemented, on 2026-11-02, the issues the first
-code raised (pull request #5, asks M, N, P and Q), and the earlier issues the asks cite.
+The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
+raised (pull request #5, asks M, N, P and Q), the issues experiments 2 and 3 raised (asks S, C and
+E, and the FFT's findings under G), and the earlier issues the asks cite.
 
 | Issue | Title, shortened                                                                 | Bears on                                         | Status                                 |
 | ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------- |
 | #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index | J                                                | Fixed on `main` by #939, after the pin |
-| #901  | The commit-msg hook reads a merge against its first parent                       | The implementing pull requests, not the engine   | Open                                   |
-| #908  | TS8070 names a static function by its emitted name                               | The refusal's wording for a unit's static helper | Open; a bug fix that needs no proposal |
+| #901  | The commit-msg hook reads a merge against its first parent                       | The implementing pull requests, not the engine   | Closed: fixed by #932 and #956         |
+| #908  | TS8070 names a static function by its emitted name                               | The refusal's wording for a unit's static helper | Fixed on `main` by #953 (`a659ae36`)   |
 | #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier            | J                                                | Open                                   |
 | #459  | A WebAssembly tier between WebGL2 and the CPU                                    | K, F                                             | Open; change 0042 draft                |
 | #535  | Reverse-mode `grad` before 1.0                                                   | L                                                | Open; change 0056 accepted             |
 | #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6, if the grain order must be stable  | Open                                   |
 | #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                   |
 | #543  | The cost of many dispatches                                                      | I                                                | Open                                   |
-| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Open                                   |
-| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open                                   |
-| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open                                   |
+| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Fixed on `main` by #962 (`20759ec9`)   |
+| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open; 0109 Amendment 1 approved (#960) |
+| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open; change 0118 accepted (#959)      |
 | #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node  | Q                                                | Open                                   |
+| #961  | The CPU tier allocates an array for the `inout` values of every method call      | S                                                | Open                                   |
+| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns | G (variant C), D                                 | Open                                   |
+| #967  | An `f64` module constant is refused, with a misleading TS8022 after it           | G (variant C), D                                 | Open                                   |
+| #968  | The determinism report has no row for subnormal flushing                         | E                                                | Open                                   |
+| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form      | C                                                | Open                                   |
+| #970  | WebGL2 refuses an `f64` local kept across a barrier                              | G (variant C), D                                 | Open                                   |
 
 ## 4. How a row moves
 
