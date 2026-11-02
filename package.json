@@ -11,10 +11,14 @@
   },
   "scripts": {
     "prepare": "bun --bun tshc sync",
-    "check": "tshc sync --check && tshc check src && tsc -p tsconfig.json",
-    "test": "vitest run"
+    "check": "tshc sync --check && tshc check src experiments && tsc -p tsconfig.json && tsc -p tsconfig.node.json",
+    "test": "vitest run",
+    "test:gpu": "bun test/browser/run.ts",
+    "exp:01": "bun experiments/01-round-trip/run.ts"
   },
   "devDependencies": {
+    "@types/node": "25.6.0",
+    "playwright-core": "1.64.1",
     "typescript": "5.6.3",
     "typeshade": "https://github.com/typeshade/typeshade/archive/145666068ca5d6ecfba32aa0ea4289cf0fc3b762.tar.gz",
     "vite": "7.3.7",
