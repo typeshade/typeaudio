@@ -1,0 +1,16 @@
+{
+  // The files that run on a host with Node's API: the build and browser scripts, the runners of
+  // the experiments, and the Vitest configuration. Everything else is `tsconfig.json`'s.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "experiments/**/run.ts",
+    "experiments/**/node.ts",
+    "test/browser/run.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": ["**/*.shade.ts"]
+}

@@ -12,3 +12,6 @@ __pycache__/
 # Host views `tshc sync` and the Vite plugin write beside a shader module (compiler surface §64).
 *.shade.typeshade.ts
 .vitest/
+# The builds of the experiments and of the browser check.
+experiments/*/out/
+/out/

@@ -3,19 +3,20 @@
 The experiments decide the first implementation. Measurement comes before any proposal
 (`docs/vision.md`, section 11). They run in order, because a later one builds on an earlier one's
 numbers. Each experiment has one question, the decision its answer supports, a method and a
-record. No experiment has run on 2026-11-02.
+record. On 2026-11-02 experiment 1 has a harness and a run on the container of a Claude Code
+session, recorded as reference numbers; no experiment has run on the owner's devices yet.
 
 ## Status
 
-| #   | Experiment                                                    | Decides                                                      | Status      |
-| --- | ------------------------------------------------------------- | ------------------------------------------------------------ | ----------- |
-| 1   | The round trip per block size                                 | The real-time block size and the lookahead; asks H and I     | not started |
-| 2   | The CPU tier inside an AudioWorklet                           | Whether the latency-critical path exists; asks F and K       | not started |
-| 3   | The FFT entry held to the oracle on three tiers               | Where the FFT lives (ask G); asks C, E and J                  | not started |
-| 4   | A 10,000-partial additive render with the fuse report read    | The graph layer's shape and `explain`; asks A, B, D and I    | not started |
-| 5   | A 10-second partitioned convolution                           | Reverb by impulse response in the catalog; asks E and G      | not started |
-| 6   | A granular scheduler on `push` and device-resident counts     | What the device schedules; issue #539                        | not started |
-| 7   | A sound match with function-level `grad`                      | Differentiable audio in the catalog; ask L                   | not started |
+| #   | Experiment                                                 | Decides                                                   | Status                                                                                                 |
+| --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | not started                                                                                            |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | not started                                                                                            |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
+| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | not started                                                                                            |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -28,6 +29,12 @@ The asks are the rows of `docs/compiler-asks.md`.
 - A fenced chunk's cost on a real device is in the compiler's `docs/hardware-notes.md`, row A5:
   at chunks of 4.1 ms the fences cost more than the work. Experiment 1 measures the audio shape
   of the same cost.
+- A lane writes its own block of frames with a runtime block size, and the loop lowers. The
+  compiler reports no TS8070 for `out[v * block + n] = voices[v].tick()` over `n < block`
+  (`src/kernels/synth.shade.ts`, compiler pin `14566606`, pull request #5). The loop runs on
+  WebGPU on SwiftShader and on the CPU tier, at 32 and 64 lanes, and the bank keeps each voice's
+  state between blocks (`bun run test:gpu`, `test/render.test.ts`, record 01). Experiment 4 holds it at 10,000
+  lanes (ask A).
 
 ## The record of a run
 
@@ -61,7 +68,11 @@ measurement. It also shows whether a `Resident` output and `createDevice({ timeB
 5. Repeat with a time budget set.
 6. Write the record per device.
 
-**Status.** Not started.
+**Status.** Harness ready: `experiments/01-round-trip/`, run by `bun run exp:01`. It times the
+four ways of `docs/records/01-round-trip-container.md`, section "The method": steps 2, 4 and 5,
+and the engine's own block. The run on the container of a Claude Code session is recorded there,
+as reference numbers: its CPU tier in Node, and WebGPU and WebGL2 on SwiftShader. The device runs
+are pending: one record per device, `docs/records/01-round-trip-<device>.md`.
 
 ## 2. The CPU tier inside an AudioWorklet
 

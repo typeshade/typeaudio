@@ -1,0 +1,18 @@
+{
+  // The host project (compiler surface §64): an import of `./x.shade.ts` reads the host view
+  // `x.shade.typeshade.ts` that `tshc sync` writes, and the shader sources are not part of this
+  // program. `tshc check` checks them, the way the editor does.
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022", "dom"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "types": [],
+    "moduleSuffixes": [".typeshade", ""]
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts", "experiments/**/*.ts"],
+  "exclude": ["**/*.shade.ts", "experiments/**/run.ts", "experiments/**/node.ts", "test/browser/run.ts"]
+}

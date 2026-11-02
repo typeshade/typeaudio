@@ -32,6 +32,10 @@ face").
 | 0110 | `changes/0110-class-consistency.md` | Rule 8.29: a class is its struct and its functions in every place a struct or a function can be. The class arm of the differential gate holds a method to one result in a compute entry, a kernel loop, the host class and the oracle. | Implemented (#883, `bef6574`, 2026-11-02), with the host leg of the class arm on the host class of 0109; the deferral deviation is closed by its record.                                                                                                                                                                                                     |
 | 0116 | `changes/0116-host-type-family.md`  | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                       | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, a matrix carries its name, and item 4 names its exceptions. |
 
+At the first compiler pin, `145666068ca5d6ecfba32aa0ea4289cf0fc3b762` (pull request #5), the
+proposals' `status` lines read: 0108 `accepted`, 0109 `implemented`, 0110 `implemented`, 0116
+`accepted`. The implementation of 0116 (#918, `9822490f`) came after the pin.
+
 ## 2. The asks
 
 Each row names the pressure, the compiler's place, the workaround this repository writes first,
@@ -47,9 +51,12 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: `out` as an array of structs, one struct with a fixed array of frames per lane, so
   each lane writes one element at its own index.
 - Measured by: experiment 4.
-- Status: to confirm. Surface §65, rule R3, admits a write at `i*W + x` over a nested loop of `x`
-  below a loop-invariant `W`, which is this form; `docs/architecture.md` builds on it, and
-  experiment 4 confirms it with a runtime `block`.
+- Status: confirmed. Surface §65, rule R3, admits a write at `i*W + x` over a nested loop of `x`
+  below a loop-invariant `W`, which is this form, and `docs/architecture.md` builds on it. Observed
+  on 2026-11-02 at the pin `14566606` (pull request #5): `src/kernels/synth.shade.ts:38` lowers
+  with a runtime `block` and no TS8070, and runs on WebGPU on SwiftShader and on the CPU tier, at
+  32 and 64 lanes. This answers experiment 4's first question; experiment 4 holds the form at
+  10,000 lanes.
 
 ### B. A metadata channel from a class to the host
 
@@ -166,10 +173,86 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Status: proposal accepted in the compiler. Its implementation state is read from
   `changes/0056-reverse-mode-grad.md` when experiment 7 starts.
 
+### M. A static builder on an abstract base
+
+- Pressure: a family of units shares one builder on its abstract base,
+  `static at<C extends Oscillator>(this: { new (): C }, f: f32, sr: f32): C`, so `Saw.at(110, sr)`
+  builds a `Saw`. Plain TypeScript accepts it, and refuses only the call on the abstract class
+  itself (TS2684).
+- Compiler: `new this()` in a static member of an abstract class is TS8035 at the declaration
+  ("Oscillator" is abstract, so there is no instance of it to build), with no call on the abstract
+  class (surface §26, Rule 12.7). Where the base declares no abstract member, the refused `new`
+  also leaves its local unbound, and each later use adds a TS8022 (Rule 12.4).
+- Workaround: a non-generic `static at(f, sr)` on each concrete class (`src/units/oscillator.shade.ts`).
+- Measured by: `tshc check` at the pin `14566606`. No device applies.
+- Status: issue #944. The workaround stays until the pin moves past the fix.
+
+### N. A `Resident` of class instances reads back as objects of their fields
+
+- Pressure: a bank is a `Resident` of `Voice` instances. `dev.array(instances)` types it
+  `Resident<Voice[]>`, so `read()` is typed `Promise<Voice[]>`, but it resolves to plain objects of
+  the fields. A call of `tick()` on what `read()` gave is a `TypeError` that `tsc` did not see.
+- Compiler: Rule 8.29 names a `Resident` among the places where a class means one thing; change
+  0109 makes a struct result of a helper an instance of its class. A read could do the same, or
+  its type could say the fields.
+- Workaround: `Bank.read()`, typed as `State<T>[]`, the fields without the methods (`src/bank.ts`).
+- Measured by: `test/render.test.ts`, on the CPU tier.
+- Status: issue #945. The workaround stays until the pin moves past the fix.
+
+### O. A composed unit keeps its class on the host only in its own file
+
+- Pressure: `Voice` composes a `Saw` and a `Lowpass` that other shader files declare. Its host
+  view writes those fields as objects of their fields (`osc: { phase: number; inc: number }`), and
+  the `protected` fields of `Lowpass` are public there. At run time the fields are plain objects,
+  so `voice.osc.tick()` does not exist on the host. A unit class declared in the same file keeps
+  its class: the field is an instance, with its methods and its `protected` fields.
+- Compiler: surface §64, "a struct another file declares is written into it as its host type, so a
+  view never imports another view".
+- Workaround: none needed yet. The host reads a composed unit's state, and calls the voice's own
+  methods.
+- Measured by: `test/units.test.ts` and the views `tshc sync` writes at the pin `14566606`.
+- Status: candidate.
+
+### P. The tier of each group in a fuse report
+
+- Pressure: `explain` says where each node ran. On WebGL2 a call that WebGL2 has no program for
+  falls to the CPU tier, and its group says nothing: a group carries no tier, and
+  `workgroupShapes` is absent on WebGL2 and on the CPU tier alike.
+- Compiler: `FuseReport` (surface §71).
+- Workaround: `explain` says "on WebGL2 or the CPU tier" for such a group (`src/explain.ts`).
+- Measured by: `docs/records/01-round-trip-container.md`: on WebGL2, `synth` and `peak` fall to the
+  CPU tier, and the report does not say so.
+- Status: issue #946. The workaround stays until the pin moves past the fix.
+
+### Q. A pin that Node loads
+
+- Pressure: the source tarball of a commit holds TypeScript sources and no `dist/`. Node does not
+  strip types under `node_modules`, so `tshc` (`src/cli/bin.ts`) and the Vite plugin do not load in
+  Node: `bun install` failed in `prepare` with `ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`.
+  `typeshade/shade` (`dist/shade.d.ts`) is absent, so the README's `tsconfig.shade.json` does not
+  work with this pin.
+- Compiler: the pin forms of change 0071 (decision D6) and the package's `exports`.
+- Workaround: the scripts run on Bun's runtime (`bunfig.toml`, `bun --bun tshc sync`), and the
+  shader modules are checked with `tshc check`. TypeNN bundles its Vite configuration with
+  esbuild instead.
+- Measured by: `bun install` with Node v22.23.4 on PATH, 2026-11-02.
+- Status: issue #947. The workaround stays until the pin moves past the fix.
+
+### R. A method's comment in the host view
+
+- Pressure: a unit's methods carry its documentation (`hz`, `set`, `tick`). At the pin the host
+  view copies the comment of a class and of its fields, and not the comment of a constructor, a
+  method or an accessor, so the editor's hover on `osc.hz(...)` shows no words.
+- Compiler: proposal 0108, Amendment 1, item 4: the members of an exported class carry their
+  comments (its decision D4). Not a new ask.
+- Workaround: none. The comments stay in the `.shade.ts` files until the pin moves past item 4.
+- Measured by: the views `tshc sync` writes at the pin `14566606`.
+- Status: proposal 0108 (accepted): Amendment 1 accepted (#915), item 4 in progress (#937).
+
 ## 3. Issues raised on the compiler
 
-The issues found while the four proposals were implemented, on 2026-11-02, and the earlier
-issues the asks cite.
+The issues found while the four proposals were implemented, on 2026-11-02, the issues the first
+code raised (pull request #5, asks M, N, P and Q), and the earlier issues the asks cite.
 
 | Issue | Title, shortened                                                                 | Bears on                                         | Status                                 |
 | ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------- |
@@ -182,6 +265,10 @@ issues the asks cite.
 | #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6, if the grain order must be stable  | Open                                   |
 | #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                   |
 | #543  | The cost of many dispatches                                                      | I                                                | Open                                   |
+| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Open                                   |
+| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open                                   |
+| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open                                   |
+| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node  | Q                                                | Open                                   |
 
 ## 4. How a row moves
 

@@ -63,10 +63,27 @@ compliance or certification.
 
 The compiler is pinned at a commit. The site, the editor and Radiance pin it as a git submodule.
 TypeNN and TypeCV install it from a source tarball (compiler proposal 0071, decision D6). This
-repository chooses one of the two forms with its first code, and records the choice here. A pull
-request that moves the pin past a compiler proposal that names `typeaudio` in its `downstream`
-entry records the proposal's id in `compiler-changes.md`, with the pull request that did the work,
-and the compiler's `scripts/downstream-impact.ts` fails the pull request until it does.
+repository installs it from a source tarball too, as TypeNN and TypeCV do. The pin is the
+`typeshade` entry of `devDependencies` in `package.json`:
+`https://github.com/typeshade/typeshade/archive/<commit>.tar.gz`, and `bun.lock` holds its hash.
+
+The tarball holds the compiler's TypeScript sources. Node does not load TypeScript from
+`node_modules`, so the scripts run on Bun's runtime: `bunfig.toml` sets `[run] bun = true`, and
+the `prepare` script is `bun --bun tshc sync`.
+
+To move the pin:
+
+1. Change the commit in the `typeshade` URL in `package.json`.
+2. Run `bun install`.
+3. Run `bun run check` and `bun run test`.
+4. Run the compiler's `scripts/downstream-impact.ts` over the old and the new commit
+   (`compiler-changes.md` gives the command).
+5. Commit `package.json`, `bun.lock` and `compiler-changes.md` in one pull request.
+
+A pull request that moves the pin past a compiler proposal that names `typeaudio` in its
+`downstream` entry records the proposal's id in `compiler-changes.md`, with the pull request that
+did the work, and the compiler's `scripts/downstream-impact.ts` fails the pull request until it
+does.
 
 ## Running sub-agents
 
