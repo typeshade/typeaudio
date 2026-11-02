@@ -1,0 +1,12 @@
+{
+  "name": "typeaudio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A GPU audio engine written in TypeScript, on TypeShade. Design phase.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/typeshade/typeaudio"
+  }
+}
