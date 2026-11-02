@@ -166,6 +166,13 @@ async function run(
   const gpu = reports.map((r) => r.groups.reduce((s, g) => s + (g.gpuTime ?? 0), 0));
   const measured = reports.every((r) => r.groups.some((g) => g.gpuTime !== undefined));
   const span = (xs: number[]): readonly [number, number] => [Math.min(...xs), Math.max(...xs)];
+  // Each group's mean GPU time, where every timed block planned the same groups.
+  const shape = JSON.stringify(last.groups.map((g) => g.calls));
+  const alike = reports.every((r) => JSON.stringify(r.groups.map((g) => g.calls)) === shape);
+  const groupGpuMs =
+    measured && alike
+      ? last.groups.map((_, i) => reports.reduce((s, r) => s + (r.groups[i]!.gpuTime ?? 0), 0) / reports.length / 1e6)
+      : undefined;
   return {
     row: {
       ...stats(times),
@@ -175,6 +182,7 @@ async function run(
       frames: B,
       firstMs: first,
       ...(measured ? { gpuMs: gpu.reduce((s, x) => s + x, 0) / gpu.length / 1e6 } : {}),
+      ...(groupGpuMs === undefined ? {} : { groupGpuMs }),
       dispatches: span(reports.map((r) => r.dispatches)),
       submissions: span(reports.map((r) => r.submissions)),
     },

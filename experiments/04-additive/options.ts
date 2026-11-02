@@ -64,6 +64,8 @@ export interface Row {
   readonly meanMs: number;
   /** The mean GPU time of a timed block, the sum of its groups' `gpuTime`, where the device measured it. */
   readonly gpuMs?: number;
+  /** The mean GPU time of each group of the plan over the timed blocks, in milliseconds, where the device measured it. */
+  readonly groupGpuMs?: readonly number[];
   /** The dispatches of each timed block's plan: the smallest and the largest. */
   readonly dispatches: readonly [number, number];
   /** The submissions of each timed block's plan: the smallest and the largest. */

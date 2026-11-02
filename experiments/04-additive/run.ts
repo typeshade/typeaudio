@@ -21,7 +21,8 @@ import type { FuseReport } from 'typeshade/runtime';
 import { bundle, ROOT } from '../../scripts/bundle.ts';
 import { inPage } from '../../scripts/browser.ts';
 import { compare, fromBase64, type Comparison } from './compare.ts';
-import { lanesInput, VARIANTS, type Options, type Row, type Variant } from './options.ts';
+import { lanesInput, spec, sweepAt, VARIANTS, type Options, type Row, type Variant } from './options.ts';
+import { coefficientErrors, type CoefficientErrors } from './design.ts';
 import { designOf, refSums } from './reference.ts';
 
 const args = new Map<string, string>();
@@ -115,12 +116,27 @@ if (reuse) {
   if (tiers.includes('cpu')) record['cpu'] = cpu;
   await writeFile(join(dir, 'reference.json'), `${JSON.stringify(stamp, null, 2)}\n`);
 }
+// The coefficients each bank holds at the end are the last block's: held to the design in doubles.
+const specs = spec(options.partials);
+const lastSweep = sweepAt(options.warmup + options.blocks - 1);
 const refOut = new Map<Variant, Float32Array>();
 const refState = new Map<Variant, Float32Array>();
 for (const v of variants) {
   refOut.set(v, await readF32(join(dir, `reference-${v}.f32`)));
   refState.set(v, await readF32(join(dir, `reference-state-${designOf(v)}.f32`)));
 }
+
+if (record['cpu'] !== undefined) {
+  const cpu = record['cpu'] as { variants: Record<string, Record<string, unknown>> };
+  for (const [variant, held] of Object.entries(cpu.variants)) {
+    if ('error' in held) continue;
+    held['coefficients'] = coefficientErrors(await readF32(join(dir, `cpu-${variant}-state.f32`)), specs, lastSweep);
+  }
+}
+// The reference's own banks, the floor each tier's coefficients are measured against.
+record['referenceCoefficients'] = Object.fromEntries(
+  [...new Set(variants.map(designOf))].map((d) => [d, coefficientErrors(refState.get(variants.find((v) => designOf(v) === d)!)!, specs, lastSweep)]),
+);
 
 const pageTiers = tiers.filter((t): t is 'webgpu' | 'webgl2' => t !== 'cpu');
 if (pageTiers.length > 0) {
@@ -150,6 +166,7 @@ if (pageTiers.length > 0) {
         report: r.report,
         out: compare(out, ref),
         state: compare(state, refState.get(variant)!),
+        coefficients: coefficientErrors(state, specs, lastSweep),
         peaksSame: r.peaks.filter((p, b) => p === blockPeak(ref, b, options.frames)).length,
       };
     }
@@ -184,6 +201,10 @@ for (const tier of tiers) {
   console.log(table(ran));
   for (const [variant, held] of Object.entries(result.variants)) {
     console.log(`\n${variant}: ${'error' in held ? `failed: ${held.error}` : groups(held.report)}`);
+    if (!('error' in held) && held.coefficients !== undefined) console.log(`  ${coefficients(held.coefficients)}`);
+    if (!('error' in held) && held.row.groupGpuMs !== undefined) {
+      console.log(`  GPU time per group, mean of the timed blocks: ${held.row.groupGpuMs.map((x) => `${x.toFixed(3)} ms`).join(', ')}`);
+    }
   }
   const probe = (record[tier] as { tiers?: Record<string, string> }).tiers;
   if (probe !== undefined) {
@@ -196,6 +217,9 @@ for (const tier of tiers) {
       console.log(`  ${k}: ${sums[k].same} of ${sums[k].count} the same bits, largest difference ${sums[k].maxAbs.toExponential(3)}, ${sums[k].maxUlp} ULP`);
     }
   }
+}
+for (const [design, c] of Object.entries(record['referenceCoefficients'] as Record<string, CoefficientErrors>)) {
+  console.log(`\nthe reference's ${design} design: ${coefficients(c)}`);
 }
 console.log(`\nwrote ${outFile}`);
 
@@ -221,6 +245,13 @@ interface Held {
   readonly out: Comparison;
   readonly state: Comparison;
   readonly peaksSame: number;
+  readonly coefficients?: CoefficientErrors;
+}
+
+/** A bank's coefficients against the design in doubles, in one line. */
+function coefficients(c: CoefficientErrors): string {
+  const names = ['b0', 'b1', 'b2', 'a1', 'a2'];
+  return `coefficients at the last sweep (${c.sweep.toFixed(4)}), against the design in doubles: largest relative error ${c.maxRel.map((x, k) => `${names[k]} ${x.toExponential(2)}`).join(', ')}; largest absolute error ${c.maxAbs.map((x, k) => `${names[k]} ${x.toExponential(2)}`).join(', ')}; worst b0 at partial ${c.worst.partial}, cutoff ${c.worst.cutoff.toFixed(2)} Hz; ${c.closeB0} b0 within 2^-20; cutoff off by up to ${(c.maxCutoffError * 100).toPrecision(3)} %; gain at 0 Hz off by up to ${c.maxDcError.toExponential(2)}`;
 }
 
 function blockPeak(ref: Float32Array, b: number, frames: number): number {

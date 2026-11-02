@@ -61,6 +61,9 @@ if (result !== undefined) {
       for (let n = 0; n < options.frames; n++) m = Math.max(m, Math.abs(ref[variant][b * options.frames + n]!));
       return p === m;
     });
+    // The tier's blocks and bank beside the reference's, as the runner writes a page tier's.
+    await writeFile(join(dir, `cpu-${variant}.f32`), new Uint8Array(r.out.buffer));
+    await writeFile(join(dir, `cpu-${variant}-state.f32`), new Uint8Array(r.state.buffer));
     variants[variant] = {
       row: r.row,
       report: r.report,
