@@ -36,6 +36,11 @@ export interface PageCount {
   readonly reverseGradient?: number[];
   /** Milliseconds to make each pipeline, by entry, in the order they are made. */
   readonly pipelineMs?: Readonly<Record<string, number>>;
+  /**
+   * Milliseconds of each entry's first call, untimed in its measure. WebGL2 builds an entry's pass
+   * program at its first dispatch, so there the build is in this time.
+   */
+  readonly firstCallMs?: Readonly<Record<string, number>>;
   /** The descent of 3 parameters on the tier: the loss before each step and after the last, and the parameters it ends at. */
   readonly descent?: { readonly losses: number[]; readonly final: number[] };
   readonly refused?: string;
@@ -79,6 +84,8 @@ async function runCount(o: PageOptions, count: number): Promise<PageCount & { re
     const limit = o.timeoutMs;
     const pipelineMs: Record<string, number> = {};
     result.pipelineMs = pipelineMs;
+    const firstCallMs: Record<string, number> = {};
+    result.firstCallMs = firstCallMs;
     const target = Float32Array.from(o.targets[String(count)]!);
     const out = resident(new Float32Array(Math.max(FRAMES, count)));
     const reached = (entry: string): readonly string[] =>
@@ -97,13 +104,17 @@ async function runCount(o: PageOptions, count: number): Promise<PageCount & { re
     };
     const call = async (entry: string, theta: readonly number[], workgroups: number): Promise<Float32Array> => {
       const pipe = await pipeline(entry);
+      const first = !(entry in firstCallMs);
+      const t = performance.now();
       const available: Record<string, unknown> = { theta: Float32Array.from(theta), target, out };
       const bindings: Record<string, unknown> = {};
       for (const name of reached(entry)) bindings[name] = available[name];
       const frame = rt.frame();
       frame.dispatch(pipe as never, bindings as never, workgroups);
       await within(frame.submit(), limit, entry);
-      return (await within(out.read(), limit, `the read-back of ${entry}`)) as Float32Array;
+      const read = (await within(out.read(), limit, `the read-back of ${entry}`)) as Float32Array;
+      if (first) firstCallMs[entry] = performance.now() - t;
+      return read;
     };
     /** Runs `measure`, and keeps what stopped it: a call that did not return stops the tier. */
     const step = async (what: string, measure: () => Promise<void>): Promise<void> => {
