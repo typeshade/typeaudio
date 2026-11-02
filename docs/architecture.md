@@ -65,7 +65,7 @@ const report = await dev.fuse((scope) => {
   const b = scope.scratch(B);
   lowpassBlock(a, bus, coeffs);                        // F: the chain starts
   drive(b, a, amount);                                 // F: joins the group (F1 to F5)
-  gain(master, b, level);                              // F: one dispatch for the three; a and b are locals
+  gain(master, b, level);                              // F: one dispatch for the three
   peak = maxAbs(master);                               // R: folds inside the chain's dispatch
 });
 ```
