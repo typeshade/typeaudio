@@ -8,15 +8,15 @@ session, recorded as reference numbers; no experiment has run on the owner's dev
 
 ## Status
 
-| #   | Experiment                                                    | Decides                                                      | Status      |
-| --- | ------------------------------------------------------------- | ------------------------------------------------------------ | ----------- |
-| 1   | The round trip per block size                                 | The real-time block size and the lookahead; asks H and I     | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
-| 2   | The CPU tier inside an AudioWorklet                           | Whether the latency-critical path exists; asks F and K       | not started |
-| 3   | The FFT entry held to the oracle on three tiers               | Where the FFT lives (ask G); asks C, E and J                  | not started |
-| 4   | A 10,000-partial additive render with the fuse report read    | The graph layer's shape and `explain`; asks A, B, D and I    | not started |
-| 5   | A 10-second partitioned convolution                           | Reverb by impulse response in the catalog; asks E and G      | not started |
-| 6   | A granular scheduler on `push` and device-resident counts     | What the device schedules; issue #539                        | not started |
-| 7   | A sound match with function-level `grad`                      | Differentiable audio in the catalog; ask L                   | not started |
+| #   | Experiment                                                 | Decides                                                   | Status                                                                                                 |
+| --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | not started                                                                                            |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | not started                                                                                            |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
+| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | not started                                                                                            |
 
 The asks are the rows of `docs/compiler-asks.md`.
 

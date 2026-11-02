@@ -8,8 +8,8 @@
 // base, `static at<C extends Oscillator>(this: { new (): C }, f: f32, sr: f32): C`, which plain
 // TypeScript accepts for an abstract class, is refused by the compiler at its `new this()` (TS8035,
 // "Oscillator" is abstract, so there is no instance of it to build), although TypeScript lets no
-// call reach it on the abstract class itself. The candidate compiler ask is recorded in
-// `docs/compiler-asks.md` (M).
+// call reach it on the abstract class itself. The compiler ask is `docs/compiler-asks.md`, M:
+// issue typeshade/typeshade#944.
 
 /** One full turn of the phase, in radians. */
 const TAU: f32 = 6.283185307179586;

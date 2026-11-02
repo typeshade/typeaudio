@@ -185,7 +185,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   also leaves its local unbound, and each later use adds a TS8022 (Rule 12.4).
 - Workaround: a non-generic `static at(f, sr)` on each concrete class (`src/units/oscillator.shade.ts`).
 - Measured by: `tshc check` at the pin `14566606`. No device applies.
-- Status: candidate.
+- Status: issue #944. The workaround stays until the pin moves past the fix.
 
 ### N. A `Resident` of class instances reads back as objects of their fields
 
@@ -197,7 +197,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   its type could say the fields.
 - Workaround: `Bank.read()`, typed as `State<T>[]`, the fields without the methods (`src/bank.ts`).
 - Measured by: `test/render.test.ts`, on the CPU tier.
-- Status: candidate.
+- Status: issue #945. The workaround stays until the pin moves past the fix.
 
 ### O. A composed unit keeps its class on the host only in its own file
 
@@ -222,7 +222,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: `explain` says "on WebGL2 or the CPU tier" for such a group (`src/explain.ts`).
 - Measured by: `docs/records/01-round-trip-container.md`: on WebGL2, `synth` and `peak` fall to the
   CPU tier, and the report does not say so.
-- Status: candidate.
+- Status: issue #946. The workaround stays until the pin moves past the fix.
 
 ### Q. A pin that Node loads
 
@@ -236,22 +236,23 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   shader modules are checked with `tshc check`. TypeNN bundles its Vite configuration with
   esbuild instead.
 - Measured by: `bun install` with Node v22.23.4 on PATH, 2026-11-02.
-- Status: candidate.
+- Status: issue #947. The workaround stays until the pin moves past the fix.
 
 ### R. A method's comment in the host view
 
-- Pressure: a unit's methods carry its documentation (`hz`, `set`, `tick`). The host view copies
-  the comment of a class and of its fields, and not the comment of a constructor, a method or an
-  accessor, so the editor's hover on `osc.hz(...)` shows no words.
-- Compiler: change 0108 (surface §64, "The author's comments").
-- Workaround: none. The comments stay in the `.shade.ts` files.
+- Pressure: a unit's methods carry its documentation (`hz`, `set`, `tick`). At the pin the host
+  view copies the comment of a class and of its fields, and not the comment of a constructor, a
+  method or an accessor, so the editor's hover on `osc.hz(...)` shows no words.
+- Compiler: proposal 0108, Amendment 1, item 4: the members of an exported class carry their
+  comments (its decision D4). Not a new ask.
+- Workaround: none. The comments stay in the `.shade.ts` files until the pin moves past item 4.
 - Measured by: the views `tshc sync` writes at the pin `14566606`.
-- Status: candidate.
+- Status: proposal 0108 (accepted): Amendment 1 accepted (#915), item 4 in progress (#937).
 
 ## 3. Issues raised on the compiler
 
-The issues found while the four proposals were implemented, on 2026-11-02, and the earlier
-issues the asks cite.
+The issues found while the four proposals were implemented, on 2026-11-02, the issues the first
+code raised (pull request #5, asks M, N, P and Q), and the earlier issues the asks cite.
 
 | Issue | Title, shortened                                                                 | Bears on                                         | Status                                 |
 | ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------- |
@@ -264,6 +265,10 @@ issues the asks cite.
 | #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6, if the grain order must be stable  | Open                                   |
 | #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                   |
 | #543  | The cost of many dispatches                                                      | I                                                | Open                                   |
+| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Open                                   |
+| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open                                   |
+| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open                                   |
+| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node  | Q                                                | Open                                   |
 
 ## 4. How a row moves
 
