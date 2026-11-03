@@ -5,9 +5,10 @@ const TIER = { webgpu: 'WebGPU', webgl2: 'WebGL2', cpu: 'the CPU tier' } as cons
 
 /**
  * The fuse reports of a render, in words (docs/vision.md, section 2, moment 5). It says how the
- * last block ran, group by group: whether each group fused into one dispatch, why a group stood
- * apart from the one before it (the compiler's `why`, in the author's names), its dispatches and
- * the GPU time the device measured, where it measured one. Then it sums every block. Print it with
+ * last block ran, group by group: the tier each group ran on (the group's `tier`), whether a group
+ * on WebGPU fused into one dispatch, why a group stood apart from the one before it or ran on a
+ * later tier than the plan (the compiler's `why`, in the author's names), its dispatches and the
+ * GPU time the device measured, where it measured one. Then it sums every block. Print it with
  * `console.log(explain(plan.reports))`.
  */
 export function explain(reports: readonly FuseReport[]): string {
@@ -21,21 +22,8 @@ export function explain(reports: readonly FuseReport[]): string {
     `the last block: ${count(last.dispatches, unit)}, ${count(last.submissions, 'submission')}`,
   ];
   last.groups.forEach((group, i) => {
-    const shapes = group.workgroupShapes;
-    // A group that did not run on WebGPU has no workgroup shapes. The report does not say whether
-    // it ran on WebGL2 or fell to the CPU tier, so the words do not either (docs/compiler-asks.md, P).
-    const where =
-      shapes !== undefined
-        ? group.fused
-          ? 'fused into one dispatch'
-          : count(shapes.length, 'dispatch')
-        : last.tier === 'cpu'
-          ? 'on the CPU tier'
-          : last.tier === 'webgl2'
-            ? 'on WebGL2 or the CPU tier'
-            : 'not on WebGPU: on WebGL2 or the CPU tier';
     const time = group.gpuTime === undefined ? '' : `, ${ms(group.gpuTime)} GPU`;
-    lines.push(`  ${i + 1}. ${group.calls.join(' + ')}: ${where}${time}`);
+    lines.push(`  ${i + 1}. ${group.calls.join(' + ')}: ${where(group)}${time}`);
     if (group.why !== undefined) lines.push(`     ${group.why}`);
   });
   const timed = all.groups.filter((g) => g.gpuTime !== undefined);
@@ -49,6 +37,17 @@ export function explain(reports: readonly FuseReport[]): string {
     );
   }
   return lines.join('\n');
+}
+
+/**
+ * Where a group ran, from the `tier` the report gives it (compiler change 0118). A group on WebGPU
+ * has one workgroup shape for each dispatch it made (compiler surface §71); a group on another tier
+ * is named by its tier.
+ */
+function where(group: FuseReport['groups'][number]): string {
+  if (group.tier !== 'webgpu') return `on ${TIER[group.tier]}`;
+  if (group.fused) return 'fused into one dispatch';
+  return count(group.workgroupShapes?.length ?? 0, 'dispatch');
 }
 
 function count(n: number, noun: string): string {

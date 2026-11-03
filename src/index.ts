@@ -2,7 +2,7 @@
 // unit with `new` and calls its methods on the CPU tier (compiler change 0109), and `render` runs
 // the kernels over a bank of instances, one `fuse` plan per block (docs/architecture.md).
 
-export { bank, type Bank, type State } from './bank.ts';
+export { bank, type Bank } from './bank.ts';
 export {
   DEFAULT_BLOCK,
   plan,

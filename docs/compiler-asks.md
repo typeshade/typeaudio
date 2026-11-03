@@ -28,16 +28,21 @@ face"), and one the fuse report that `explain` reads.
 | Id   | Proposal                            | What it gives TypeAudio                                                                                                                                                                                                                | Status on 2026-11-02                                                                                                                                                                                                                                                                                                                                         |
 | ---- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 0108 | `changes/0108-host-view-jsdoc.md`   | The host view carries the author's JSDoc verbatim, so a unit's documentation reaches the editor through the host face.                                                                                                                 | Implemented: items 1 to 3 by #887 (`77ced44`, 2026-11-02), the inherited-field deviation closed by its record; Amendment 1 accepted (#915, `bb82036b`) and item 4, the members of an exported class carry their comments (decision D4), implemented by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, `a80551b4`, 2026-11-02) drops the static field from item 4's list, since the view declares none.                                                                                |
-| 0109 | `changes/0109-host-classes.md`      | An exported class is a value of the host face: `new` and the methods run on the CPU tier, an instance is the struct's host value, a struct result is an instance. The engine's `new OnePole(0.1)` on the host rests on it.             | Implemented (#890, squash commit `9dbc298`, 2026-11-02). Two deviations open in the proposal's record: the view's flat declaration where TypeScript refuses an override; a mixin's members untested. Amendment 1 approved (#960, `376f8927`, 2026-11-02, decision D5): item 6, a `Resident` made from instances keeps their classes and `read()` returns instances (ask N); its implementation is not started.                                                                                                                                                         |
+| 0109 | `changes/0109-host-classes.md`      | An exported class is a value of the host face: `new` and the methods run on the CPU tier, an instance is the struct's host value, a struct result is an instance. The engine's `new OnePole(0.1)` on the host rests on it.             | Implemented (#890, squash commit `9dbc298`, 2026-11-02). Two deviations open in the proposal's record: the view's flat declaration where TypeScript refuses an override; a mixin's members untested. Amendment 1 (#960, `376f8927`, 2026-11-02, decision D5): item 6, a `Resident` made from instances keeps their classes and `read()` returns instances (ask N). Implemented by #993 (`87af4eb0`, 2026-11-02), which the pin `87af4eb0` holds; pull request #15 of this repository retires the workaround. |
 | 0110 | `changes/0110-class-consistency.md` | Rule 8.29: a class is its struct and its functions in every place a struct or a function can be. The class arm of the differential gate holds a method to one result in a compute entry, a kernel loop, the host class and the oracle. | Implemented (#883, `bef6574`, 2026-11-02), with the host leg of the class arm on the host class of 0109; the deferral deviation is closed by its record.                                                                                                                                                                                                     |
 | 0116 | `changes/0116-host-type-family.md`  | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                       | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, a matrix carries its name, and item 4 names its exceptions. |
-| 0118 | `changes/0118-fuse-group-tier.md` | Each group of a `FuseReport` carries the tier it ran on, and a group below its plan's tier says why in its `why`, so `explain` reads where each node ran instead of inferring it (ask P). | Accepted (#959, `6c1799ec`, 2026-11-02) with D1 to D3 as drafted: `tier` on every group; the reason in `why`; the call layer's own text. Its implementation is not started. |
+| 0118 | `changes/0118-fuse-group-tier.md` | Each group of a `FuseReport` carries the tier it ran on, and a group below its plan's tier says why in its `why`, so `explain` reads where each node ran instead of inferring it (ask P). | Implemented (#990, `480b6a64`, 2026-11-02), which the pin `87af4eb0` holds. Accepted (#959, `6c1799ec`) with D1 to D3 as drafted: `tier` on every group; the reason in `why`; the call layer's own text. One deviation open in the proposal's record (D-1): the reason a tier gives for a call it has no program for repeats "runs on the CPU" (`peak runs on the CPU, it runs on the CPU, loop 1 reduces, ...`). Pull request #15 of this repository retires the workaround. |
 
 At the first compiler pin, `145666068ca5d6ecfba32aa0ea4289cf0fc3b762` (pull request #5), the
 proposals' `status` lines read: 0108 `accepted`, 0109 `implemented`, 0110 `implemented`, 0116
 `accepted`. The implementation of 0116 (#918, `9822490f`) came after the pin. So did 0108's item 4 (#937,
 `f4f4b7d2`), the fixes #953, #962 and #964, and the acceptance of 0118 (#959) and of 0109's
 Amendment 1 (#960).
+
+At the second compiler pin, `87af4eb0d9d15f02b66b8341b72cab0944290472` (pull request #15), the
+`status` lines of 0108, 0109, 0110, 0116 and 0118 read `implemented`. The move passed the
+implementations of 0116 (#918), of 0108's item 4 (#937), of 0118 (#990, `480b6a64`) and of 0109's
+Amendment 1 (#993, `87af4eb0`), and the fix #962. `compiler-changes.md` records 0109 and 0118.
 
 ## 2. The asks
 
@@ -195,7 +200,16 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Measured by: experiment 2.
 - Status: measured (`docs/records/02-worklet-container.md`, the container, 2026-11-02, pin
   `14566606`). Every call ran on the CPU tier, and each output had the reference's bits in its
-  own quantum. The device runs, and a browser other than Chromium, are pending.
+  own quantum. The device runs, and a browser other than Chromium, are pending. Item 2 is met at
+  the pin `87af4eb0` (pull request #15): `resident()`, `dev.array()` and `r.write()` copy with no
+  `structuredClone` (proposal 0109, Amendment 1, #993). Observed on 2026-11-02 with the `load`
+  part of experiment 2 in headless Chromium 153 on SwiftShader, and kept in no record: the engine
+  bundle with its dynamic imports inlined ran with no `structuredClone` installed, and 24,000 of
+  24,000 frames had the reference's bits. At the pin `14566606` the same run failed at `bank()`.
+  Item 1 is open: the engine bundle that keeps its dynamic imports as chunks fails at `render()`
+  with `import() is disallowed on WorkletGlobalScope`, and `fuse()` still loads its planner with a
+  dynamic `import()` (`src/core/fuse-record.ts`). The workaround keeps its first and third parts.
+  Its second part, `cloneData`, stays in `experiments/02-worklet/` as the experiment ran it.
 
 ### G. An FFT as a common module
 
@@ -331,10 +345,13 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   also leaves its local unbound, and each later use adds a TS8022 (Rule 12.4).
 - Workaround: a non-generic `static at(f, sr)` on each concrete class (`src/units/oscillator.shade.ts`).
 - Measured by: `tshc check` at the pin `14566606`. No device applies.
-- Status: fixed on the compiler's `main` by #962 (squash commit `20759ec9`, 2026-11-02): `new
-  this()` in a static of an abstract class builds each class that extends it, and a call through
-  the abstract class is refused with TS8035 on the call. The workaround stays until the pin moves
-  past it.
+- Status: retired at the pin `87af4eb0` (pull request #15). The compiler fixed it on `main` by
+  #962 (squash commit `20759ec9`, 2026-11-02): `new this()` in a static of an abstract class
+  builds each class that extends it, and a call through the abstract class is refused with
+  TS8035 on the call. `Oscillator` holds the one generic `static at`, and the `static at` of
+  `Sine` and `Saw` are gone (`src/units/oscillator.shade.ts`). The fix has no proposal, so
+  `compiler-changes.md` records no id. Observed at the pin: `Saw.at` and `Sine.at` build their
+  own class, and a call of `Oscillator.at` is refused by the host view and at run time.
 
 ### N. A `Resident` of class instances reads back as objects of their fields
 
@@ -346,9 +363,13 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   its type could say the fields.
 - Workaround: `Bank.read()`, typed as `State<T>[]`, the fields without the methods (`src/bank.ts`).
 - Measured by: `test/render.test.ts`, on the CPU tier.
-- Status: issue #945; proposal 0109, Amendment 1 (#960, `376f8927`, 2026-11-02, decision D5): a
-  `Resident` keeps the classes of the value it was given, and `read()` returns instances. Its
-  implementation is not started. The workaround stays until the pin moves past it.
+- Status: retired at the pin `87af4eb0` (pull request #15). Issue #945 is answered by proposal
+  0109, Amendment 1 (#960, `376f8927`, 2026-11-02, decision D5), implemented by #993
+  (`87af4eb0`): a `Resident` keeps the classes of the value it was given, and `read()` returns
+  instances. `Bank.read()` is `Promise<T[]>`, and the `State<T>` type is gone (`src/bank.ts`).
+  `test/render.test.ts` holds a bank read back after a render to `instanceof Voice`, and ticks
+  it. `compiler-changes.md` records 0109. A field whose class another file declares is still a
+  plain object (ask O).
 
 ### O. A composed unit keeps its class on the host only in its own file
 
@@ -375,9 +396,13 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   CPU tier, and the report does not say so. `docs/records/06-granular-container.md`: on a device
   that opened on WebGL2, all six calls of a block of grains fell to the CPU tier; the report's tier
   is `cpu`, and no group says why.
-- Status: issue #946; proposal 0118 accepted (#959, `6c1799ec`, 2026-11-02, D1 to D3): each group
-  carries `tier`, and a group below its plan's tier says why in `why`. Its implementation is not
-  started. The workaround stays until the pin moves past it.
+- Status: retired at the pin `87af4eb0` (pull request #15). Issue #946 is answered by proposal
+  0118 (#959, `6c1799ec`, 2026-11-02, D1 to D3), implemented by #990 (`480b6a64`): each group
+  carries `tier`, and a group below its plan's tier says why in `why`. `explain` reads both
+  (`src/explain.ts`): it names a group that did not run on WebGPU "on WebGL2" or "on the CPU
+  tier", and prints its `why` under it. `compiler-changes.md` records 0118. Observed at the pin on
+  WebGL2, in headless Chromium on SwiftShader: `synth` and `peak` ran on the CPU tier, and their
+  `why` says so, with "runs on the CPU" twice (the open deviation D-1 of the proposal's record).
 
 ### Q. A pin that Node loads
 

@@ -47,8 +47,10 @@ describe('render on the CPU tier', () => {
     const after = await voices.read();
     expect(after.map((v) => v.osc)).toEqual(refs.map((r) => ({ phase: r.osc.phase, inc: r.osc.inc })));
     expect(after.map((v) => v.filter)).toEqual(refs.map((r) => ({ ...r.filter })));
-    // The read holds the fields, not instances of the class (docs/compiler-asks.md, N).
-    expect(after.some((v) => v instanceof Voice)).toBe(false);
+    // The read holds instances of the class, methods included (compiler change 0109, Amendment 1;
+    // docs/compiler-asks.md, N): a call of tick() continues each voice where its lane stopped.
+    expect(after.every((v) => v instanceof Voice)).toBe(true);
+    expect(after.map((v) => v.tick())).toEqual(refs.map((r) => r.tick()));
   });
 
   test('a block holds 1024 frames when the render names none', async () => {
@@ -90,6 +92,8 @@ describe('the fuse report of each block', () => {
       // The CPU tier fuses nothing and says nothing of why (compiler surface §71).
       expect(report.groups.every((g) => !g.fused && g.why === undefined)).toBe(true);
       expect(report.groups.every((g) => g.workgroupShapes === undefined)).toBe(true);
+      // Each group names the tier it ran on (compiler change 0118).
+      expect(report.groups.every((g) => g.tier === 'cpu')).toBe(true);
     }
   });
 

@@ -27,10 +27,19 @@ describe('a unit built with new ticks on the CPU tier as the reference does', ()
     expect([osc.phase, osc.inc]).toEqual([ref.phase, ref.inc]);
   });
 
-  test('Saw, built by its static builder', () => {
+  test('Saw, built by the static builder of its base', () => {
     const osc = Saw.at(110, SR);
     const ref = refSaw().hz(110, SR);
     expect(osc).toBeInstanceOf(Saw);
+    expect(run(2000, () => osc.tick())).toEqual(run(2000, () => ref.tick()));
+    expect([osc.phase, osc.inc]).toEqual([ref.phase, ref.inc]);
+  });
+
+  test('Sine, built by the same builder, is a Sine and not a Saw', () => {
+    const osc = Sine.at(440, SR);
+    const ref = refSine().hz(440, SR);
+    expect(osc).toBeInstanceOf(Sine);
+    expect(osc).not.toBeInstanceOf(Saw);
     expect(run(2000, () => osc.tick())).toEqual(run(2000, () => ref.tick()));
     expect([osc.phase, osc.inc]).toEqual([ref.phase, ref.inc]);
   });
@@ -90,6 +99,13 @@ describe('the classes on the host', () => {
     // caller tsc did not read is refused at run time.
     const Abstract = Oscillator as unknown as new () => Oscillator;
     expect(() => new Abstract()).toThrow(/abstract/);
+  });
+
+  test('the static builder of the abstract base is called through a concrete class', () => {
+    // The view types `Oscillator.at` as `never`, so `tsc` refuses the call on the abstract class;
+    // the call is refused at run time as well, and names the class to call it through.
+    // @ts-expect-error The abstract class has no instance to build (compiler surface §26, Rule 8.20).
+    expect(() => Oscillator.at(110, SR)).toThrow(/Oscillator\.at cannot be called from host code/);
   });
 
   test('a unit field of a voice is a plain object of its fields on the host', () => {

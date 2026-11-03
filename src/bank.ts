@@ -1,14 +1,6 @@
 import type { Device, Resident } from 'typeshade/runtime';
 
 /**
- * The state of an instance: its fields, without its methods. A unit field whose class another
- * file declares is already an object of its fields in the host view (compiler surface §64).
- */
-export type State<T> = {
-  [K in keyof T as T[K] extends (...args: never[]) => unknown ? never : K]: T[K];
-};
-
-/**
  * A bank: the instances of one unit class on a device, one lane each, as a kernel's `array<T>`
  * takes them. A kernel that calls a method on an element writes that element (compiler Rule 8.29),
  * so each instance's state stays on the device from block to block, and the host reads it only
@@ -22,11 +14,13 @@ export interface Bank<T extends object> {
   /** How many lanes the bank holds. */
   readonly size: number;
   /**
-   * Reads the state of every lane back from the device, in lane order: the fields of each
-   * instance, as plain objects. A read of the `Resident` returns the fields and not instances of
-   * the class (workaround of `docs/compiler-asks.md`, N), so the type says so.
+   * Reads the state of every lane back from the device, in lane order, as a new array of
+   * instances of the unit class: each is built without the constructor, with the state of its lane
+   * as its fields (compiler change 0109, Amendment 1). A method called on one runs on the CPU
+   * tier and changes that copy, not the lane. A field whose class another file declares is an
+   * object of its fields, as the host view types it (compiler surface §64).
    */
-  read(): Promise<State<T>[]>;
+  read(): Promise<T[]>;
 }
 
 /**
