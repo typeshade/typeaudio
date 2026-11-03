@@ -16,8 +16,8 @@ The loop is `docs/vision.md`, section 10. A row moves through these states:
 | proposal NNNN (draft, accepted, implemented) | The lifecycle state of the compiler proposal, as its `status` line says.                             |
 | retired                                      | The pin moved past the implementation, `compiler-changes.md` records the id, the workaround is gone. |
 
-The letters and the ids are stable. A new ask takes the next free letter. A row never changes
-its letter.
+The letters and the ids are stable. A new ask takes the next free letter. After Z, an ask takes
+two letters, in order: AA, AB, AC. A row never changes its letter.
 
 ## 1. The proposals this engine rests on
 
@@ -220,7 +220,13 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Pressure: the partitioned convolution, the spectral effects and the analysis need one FFT held
   to the oracle on three tiers.
 - Compiler: a common module `typeshade/fft` (Rule 11.20; changes 0072 and 0076 are the
-  precedent).
+  precedent). Records 03 and 05 name four items for it:
+  1. the twiddles from a table, or from an emulated double (record 03);
+  2. a storage form past the 16 KiB of workgroup memory (record 03);
+  3. the CPU tier of change 0092 (records 03 and 05);
+  4. a real-input form (record 05, formerly its candidate ask B): 1,025 bins hold the spectrum of a
+     real signal's 2,048, so the spectra and the delay line of the convolution would take 7.34 MiB
+     instead of 14.66 MiB, and the multiply-accumulate would read about half as much.
 - Workaround: the FFT entry lives in this repository's layer 1.
 - Measured by: experiments 3 and 5.
 - Status: measured by experiment 3, on the container only (`docs/records/03-fft-container.md`,
@@ -231,12 +237,11 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   so the CPU answer is the oracle's `dispatch`, 1.6 to 8.3 seconds a call. 4,096 complex points need
   32 KiB of workgroup memory, over WebGPU's 16 KiB, so the 4,096-point entry works in storage
   memory. Inference, for the owner's decision: the entry lives in layer 1 here first, as the
-  workaround, and the issue for `typeshade/fft` follows the device runs. It would carry the twiddles
-  from a table or an emulated double, a storage form past workgroup memory, and the CPU tier of
-  change 0092. Compiler issues #966 (WebGL2 does
-  not bind the `_fp64` guard of an `f64` entry, so variant C never returns), #970 (an `f64` across
-  a barrier on WebGL2) and #967 (an `f64` module constant, and the TS8022 that follows its
-  refusal) record variant C's findings. Experiment 5, on the container only
+  workaround, and the issue for `typeshade/fft` follows the device runs. It would carry items 1 to 3
+  under Compiler. Compiler issues #966 (WebGL2 does not bind the `_fp64` guard of an `f64` entry, so
+  variant C never returns), #970 (an `f64` across a barrier on WebGL2) and #967 (an `f64` module
+  constant, and the TS8022 that follows its refusal) record variant C's findings. Experiment 5, on
+  the container only
   (`docs/records/05-convolution-container.md`, 2026-11-02, reference numbers), adds a 2,048-point
   entry in workgroup memory, 16 KiB, with the host's table, and runs it on a 10-second impulse
   response's 469 partitions and twice a block: the oracle, WebGPU and WebGL2 give the same bits for
@@ -245,8 +250,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   transforms take 4.0 and 4.7 ms of a block's 31.0 ms of GPU time at the median, the
   multiply-accumulate 18.8 ms. On WebGL2 the report counts 146 draws a block, the kernel functions on
   the CPU tier. The host's CPU tier refuses the entry, as in experiment 3. Inference: the common
-  module would also carry a real-input form, which halves a convolution's spectra and delay line
-  (14.66 MiB at these sizes).
+  module would also carry item 4 under Compiler, the real-input form.
 
 ### H. GPU time
 
@@ -461,7 +465,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   allocation per call.
 - Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
 - Measured by: experiment 2.
-- Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`).
+- Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`). The
+  cost of entering a call with an array, which record 05 measured on the CPU tier (its candidate ask
+  C), is ask V's and not this ask's.
 
 ### T. A sum over the lanes of each frame on the GPU
 
@@ -513,10 +519,17 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: the CPU tier's call (Rule 11.7, surface §65): the generated code reading the caller's
   typed array in place, with no copy per call.
 - Workaround: none. The engine's plan keeps the calls of a block few.
-- Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container). That the
-  conversion is the cost is an inference from the source; the run does not time it apart.
+- Measured by: experiments 4 and 5 (`docs/records/04-additive-container.md` and
+  `docs/records/05-convolution-container.md`, the container). That the conversion is the cost is an
+  inference from the source; the runs do not time it apart.
 - Status: candidate. Ask S (issue #961) is the cost of the generated code inside a call; this is the
-  cost of entering it.
+  cost of entering it. Experiment 5 (record 05, section "The kernel check"; it was candidate ask C
+  of that record) measured the same cost on the CPU tier in Node, on host arrays: `store` writes
+  2,048 of the delay line's 960,512 points in 962.1 ms, and `pad` writes 1,024 points of a
+  2,048-point array in 5.2 ms, while the oracle's `fns`, given the values in its own form, takes
+  0.19 ms for the same `store`. Inference of the record: the time follows the arrays' length, not
+  the work; a large `Resident` on the CPU tier (a delay line, a bank) may cost the same on each
+  call. The run measured host arrays only.
 
 ### W. A loop that pushes over a range the device holds
 
@@ -578,35 +591,57 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   and a median `fuse` call of 3.170 ms; with it, 1,000 reads and 16.030 ms.
 - Status: candidate. Measured on the container only.
 
+### AA. WebGL2 loops for a kernel that writes a `vec2` element, writes off its counter, or writes two arrays
+
+- Pressure: the partitioned convolution has four kernel functions, `pad`, `store`, `accumulate` and
+  `overlapAdd`. Each is a loop that writes an element of `array<vec2>`, writes at an index other
+  than its counter, or writes two arrays. None has a WebGL2 program at the pin. On a device that
+  prefers `['webgl2', 'cpu']` they run on the CPU tier, and a block takes 5,580.98 ms at the median
+  (10 blocks) against a budget of 21.33 ms.
+- Compiler: the WebGL2 tier's loop forms (surface §65, "The tiers"): a draw that writes the two words
+  of a `vec2` element, writes at `i + c`, or writes several arrays as several render targets.
+- Workaround: none. The four calls run on the CPU tier, and the FFT entry runs on WebGL2.
+- Measured by: experiment 5 (`docs/records/05-convolution-container.md`, sections "Refusals, and calls
+  that did not return" and "The numbers").
+- Status: measured by experiment 5, on the container only (2026-11-02, pin `14566606`, reference
+  numbers; the owner's devices pending). The record keeps each refusal word for word. `pad()` and
+  `accumulate()` write an element that is not one `f32`, `i32` or `u32`. `store()` writes "line"
+  other than at `i`. `overlapAdd()` "writes more than one array, and WebGL2 draws one". Record 04
+  (ask A: `additive` writes at `v * block + n`) and record 06 (`keep` writes "tape" other than at
+  `i`) met the same limit. This ask was candidate ask A of record 05.
+
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
 raised (pull request #5, asks M, N, P and Q), the issues experiments 2 and 3 raised (asks S, C and
-E, and the FFT's findings under G), and the earlier issues the asks cite.
+E, and the FFT's findings under G), the issues experiment 5 raised (#997 and #998), and the earlier
+issues the asks cite.
 
 The states are those of 2026-11-03, at the pin `87af4eb0`.
 
-| Issue | Title, shortened                                                                 | Bears on                                         | Status                                                                                                 |
-| ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index | J                                                | Fixed by #939 (`b3bf0af8`), in the pin `87af4eb0`                                                      |
-| #901  | The commit-msg hook reads a merge against its first parent                       | The implementing pull requests, not the engine   | Closed: fixed by #932 and #956                                                                         |
-| #908  | TS8070 names a static function by its emitted name                               | The refusal's wording for a unit's static helper | Fixed on `main` by #953 (`a659ae36`)                                                                   |
-| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier            | J                                                | Open                                                                                                   |
-| #459  | A WebAssembly tier between WebGL2 and the CPU                                    | K, F                                             | Open; change 0042 draft                                                                                |
-| #535  | Reverse-mode `grad` before 1.0                                                   | L                                                | Open; change 0056 accepted                                                                             |
-| #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6: one cloud's grains need no sort    | Open                                                                                                   |
-| #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                                                                                   |
-| #543  | The cost of many dispatches                                                      | I                                                | Open                                                                                                   |
-| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Closed: fixed by #962 (`20759ec9`), in the pin `87af4eb0`; ask M retired                               |
-| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open; answered by 0109 Amendment 1 (#960), implemented by #993 (`87af4eb0`), in the pin; ask N retired |
-| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired      |
-| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node  | Q                                                | Open                                                                                                   |
-| #961  | The CPU tier allocates an array for the `inout` values of every method call      | S                                                | Open                                                                                                   |
-| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns | G (variant C), D                                 | Open                                                                                                   |
-| #967  | An `f64` module constant is refused, with a misleading TS8022 after it           | G (variant C), D                                 | Open                                                                                                   |
-| #968  | The determinism report has no row for subnormal flushing                         | E                                                | Open                                                                                                   |
-| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form      | C                                                | Open                                                                                                   |
-| #970  | WebGL2 refuses an `f64` local kept across a barrier                              | G (variant C), D                                 | Open                                                                                                   |
+| Issue | Title, shortened                                                                                                    | Bears on                                                                   | Status                                                                                                 |
+| ----- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index                                    | J                                                                          | Fixed by #939 (`b3bf0af8`), in the pin `87af4eb0`                                                      |
+| #901  | The commit-msg hook reads a merge against its first parent                                                          | The implementing pull requests, not the engine                             | Closed: fixed by #932 and #956                                                                         |
+| #908  | TS8070 names a static function by its emitted name                                                                  | The refusal's wording for a unit's static helper                           | Fixed on `main` by #953 (`a659ae36`)                                                                   |
+| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier                                               | J                                                                          | Open                                                                                                   |
+| #459  | A WebAssembly tier between WebGL2 and the CPU                                                                       | K, F                                                                       | Open; change 0042 draft                                                                                |
+| #535  | Reverse-mode `grad` before 1.0                                                                                      | L                                                                          | Open; change 0056 accepted                                                                             |
+| #539  | A stable sort of `u32` keys with values on every tier                                                               | Experiment 6: one cloud's grains need no sort                              | Open                                                                                                   |
+| #542  | GPU time through `typeshade/runtime`                                                                                | H                                                                          | Open                                                                                                   |
+| #543  | The cost of many dispatches                                                                                         | I                                                                          | Open                                                                                                   |
+| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)                                         | M                                                                          | Closed: fixed by #962 (`20759ec9`), in the pin `87af4eb0`; ask M retired                               |
+| #945  | `read()` of a `Resident` of class instances returns plain objects                                                   | N                                                                          | Open; answered by 0109 Amendment 1 (#960), implemented by #993 (`87af4eb0`), in the pin; ask N retired |
+| #946  | The fuse report names the plan's best tier but not the tier of each group                                           | P                                                                          | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired      |
+| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node                                     | Q                                                                          | Open                                                                                                   |
+| #961  | The CPU tier allocates an array for the `inout` values of every method call                                         | S                                                                          | Open                                                                                                   |
+| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                    | G (variant C), D                                                           | Open                                                                                                   |
+| #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                              | G (variant C), D                                                           | Open                                                                                                   |
+| #968  | The determinism report has no row for subnormal flushing                                                            | E                                                                          | Open                                                                                                   |
+| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form                                         | C                                                                          | Open                                                                                                   |
+| #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                 | G (variant C), D                                                           | Open                                                                                                   |
+| #997  | The call's read check refuses a guarded read that stays inside the array (a `TypeError`; `tshc check` says nothing) | Experiment 5 (record 05, candidate issue 1): the guarded `pad`             | Open; pull request #1029 open                                                                          |
+| #998  | A queued call runs on the output of a call that failed                                                              | Experiment 5 (record 05, candidate issue 2): a block that queues its calls | Open; a decision on the queue after a failed call (propagate the error: a proposal; or document it)    |
 
 ## 4. How a row moves
 

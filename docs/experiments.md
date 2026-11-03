@@ -219,6 +219,10 @@ departs from the method":
 - At full scale the tail holds no subnormal, so a second impulse, at 2^-112, is added, whose last
   second lies across 2^-126.
 
+The record's candidate asks and issues have their places in `docs/compiler-asks.md` and on the
+compiler: candidate ask A is now ask AA, candidate ask B is now an item of ask G, and candidate ask
+C is now evidence of ask V. Candidate issues 1 and 2 are now compiler issues #997 and #998.
+
 ## 6. A granular scheduler on `push` and device-resident counts
 
 **Question.** A kernel appends grain events with `push` (change 0078) into a list whose count

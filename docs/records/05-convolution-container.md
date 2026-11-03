@@ -338,9 +338,9 @@ While the kernels were written, at the pin:
   is refused by the call before it runs. On WebGPU, in a development run of this harness:
   `TypeError: pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0 to 2047.`
   The read never leaves the array, and `tshc check` reports no problem. The same form is refused on
-  the CPU tier (candidate issue 1, in section "Inferences", has the reproduction). The call's check
-  of the arrays a loop reads, added for compiler issue #655, does not see the guard. `pad` loops
-  over the 1,024 frames instead.
+  the CPU tier (candidate issue 1, now issue #997, in section "Inferences", has the reproduction).
+  The call's check of the arrays a loop reads, added for compiler issue #655, does not see the
+  guard. `pad` loops over the 1,024 frames instead.
 
 ## What departs from the method
 
@@ -477,10 +477,10 @@ sessions. The owner's devices give the real numbers.
 These are inferences for the owner and the coordinating session, who letter the asks and file the
 issues. Each suspected bug has a minimal reproduction, run at the pin on 2026-11-02.
 
-**Candidate issue 1. The call's read check does not see a guard.** A kernel loop that reads an
-array only under a branch that keeps the index inside it is refused before it runs: on the CPU tier
-(this reproduction) and on WebGPU (the guarded `pad`, in a development run). `tshc check` reports no
-problem.
+**Candidate issue 1, now issue #997 of the compiler. The call's read check does not see a guard.** A
+kernel loop that reads an array only under a branch that keeps the index inside it is refused before
+it runs: on the CPU tier (this reproduction) and on WebGPU (the guarded `pad`, in a development
+run). `tshc check` reports no problem.
 
 ```ts
 "use typeshade";
@@ -503,9 +503,9 @@ The read check came with the fix of compiler issue #655 (`src/core/passes/kernel
 `read` checks from the proof's `reads`, at the pin). Expected: the call runs, or the check is
 limited to the reads that no guard bounds. Not in the issues `docs/compiler-asks.md` cites.
 
-**Candidate issue 2. A queued call runs on the output of a call that failed.** A call that fails
-keeps its error on the `Resident`s it writes. A queued call that reads one of them runs on what the
-array held before, and a read of its own output resolves.
+**Candidate issue 2, now issue #998 of the compiler. A queued call runs on the output of a call that
+failed.** A call that fails keeps its error on the `Resident`s it writes. A queued call that reads
+one of them runs on what the array held before, and a read of its own output resolves.
 
 ```ts
 const dev = await createDevice({ prefer: ['cpu'] });
@@ -522,24 +522,26 @@ later call that reads it. An engine that queues a block's calls without awaiting
 silent wrong block. Observed in a development run of this harness on WebGPU, whose fallback to
 plain calls returned blocks of zeros; reproduced as above on the CPU tier.
 
-**Candidate ask A. WebGL2 loops for the convolution's kernels.** On WebGL2 a kernel loop that
-writes an `array<vec2>`, writes at an index other than its counter, or writes two arrays has no
+**Candidate ask A, now ask AA. WebGL2 loops for the convolution's kernels.** On WebGL2 a kernel loop
+that writes an `array<vec2>`, writes at an index other than its counter, or writes two arrays has no
 WebGL2 program (section "Refusals, and calls that did not return"). All four of the convolution's
 kernels fall to the CPU tier there, and a block costs 5.6 seconds against a budget of 21.33 ms. The
 general part: a WebGL2 draw that writes the two words of a `vec2` element, writes at `i + c`, or
 writes several arrays as several render targets.
 
-**Candidate ask B. A real-input transform in the FFT module (ask G).** A real signal's spectrum is
-Hermitian: 1,025 of the 2,048 bins hold all of it. The spectra and the delay line would hold 7.34
-MiB instead of 14.66 MiB, and the multiply-accumulate would read about half as much. This belongs to
-what `typeshade/fft` would carry, beside the twiddles from a table and a storage form (record 03).
+**Candidate ask B, now an item of ask G. A real-input transform in the FFT module (ask G).** A real
+signal's spectrum is Hermitian: 1,025 of the 2,048 bins hold all of it. The spectra and the delay
+line would hold 7.34 MiB instead of 14.66 MiB, and the multiply-accumulate would read about half as
+much. This belongs to what `typeshade/fft` would carry, beside the twiddles from a table and a
+storage form (record 03).
 
-**Candidate ask C. The CPU tier converts every element of an array argument on every call.** On the
-CPU tier in Node, `store` writes 2,048 of the delay line's 960,512 points in 962.1 ms, and `pad`
-writes 1,024 points of a 2,048-point array in 5.2 ms. The oracle's `fns`, given the values in its own
-form, takes 0.19 ms for the same `store`. The time follows the arrays' length, not the work. This
-run measured host arrays only; a large `Resident` on the CPU tier (a delay line, a bank) may cost
-the same on each call. Related to ask S (#961), which measures the allocation per method call.
+**Candidate ask C, now evidence of ask V. The CPU tier converts every element of an array argument
+on every call.** On the CPU tier in Node, `store` writes 2,048 of the delay line's 960,512 points in
+962.1 ms, and `pad` writes 1,024 points of a 2,048-point array in 5.2 ms. The oracle's `fns`, given
+the values in its own form, takes 0.19 ms for the same `store`. The time follows the arrays' length,
+not the work. This run measured host arrays only; a large `Resident` on the CPU tier (a delay line,
+a bank) may cost the same on each call. Related to ask S (#961), which measures the allocation per
+method call.
 
 ## What this run finds in the design documents
 
