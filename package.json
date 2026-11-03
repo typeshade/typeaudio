@@ -18,6 +18,7 @@
     "exp:02": "bun experiments/02-worklet/run.ts",
     "exp:03": "bun experiments/03-fft/run.ts",
     "exp:04": "bun experiments/04-additive/run.ts",
+    "exp:05": "bun experiments/05-convolution/run.ts",
     "exp:06": "bun experiments/06-granular/run.ts"
   },
   "devDependencies": {
