@@ -3,19 +3,20 @@
 The experiments decide the first implementation. Measurement comes before any proposal
 (`docs/vision.md`, section 11). They run in order, because a later one builds on an earlier one's
 numbers. Each experiment has one question, the decision its answer supports, a method and a
-record. On 2026-11-02 experiments 1, 2, 3 and 7 each have a harness and a run on the container of
-an agent session, recorded as reference numbers; no experiment has run on the owner's devices yet.
+record. On 2026-11-02 experiments 1, 2, 3, 4, 5, 6 and 7 each have a harness and a run on the
+container of an agent session, recorded as reference numbers; no experiment has run on the owner's
+devices yet.
 
 ## Status
 
-| #   | Experiment                                                 | Decides                                                   | Status                                                                                                 |
-| --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
-| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending    |
-| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending        |
-| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
-| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
-| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
+| #   | Experiment                                                 | Decides                                                   | Status                                                                                                  |
+| --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending  |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending     |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending         |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending    |
+| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending    |
 | 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending |
 
 The asks are the rows of `docs/compiler-asks.md`.
@@ -166,7 +167,14 @@ host read.
 5. Measure the time per block over 1,000 blocks.
 6. Write the record.
 
-**Status.** Not started.
+**Status.** Harness ready: `experiments/04-additive/`, run by `bun run exp:04`. One block is one
+`dev.fuse()` scope over a bank of 10,000 partials, each a `Sine` through a `Lowpass` at the level
+of an `Envelope`, its cutoff moved every block. Six variants change the sum of the lanes, where the
+filters' coefficients come from, and where the lanes live; `docs/records/04-additive-container.md`,
+section "The method", says how. The run on the container of a Claude Code session is recorded
+there, as reference numbers. The engine's plan ran 1,000 blocks on each tier; the other variants
+ran fewer, and the record lists each difference from the method above with its disposition. The
+device runs are pending: one record per device, `docs/records/04-additive-<device>.md`.
 
 ## 5. A 10-second partitioned convolution
 
@@ -187,7 +195,29 @@ the FFT, and ask E, the tail.
    oracle's output.
 5. Write the record.
 
-**Status.** Not started.
+**Status.** Harness ready: `experiments/05-convolution/`, run by `bun run exp:05`. The run on the
+container of an agent session is recorded in `docs/records/05-convolution-container.md`, as
+reference numbers: WebGPU and WebGL2 on SwiftShader, the compiler's oracle in Bun, and a kernel
+check on the CPU tier in Node. The device runs are pending: one record per device,
+`docs/records/05-convolution-<device>.md`.
+
+The harness departs from the method in six places, each recorded in the record's section "What
+departs from the method":
+
+- Step 1 names the FFT of experiment 3, which has no 2,048-point entry. A partition of 1,024 frames,
+  zero-padded, is 2,048 points, so `experiments/03-fft/fft.shade.ts` gains `fftMediumTable`: 16 KiB
+  of workgroup memory, the twiddles from the host's table.
+- Step 3 asks for 1,000 blocks. WebGPU runs 1,000 blocks, on a device with `timestamp-query` and on
+  one without. WebGL2 runs 10 blocks and the oracle 3: a block takes seconds there.
+- Step 4 compares the last second of the tail. The oracle and WebGL2 run block 0 and blocks 420 to
+  468 of the impulse, not every block; on WebGPU this jump gives the bits of the full run.
+- At the compiler pin the host's CPU tier refuses the FFT entry, which reaches a barrier (change
+  0092 is accepted, not implemented). The CPU answer is the compiler's oracle, as in experiment 3.
+  The host's CPU tier runs the four kernel functions in a kernel check.
+- On WebGL2 the four kernel functions have no WebGL2 loop at the pin and run on the CPU tier; only
+  the FFT entry runs on WebGL2.
+- At full scale the tail holds no subnormal, so a second impulse, at 2^-112, is added, whose last
+  second lies across 2^-126.
 
 ## 6. A granular scheduler on `push` and device-resident counts
 
@@ -207,7 +237,25 @@ order needs a stable sort (issue #539).
 4. Run the same on WebGL2, and record what it refuses.
 5. Write the record.
 
-**Status.** Not started.
+**Status.** Harness ready: `experiments/06-granular/`, run by `bun run exp:06`. It runs the
+engine's grain scheduler, `cull`, `spawn` and `play` of `src/kernels/grains.shade.ts`, as one `fuse`
+plan per block, in four arms of the same seed (`docs/records/06-granular-container.md`, section
+"The method"). The run on the container of a Claude Code session is recorded there, as reference
+numbers:
+
+- On WebGPU on SwiftShader the scheduler ran 10,000 grains a second at blocks of 1,024 frames with
+  no device read per block. Streamed, a block took 14.4 ms, below its 21.3 ms. The 99th percentile
+  of a fenced block, 32.4 ms, was above it, on a loaded machine. The CPU tier took about 100 ms a
+  block.
+- Each tier gave the same bits on every render of the seed. The lists of grains were the same bits
+  on the three tiers, in the order the grains started. Inference: one cloud's grains need no sort
+  (issue #539).
+- WebGL2 runs no loop that pushes, and every call of a block fell to the CPU tier. The record
+  keeps each refusal word for word.
+
+The method's step 1 names two kernels, and the scheduler has three: the record keeps that
+deviation open for the owner. The device runs are pending: one record per device,
+`docs/records/06-granular-<device>.md`.
 
 ## 7. A sound match with function-level `grad`
 
