@@ -330,9 +330,24 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 - Pressure: a sound match over many parameters needs one backward pass, not one forward pass per
   parameter.
-- Compiler: change 0056 (accepted) and issue #535 (its design issue, raised by
-  typeshade/radiance).
-- Workaround: forward-mode function-level `grad` over few parameters.
+- Compiler: change 0056 (accepted) and issue #535 (its design issue, raised by typeshade/radiance).
+  Issues #1017 (the CPU tier's code generator hands a reverse-mode loop to the interpreter; fixed on
+  the compiler's `main` by #1019, `e30bbe57`, after the pin) and #1018 (the pipeline of the
+  reverse-mode derivative is slow to build; open) bear on it. Record 07 names four items under this
+  letter. They were its candidate asks and its needs, with no letter of their own:
+  1. change 0056, step 4: a derivative on the host face and in the manifest, so that an application
+     calls one without the compiler, and a GPU tier runs one without the harness's swap of
+     placeholders;
+  2. `grad` carries a derivative through a fixed-size local array, or change 0056's steps 3 and 4
+     reach a kernel function or an entry, so that a loss can keep the render and use the FFT of
+     experiment 3 over every bin, in place of 16 bins inside the frame loop;
+  3. forward mode takes a direction as an argument, as the harness's `along` form writes it by
+     hand, so that a GPU runs the derivative of every parameter in one dispatch;
+  4. forward mode takes a matrix parameter, as reverse mode does.
+- Workaround: forward-mode function-level `grad` over few parameters. The harness of experiment 7
+  adds three forms: `along` (item 3), a swap of placeholders that runs a derivative on the GPU tiers
+  (item 1), and the `probe`, which rewrites reverse mode's loop headers so that the CPU tier's code
+  generator compiles them (issue #1017). The `probe` retires when the pin moves past `e30bbe57`.
 - Measured by: experiment 7.
 - Status: measured by experiment 7, on the container only
   (`docs/records/07-sound-match-container.md`, 2026-11-02, reference numbers). At the pin, change
@@ -346,8 +361,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   mode's step moves little with the count, but its loops run in the interpreter on the CPU code
   path: 387 to 507 ms a step. Generated, as the record's probe stands for it, it costs 2.26 to 16.3
   ms and overtakes forward mode between 3 and 10 parameters in Node and between 10 and 30 in Bun
-  (candidate compiler issue in the record). On SwiftShader the reverse-mode pipeline took 9,850 ms
-  to make at 30 parameters and was not made at 100.
+  (issue #1017, fixed on the compiler's `main` by #1019, `e30bbe57`, after the pin: the `probe`
+  retires when the pin moves past it). On SwiftShader the reverse-mode pipeline took 9,850 ms to
+  make at 30 parameters and was not made at 100 (issue #1018, open).
 
 ### M. A static builder on an abstract base
 
@@ -614,34 +630,36 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
 raised (pull request #5, asks M, N, P and Q), the issues experiments 2 and 3 raised (asks S, C and
-E, and the FFT's findings under G), the issues experiment 5 raised (#997 and #998), and the earlier
-issues the asks cite.
+E, and the FFT's findings under G), the issues experiments 5 and 7 raised (#997 and #998; #1017 and
+#1018), and the earlier issues the asks cite.
 
 The states are those of 2026-11-03, at the pin `87af4eb0`.
 
-| Issue | Title, shortened                                                                                                    | Bears on                                                                   | Status                                                                                                 |
-| ----- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index                                    | J                                                                          | Fixed by #939 (`b3bf0af8`), in the pin `87af4eb0`                                                      |
-| #901  | The commit-msg hook reads a merge against its first parent                                                          | The implementing pull requests, not the engine                             | Closed: fixed by #932 and #956                                                                         |
-| #908  | TS8070 names a static function by its emitted name                                                                  | The refusal's wording for a unit's static helper                           | Fixed on `main` by #953 (`a659ae36`)                                                                   |
-| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier                                               | J                                                                          | Open                                                                                                   |
-| #459  | A WebAssembly tier between WebGL2 and the CPU                                                                       | K, F                                                                       | Open; change 0042 draft                                                                                |
-| #535  | Reverse-mode `grad` before 1.0                                                                                      | L                                                                          | Open; change 0056 accepted                                                                             |
-| #539  | A stable sort of `u32` keys with values on every tier                                                               | Experiment 6: one cloud's grains need no sort                              | Open                                                                                                   |
-| #542  | GPU time through `typeshade/runtime`                                                                                | H                                                                          | Open                                                                                                   |
-| #543  | The cost of many dispatches                                                                                         | I                                                                          | Open                                                                                                   |
-| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)                                         | M                                                                          | Closed: fixed by #962 (`20759ec9`), in the pin `87af4eb0`; ask M retired                               |
-| #945  | `read()` of a `Resident` of class instances returns plain objects                                                   | N                                                                          | Open; answered by 0109 Amendment 1 (#960), implemented by #993 (`87af4eb0`), in the pin; ask N retired |
-| #946  | The fuse report names the plan's best tier but not the tier of each group                                           | P                                                                          | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired      |
-| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node                                     | Q                                                                          | Open                                                                                                   |
-| #961  | The CPU tier allocates an array for the `inout` values of every method call                                         | S                                                                          | Open                                                                                                   |
-| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                    | G (variant C), D                                                           | Open                                                                                                   |
-| #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                              | G (variant C), D                                                           | Open                                                                                                   |
-| #968  | The determinism report has no row for subnormal flushing                                                            | E                                                                          | Open                                                                                                   |
-| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form                                         | C                                                                          | Open                                                                                                   |
-| #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                 | G (variant C), D                                                           | Open                                                                                                   |
-| #997  | The call's read check refuses a guarded read that stays inside the array (a `TypeError`; `tshc check` says nothing) | Experiment 5 (record 05, candidate issue 1): the guarded `pad`             | Open; pull request #1029 open                                                                          |
-| #998  | A queued call runs on the output of a call that failed                                                              | Experiment 5 (record 05, candidate issue 2): a block that queues its calls | Open; a decision on the queue after a failed call (propagate the error: a proposal; or document it)    |
+| Issue | Title, shortened                                                                                                     | Bears on                                                                   | Status                                                                                                                    |
+| ----- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index                                     | J                                                                          | Fixed by #939 (`b3bf0af8`), in the pin `87af4eb0`                                                                         |
+| #901  | The commit-msg hook reads a merge against its first parent                                                           | The implementing pull requests, not the engine                             | Closed: fixed by #932 and #956                                                                                            |
+| #908  | TS8070 names a static function by its emitted name                                                                   | The refusal's wording for a unit's static helper                           | Fixed on `main` by #953 (`a659ae36`)                                                                                      |
+| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier                                                | J                                                                          | Open                                                                                                                      |
+| #459  | A WebAssembly tier between WebGL2 and the CPU                                                                        | K, F                                                                       | Open; change 0042 draft                                                                                                   |
+| #535  | Reverse-mode `grad` before 1.0                                                                                       | L                                                                          | Open; change 0056 accepted                                                                                                |
+| #539  | A stable sort of `u32` keys with values on every tier                                                                | Experiment 6: one cloud's grains need no sort                              | Open                                                                                                                      |
+| #542  | GPU time through `typeshade/runtime`                                                                                 | H                                                                          | Open                                                                                                                      |
+| #543  | The cost of many dispatches                                                                                          | I                                                                          | Open                                                                                                                      |
+| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)                                          | M                                                                          | Closed: fixed by #962 (`20759ec9`), in the pin `87af4eb0`; ask M retired                                                  |
+| #945  | `read()` of a `Resident` of class instances returns plain objects                                                    | N                                                                          | Open; answered by 0109 Amendment 1 (#960), implemented by #993 (`87af4eb0`), in the pin; ask N retired                    |
+| #946  | The fuse report names the plan's best tier but not the tier of each group                                            | P                                                                          | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired                         |
+| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node                                      | Q                                                                          | Open                                                                                                                      |
+| #961  | The CPU tier allocates an array for the `inout` values of every method call                                          | S                                                                          | Open                                                                                                                      |
+| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                     | G (variant C), D                                                           | Open                                                                                                                      |
+| #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                               | G (variant C), D                                                           | Open                                                                                                                      |
+| #968  | The determinism report has no row for subnormal flushing                                                             | E                                                                          | Open                                                                                                                      |
+| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form                                          | C                                                                          | Open                                                                                                                      |
+| #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                  | G (variant C), D                                                           | Open                                                                                                                      |
+| #997  | The call's read check refuses a guarded read that stays inside the array (a `TypeError`; `tshc check` says nothing)  | Experiment 5 (record 05, candidate issue 1): the guarded `pad`             | Open; pull request #1029 open                                                                                             |
+| #998  | A queued call runs on the output of a call that failed                                                               | Experiment 5 (record 05, candidate issue 2): a block that queues its calls | Open; a decision on the queue after a failed call (propagate the error: a proposal; or document it)                       |
+| #1017 | `compileModuleJs` runs a reverse-mode derivative with a loop in the interpreter                                      | L                                                                          | Fixed on `main` by #1019 (`e30bbe57`), after the pin; the `probe` form of experiment 7 retires when the pin moves past it |
+| #1018 | The pipeline of a reverse-mode derivative with a frame loop grows past usable with the parameter count (SwiftShader) | L                                                                          | Open                                                                                                                      |
 
 ## 4. How a row moves
 
