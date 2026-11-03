@@ -235,7 +235,7 @@ SwiftShader. The device runs are pending: one record per device,
 0056 is accepted and its steps 1, 1b and 2a are implemented: `grad` has a function-level reverse
 mode as well.
 
-The harness departs from the method in five places, each recorded in the record's section "What
+The harness departs from the method in six places, each recorded in the record's section "What
 departs from the method":
 
 - The loss takes 16 bins of a 1,024-point DFT by one Goertzel recurrence per bin inside the frame
@@ -243,10 +243,12 @@ departs from the method":
   (`SD0118`). The FFT of experiment 3 holds the loss's bins and measures the match over 512 bins.
 - Beside forward mode per parameter, the harness takes the gradient in three more forms: forward
   mode along a direction given as an argument, reverse mode, and a probe that rewrites reverse
-  mode's loop headers, which the CPU tier's code generator refuses at the pin.
+  mode's loop headers, which the CPU tier's code generator hands to the interpreter at the pin.
 - At the pin a derivative reaches neither the host face nor the manifest (change 0056, step 4). The
   CPU tier runs the derivatives through `compileModuleJs`, the host face's code generator, and the
   GPU tiers through a packed program whose placeholders take the bodies `grad` builds.
 - The descent uses Adam. Plain gradient descent, also run, ends farther from the known answer.
 - The GPU tiers also time a render with one invocation for each frame, beside the render by one
   invocation that the CPU arms time.
+- The frame loop runs over the envelope's segments, and over each segment's frames inside it, so a
+  level is looked up once a segment; the frames total 1,024 at every count.
