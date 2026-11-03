@@ -17,10 +17,10 @@ graph, the transports, and the unit and channel types. The design is `docs/visio
 First code (pull request #5). The units, the kernels in the four loop shapes, a bank, `render` and
 `explain` exist, with unit tests on the CPU tier and a browser check on WebGPU. The grains and the
 three kernels of their scheduler exist too (experiment 6). The harnesses of experiments 1, 2, 3, 4,
-5 and 6 are ready, and their container runs are recorded as reference numbers; their device runs are
-pending. The code builds on decisions D1 to D6 of `docs/architecture.md`, which the owner approved
-on 2026-11-02: D1, D2 and the block of D5 are built; D3, D4, the lookahead of D5 and the device the
-engine makes (D6) wait for later pull requests. Nothing here is published to npm.
+5, 6 and 7 are ready, and their container runs are recorded as reference numbers; their device runs
+are pending. The code builds on decisions D1 to D6 of `docs/architecture.md`, which the owner
+approved on 2026-11-02: D1, D2 and the block of D5 are built; D3, D4, the lookahead of D5 and the
+device the engine makes (D6) wait for later pull requests. Nothing here is published to npm.
 
 ## The design in one screen
 
@@ -67,6 +67,7 @@ engine makes (D6) wait for later pull requests. Nothing here is published to npm
 | `experiments/04-additive/`                       | Experiment 4: its partials and sums, its plain-JavaScript reference, its harness and its runner                                                                 |
 | `experiments/05-convolution/`                    | Experiment 5: the kernels of the partitioned convolution, the impulse response, the `f64` references, the oracle's run, the harness and its runner              |
 | `experiments/06-granular/`                       | Experiment 6: its two kernels of measurement, its harness over the grain scheduler, its page and its runner                                                     |
+| `experiments/07-sound-match/`                    | Experiment 7: the FM patch and its loss written by a generator, the four forms of the gradient, the harness and its runner                                      |
 | `scripts/`                                       | The Vite build, the headless Chromium and the CPU time of its threads, which the browser check and the experiments share                                        |
 
 ## Baselines
@@ -109,6 +110,10 @@ engine makes (D6) wait for later pull requests. Nothing here is published to npm
 - `bun run exp:06`: experiment 6, the grain scheduler, on the CPU tier in Node, and on WebGPU and
   WebGL2 in headless Chromium. It writes the result as JSON (`--out`) and keeps each tier's
   render in `experiments/06-granular/out/`; its records are in `docs/records/`. CI does not run it.
+- `bun run exp:07`: experiment 7 on the CPU tier in Node, on the compiler's oracle in Bun, and on
+  WebGPU and WebGL2 in headless Chromium. It times the render, the loss and a descent's step with
+  the gradient of `grad` in four forms, per parameter count. It writes the result as JSON (`--out`);
+  its records are in `docs/records/`. `bun run exp:07 --write` writes the patch's modules again.
 
 CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
 and `bun run test`. Every claim of a result names the command, the date, the commit and the

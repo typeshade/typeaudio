@@ -304,8 +304,20 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   typeshade/radiance).
 - Workaround: forward-mode function-level `grad` over few parameters.
 - Measured by: experiment 7.
-- Status: proposal accepted in the compiler. Its implementation state is read from
-  `changes/0056-reverse-mode-grad.md` when experiment 7 starts.
+- Status: measured by experiment 7, on the container only
+  (`docs/records/07-sound-match-container.md`, 2026-11-02, reference numbers). At the pin, change
+  0056 reads `accepted` and its validation record "does not yet apply"; the compiler's changelog
+  lists step 1 (#546), step 1b (#547) and slice 2a (#548) as implemented. So `grad` has a
+  function-level reverse mode, loops included, and `gradCheck` holds both modes to a central
+  difference (it passes on the loss of 3 parameters). A derivative reaches no host face and no
+  manifest (step 4), so no application and no GPU tier calls one without the compiler; `grad` takes
+  no array, struct or entry. On the CPU tier in Node, forward mode's step costs 14.4, 56.4, 197 and
+  407 renders at 3, 10, 30 and 100 parameters, 2.10 to 2.91 losses for each parameter. Reverse
+  mode's step moves little with the count, but its loops run in the interpreter on the CPU code
+  path: 387 to 507 ms a step. Generated, as the record's probe stands for it, it costs 2.26 to 16.3
+  ms and overtakes forward mode between 3 and 10 parameters in Node and between 10 and 30 in Bun
+  (candidate compiler issue in the record). On SwiftShader the reverse-mode pipeline took 9,850 ms
+  to make at 30 parameters and was not made at 100.
 
 ### M. A static builder on an abstract base
 
