@@ -16,22 +16,26 @@ The loop is `docs/vision.md`, section 10. A row moves through these states:
 | proposal NNNN (draft, accepted, implemented) | The lifecycle state of the compiler proposal, as its `status` line says.                             |
 | retired                                      | The pin moved past the implementation, `compiler-changes.md` records the id, the workaround is gone. |
 
-The letters and the ids are stable. A new ask takes the next free letter. A row never changes
-its letter.
+The letters and the ids are stable. A new ask takes the next free letter. After Z, an ask takes
+two letters, in order: AA, AB, AC. A row never changes its letter.
 
 ## 1. The proposals this engine rests on
 
 Five proposals were drafted and accepted on 2026-11-02, in the session that wrote the design.
 Four shape the host face a unit shows the developer (`docs/vision.md`, section 8, "The host
-face"), and one the fuse report that `explain` reads.
+face"), and one the fuse report that `explain` reads. The last two rows, 0119 and 0120, are
+proposals of the compiler that name `typeaudio` in their `downstream` entries. No ask of this ledger
+leads to either.
 
-| Id   | Proposal                            | What it gives TypeAudio                                                                                                                                                                                                                | Status on 2026-11-02                                                                                                                                                                                                                                                                                                                                         |
-| ---- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0108 | `changes/0108-host-view-jsdoc.md`   | The host view carries the author's JSDoc verbatim, so a unit's documentation reaches the editor through the host face.                                                                                                                 | Implemented: items 1 to 3 by #887 (`77ced44`, 2026-11-02), the inherited-field deviation closed by its record; Amendment 1 accepted (#915, `bb82036b`) and item 4, the members of an exported class carry their comments (decision D4), implemented by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, `a80551b4`, 2026-11-02) drops the static field from item 4's list, since the view declares none.                                                                                |
-| 0109 | `changes/0109-host-classes.md`      | An exported class is a value of the host face: `new` and the methods run on the CPU tier, an instance is the struct's host value, a struct result is an instance. The engine's `new OnePole(0.1)` on the host rests on it.             | Implemented (#890, squash commit `9dbc298`, 2026-11-02). Two deviations open in the proposal's record: the view's flat declaration where TypeScript refuses an override; a mixin's members untested. Amendment 1 (#960, `376f8927`, 2026-11-02, decision D5): item 6, a `Resident` made from instances keeps their classes and `read()` returns instances (ask N). Implemented by #993 (`87af4eb0`, 2026-11-02), which the pin `87af4eb0` holds; pull request #15 of this repository retires the workaround. |
-| 0110 | `changes/0110-class-consistency.md` | Rule 8.29: a class is its struct and its functions in every place a struct or a function can be. The class arm of the differential gate holds a method to one result in a compute entry, a kernel loop, the host class and the oracle. | Implemented (#883, `bef6574`, 2026-11-02), with the host leg of the class arm on the host class of 0109; the deferral deviation is closed by its record.                                                                                                                                                                                                     |
-| 0116 | `changes/0116-host-type-family.md`  | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                       | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, a matrix carries its name, and item 4 names its exceptions. |
-| 0118 | `changes/0118-fuse-group-tier.md` | Each group of a `FuseReport` carries the tier it ran on, and a group below its plan's tier says why in its `why`, so `explain` reads where each node ran instead of inferring it (ask P). | Implemented (#990, `480b6a64`, 2026-11-02), which the pin `87af4eb0` holds. Accepted (#959, `6c1799ec`) with D1 to D3 as drafted: `tier` on every group; the reason in `why`; the call layer's own text. One deviation open in the proposal's record (D-1): the reason a tier gives for a call it has no program for repeats "runs on the CPU" (`peak runs on the CPU, it runs on the CPU, loop 1 reduces, ...`). Pull request #15 of this repository retires the workaround. |
+| Id   | Proposal                                     | What it gives TypeAudio                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Status on 2026-11-02                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ---- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0108 | `changes/0108-host-view-jsdoc.md`            | The host view carries the author's JSDoc verbatim, so a unit's documentation reaches the editor through the host face.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Implemented: items 1 to 3 by #887 (`77ced44`, 2026-11-02), the inherited-field deviation closed by its record; Amendment 1 accepted (#915, `bb82036b`) and item 4, the members of an exported class carry their comments (decision D4), implemented by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, `a80551b4`, 2026-11-02) drops the static field from item 4's list, since the view declares none.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 0109 | `changes/0109-host-classes.md`               | An exported class is a value of the host face: `new` and the methods run on the CPU tier, an instance is the struct's host value, a struct result is an instance. The engine's `new OnePole(0.1)` on the host rests on it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Implemented (#890, squash commit `9dbc298`, 2026-11-02). Two deviations open in the proposal's record: the view's flat declaration where TypeScript refuses an override; a mixin's members untested. Amendment 1 (#960, `376f8927`, 2026-11-02, decision D5): item 6, a `Resident` made from instances keeps their classes and `read()` returns instances (ask N). Implemented by #993 (`87af4eb0`, 2026-11-02), which the pin `87af4eb0` holds; pull request #15 of this repository retires the workaround.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 0110 | `changes/0110-class-consistency.md`          | Rule 8.29: a class is its struct and its functions in every place a struct or a function can be. The class arm of the differential gate holds a method to one result in a compute entry, a kernel loop, the host class and the oracle.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Implemented (#883, `bef6574`, 2026-11-02), with the host leg of the class arm on the host class of 0109; the deferral deviation is closed by its record.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 0116 | `changes/0116-host-type-family.md`           | `typeshade/runtime` exports a family of host types spelled as the shader spells them (`f32`, `vec3`, `array<f32>`), so the host view reads as the `.shade.ts` file does. Renumbered from 0111 (#884, `c33f743`).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Implemented (#918, `9822490f`, 2026-11-02) with Amendment 1 (#925, `334b9fc4`), which declared the twenty exports of the common modules and §74 and decided D7 to D10: a struct is spelled by its name and an exported class as the class, a struct binding by its name beside its packed forms, a matrix carries its name, and item 4 names its exceptions.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 0118 | `changes/0118-fuse-group-tier.md`            | Each group of a `FuseReport` carries the tier it ran on, and a group below its plan's tier says why in its `why`, so `explain` reads where each node ran instead of inferring it (ask P).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Implemented (#990, `480b6a64`, 2026-11-02), which the pin `87af4eb0` holds. Accepted (#959, `6c1799ec`) with D1 to D3 as drafted: `tier` on every group; the reason in `why`; the call layer's own text. One deviation open in the proposal's record (D-1): the reason a tier gives for a call it has no program for repeats "runs on the CPU" (`peak runs on the CPU, it runs on the CPU, loop 1 reduces, ...`). Pull request #15 of this repository retires the workaround.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 0119 | `changes/0119-subgroup-reduction-variant.md` | A kernel function's reduction whose operator gives one value in every order folds inside a subgroup first on a WebGPU device that has `subgroups`, as a second WGSL variant that the runtime selects by feature and probe: an integer `+`, a bitwise operator, `min` or `max`, and `min` or `max` on a float; and a scatter `a[k] op= e` into an integer array. No source changes, and the bits are the tree's. `peak` (`src/kernels/meter.shade.ts`, shape R) reduces with `max` on `f32`, which the variant covers. An `f32` sum keeps the tree, as `sumFrame` of experiment 4 does. The proposal's entry for `typeaudio` says "No known integer reduction in a kernel function. The record notes the id at the pin." | Accepted (#977, merge `64caf3ea`, 2026-11-02), amended twice by #1024 (`d7f035ea`, 2026-11-03), and implemented on the compiler's `main` (`ad0a3865`, read 2026-11-03) after the pin, in three stages: #1020 (`8d693f34`, the second WGSL text), #1026 (`043f8cad`, the runtime selects it by feature and a known-answer probe) and #1027 (`ad0a3865`, Rules 8.22, 10.2 and 11.23, surface §38, §65 and §69). The proposal reads `implemented`, with deviations D-1 to D-7 in its record. D-2 (a fused plan keeps one text) and D-3 (`reflect().variants` is not delivered) are open. The pin `87af4eb0` holds none of it. It names `typeaudio` under `downstream`, so `scripts/downstream-impact.ts` lists it once a pin passes its implementation, and `compiler-changes.md` then records its id. At the next pin move this repository gets: the variant for a call of `peak` that is not fused (D-2), on a device that has `subgroups` and passes the probe, with the same bits and no source change; `DeviceInfo.subgroups`, the observation of the probe or `null`; `DeviceStatistics.variants`, the text (`'subgroup'` or `'tree'`) that the last call of each kernel function dispatched; and `createDevice({ subgroups: 'off' })`, which skips the probe. Nothing here is retired. Inference: while D-2 is open, the engine's block keeps the tree for `peak`, which is the last call of a fused group on WebGPU (`bun run test:gpu` prints "mixdown+drive+gain+peak (fused)"); and `explain` could name the variant that `Device.statistics` gives. |
+| 0120 | `changes/0120-device-rhi.md`                 | `createDevice()` becomes the one public entry point. A `Device` keeps every member it has, and gains the operations of the program runtime (`load`, `frame`, `sampler`, `submit`, `native`, `canvas` and `draw`), over a render hardware interface that the compiler owns, with a CPU backend for the program runtime. `createRuntime()`, `runtime()`, `Runtime` and `RuntimeOptions` stay for one release with a warning, and the release after it removes them, with `configure({ runtime })`. The proposal says that a host of `createDevice()` and of entry and kernel calls sees no change, except one WebGL2 context (its open point O5).                                                                         | Accepted (#1030, `66bdb832`, 2026-11-03). Not implemented at the pin `87af4eb0` or on the compiler's `main` (read 2026-11-03). It names `typeaudio` under `downstream`: "The same search and migration as typenn", that is, a host or test that calls `createRuntime`, `runtime()` or `configure({ runtime })` moves to `createDevice()` before the release that removes them. So `scripts/downstream-impact.ts` lists it once a pin passes its implementation, and `compiler-changes.md` then records its id. One file here would change: `experiments/07-sound-match/browser.ts` calls `createRuntime`, `rt.load`, `rt.frame`, `rt.device`, `rt.tier` and `rt.destroy`, and would move to `createDevice()`, `device.load`, `device.frame`, `device.native`, `device.tier` and `device.dispose` (the proposal's migration table). No call of `runtime()` and no `configure({ runtime })` was found here (searched on 2026-11-03). The rest of this repository imports `createDevice`, `configure({ prefer })`, `resident`, `Device`, `DeviceInfo`, `DeviceStatistics`, `FuseReport`, `mergeReports` and `Resident` from `typeshade/runtime`. Of them the proposal lists `createDevice`, `configure`, `Device` and `DeviceOptions` among its reshaped exports. A proposal to watch at the next pin move.                                                                                                                                                                                                                                                     |
 
 At the first compiler pin, `145666068ca5d6ecfba32aa0ea4289cf0fc3b762` (pull request #5), the
 proposals' `status` lines read: 0108 `accepted`, 0109 `implemented`, 0110 `implemented`, 0116
@@ -43,6 +47,8 @@ At the second compiler pin, `87af4eb0d9d15f02b66b8341b72cab0944290472` (pull req
 `status` lines of 0108, 0109, 0110, 0116 and 0118 read `implemented`. The move passed the
 implementations of 0116 (#918), of 0108's item 4 (#937), of 0118 (#990, `480b6a64`) and of 0109's
 Amendment 1 (#993, `87af4eb0`), and the fix #962. `compiler-changes.md` records 0109 and 0118.
+The `status` line of 0119 reads `accepted` at that pin, and the pin holds no implementation of it.
+The script lists 0119 once a pin passes its implementation.
 
 ## 2. The asks
 
@@ -216,7 +222,13 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Pressure: the partitioned convolution, the spectral effects and the analysis need one FFT held
   to the oracle on three tiers.
 - Compiler: a common module `typeshade/fft` (Rule 11.20; changes 0072 and 0076 are the
-  precedent).
+  precedent). Records 03 and 05 name four items for it:
+  1. the twiddles from a table, or from an emulated double (record 03);
+  2. a storage form past the 16 KiB of workgroup memory (record 03);
+  3. the CPU tier of change 0092 (records 03 and 05);
+  4. a real-input form (record 05, formerly its candidate ask B): 1,025 bins hold the spectrum of a
+     real signal's 2,048, so the spectra and the delay line of the convolution would take 7.34 MiB
+     instead of 14.66 MiB, and the multiply-accumulate would read about half as much.
 - Workaround: the FFT entry lives in this repository's layer 1.
 - Measured by: experiments 3 and 5.
 - Status: measured by experiment 3, on the container only (`docs/records/03-fft-container.md`,
@@ -227,12 +239,12 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   so the CPU answer is the oracle's `dispatch`, 1.6 to 8.3 seconds a call. 4,096 complex points need
   32 KiB of workgroup memory, over WebGPU's 16 KiB, so the 4,096-point entry works in storage
   memory. Inference, for the owner's decision: the entry lives in layer 1 here first, as the
-  workaround, and the issue for `typeshade/fft` follows the device runs. It would carry the twiddles
-  from a table or an emulated double, a storage form past workgroup memory, and the CPU tier of
-  change 0092. Compiler issues #966 (WebGL2 does
-  not bind the `_fp64` guard of an `f64` entry, so variant C never returns), #970 (an `f64` across
-  a barrier on WebGL2) and #967 (an `f64` module constant, and the TS8022 that follows its
-  refusal) record variant C's findings. Experiment 5, on the container only
+  workaround, and the issue for `typeshade/fft` follows the device runs. It would carry items 1 to 3
+  under Compiler. Compiler issues #966 (WebGL2 does not bind the `_fp64` guard of an `f64` entry, so
+  variant C never returns), #970 (an `f64` across a barrier on WebGL2) and #967 (an `f64` module
+  constant, and the TS8022 that follows its refusal) record variant C's findings. #966 and #970 are
+  closed on the compiler's `main` by #1003 and #1014, after the pin; their workarounds stay until
+  the pin moves past them. Experiment 5, on the container only
   (`docs/records/05-convolution-container.md`, 2026-11-02, reference numbers), adds a 2,048-point
   entry in workgroup memory, 16 KiB, with the host's table, and runs it on a 10-second impulse
   response's 469 partitions and twice a block: the oracle, WebGPU and WebGL2 give the same bits for
@@ -241,8 +253,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   transforms take 4.0 and 4.7 ms of a block's 31.0 ms of GPU time at the median, the
   multiply-accumulate 18.8 ms. On WebGL2 the report counts 146 draws a block, the kernel functions on
   the CPU tier. The host's CPU tier refuses the entry, as in experiment 3. Inference: the common
-  module would also carry a real-input form, which halves a convolution's spectra and delay line
-  (14.66 MiB at these sizes).
+  module would also carry item 4 under Compiler, the real-input form.
 
 ### H. GPU time
 
@@ -279,14 +290,22 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 - Pressure: a wavetable unit reads `table[at % table.length]`.
 - Compiler: issue #689 (a kernel loop whose body reads another array's `.length` has no WebGL2
-  tier) and issue #900 (the WebGL2 pass program drops the length declaration inside an index).
+  tier) and issue #900 (the WebGL2 pass program drops the length declaration inside an index;
+  fixed, in the pin `87af4eb0`).
 - Workaround: the length is a `u32` parameter, and the position stays inside the table.
 - Measured by: the WebGL2 arms of experiments 3 and 6.
-- Status: measured at the pin (`docs/records/03-fft-container.md`, 2026-11-02). The probe
-  `ys[i] = xs[i % xs.length]` runs on WebGPU and on the CPU tier, and on WebGL2 its pass program
-  does not compile: `'_phx_len_xs' : undeclared identifier`. The FFT entries read no length, since
-  their sizes are module constants, and run on WebGL2. #900 is fixed on the compiler's `main` by
-  #939 (`b3bf0af8`), after the pin; the workaround stays until the pin moves past it. #689 is open.
+- Status: measured at the pin `14566606` (`docs/records/03-fft-container.md`, 2026-11-02); #900 is
+  answered at the pin `87af4eb0`, and #689 is open. The probe `ys[i] = xs[i % xs.length]` runs on
+  WebGPU and on the CPU tier, and on WebGL2 its pass program did not compile:
+  `'_phx_len_xs' : undeclared identifier`. The FFT entries read no length, since their sizes are
+  module constants, and run on WebGL2. #900 is fixed by #939 (`b3bf0af8`, 2026-11-02), which the pin
+  `87af4eb0` holds (pull request #15 moved the pin past it). Run again at that pin on 2026-11-03 at
+  02:13 UTC, with `bun run exp:03 --tier webgl2 --sizes 1024 --variants table --repeats 1` at the
+  commit `b3bf00d` (headless Chromium 153, WebGL2 through ANGLE over Vulkan on SwiftShader), the
+  probe ran on WebGL2 and gave the exact result in 12 of 12 values, with no `'_phx_len_xs'` error.
+  This is a smoke run and not a record: the harness runs its probes before its calls and has no
+  option to drop them, so one call of the 1,024-point entry ran with the probes. #689 is open, and
+  the workaround stays until it closes.
   Experiment 6 (`docs/records/06-granular-container.md`): `play` of `src/kernels/grains.shade.ts`
   reads `grains.length` in its loop body, and on WebGL2 alone it is refused with `play(): no tier
   it may use can run it (webgl2: it runs on the CPU, its GLSL did not emit: glsl-es300: arrayLength
@@ -314,9 +333,24 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 - Pressure: a sound match over many parameters needs one backward pass, not one forward pass per
   parameter.
-- Compiler: change 0056 (accepted) and issue #535 (its design issue, raised by
-  typeshade/radiance).
-- Workaround: forward-mode function-level `grad` over few parameters.
+- Compiler: change 0056 (accepted) and issue #535 (its design issue, raised by typeshade/radiance).
+  Issues #1017 (the CPU tier's code generator hands a reverse-mode loop to the interpreter; fixed on
+  the compiler's `main` by #1019, `e30bbe57`, after the pin) and #1018 (the pipeline of the
+  reverse-mode derivative is slow to build; open) bear on it. Record 07 names four items under this
+  letter. They were its candidate asks and its needs, with no letter of their own:
+  1. change 0056, step 4: a derivative on the host face and in the manifest, so that an application
+     calls one without the compiler, and a GPU tier runs one without the harness's swap of
+     placeholders;
+  2. `grad` carries a derivative through a fixed-size local array, or change 0056's steps 3 and 4
+     reach a kernel function or an entry, so that a loss can keep the render and use the FFT of
+     experiment 3 over every bin, in place of 16 bins inside the frame loop;
+  3. forward mode takes a direction as an argument, as the harness's `along` form writes it by
+     hand, so that a GPU runs the derivative of every parameter in one dispatch;
+  4. forward mode takes a matrix parameter, as reverse mode does.
+- Workaround: forward-mode function-level `grad` over few parameters. The harness of experiment 7
+  adds three forms: `along` (item 3), a swap of placeholders that runs a derivative on the GPU tiers
+  (item 1), and the `probe`, which rewrites reverse mode's loop headers so that the CPU tier's code
+  generator compiles them (issue #1017). The `probe` retires when the pin moves past `e30bbe57`.
 - Measured by: experiment 7.
 - Status: measured by experiment 7, on the container only
   (`docs/records/07-sound-match-container.md`, 2026-11-02, reference numbers). At the pin, change
@@ -330,8 +364,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   mode's step moves little with the count, but its loops run in the interpreter on the CPU code
   path: 387 to 507 ms a step. Generated, as the record's probe stands for it, it costs 2.26 to 16.3
   ms and overtakes forward mode between 3 and 10 parameters in Node and between 10 and 30 in Bun
-  (candidate compiler issue in the record). On SwiftShader the reverse-mode pipeline took 9,850 ms
-  to make at 30 parameters and was not made at 100.
+  (issue #1017, fixed on the compiler's `main` by #1019, `e30bbe57`, after the pin: the `probe`
+  retires when the pin moves past it). On SwiftShader the reverse-mode pipeline took 9,850 ms to
+  make at 30 parameters and was not made at 100 (issue #1018, open).
 
 ### M. A static builder on an abstract base
 
@@ -420,16 +455,21 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 ### R. A method's comment in the host view
 
-- Pressure: a unit's methods carry its documentation (`hz`, `set`, `tick`). At the pin the host
-  view copies the comment of a class and of its fields, and not the comment of a constructor, a
-  method or an accessor, so the editor's hover on `osc.hz(...)` shows no words.
+- Pressure: a unit's methods carry its documentation (`hz`, `set`, `tick`). At the pin `14566606`
+  the host view copies the comment of a class and of its fields, and not the comment of a
+  constructor, a method or an accessor, so the editor's hover on `osc.hz(...)` shows no words.
 - Compiler: proposal 0108, Amendment 1, item 4: the members of an exported class carry their
   comments (its decision D4). Not a new ask.
-- Workaround: none. The comments stay in the `.shade.ts` files until the pin moves past item 4.
-- Measured by: the views `tshc sync` writes at the pin `14566606`.
-- Status: proposal 0108 implemented: item 4 by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978,
-  `a80551b4`) drops the static field from item 4's list. The comments reach the view when the pin
-  moves past #937.
+- Workaround: none. The comments stayed in the `.shade.ts` files until the pin moved past item 4.
+- Measured by: the views `tshc sync` writes at the pin `14566606`, and again at the pin
+  `87af4eb0`.
+- Status: retired at the pin `87af4eb0` (pull request #15 moved the pin past #937). Proposal 0108 is
+  implemented: item 4 by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, `a80551b4`) drops the
+  static field from item 4's list. Observed at the pin: the generated
+  `src/units/oscillator.shade.typeshade.ts` carries the comment of each member of `Oscillator`,
+  `Sine` and `Saw` (`hz`, `tick` and the static `at`). Inference: the editor's hover on
+  `osc.hz(...)` shows these words; no hover was run. `compiler-changes.md` records no id, since
+  proposal 0108 does not name `typeaudio` under `downstream`.
 
 ### S. The cost of the CPU tier's generated code
 
@@ -444,7 +484,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   allocation per call.
 - Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
 - Measured by: experiment 2.
-- Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`).
+- Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`). The
+  cost of entering a call with an array, which record 05 measured on the CPU tier (its candidate ask
+  C), is ask V's and not this ask's.
 
 ### T. A sum over the lanes of each frame on the GPU
 
@@ -465,7 +507,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: the engine's `mixdown` (shape G). For the same lanes, record 04 found its sum the same
   bits on every tier.
 - Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
-- Status: candidate.
+- Status: issue #991, open.
 
 ### U. The dispatches and the arrays of each group of a fuse report
 
@@ -473,15 +515,17 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   count of its dispatches: a reduction's folds and the entry that stores after a loop add no
   `workgroupShapes` triple (surface §71). In record 04's `tree` plan each of the 1,024 `sumFrame`
   groups lists one triple and makes three dispatches, and `explain` says "1 dispatch"
-  (`src/explain.ts:31`). A group does not say which scratch arrays it held as locals and which the
-  plan made as buffers: in the engine's plan the 40,960,000-byte `lanes` is a new device buffer in
-  every block (`ScratchState.release`, `src/core/fuse-record.ts:275` of the pin), and the report is
-  silent. `docs/architecture.md`, section 3, sketches an `explain` that names the locals.
+  (`src/explain.ts`, the function `where`). A group does not say which scratch arrays it held as
+  locals and which the plan made as buffers: in the engine's plan the 40,960,000-byte `lanes` is a
+  new device buffer in every block (`ScratchState.release`, `src/core/fuse-record.ts:275` of the
+  pin), and the report is silent. `docs/architecture.md`, section 3, sketches an `explain` that
+  names the locals.
 - Compiler: `FuseReport` (§71). Proposal 0118 (accepted, #959) gives each group its tier (P); this
   is the rest of what `explain` reads.
 - Workaround: none. `explain` gives the plan's dispatches in its totals.
 - Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
-- Status: candidate.
+- Status: issues #985 (the dispatches of each group) and #992 (the scratch arrays), open. Ask U asks
+  for the same count and the arrays; ask Y adds record 06's evidence.
 
 ### V. The CPU tier's cost of entering a call with a long array
 
@@ -495,10 +539,17 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: the CPU tier's call (Rule 11.7, surface §65): the generated code reading the caller's
   typed array in place, with no copy per call.
 - Workaround: none. The engine's plan keeps the calls of a block few.
-- Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container). That the
-  conversion is the cost is an inference from the source; the run does not time it apart.
+- Measured by: experiments 4 and 5 (`docs/records/04-additive-container.md` and
+  `docs/records/05-convolution-container.md`, the container). That the conversion is the cost is an
+  inference from the source; the runs do not time it apart.
 - Status: candidate. Ask S (issue #961) is the cost of the generated code inside a call; this is the
-  cost of entering it.
+  cost of entering it. Experiment 5 (record 05, section "The kernel check"; it was candidate ask C
+  of that record) measured the same cost on the CPU tier in Node, on host arrays: `store` writes
+  2,048 of the delay line's 960,512 points in 962.1 ms, and `pad` writes 1,024 points of a
+  2,048-point array in 5.2 ms, while the oracle's `fns`, given the values in its own form, takes
+  0.19 ms for the same `store`. Inference of the record: the time follows the arrays' length, not
+  the work; a large `Resident` on the CPU tier (a delay line, a bank) may cost the same on each
+  call. The run measured host arrays only.
 
 ### W. A loop that pushes over a range the device holds
 
@@ -514,7 +565,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   `grains.length`, and tests `g < count[0]` in its body; it then runs on WebGPU.
 - Measured by: experiment 6 (`docs/records/06-granular-container.md`): over a capacity of 2,048
   and a median of 814 grains, `cull` took a mean of 0.807 ms of a block's 10.727 ms of GPU time.
-- Status: candidate. Measured on the container only.
+- Status: issue #984, open. Measured on the container only.
 
 ### X. A write at an offset the host passes, `out[at + n]`
 
@@ -522,15 +573,28 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   write of a delay line.
 - Compiler: surface §65, rule R3, admits a write "at one index whose coefficient of `i` is
   loop-invariant". The proof finds that coefficient only in a product (`scaledCoefficient`, line
-  1086 of `src/core/passes/parallel-loop.ts` at the pin). A probe whose loop writes
+  1086 of `src/core/passes/parallel-loop.ts` at the pin `14566606`). A probe whose loop writes
   `tape[at + n] = block[n]` gets TS8070: `This loop runs on the CPU because line 5 writes "tape[at +
   n]", an element two iterations can share. Write at an index made from "n".` `tape[n + at]` gets
   the same; `tape[n * 1 + at]` and `tape[at + n * stride]` lower.
-- Workaround: `keep` (`experiments/06-granular/measure.shade.ts`, line 16) writes
-  `tape[n * 1 + at]`.
-- Measured by: `tshc check` and the faces at the pin `14566606`; experiment 6 runs the workaround
-  on WebGPU, fused with `play`.
-- Status: candidate. Inference: the rule's text admits `at + n`, so its fix may need no proposal.
+  Compiler issue #983 records the ask. #994 (`3b7019da`) fixed it, and the pin `87af4eb0` holds the
+  fix.
+- Workaround: `keep` (`experiments/06-granular/measure.shade.ts`, line 16) writes `tape[n * 1 + at]`.
+  Experiment 5's `store` (`experiments/05-convolution/convolution.shade.ts`) writes
+  `line[j * 1 + slot * POINTS]` for the same reason.
+- Measured by: `tshc check` and the faces at the pin `14566606`; experiment 6 runs the workaround on
+  WebGPU, fused with `play`. Experiment 5 (`docs/records/05-convolution-container.md`, section
+  "Refusals, and calls that did not return") met the same refusal for `line[slot * POINTS + j]` and
+  `line[offset + j]` in `store`. `tshc check` again at the pin `87af4eb0`, on 2026-11-03.
+- Status: answered at the pin `87af4eb0`, and not retired. Compiler issue #983 is closed by #994
+  (`3b7019da`, 2026-11-02), which the pin holds. Observed at the pin on 2026-11-03 at 02:16 and
+  02:32 UTC, with `tshc check` on scratch modules outside this repository: the loops that write
+  `tape[at + n]`, `line[slot * POINTS + j]` and `line[offset + j]` draw no TS8070 ("No problems
+  found in 1 file"). The check shows that the front end admits the form. A run of the loop on a GPU
+  at the pin was not made. The workarounds stay in the code, in
+  `experiments/06-granular/measure.shade.ts` and in
+  `experiments/05-convolution/convolution.shade.ts`. They are code, and their retirement goes in a
+  pull request of its own.
 
 ### Y. The dispatches of each group in a fuse report
 
@@ -538,11 +602,12 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: `FuseReport` (surface §71) counts `dispatches` for the whole plan. A group's
   `workgroupShapes` holds one triple for a loop that pushes, which runs as count, scan and store,
   and none for the stores after a function's loops.
-- Workaround: none. `explain` (`src/explain.ts`, line 31) counts a group's triples as its
-  dispatches, so it prints "1 dispatch" for `cull` and "0 dispatches" for each `tally` of a plan
-  whose report counts 10 (`docs/records/06-granular-container.md`, "How the plan ran").
+- Workaround: none. `explain` (`src/explain.ts`, the function `where`) counts a group's triples as
+  its dispatches, so it prints "1 dispatch" for `cull` and "0 dispatches" for each `tally` of a
+  plan whose report counts 10 (`docs/records/06-granular-container.md`, "How the plan ran").
 - Measured by: experiment 6, the fuse report of each block on WebGPU.
-- Status: candidate. The wording of `explain` for such a group is open in this repository.
+- Status: issue #985, open. Ask U asks for the same count and the arrays; ask Y adds record 06's
+  evidence. The wording of `explain` for such a group is open in this repository.
 
 ### Z. A plan's GPU time without a read of each plan
 
@@ -557,35 +622,68 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Measured by: experiment 6, arms `stream` and `stamped` on WebGPU
   (`docs/records/06-granular-container.md`): without the feature, 0 device reads over 1,000 blocks
   and a median `fuse` call of 3.170 ms; with it, 1,000 reads and 16.030 ms.
-- Status: candidate. Measured on the container only.
+- Status: issue #986, open. Measured on the container only.
+
+### AA. WebGL2 loops for a kernel that writes a `vec2` element, writes off its counter, or writes two arrays
+
+- Pressure: the partitioned convolution has four kernel functions, `pad`, `store`, `accumulate` and
+  `overlapAdd`. Each is a loop that writes an element of `array<vec2>`, writes at an index other
+  than its counter, or writes two arrays. None has a WebGL2 program at the pin `14566606`. On a
+  device that prefers `['webgl2', 'cpu']` they run on the CPU tier, and a block takes 5,580.98 ms at
+  the median (10 blocks) against a budget of 21.33 ms.
+- Compiler: the WebGL2 tier's loop forms (surface §65, "The tiers"): a draw that writes the two words
+  of a `vec2` element, writes at `i + c`, or writes several arrays as several render targets.
+- Workaround: none. The four calls run on the CPU tier, and the FFT entry runs on WebGL2.
+- Measured by: experiment 5 (`docs/records/05-convolution-container.md`, sections "Refusals, and calls
+  that did not return" and "The numbers").
+- Status: measured by experiment 5, on the container only (2026-11-02, pin `14566606`, reference
+  numbers; the owner's devices pending). The record keeps each refusal word for word. `pad()` and
+  `accumulate()` write an element that is not one `f32`, `i32` or `u32`. `store()` writes "line"
+  other than at `i`. `overlapAdd()` "writes more than one array, and WebGL2 draws one". Record 04
+  (ask A: `additive` writes at `v * block + n`) and record 06 (`keep` writes "tape" other than at
+  `i`) met the same limit. It was not run again at the pin `87af4eb0`. This ask was candidate ask A
+  of record 05.
 
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
 raised (pull request #5, asks M, N, P and Q), the issues experiments 2 and 3 raised (asks S, C and
-E, and the FFT's findings under G), and the earlier issues the asks cite.
+E, and the FFT's findings under G), the issues experiments 4 to 7 raised (#983 to #986, #991, #992,
+#997, #998, #1017 and #1018), and the earlier issues the asks cite.
 
-| Issue | Title, shortened                                                                 | Bears on                                         | Status                                 |
-| ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------- |
-| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index | J                                                | Fixed on `main` by #939, after the pin |
-| #901  | The commit-msg hook reads a merge against its first parent                       | The implementing pull requests, not the engine   | Closed: fixed by #932 and #956         |
-| #908  | TS8070 names a static function by its emitted name                               | The refusal's wording for a unit's static helper | Fixed on `main` by #953 (`a659ae36`)   |
-| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier            | J                                                | Open                                   |
-| #459  | A WebAssembly tier between WebGL2 and the CPU                                    | K, F                                             | Open; change 0042 draft                |
-| #535  | Reverse-mode `grad` before 1.0                                                   | L                                                | Open; change 0056 accepted             |
-| #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6: one cloud's grains need no sort    | Open                                   |
-| #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                   |
-| #543  | The cost of many dispatches                                                      | I                                                | Open                                   |
-| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Fixed on `main` by #962 (`20759ec9`)   |
-| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open; 0109 Amendment 1 approved (#960) |
-| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open; change 0118 accepted (#959)      |
-| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node  | Q                                                | Open                                   |
-| #961  | The CPU tier allocates an array for the `inout` values of every method call      | S                                                | Open                                   |
-| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns | G (variant C), D                                 | Open                                   |
-| #967  | An `f64` module constant is refused, with a misleading TS8022 after it           | G (variant C), D                                 | Open                                   |
-| #968  | The determinism report has no row for subnormal flushing                         | E                                                | Open                                   |
-| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form      | C                                                | Open                                   |
-| #970  | WebGL2 refuses an `f64` local kept across a barrier                              | G (variant C), D                                 | Open                                   |
+The states are those of 2026-11-03, at the pin `87af4eb0`.
+
+| Issue | Title, shortened                                                                                                     | Bears on                                                                   | Status                                                                                                                    |
+| ----- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index                                     | J                                                                          | Fixed by #939 (`b3bf0af8`), in the pin `87af4eb0`                                                                         |
+| #901  | The commit-msg hook reads a merge against its first parent                                                           | The implementing pull requests, not the engine                             | Closed: fixed by #932 and #956                                                                                            |
+| #908  | TS8070 names a static function by its emitted name                                                                   | The refusal's wording for a unit's static helper                           | Fixed on `main` by #953 (`a659ae36`)                                                                                      |
+| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier                                                | J                                                                          | Open                                                                                                                      |
+| #459  | A WebAssembly tier between WebGL2 and the CPU                                                                        | K, F                                                                       | Open; change 0042 draft                                                                                                   |
+| #535  | Reverse-mode `grad` before 1.0                                                                                       | L                                                                          | Open; change 0056 accepted                                                                                                |
+| #539  | A stable sort of `u32` keys with values on every tier                                                                | Experiment 6: one cloud's grains need no sort                              | Open                                                                                                                      |
+| #542  | GPU time through `typeshade/runtime`                                                                                 | H                                                                          | Open                                                                                                                      |
+| #543  | The cost of many dispatches                                                                                          | I                                                                          | Open                                                                                                                      |
+| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)                                          | M                                                                          | Closed: fixed by #962 (`20759ec9`), in the pin `87af4eb0`; ask M retired                                                  |
+| #945  | `read()` of a `Resident` of class instances returns plain objects                                                    | N                                                                          | Open; answered by 0109 Amendment 1 (#960), implemented by #993 (`87af4eb0`), in the pin; ask N retired                    |
+| #946  | The fuse report names the plan's best tier but not the tier of each group                                            | P                                                                          | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired                         |
+| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node                                      | Q                                                                          | Open                                                                                                                      |
+| #961  | The CPU tier allocates an array for the `inout` values of every method call                                          | S                                                                          | Open                                                                                                                      |
+| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                     | G (variant C), D                                                           | Closed: fixed on `main` by #1003 (`92c3d2ff`), after the pin; the workaround stays until the pin moves past it            |
+| #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                               | G (variant C), D                                                           | Open                                                                                                                      |
+| #968  | The determinism report has no row for subnormal flushing                                                             | E                                                                          | Open                                                                                                                      |
+| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form                                          | C                                                                          | Open                                                                                                                      |
+| #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                  | G (variant C), D                                                           | Closed: fixed on `main` by #1014 (`130c4bf9`), after the pin; the workaround stays until the pin moves past it            |
+| #983  | The kernel-loop proof refuses a write at `tape[at + n]` (TS8070) where `tape[n * 1 + at]` lowers                     | X (experiments 5 and 6)                                                    | Closed: fixed by #994 (`3b7019da`), in the pin `87af4eb0`; the workarounds stay in the code                               |
+| #984  | A loop that pushes over a range the device holds runs the whole function on the CPU tier                             | W                                                                          | Open                                                                                                                      |
+| #985  | `FuseReport.dispatches` counts 10 for a plan whose groups' `workgroupShapes` show 3                                  | U and Y (the count of dispatches)                                          | Open                                                                                                                      |
+| #986  | A plan on a device with `timestamp-query` maps its timestamps back before it resolves                                | Z                                                                          | Open                                                                                                                      |
+| #991  | A per-frame sum over lanes in the tree order has no GPU form                                                         | T                                                                          | Open                                                                                                                      |
+| #992  | A scratch array of a `fuse` scope is destroyed after every plan, so a stream re-creates it each block                | U (the arrays of a group)                                                  | Open                                                                                                                      |
+| #997  | The call's read check refuses a guarded read that stays inside the array (a `TypeError`; `tshc check` says nothing)  | Experiment 5 (record 05, candidate issue 1): the guarded `pad`             | Open; pull request #1029 open                                                                                             |
+| #998  | A queued call runs on the output of a call that failed                                                               | Experiment 5 (record 05, candidate issue 2): a block that queues its calls | Open; a decision on the queue after a failed call (propagate the error: a proposal; or document it)                       |
+| #1017 | `compileModuleJs` runs a reverse-mode derivative with a loop in the interpreter                                      | L                                                                          | Fixed on `main` by #1019 (`e30bbe57`), after the pin; the `probe` form of experiment 7 retires when the pin moves past it |
+| #1018 | The pipeline of a reverse-mode derivative with a frame loop grows past usable with the parameter count (SwiftShader) | L                                                                          | Open                                                                                                                      |
 
 ## 4. How a row moves
 
