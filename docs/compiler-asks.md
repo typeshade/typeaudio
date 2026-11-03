@@ -240,8 +240,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   workaround, and the issue for `typeshade/fft` follows the device runs. It would carry items 1 to 3
   under Compiler. Compiler issues #966 (WebGL2 does not bind the `_fp64` guard of an `f64` entry, so
   variant C never returns), #970 (an `f64` across a barrier on WebGL2) and #967 (an `f64` module
-  constant, and the TS8022 that follows its refusal) record variant C's findings. Experiment 5, on
-  the container only
+  constant, and the TS8022 that follows its refusal) record variant C's findings. #966 and #970 are
+  closed on the compiler's `main` by #1003 and #1014, after the pin; their workarounds stay until
+  the pin moves past them. Experiment 5, on the container only
   (`docs/records/05-convolution-container.md`, 2026-11-02, reference numbers), adds a 2,048-point
   entry in workgroup memory, 16 KiB, with the host's table, and runs it on a 10-second impulse
   response's 469 partitions and twice a block: the oracle, WebGPU and WebGL2 give the same bits for
@@ -504,7 +505,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: the engine's `mixdown` (shape G). For the same lanes, record 04 found its sum the same
   bits on every tier.
 - Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
-- Status: candidate.
+- Status: issue #991, open.
 
 ### U. The dispatches and the arrays of each group of a fuse report
 
@@ -521,7 +522,8 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   is the rest of what `explain` reads.
 - Workaround: none. `explain` gives the plan's dispatches in its totals.
 - Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
-- Status: candidate. Ask U asks for the same count and the arrays; ask Y adds record 06's evidence.
+- Status: issues #985 (the dispatches of each group) and #992 (the scratch arrays), open. Ask U asks
+  for the same count and the arrays; ask Y adds record 06's evidence.
 
 ### V. The CPU tier's cost of entering a call with a long array
 
@@ -561,7 +563,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   `grains.length`, and tests `g < count[0]` in its body; it then runs on WebGPU.
 - Measured by: experiment 6 (`docs/records/06-granular-container.md`): over a capacity of 2,048
   and a median of 814 grains, `cull` took a mean of 0.807 ms of a block's 10.727 ms of GPU time.
-- Status: candidate. Measured on the container only.
+- Status: issue #984, open. Measured on the container only.
 
 ### X. A write at an offset the host passes, `out[at + n]`
 
@@ -602,8 +604,8 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   its dispatches, so it prints "1 dispatch" for `cull` and "0 dispatches" for each `tally` of a
   plan whose report counts 10 (`docs/records/06-granular-container.md`, "How the plan ran").
 - Measured by: experiment 6, the fuse report of each block on WebGPU.
-- Status: candidate. The wording of `explain` for such a group is open in this repository. Ask U
-  asks for the same count and the arrays; ask Y adds record 06's evidence.
+- Status: issue #985, open. Ask U asks for the same count and the arrays; ask Y adds record 06's
+  evidence. The wording of `explain` for such a group is open in this repository.
 
 ### Z. A plan's GPU time without a read of each plan
 
@@ -618,7 +620,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Measured by: experiment 6, arms `stream` and `stamped` on WebGPU
   (`docs/records/06-granular-container.md`): without the feature, 0 device reads over 1,000 blocks
   and a median `fuse` call of 3.170 ms; with it, 1,000 reads and 16.030 ms.
-- Status: candidate. Measured on the container only.
+- Status: issue #986, open. Measured on the container only.
 
 ### AA. WebGL2 loops for a kernel that writes a `vec2` element, writes off its counter, or writes two arrays
 
@@ -643,8 +645,8 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
 raised (pull request #5, asks M, N, P and Q), the issues experiments 2 and 3 raised (asks S, C and
-E, and the FFT's findings under G), the issues experiments 5 and 7 raised (#997 and #998; #1017 and
-#1018), and the earlier issues the asks cite.
+E, and the FFT's findings under G), the issues experiments 4 to 7 raised (#983 to #986, #991, #992,
+#997, #998, #1017 and #1018), and the earlier issues the asks cite.
 
 The states are those of 2026-11-03, at the pin `87af4eb0`.
 
@@ -664,12 +666,17 @@ The states are those of 2026-11-03, at the pin `87af4eb0`.
 | #946  | The fuse report names the plan's best tier but not the tier of each group                                            | P                                                                          | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired                         |
 | #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node                                      | Q                                                                          | Open                                                                                                                      |
 | #961  | The CPU tier allocates an array for the `inout` values of every method call                                          | S                                                                          | Open                                                                                                                      |
-| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                     | G (variant C), D                                                           | Open                                                                                                                      |
+| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                     | G (variant C), D                                                           | Closed: fixed on `main` by #1003 (`92c3d2ff`), after the pin; the workaround stays until the pin moves past it            |
 | #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                               | G (variant C), D                                                           | Open                                                                                                                      |
 | #968  | The determinism report has no row for subnormal flushing                                                             | E                                                                          | Open                                                                                                                      |
 | #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form                                          | C                                                                          | Open                                                                                                                      |
-| #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                  | G (variant C), D                                                           | Open                                                                                                                      |
+| #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                  | G (variant C), D                                                           | Closed: fixed on `main` by #1014 (`130c4bf9`), after the pin; the workaround stays until the pin moves past it            |
 | #983  | The kernel-loop proof refuses a write at `tape[at + n]` (TS8070) where `tape[n * 1 + at]` lowers                     | X (experiments 5 and 6)                                                    | Closed: fixed by #994 (`3b7019da`), in the pin `87af4eb0`; the workarounds stay in the code                               |
+| #984  | A loop that pushes over a range the device holds runs the whole function on the CPU tier                             | W                                                                          | Open                                                                                                                      |
+| #985  | `FuseReport.dispatches` counts 10 for a plan whose groups' `workgroupShapes` show 3                                  | U and Y (the count of dispatches)                                          | Open                                                                                                                      |
+| #986  | A plan on a device with `timestamp-query` maps its timestamps back before it resolves                                | Z                                                                          | Open                                                                                                                      |
+| #991  | A per-frame sum over lanes in the tree order has no GPU form                                                         | T                                                                          | Open                                                                                                                      |
+| #992  | A scratch array of a `fuse` scope is destroyed after every plan, so a stream re-creates it each block                | U (the arrays of a group)                                                  | Open                                                                                                                      |
 | #997  | The call's read check refuses a guarded read that stays inside the array (a `TypeError`; `tshc check` says nothing)  | Experiment 5 (record 05, candidate issue 1): the guarded `pad`             | Open; pull request #1029 open                                                                                             |
 | #998  | A queued call runs on the output of a call that failed                                                               | Experiment 5 (record 05, candidate issue 2): a block that queues its calls | Open; a decision on the queue after a failed call (propagate the error: a proposal; or document it)                       |
 | #1017 | `compileModuleJs` runs a reverse-mode derivative with a loop in the interpreter                                      | L                                                                          | Fixed on `main` by #1019 (`e30bbe57`), after the pin; the `probe` form of experiment 7 retires when the pin moves past it |
