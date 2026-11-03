@@ -16,7 +16,8 @@
     "test:gpu": "bun test/browser/run.ts",
     "exp:01": "bun experiments/01-round-trip/run.ts",
     "exp:02": "bun experiments/02-worklet/run.ts",
-    "exp:03": "bun experiments/03-fft/run.ts"
+    "exp:03": "bun experiments/03-fft/run.ts",
+    "exp:04": "bun experiments/04-additive/run.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",

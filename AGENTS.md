@@ -16,11 +16,11 @@ graph, the transports, and the unit and channel types. The design is `docs/visio
 
 First code (pull request #5). The units, the kernels in the four loop shapes, a bank, `render` and
 `explain` exist, with unit tests on the CPU tier and a browser check on WebGPU. The harnesses of
-experiments 1, 2 and 3 are ready, and their container runs are recorded as reference numbers; their
-device runs are pending. The code builds on decisions D1 to D6 of `docs/architecture.md`, which
-the owner approved on 2026-11-02: D1, D2 and the block of D5 are built; D3, D4, the lookahead of
-D5 and the device the engine makes (D6) wait for later pull requests. Nothing here is published to
-npm.
+experiments 1, 2, 3 and 4 are ready, and their container runs are recorded as reference numbers;
+their device runs are pending. The code builds on decisions D1 to D6 of `docs/architecture.md`,
+which the owner approved on 2026-11-02: D1, D2 and the block of D5 are built; D3, D4, the
+lookahead of D5 and the device the engine makes (D6) wait for later pull requests. Nothing here is
+published to npm.
 
 ## The design in one screen
 
@@ -56,13 +56,14 @@ npm.
 
 | Path                                             | What it is                                                                                                                             |
 | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/units/*.shade.ts`                           | The units, as exported classes: `Oscillator` (abstract), `Sine`, `Saw`, `OnePole`, `Biquad` (abstract), `Lowpass`                      |
+| `src/units/*.shade.ts`                           | The units, as exported classes: `Oscillator` (abstract), `Sine`, `Saw`, `OnePole`, `Biquad` (abstract), `Lowpass`, `Envelope`          |
 | `src/kernels/*.shade.ts`                         | The kernels, each a loop and nothing else: `synth` over a bank of `Voice` (shape V), `mixdown` (G), `gain` and `drive` (F), `peak` (R) |
 | `src/bank.ts`, `src/render.ts`, `src/explain.ts` | The host API, exported by `src/index.ts`: `bank`, `plan`, `render` (one `fuse` plan per block) and `explain`                           |
 | `test/`                                          | The unit tests and their plain-JavaScript reference (`test/reference.ts`); `test/browser/`, the browser check                          |
 | `experiments/01-round-trip/`                     | Experiment 1: its kernel, its harness and its runner                                                                                   |
 | `experiments/02-worklet/`                        | Experiment 2: its worklet processors, its page and its runner                                                                          |
 | `experiments/03-fft/`                            | Experiment 3: the FFT entry in three twiddle variants, two probes, the `f64` reference, the harness and its runner                     |
+| `experiments/04-additive/`                       | Experiment 4: its partials and sums, its plain-JavaScript reference, its harness and its runner                                        |
 | `scripts/`                                       | The Vite build, the headless Chromium and the CPU time of its threads, which the browser check and the experiments share               |
 
 ## Baselines
@@ -95,6 +96,9 @@ npm.
 - `bun run exp:03`: experiment 3 on the CPU tier in Node, on the compiler's oracle in Bun, and on
   WebGPU and WebGL2 in headless Chromium. It writes the result as JSON (`--out`) and the outputs'
   bits (`--raw`); its records are in `docs/records/`.
+- `bun run exp:04`: experiment 4, a block of 10,000 partials as one `fuse` plan, on the CPU tier in
+  Node and on WebGPU and WebGL2 in headless Chromium, held to a plain-JavaScript reference. It
+  writes the result as JSON (`--out`); its records are in `docs/records/`. CI does not run it.
 
 CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
 and `bun run test`. Every claim of a result names the command, the date, the commit and the

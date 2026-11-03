@@ -40,6 +40,27 @@ export class RefOnePole {
   }
 }
 
+export class RefEnvelope {
+  rise = 0;
+  fall = 1;
+  attack = 1;
+  decay = 1;
+  sustain = 1;
+  times(attack: number, decay: number, sustain: number, sr: number): this {
+    const rate = f(sr);
+    this.attack = f(1 - f(Math.exp(f(-1 / f(f(attack) * rate)))));
+    this.decay = f(1 - f(Math.exp(f(-1 / f(f(decay) * rate)))));
+    this.sustain = f(sustain);
+    return this;
+  }
+  tick(): number {
+    const y = f(this.rise * this.fall);
+    this.rise = f(this.rise + f(this.attack * f(1 - this.rise)));
+    this.fall = f(this.fall + f(this.decay * f(this.sustain - this.fall)));
+    return y;
+  }
+}
+
 export class RefLowpass {
   b0 = 1;
   b1 = 0;

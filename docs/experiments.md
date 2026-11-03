@@ -3,8 +3,8 @@
 The experiments decide the first implementation. Measurement comes before any proposal
 (`docs/vision.md`, section 11). They run in order, because a later one builds on an earlier one's
 numbers. Each experiment has one question, the decision its answer supports, a method and a
-record. On 2026-11-02 experiments 1, 2 and 3 each have a harness and a run on the container of a
-Claude Code session, recorded as reference numbers; no experiment has run on the owner's devices
+record. On 2026-11-02 experiments 1, 2, 3 and 4 each have a harness and a run on the container of
+a Claude Code session, recorded as reference numbers; no experiment has run on the owner's devices
 yet.
 
 ## Status
@@ -14,7 +14,7 @@ yet.
 | 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending |
 | 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending    |
 | 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending        |
-| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | not started                                                                                            |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending   |
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | not started                                                                                            |
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | not started                                                                                            |
 | 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | not started                                                                                            |
@@ -167,7 +167,14 @@ host read.
 5. Measure the time per block over 1,000 blocks.
 6. Write the record.
 
-**Status.** Not started.
+**Status.** Harness ready: `experiments/04-additive/`, run by `bun run exp:04`. One block is one
+`dev.fuse()` scope over a bank of 10,000 partials, each a `Sine` through a `Lowpass` at the level
+of an `Envelope`, its cutoff moved every block. Six variants change the sum of the lanes, where the
+filters' coefficients come from, and where the lanes live; `docs/records/04-additive-container.md`,
+section "The method", says how. The run on the container of a Claude Code session is recorded
+there, as reference numbers. The engine's plan ran 1,000 blocks on each tier; the other variants
+ran fewer, and the record lists each difference from the method above with its disposition. The
+device runs are pending: one record per device, `docs/records/04-additive-<device>.md`.
 
 ## 5. A 10-second partitioned convolution
 

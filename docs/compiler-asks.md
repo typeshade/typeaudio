@@ -56,10 +56,16 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Measured by: experiment 4.
 - Status: confirmed. Surface §65, rule R3, admits a write at `i*W + x` over a nested loop of `x`
   below a loop-invariant `W`, which is this form, and `docs/architecture.md` builds on it. Observed
-  on 2026-11-02 at the pin `14566606` (pull request #5): `src/kernels/synth.shade.ts:38` lowers
-  with a runtime `block` and no TS8070, and runs on WebGPU on SwiftShader and on the CPU tier, at
-  32 and 64 lanes. This answers experiment 4's first question; experiment 4 holds the form at
-  10,000 lanes.
+  on 2026-11-02 at the pin `14566606` (pull request #5): `src/kernels/synth.shade.ts:38` lowers with
+  a runtime `block` and no TS8070, and runs on WebGPU on SwiftShader and on the CPU tier, at 32 and
+  64 lanes. Experiment 4 (`docs/records/04-additive-container.md`, the container, 2026-11-02, the
+  same pin) held it at 10,000 lanes: `additive` (`experiments/04-additive/additive.shade.ts`) writes
+  `out[v * block + n]` after a method call on the lane, `partials[v].retune(sweep)`, and
+  `tshc check` reports no TS8070. On WebGPU it ran as one dispatch at `[64, 1, 1]` in each of the
+  1,000 timed blocks; on the WebGL2 device it ran on the CPU tier, since WebGL2 takes a write at
+  exactly `i` only (surface §65, "The tiers"). The bank kept its state on the device for 1,010
+  blocks with no read: after them, the 10,000 phases and envelopes on WebGPU had the reference's
+  bits. The workaround is not needed.
 
 ### B. A metadata channel from a class to the host
 
@@ -71,7 +77,11 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   0108 bakes.
 - Measured by: experiment 4's `explain`, and the editor hover of the sketches in `docs/vision.md`,
   section 2.
-- Status: candidate, after 0108 is implemented.
+- Status: candidate, after 0108 is implemented. Experiment 4's `explain` of a block's plan used no
+  metadata of a unit: its words are the kernels' names and the compiler's `why`
+  (`docs/records/04-additive-container.md`, "What explain says"). What it lacked is in the fuse
+  report: each group's tier (P), its dispatches and the arrays it made (U). The editor hover and a
+  parameter view, which experiment 4 did not exercise, still bear on B.
 
 ### C. The precision of the transcendentals
 
@@ -105,7 +115,25 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: the coefficient math runs on the host in JavaScript doubles and is uploaded as the
   two words of an `f64`.
 - Measured by: experiment 4, where a voice's filter cutoff changes per block.
-- Status: candidate.
+- Status: measured (`docs/records/04-additive-container.md`, the container, 2026-11-02, pin
+  `14566606`). The engine's `Lowpass` designs its coefficients with `sin` and `cos`, and no `tan` or
+  `exp`. Experiment 4 moved the cutoffs of 10,000 lowpasses every block and held the coefficients of
+  the last block to the design in doubles:
+  - designed on the device in `f32`, by `Lowpass` itself: on WebGPU (SwiftShader) `b0` was off by up
+    to 169 % and the cutoff by up to 63.9 %, at a cutoff of 24.30 Hz (R1-webgpu, the last block's
+    sweep); on the CPU tier, where `cos` is correctly rounded, by 0.577 % and 0.289 %, the
+    cancellation in `1 - cos(w)` of an `f32` alone;
+  - designed on the device in the emulated `f64` (`Lowpass64`, the same formulas), and designed on
+    the host in doubles and written each block (the workaround): within the `f32` rounding of each
+    coefficient on every tier, 2.71e-7 on `b0`, the cutoff within 1.95e-7.
+
+  So this filter needs its design in `f64`, which §39 has, or on the host; it does not need the
+  functions this row asks for. The `f64` design cost the kernel 17.4 ms of GPU time a block more
+  than the host's coefficients on SwiftShader (163.055 ms against 145.610 ms, means of 1,000 blocks
+  each), and with either the largest difference of WebGPU's samples from the reference fell from
+  1.960e-1 to 4.858e-5. The row stays a candidate for the designs that need `tan`, `exp` or `pow`: a
+  bilinear transform with a prewarped cutoff, a one-pole from a time constant, the envelope's
+  `times`.
 
 ### E. Subnormals
 
@@ -203,7 +231,15 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   matters).
 - Workaround: a block is one `fuse` scope, so the planner keeps the dispatch count low.
 - Measured by: experiments 1 and 4.
-- Status: issue #543 open (raised by typeshade/radiance).
+- Status: issue #543 open (raised by typeshade/radiance). Experiment 4
+  (`docs/records/04-additive-container.md`, the container): one block of the engine's plan over
+  10,000 partials is 3 dispatches in one submission on WebGPU. Summed in the tree order by one
+  reduction per frame, the same block is 3,075 dispatches in one submission (1,026 groups), and its
+  median block took 12,130.720 ms against 367.280 ms (SwiftShader, 5 and 1,000 timed blocks, at
+  different loads). At 512 frames, where the device times the plan, its 1,539 dispatches held
+  4,397.112 ms of GPU time of a mean block of 4,468.537 ms: on this container the cost of many
+  dispatches is the device's, and the host and the gaps between passes took about 0.05 ms a
+  dispatch.
 
 ### J. A length read inside a loop body or an index on WebGL2
 
@@ -345,6 +381,60 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
 - Measured by: experiment 2.
 - Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`).
+
+### T. A sum over the lanes of each frame on the GPU
+
+- Pressure: a bank's lanes are summed into one block every block: 10,000 partials into 1,024 frames.
+  The engine's `mixdown` gathers: one invocation per frame adds the lanes one after another, 1,024
+  invocations of 10,000 additions in 4 workgroups of 256. The language's two forms of a sum in the
+  tree order of Rule 7.2 do not run as one dispatch on the GPU:
+  - a reduction per frame, `sumFrame`, one call per frame: 3,075 dispatches per block (record 04: a
+    median block of 12,130.720 ms on SwiftShader, against 367.280 ms for the gather);
+  - the form an author writes, `out[n] += lanes[v * block + n]` over the lanes
+    (`experiments/04-additive/sums.shade.ts:29`), which the proof refuses for the GPU (TS8070):
+    "This loop runs on the CPU because line 29 writes "out[n]", an element two iterations can share.
+    Write at an index made from "v"." On WebGPU it runs on the CPU tier (a median block of
+    5,407.840 ms).
+- Compiler: surface §65, "An `f32` scatter": "WebGPU and WebGL2 do not lower it yet, so the compiler
+  still reports `TS8070` for the loop" (change 0056, slice 2a); or a reduction into each element of
+  an array over a two-dimensional range.
+- Workaround: the engine's `mixdown` (shape G). For the same lanes, record 04 found its sum the same
+  bits on every tier.
+- Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
+- Status: candidate.
+
+### U. The dispatches and the arrays of each group of a fuse report
+
+- Pressure: `explain` says what each group of a block's plan costs. A group of the report has no
+  count of its dispatches: a reduction's folds and the entry that stores after a loop add no
+  `workgroupShapes` triple (surface §71). In record 04's `tree` plan each of the 1,024 `sumFrame`
+  groups lists one triple and makes three dispatches, and `explain` says "1 dispatch"
+  (`src/explain.ts:31`). A group does not say which scratch arrays it held as locals and which the
+  plan made as buffers: in the engine's plan the 40,960,000-byte `lanes` is a new device buffer in
+  every block (`ScratchState.release`, `src/core/fuse-record.ts:275` of the pin), and the report is
+  silent. `docs/architecture.md`, section 3, sketches an `explain` that names the locals.
+- Compiler: `FuseReport` (§71). Proposal 0118 (accepted, #959) gives each group its tier (P); this
+  is the rest of what `explain` reads.
+- Workaround: none. `explain` gives the plan's dispatches in its totals.
+- Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
+- Status: candidate.
+
+### V. The CPU tier's cost of entering a call with a long array
+
+- Pressure: on the CPU tier, a block of the engine is a few kernel calls over a scratch array of
+  10,240,000 lanes. The CPU tier converts every array a call takes into a plain array, element by
+  element, and writes every array the call writes back the same way (`toCpu` and `fromCpu`,
+  `src/core/host-entry.ts:564` of the pin, called for each array parameter by `onCpu`,
+  `src/core/host-kernel.ts:1888`). In record 04, one block of `tree`, 1,024 calls of `sumFrame` that
+  each read 10,000 of the 10,240,000 lanes, took 316,073.214 ms on the CPU tier, about 0.31 s a
+  call; one block of `scatter`, one call over the same lanes, took 9,286.553 ms.
+- Compiler: the CPU tier's call (Rule 11.7, surface §65): the generated code reading the caller's
+  typed array in place, with no copy per call.
+- Workaround: none. The engine's plan keeps the calls of a block few.
+- Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container). That the
+  conversion is the cost is an inference from the source; the run does not time it apart.
+- Status: candidate. Ask S (issue #961) is the cost of the generated code inside a call; this is the
+  cost of entering it.
 
 ## 3. Issues raised on the compiler
 
