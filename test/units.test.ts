@@ -2,8 +2,9 @@ import { describe, expect, test } from 'vitest';
 import { OnePole } from '../src/units/one-pole.shade.ts';
 import { Biquad, Lowpass } from '../src/units/biquad.shade.ts';
 import { Oscillator, Saw, Sine } from '../src/units/oscillator.shade.ts';
+import { Envelope } from '../src/units/envelope.shade.ts';
 import { Voice } from '../src/kernels/synth.shade.ts';
-import { RefLowpass, RefOnePole, RefVoice, refSaw, refSine } from './reference.ts';
+import { RefEnvelope, RefLowpass, RefOnePole, RefVoice, refSaw, refSine } from './reference.ts';
 
 // Each unit is built with `new` on the host and ticked synchronously on the CPU tier (compiler
 // change 0109), and held to the plain-JavaScript reference bit for bit: both round every
@@ -55,6 +56,20 @@ describe('a unit built with new ticks on the CPU tier as the reference does', ()
     const ref = new RefLowpass().set(1200, 0.707, SR);
     expect(lp).toBeInstanceOf(Lowpass);
     expect(run(2000, (i) => lp.tick(signal(i)))).toEqual(run(2000, (i) => ref.tick(signal(i))));
+  });
+
+  test('Envelope, set by times(), which returns the envelope', () => {
+    const env = new Envelope().times(0.002, 0.05, 0.25, SR);
+    const ref = new RefEnvelope().times(0.002, 0.05, 0.25, SR);
+    expect(env).toBeInstanceOf(Envelope);
+    expect([env.attack, env.decay, env.sustain]).toEqual([ref.attack, ref.decay, ref.sustain]);
+    const levels = run(20000, () => env.tick());
+    expect(levels).toEqual(run(20000, () => ref.tick()));
+    // It rises from 0 and settles at the sustain level, with no subnormal on the way.
+    expect(levels[0]).toBe(0);
+    expect(Math.max(...levels)).toBeLessThanOrEqual(1);
+    expect(Math.abs(levels[levels.length - 1]! - 0.25)).toBeLessThan(1e-3);
+    expect(levels.every((x) => x === 0 || Math.abs(x) >= 2 ** -126)).toBe(true);
   });
 
   test('Voice, a Saw and a Lowpass composed as its fields', () => {

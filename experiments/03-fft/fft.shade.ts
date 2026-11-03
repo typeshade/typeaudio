@@ -18,6 +18,12 @@
 // inside an index, the form the WebGL2 pass program at the pin leaves undeclared
 // (docs/compiler-asks.md, J; compiler issue #900). A module constant cannot be an `f64` at the pin
 // ("must be f32, i32, u32, or bool for now"), so variant C writes 2π as an `f64` literal.
+//
+// Experiment 5 (docs/experiments.md, section 5) adds a medium transform, 2,048 points: a block of
+// 1,024 frames zero-padded to twice its length, the transform of a partitioned convolution. It
+// holds its points in workgroup memory, as the small transform does: 2,048 `vec2`s are 16 KiB,
+// exactly WebGPU's default per workgroup and the SwiftShader adapter's limit. It has the table
+// variant only, the one whose bits the three tiers share (docs/records/03-fft-container.md).
 
 /** One full turn, in radians. */
 const TAU: f32 = 6.283185307179586;
@@ -42,6 +48,11 @@ const LARGE_STEP: f32 = TAU / 4096.;
 /** One twiddle step of the large transform, in turns: 1 / 4,096. */
 const LARGE_TURN: f32 = 1. / 4096.;
 
+/** The points of the medium transform (experiment 5). */
+const MEDIUM: u32 = 2048;
+/** The stages of the medium transform: log2 of its points. */
+const MEDIUM_STAGES: u32 = 11;
+
 /** The direction of a call and the scale of its output. */
 interface Transform {
   /** -1 for the forward transform, +1 for the inverse. */
@@ -63,6 +74,8 @@ declare const twiddles: storage<array<vec2>>;
 
 /** The points of one small transform, shared by the invocations of its workgroup. */
 let points: workgroup<array<vec2, 1024>>;
+/** The points of one medium transform, shared by the invocations of its workgroup: 16 KiB. */
+let mediumPoints: workgroup<array<vec2, 2048>>;
 
 /** `i` with its low `bits` bits in reverse order: the place a point of the input takes. */
 function reversed(i: u32, bits: u32): u32 {
@@ -182,6 +195,45 @@ function largeScale(lid: u32, base: u32) {
   }
 }
 
+/**
+ * The butterflies of the medium transform, in workgroup memory: as `smallStages`, with four
+ * butterflies for each invocation in each stage. `twiddle(t)` is `exp(±2πi t / 2048)`.
+ */
+function mediumStages(lid: u32, twiddle: (t: u32) => vec2) {
+  for (let s: u32 = 1; s <= MEDIUM_STAGES; s++) {
+    const half = u32(1) << (s - 1);
+    for (let j: u32 = 0; j < MEDIUM / 2 / THREADS; j++) {
+      const b = lid + j * THREADS;
+      const k = b & (half - 1);
+      const top = ((b - k) << 1) + k;
+      const bottom = top + half;
+      const w = twiddle(k << (MEDIUM_STAGES - s));
+      const u = mediumPoints[top];
+      const v = cmul(mediumPoints[bottom], w);
+      mediumPoints[top] = u + v;
+      mediumPoints[bottom] = u - v;
+    }
+    workgroupBarrier();
+  }
+}
+
+/** Loads one medium transform into workgroup memory in bit-reversed order. */
+function mediumLoad(lid: u32, base: u32) {
+  for (let j: u32 = 0; j < MEDIUM / THREADS; j++) {
+    const i = lid + j * THREADS;
+    mediumPoints[reversed(i, MEDIUM_STAGES)] = src[base + i];
+  }
+  workgroupBarrier();
+}
+
+/** Stores one medium transform from workgroup memory, scaled. */
+function mediumStore(lid: u32, base: u32) {
+  for (let j: u32 = 0; j < MEDIUM / THREADS; j++) {
+    const i = lid + j * THREADS;
+    dst[base + i] = mediumPoints[i] * transform.scale;
+  }
+}
+
 /** The 1,024-point transform of each workgroup's points, the twiddles from `sin` and `cos` (variant A). */
 export const fftSmallDevice = compute([THREADS], function fftSmallDevice(
   lid: builtin<"local_invocation_id", vec3u>,
@@ -252,4 +304,19 @@ export const fftLargeDouble = compute([THREADS], function fftLargeDouble(
   largeLoad(lid.x, base);
   largeStages(lid.x, base, (t) => inDouble(t, turn));
   largeScale(lid.x, base);
+});
+
+/**
+ * The 2,048-point transform of each workgroup's points, the twiddles from the host's table
+ * (variant B): the transform of experiment 5's partitioned convolution.
+ */
+export const fftMediumTable = compute([THREADS], function fftMediumTable(
+  lid: builtin<"local_invocation_id", vec3u>,
+  wid: builtin<"workgroup_id", vec3u>,
+) {
+  const base = wid.x * MEDIUM;
+  const sign = transform.sign;
+  mediumLoad(lid.x, base);
+  mediumStages(lid.x, (t) => fromTable(t, sign));
+  mediumStore(lid.x, base);
 });

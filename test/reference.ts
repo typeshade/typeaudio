@@ -40,6 +40,27 @@ export class RefOnePole {
   }
 }
 
+export class RefEnvelope {
+  rise = 0;
+  fall = 1;
+  attack = 1;
+  decay = 1;
+  sustain = 1;
+  times(attack: number, decay: number, sustain: number, sr: number): this {
+    const rate = f(sr);
+    this.attack = f(1 - f(Math.exp(f(-1 / f(f(attack) * rate)))));
+    this.decay = f(1 - f(Math.exp(f(-1 / f(f(decay) * rate)))));
+    this.sustain = f(sustain);
+    return this;
+  }
+  tick(): number {
+    const y = f(this.rise * this.fall);
+    this.rise = f(this.rise + f(this.attack * f(1 - this.rise)));
+    this.fall = f(this.fall + f(this.decay * f(this.sustain - this.fall)));
+    return y;
+  }
+}
+
 export class RefLowpass {
   b0 = 1;
   b1 = 0;
@@ -103,4 +124,133 @@ export function refRender(
     }
   }
   return out;
+}
+
+/** `hash32` of `typeshade/random`: the `lowbias32` finaliser, on 32-bit words. */
+export function refHash32(x: number): number {
+  let h = (x ^ (x >>> 16)) >>> 0;
+  h = Math.imul(h, 0x7feb352d) >>> 0;
+  h = (h ^ (h >>> 15)) >>> 0;
+  h = Math.imul(h, 0x846ca68b) >>> 0;
+  return (h ^ (h >>> 16)) >>> 0;
+}
+
+/** `uniform` of `typeshade/random`: the 24 high bits of a word as an f32 in [0, 1). */
+export const refUniform = (word: number): number => f((word >>> 8) * (1 / 16777216));
+
+/** WGSL's `u32()` of an `f32`: toward zero, held in [0, 2^32 - 1]. */
+const u32of = (x: number): number => Math.min(Math.max(Math.trunc(x), 0), 4294967295);
+
+export class RefGrain {
+  constructor(
+    readonly start: number,
+    readonly length: number,
+    readonly inc: number,
+    readonly peak: number,
+  ) {
+    this.inc = f(inc);
+    this.peak = f(peak);
+  }
+  at(t: number): number {
+    if (t < this.start) return 0;
+    const age = t - this.start;
+    if (age >= this.length) return 0;
+    const window = f(0.5 - f(0.5 * f(Math.cos(f(TAU * f(f(age) / f(this.length)))))));
+    return f(f(this.peak * window) * f(Math.sin(f(TAU * fract(f(this.inc * f(age)))))));
+  }
+  soundsFrom(t: number): boolean {
+    return this.start + this.length > t;
+  }
+}
+
+export class RefCloud {
+  chance = 0;
+  shortest = 1;
+  spread = 0;
+  low = 0;
+  span = 0;
+  loudest = 1;
+  key = 1;
+  readonly sr: number;
+  constructor(sr: number) {
+    this.sr = f(sr);
+  }
+  density(perSecond: number): this {
+    this.chance = f(f(perSecond) / this.sr);
+    return this;
+  }
+  lengths(shortest: number, longest: number): this {
+    this.shortest = Math.max(u32of(f(f(shortest) * this.sr)), 1);
+    this.spread = u32of(f(f(f(longest) - f(shortest)) * this.sr));
+    return this;
+  }
+  pitches(low: number, high: number): this {
+    this.low = f(f(low) / this.sr);
+    this.span = f(f(f(high) - f(low)) / this.sr);
+    return this;
+  }
+  level(loudest: number): this {
+    this.loudest = f(loudest);
+    return this;
+  }
+  seed(key: number): this {
+    this.key = key >>> 0;
+    return this;
+  }
+  draw(t: number): number {
+    return refHash32((this.key ^ refHash32(t >>> 0)) >>> 0);
+  }
+  starts(word: number): boolean {
+    return refUniform(word) < this.chance;
+  }
+  grain(t: number, word: number): RefGrain {
+    const length = (this.shortest + (refHash32((word ^ 1) >>> 0) % (this.spread + 1))) >>> 0;
+    const inc = f(this.low + f(this.span * refUniform(refHash32((word ^ 2) >>> 0))));
+    const peak = f(this.loudest * f(0.5 + f(0.5 * refUniform(refHash32((word ^ 3) >>> 0)))));
+    return new RefGrain(t, length, inc, peak);
+  }
+}
+
+/**
+ * The grain scheduler of `src/kernels/grains.shade.ts` in plain JavaScript, block after block: the
+ * grains that still sound at the block's first frame, then the grains that start in the block,
+ * then the block rendered from the list in its order. A list holds `capacity` grains; a push past
+ * it is counted and not kept, as a push past an array's end is (compiler surface §65).
+ */
+export class RefScheduler {
+  list: RefGrain[] = [];
+  count = 0;
+  constructor(
+    readonly cloud: RefCloud,
+    readonly capacity: number,
+  ) {}
+  /** One block of `block` frames from the frame `start`: the samples, the survivors and the count. */
+  block(start: number, block: number): { out: Float32Array; survivors: number; count: number } {
+    const kept: RefGrain[] = [];
+    let survivors = 0;
+    for (let g = 0; g < Math.min(this.count, this.capacity); g++) {
+      if (this.list[g]!.soundsFrom(start)) {
+        if (survivors < this.capacity) kept.push(this.list[g]!);
+        survivors++;
+      }
+    }
+    let count = survivors;
+    for (let n = 0; n < block; n++) {
+      const word = this.cloud.draw(start + n);
+      if (this.cloud.starts(word)) {
+        if (count < this.capacity) kept.push(this.cloud.grain(start + n, word));
+        count++;
+      }
+    }
+    this.list = kept;
+    this.count = count;
+    const out = new Float32Array(block);
+    const live = Math.min(count, this.capacity);
+    for (let n = 0; n < block; n++) {
+      let s = 0;
+      for (let g = 0; g < live; g++) s = f(s + kept[g]!.at(start + n));
+      out[n] = s;
+    }
+    return { out, survivors, count };
+  }
 }

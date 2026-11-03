@@ -23,10 +23,16 @@ export interface Bundle {
    * instead of inlining it into the module. Experiment 2 loads both builds.
    */
   readonly split?: boolean;
+  /**
+   * `node`: packages to leave out of the bundle, which Node then loads from `node_modules`.
+   * Experiment 7 bundles the compiler, whose `typescript` reads `__filename`, which an ES module
+   * does not have, so it stays outside.
+   */
+  readonly external?: readonly string[];
 }
 
 /** Builds `bundle` and resolves to the absolute path of the module to run or to load. */
-export async function bundle({ entry, outDir, target, split = false }: Bundle): Promise<string> {
+export async function bundle({ entry, outDir, target, split = false, external = [] }: Bundle): Promise<string> {
   const out = join(ROOT, outDir);
   if (target === 'worklet') {
     await build({
@@ -49,13 +55,13 @@ export async function bundle({ entry, outDir, target, split = false }: Bundle): 
       root: ROOT,
       logLevel: 'warn',
       plugins: [typeshade()],
-      ssr: { noExternal: true },
+      ssr: { noExternal: true, external: [...external] },
       build: {
         ssr: entry,
         outDir: out,
         emptyOutDir: true,
         target: 'node22',
-        rollupOptions: { output: { entryFileNames: 'main.mjs' } },
+        rollupOptions: { external: [...external], output: { entryFileNames: 'main.mjs' } },
       },
     });
     return join(out, 'main.mjs');
