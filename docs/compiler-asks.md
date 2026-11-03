@@ -473,15 +473,16 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   count of its dispatches: a reduction's folds and the entry that stores after a loop add no
   `workgroupShapes` triple (surface §71). In record 04's `tree` plan each of the 1,024 `sumFrame`
   groups lists one triple and makes three dispatches, and `explain` says "1 dispatch"
-  (`src/explain.ts:31`). A group does not say which scratch arrays it held as locals and which the
-  plan made as buffers: in the engine's plan the 40,960,000-byte `lanes` is a new device buffer in
-  every block (`ScratchState.release`, `src/core/fuse-record.ts:275` of the pin), and the report is
-  silent. `docs/architecture.md`, section 3, sketches an `explain` that names the locals.
+  (`src/explain.ts`, the function `where`). A group does not say which scratch arrays it held as
+  locals and which the plan made as buffers: in the engine's plan the 40,960,000-byte `lanes` is a
+  new device buffer in every block (`ScratchState.release`, `src/core/fuse-record.ts:275` of the
+  pin), and the report is silent. `docs/architecture.md`, section 3, sketches an `explain` that
+  names the locals.
 - Compiler: `FuseReport` (§71). Proposal 0118 (accepted, #959) gives each group its tier (P); this
   is the rest of what `explain` reads.
 - Workaround: none. `explain` gives the plan's dispatches in its totals.
 - Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
-- Status: candidate.
+- Status: candidate. Ask U asks for the same count and the arrays; ask Y adds record 06's evidence.
 
 ### V. The CPU tier's cost of entering a call with a long array
 
@@ -538,11 +539,12 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: `FuseReport` (surface §71) counts `dispatches` for the whole plan. A group's
   `workgroupShapes` holds one triple for a loop that pushes, which runs as count, scan and store,
   and none for the stores after a function's loops.
-- Workaround: none. `explain` (`src/explain.ts`, line 31) counts a group's triples as its
-  dispatches, so it prints "1 dispatch" for `cull` and "0 dispatches" for each `tally` of a plan
-  whose report counts 10 (`docs/records/06-granular-container.md`, "How the plan ran").
+- Workaround: none. `explain` (`src/explain.ts`, the function `where`) counts a group's triples as
+  its dispatches, so it prints "1 dispatch" for `cull` and "0 dispatches" for each `tally` of a
+  plan whose report counts 10 (`docs/records/06-granular-container.md`, "How the plan ran").
 - Measured by: experiment 6, the fuse report of each block on WebGPU.
-- Status: candidate. The wording of `explain` for such a group is open in this repository.
+- Status: candidate. The wording of `explain` for such a group is open in this repository. Ask U
+  asks for the same count and the arrays; ask Y adds record 06's evidence.
 
 ### Z. A plan's GPU time without a read of each plan
 
