@@ -569,15 +569,28 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   write of a delay line.
 - Compiler: surface §65, rule R3, admits a write "at one index whose coefficient of `i` is
   loop-invariant". The proof finds that coefficient only in a product (`scaledCoefficient`, line
-  1086 of `src/core/passes/parallel-loop.ts` at the pin). A probe whose loop writes
+  1086 of `src/core/passes/parallel-loop.ts` at the pin `14566606`). A probe whose loop writes
   `tape[at + n] = block[n]` gets TS8070: `This loop runs on the CPU because line 5 writes "tape[at +
   n]", an element two iterations can share. Write at an index made from "n".` `tape[n + at]` gets
   the same; `tape[n * 1 + at]` and `tape[at + n * stride]` lower.
-- Workaround: `keep` (`experiments/06-granular/measure.shade.ts`, line 16) writes
-  `tape[n * 1 + at]`.
-- Measured by: `tshc check` and the faces at the pin `14566606`; experiment 6 runs the workaround
-  on WebGPU, fused with `play`.
-- Status: candidate. Inference: the rule's text admits `at + n`, so its fix may need no proposal.
+  Compiler issue #983 records the ask. #994 (`3b7019da`) fixed it, and the pin `87af4eb0` holds the
+  fix.
+- Workaround: `keep` (`experiments/06-granular/measure.shade.ts`, line 16) writes `tape[n * 1 + at]`.
+  Experiment 5's `store` (`experiments/05-convolution/convolution.shade.ts`) writes
+  `line[j * 1 + slot * POINTS]` for the same reason.
+- Measured by: `tshc check` and the faces at the pin `14566606`; experiment 6 runs the workaround on
+  WebGPU, fused with `play`. Experiment 5 (`docs/records/05-convolution-container.md`, section
+  "Refusals, and calls that did not return") met the same refusal for `line[slot * POINTS + j]` and
+  `line[offset + j]` in `store`. `tshc check` again at the pin `87af4eb0`, on 2026-11-03.
+- Status: answered at the pin `87af4eb0`, and not retired. Compiler issue #983 is closed by #994
+  (`3b7019da`, 2026-11-02), which the pin holds. Observed at the pin on 2026-11-03 at 02:16 and
+  02:32 UTC, with `tshc check` on scratch modules outside this repository: the loops that write
+  `tape[at + n]`, `line[slot * POINTS + j]` and `line[offset + j]` draw no TS8070 ("No problems
+  found in 1 file"). The check shows that the front end admits the form. A run of the loop on a GPU
+  at the pin was not made. The workarounds stay in the code, in
+  `experiments/06-granular/measure.shade.ts` and in
+  `experiments/05-convolution/convolution.shade.ts`. They are code, and their retirement goes in a
+  pull request of its own.
 
 ### Y. The dispatches of each group in a fuse report
 
@@ -656,6 +669,7 @@ The states are those of 2026-11-03, at the pin `87af4eb0`.
 | #968  | The determinism report has no row for subnormal flushing                                                             | E                                                                          | Open                                                                                                                      |
 | #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form                                          | C                                                                          | Open                                                                                                                      |
 | #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                  | G (variant C), D                                                           | Open                                                                                                                      |
+| #983  | The kernel-loop proof refuses a write at `tape[at + n]` (TS8070) where `tape[n * 1 + at]` lowers                     | X (experiments 5 and 6)                                                    | Closed: fixed by #994 (`3b7019da`), in the pin `87af4eb0`; the workarounds stay in the code                               |
 | #997  | The call's read check refuses a guarded read that stays inside the array (a `TypeError`; `tshc check` says nothing)  | Experiment 5 (record 05, candidate issue 1): the guarded `pad`             | Open; pull request #1029 open                                                                                             |
 | #998  | A queued call runs on the output of a call that failed                                                               | Experiment 5 (record 05, candidate issue 2): a block that queues its calls | Open; a decision on the queue after a failed call (propagate the error: a proposal; or document it)                       |
 | #1017 | `compileModuleJs` runs a reverse-mode derivative with a loop in the interpreter                                      | L                                                                          | Fixed on `main` by #1019 (`e30bbe57`), after the pin; the `probe` form of experiment 7 retires when the pin moves past it |
