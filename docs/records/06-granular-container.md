@@ -56,7 +56,7 @@ Inference: the numbers hold that load, the 99th percentiles and the maxima more 
 - One block of 1,024 frames is one `dev.fuse` plan of six calls, in this order:
   1. `cull`: the grains of the other list that still sound at the block's first frame go to the
      head of this block's list, and their count to its count (a push, and a store after the
-     loop). Its loop runs over the list's capacity, 2,048 (deviation 1; ask U of
+     loop). Its loop runs over the list's capacity, 2,048 (deviation 1; ask W of
      `docs/compiler-asks.md`).
   2. `tally`: the count is stored in the log (the harness's kernel).
   3. `spawn`: the block's new grains are appended after the count, `{ array, length }`, a push
@@ -65,7 +65,7 @@ Inference: the numbers hold that load, the 99th percentiles and the maxima more 
   5. `play`: the list is rendered into the block, `min(count[0], grains.length)` grains summed in
      the list's order for each frame, into a scratch array.
   6. `keep`: the block is copied into the tape (the harness's kernel). Its index is written
-     `n * 1 + at`, because the loop proof refuses `at + n` (ask V of `docs/compiler-asks.md`).
+     `n * 1 + at`, because the loop proof refuses `at + n` (ask X of `docs/compiler-asks.md`).
 - The two lists (`Resident<Grain[]>` of 2,048 grains) and their counts (`Resident<Uint32Array>`)
   are swapped each block. The log (2 words a block) and the tape (1,024 samples a block) stay on
   the device. Each arm reads the tape, the log and the last list once, after its last block.
@@ -255,9 +255,9 @@ These are inferences, not results.
   needed by one cloud's list. A sort would matter to a list merged from several sources by start
   frame, or ordered by another key. This run measures neither.
 - A host that wants no read per block passes a device with no `timestamp-query`; its reports then
-  carry no `gpuTime` (observation 3). The general part is ask X of `docs/compiler-asks.md`.
+  carry no `gpuTime` (observation 3). The general part is ask Z of `docs/compiler-asks.md`.
 - `cull` over the capacity costs little at this headroom: 0.807 ms of 10.727 ms. Its cost grows
-  with the capacity, not with the grains (ask U of `docs/compiler-asks.md`).
+  with the capacity, not with the grains (ask W of `docs/compiler-asks.md`).
 
 ## Open questions
 
@@ -268,7 +268,7 @@ These are inferences, not results.
   `grains.length`, which has no GLSL ES 3.00 spelling (ask J), so the render falls to the CPU tier
   too. This run does not measure a render on WebGL2.
 - How `explain()` should word a group that pushes or stores after its loops (observation 11). The
-  report gives no dispatch count per group (ask W of `docs/compiler-asks.md`).
+  report gives no dispatch count per group (ask Y of `docs/compiler-asks.md`).
 
 ## Deviations from the method
 

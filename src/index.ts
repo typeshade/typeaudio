@@ -15,6 +15,7 @@ export { explain } from './explain.ts';
 export { Oscillator, Saw, Sine } from './units/oscillator.shade.ts';
 export { OnePole } from './units/one-pole.shade.ts';
 export { Biquad, Lowpass } from './units/biquad.shade.ts';
+export { Envelope } from './units/envelope.shade.ts';
 export { Voice, synth } from './kernels/synth.shade.ts';
 export { mixdown } from './kernels/mixdown.shade.ts';
 export { drive, gain } from './kernels/bus.shade.ts';
