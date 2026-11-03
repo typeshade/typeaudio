@@ -20,3 +20,5 @@ export { Voice, synth } from './kernels/synth.shade.ts';
 export { mixdown } from './kernels/mixdown.shade.ts';
 export { drive, gain } from './kernels/bus.shade.ts';
 export { peak } from './kernels/meter.shade.ts';
+export { Cloud, Grain } from './units/grain.shade.ts';
+export { cull, play, spawn } from './kernels/grains.shade.ts';

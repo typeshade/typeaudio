@@ -230,7 +230,7 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: issue #543 (measure the host time per `dispatch()`, then a recorded sequence if it
   matters).
 - Workaround: a block is one `fuse` scope, so the planner keeps the dispatch count low.
-- Measured by: experiments 1 and 4.
+- Measured by: experiments 1, 4 and 6.
 - Status: issue #543 open (raised by typeshade/radiance). Experiment 4
   (`docs/records/04-additive-container.md`, the container): one block of the engine's plan over
   10,000 partials is 3 dispatches in one submission on WebGPU. Summed in the tree order by one
@@ -239,7 +239,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   different loads). At 512 frames, where the device times the plan, its 1,539 dispatches held
   4,397.112 ms of GPU time of a mean block of 4,468.537 ms: on this container the cost of many
   dispatches is the device's, and the host and the gaps between passes took about 0.05 ms a
-  dispatch.
+  dispatch. Experiment 6 measured one plan of 10 dispatches in 1 submission per block of grains:
+  with no fence and no read, the host's `fuse` call took a median of 3.170 ms on WebGPU on
+  SwiftShader (`docs/records/06-granular-container.md`, arm `stream`, the container, 2026-11-02).
 
 ### J. A length read inside a loop body or an index on WebGL2
 
@@ -247,12 +249,17 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: issue #689 (a kernel loop whose body reads another array's `.length` has no WebGL2
   tier) and issue #900 (the WebGL2 pass program drops the length declaration inside an index).
 - Workaround: the length is a `u32` parameter, and the position stays inside the table.
-- Measured by: the WebGL2 arm of experiment 3.
+- Measured by: the WebGL2 arms of experiments 3 and 6.
 - Status: measured at the pin (`docs/records/03-fft-container.md`, 2026-11-02). The probe
   `ys[i] = xs[i % xs.length]` runs on WebGPU and on the CPU tier, and on WebGL2 its pass program
   does not compile: `'_phx_len_xs' : undeclared identifier`. The FFT entries read no length, since
   their sizes are module constants, and run on WebGL2. #900 is fixed on the compiler's `main` by
   #939 (`b3bf0af8`), after the pin; the workaround stays until the pin moves past it. #689 is open.
+  Experiment 6 (`docs/records/06-granular-container.md`): `play` of `src/kernels/grains.shade.ts`
+  reads `grains.length` in its loop body, and on WebGL2 alone it is refused with `play(): no tier
+  it may use can run it (webgl2: it runs on the CPU, its GLSL did not emit: glsl-es300: arrayLength
+  has no GLSL ES 3.00 spelling (no storage buffers, no runtime-sized arrays)).` The engine keeps the
+  read, since its scheduler's pushes have no WebGL2 tier either.
 
 ### K. The WebAssembly tier
 
@@ -335,7 +342,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Compiler: `FuseReport` (surface §71).
 - Workaround: `explain` says "on WebGL2 or the CPU tier" for such a group (`src/explain.ts`).
 - Measured by: `docs/records/01-round-trip-container.md`: on WebGL2, `synth` and `peak` fall to the
-  CPU tier, and the report does not say so.
+  CPU tier, and the report does not say so. `docs/records/06-granular-container.md`: on a device
+  that opened on WebGL2, all six calls of a block of grains fell to the CPU tier; the report's tier
+  is `cpu`, and no group says why.
 - Status: issue #946; proposal 0118 accepted (#959, `6c1799ec`, 2026-11-02, D1 to D3): each group
   carries `tier`, and a group below its plan's tier says why in `why`. Its implementation is not
   started. The workaround stays until the pin moves past it.
@@ -436,6 +445,65 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 - Status: candidate. Ask S (issue #961) is the cost of the generated code inside a call; this is the
   cost of entering it.
 
+### W. A loop that pushes over a range the device holds
+
+- Pressure: a schedule on the device keeps a list whose count stays there. Each block the grains
+  that still sound move to the head of the next list, a stream compaction, which a loop that pushes
+  is. The loop's own range is the list's count, `count[0]`, which only the device holds.
+- Compiler: surface §65, "A trip count read from an array": "In this version a loop over such a
+  range that pushes [...] run[s] the whole function on the CPU". A probe of `cull` whose loop runs
+  to `const n: u32 = count[0]`, compiled with the pinned compiler's `hostFace`, gave the reason:
+  `loop 1 pushes onto "next" over a trip count it reads from an array, and the call sizes the counts
+  of a push from a trip count the host knows`.
+- Workaround: `cull` (`src/kernels/grains.shade.ts`, line 21) loops over the list's capacity,
+  `grains.length`, and tests `g < count[0]` in its body; it then runs on WebGPU.
+- Measured by: experiment 6 (`docs/records/06-granular-container.md`): over a capacity of 2,048
+  and a median of 814 grains, `cull` took a mean of 0.807 ms of a block's 10.727 ms of GPU time.
+- Status: candidate. Measured on the container only.
+
+### X. A write at an offset the host passes, `out[at + n]`
+
+- Pressure: a block written into a longer array from a frame the host passes: a tape, a ring, the
+  write of a delay line.
+- Compiler: surface §65, rule R3, admits a write "at one index whose coefficient of `i` is
+  loop-invariant". The proof finds that coefficient only in a product (`scaledCoefficient`, line
+  1086 of `src/core/passes/parallel-loop.ts` at the pin). A probe whose loop writes
+  `tape[at + n] = block[n]` gets TS8070: `This loop runs on the CPU because line 5 writes "tape[at +
+  n]", an element two iterations can share. Write at an index made from "n".` `tape[n + at]` gets
+  the same; `tape[n * 1 + at]` and `tape[at + n * stride]` lower.
+- Workaround: `keep` (`experiments/06-granular/measure.shade.ts`, line 16) writes
+  `tape[n * 1 + at]`.
+- Measured by: `tshc check` and the faces at the pin `14566606`; experiment 6 runs the workaround
+  on WebGPU, fused with `play`.
+- Status: candidate. Inference: the rule's text admits `at + n`, so its fix may need no proposal.
+
+### Y. The dispatches of each group in a fuse report
+
+- Pressure: `explain` says how many dispatches each node of a block costs.
+- Compiler: `FuseReport` (surface §71) counts `dispatches` for the whole plan. A group's
+  `workgroupShapes` holds one triple for a loop that pushes, which runs as count, scan and store,
+  and none for the stores after a function's loops.
+- Workaround: none. `explain` (`src/explain.ts`, line 31) counts a group's triples as its
+  dispatches, so it prints "1 dispatch" for `cull` and "0 dispatches" for each `tally` of a plan
+  whose report counts 10 (`docs/records/06-granular-container.md`, "How the plan ran").
+- Measured by: experiment 6, the fuse report of each block on WebGPU.
+- Status: candidate. The wording of `explain` for such a group is open in this repository.
+
+### Z. A plan's GPU time without a read of each plan
+
+- Pressure: a real-time transport submits blocks ahead and reads nothing back per block. On a
+  device with `timestamp-query`, each plan maps its timestamps back before `fuse` resolves, so the
+  host waits for the GPU on every block.
+- Compiler: surface §71, "The GPU time" (change 0066). The flush of a plan maps the timestamps
+  before it resolves (`src/core/host-entry.ts` at the pin, line 1920). Ask H is the GPU time itself.
+- Workaround: a device requested without `timestamp-query` and passed as `createDevice({ device })`
+  (`experiments/06-granular/browser.ts`, line 40): no plan maps anything back, and no group has
+  `gpuTime`.
+- Measured by: experiment 6, arms `stream` and `stamped` on WebGPU
+  (`docs/records/06-granular-container.md`): without the feature, 0 device reads over 1,000 blocks
+  and a median `fuse` call of 3.170 ms; with it, 1,000 reads and 16.030 ms.
+- Status: candidate. Measured on the container only.
+
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
@@ -450,7 +518,7 @@ E, and the FFT's findings under G), and the earlier issues the asks cite.
 | #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier            | J                                                | Open                                   |
 | #459  | A WebAssembly tier between WebGL2 and the CPU                                    | K, F                                             | Open; change 0042 draft                |
 | #535  | Reverse-mode `grad` before 1.0                                                   | L                                                | Open; change 0056 accepted             |
-| #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6, if the grain order must be stable  | Open                                   |
+| #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6: one cloud's grains need no sort    | Open                                   |
 | #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                   |
 | #543  | The cost of many dispatches                                                      | I                                                | Open                                   |
 | #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Fixed on `main` by #962 (`20759ec9`)   |
