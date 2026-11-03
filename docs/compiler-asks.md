@@ -279,14 +279,22 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 - Pressure: a wavetable unit reads `table[at % table.length]`.
 - Compiler: issue #689 (a kernel loop whose body reads another array's `.length` has no WebGL2
-  tier) and issue #900 (the WebGL2 pass program drops the length declaration inside an index).
+  tier) and issue #900 (the WebGL2 pass program drops the length declaration inside an index;
+  fixed, in the pin `87af4eb0`).
 - Workaround: the length is a `u32` parameter, and the position stays inside the table.
 - Measured by: the WebGL2 arms of experiments 3 and 6.
-- Status: measured at the pin (`docs/records/03-fft-container.md`, 2026-11-02). The probe
-  `ys[i] = xs[i % xs.length]` runs on WebGPU and on the CPU tier, and on WebGL2 its pass program
-  does not compile: `'_phx_len_xs' : undeclared identifier`. The FFT entries read no length, since
-  their sizes are module constants, and run on WebGL2. #900 is fixed on the compiler's `main` by
-  #939 (`b3bf0af8`), after the pin; the workaround stays until the pin moves past it. #689 is open.
+- Status: measured at the pin `14566606` (`docs/records/03-fft-container.md`, 2026-11-02); #900 is
+  answered at the pin `87af4eb0`, and #689 is open. The probe `ys[i] = xs[i % xs.length]` runs on
+  WebGPU and on the CPU tier, and on WebGL2 its pass program did not compile:
+  `'_phx_len_xs' : undeclared identifier`. The FFT entries read no length, since their sizes are
+  module constants, and run on WebGL2. #900 is fixed by #939 (`b3bf0af8`, 2026-11-02), which the pin
+  `87af4eb0` holds (pull request #15 moved the pin past it). Run again at that pin on 2026-11-03 at
+  02:13 UTC, with `bun run exp:03 --tier webgl2 --sizes 1024 --variants table --repeats 1` at the
+  commit `b3bf00d` (headless Chromium 153, WebGL2 through ANGLE over Vulkan on SwiftShader), the
+  probe ran on WebGL2 and gave the exact result in 12 of 12 values, with no `'_phx_len_xs'` error.
+  This is a smoke run and not a record: the harness runs its probes before its calls and has no
+  option to drop them, so one call of the 1,024-point entry ran with the probes. #689 is open, and
+  the workaround stays until it closes.
   Experiment 6 (`docs/records/06-granular-container.md`): `play` of `src/kernels/grains.shade.ts`
   reads `grains.length` in its loop body, and on WebGL2 alone it is refused with `play(): no tier
   it may use can run it (webgl2: it runs on the CPU, its GLSL did not emit: glsl-es300: arrayLength
@@ -420,16 +428,21 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 ### R. A method's comment in the host view
 
-- Pressure: a unit's methods carry its documentation (`hz`, `set`, `tick`). At the pin the host
-  view copies the comment of a class and of its fields, and not the comment of a constructor, a
-  method or an accessor, so the editor's hover on `osc.hz(...)` shows no words.
+- Pressure: a unit's methods carry its documentation (`hz`, `set`, `tick`). At the pin `14566606`
+  the host view copies the comment of a class and of its fields, and not the comment of a
+  constructor, a method or an accessor, so the editor's hover on `osc.hz(...)` shows no words.
 - Compiler: proposal 0108, Amendment 1, item 4: the members of an exported class carry their
   comments (its decision D4). Not a new ask.
-- Workaround: none. The comments stay in the `.shade.ts` files until the pin moves past item 4.
-- Measured by: the views `tshc sync` writes at the pin `14566606`.
-- Status: proposal 0108 implemented: item 4 by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978,
-  `a80551b4`) drops the static field from item 4's list. The comments reach the view when the pin
-  moves past #937.
+- Workaround: none. The comments stayed in the `.shade.ts` files until the pin moved past item 4.
+- Measured by: the views `tshc sync` writes at the pin `14566606`, and again at the pin
+  `87af4eb0`.
+- Status: retired at the pin `87af4eb0` (pull request #15 moved the pin past #937). Proposal 0108 is
+  implemented: item 4 by #937 (`f4f4b7d2`, 2026-11-02). Amendment 2 (#978, `a80551b4`) drops the
+  static field from item 4's list. Observed at the pin: the generated
+  `src/units/oscillator.shade.typeshade.ts` carries the comment of each member of `Oscillator`,
+  `Sine` and `Saw` (`hz`, `tick` and the static `at`). Inference: the editor's hover on
+  `osc.hz(...)` shows these words; no hover was run. `compiler-changes.md` records no id, since
+  proposal 0108 does not name `typeaudio` under `downstream`.
 
 ### S. The cost of the CPU tier's generated code
 
@@ -567,27 +580,29 @@ The issues found while the proposals were implemented, on 2026-11-02, the issues
 raised (pull request #5, asks M, N, P and Q), the issues experiments 2 and 3 raised (asks S, C and
 E, and the FFT's findings under G), and the earlier issues the asks cite.
 
-| Issue | Title, shortened                                                                 | Bears on                                         | Status                                 |
-| ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------- |
-| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index | J                                                | Fixed on `main` by #939, after the pin |
-| #901  | The commit-msg hook reads a merge against its first parent                       | The implementing pull requests, not the engine   | Closed: fixed by #932 and #956         |
-| #908  | TS8070 names a static function by its emitted name                               | The refusal's wording for a unit's static helper | Fixed on `main` by #953 (`a659ae36`)   |
-| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier            | J                                                | Open                                   |
-| #459  | A WebAssembly tier between WebGL2 and the CPU                                    | K, F                                             | Open; change 0042 draft                |
-| #535  | Reverse-mode `grad` before 1.0                                                   | L                                                | Open; change 0056 accepted             |
-| #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6: one cloud's grains need no sort    | Open                                   |
-| #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                   |
-| #543  | The cost of many dispatches                                                      | I                                                | Open                                   |
-| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Fixed on `main` by #962 (`20759ec9`)   |
-| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open; 0109 Amendment 1 approved (#960) |
-| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open; change 0118 accepted (#959)      |
-| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node  | Q                                                | Open                                   |
-| #961  | The CPU tier allocates an array for the `inout` values of every method call      | S                                                | Open                                   |
-| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns | G (variant C), D                                 | Open                                   |
-| #967  | An `f64` module constant is refused, with a misleading TS8022 after it           | G (variant C), D                                 | Open                                   |
-| #968  | The determinism report has no row for subnormal flushing                         | E                                                | Open                                   |
-| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form      | C                                                | Open                                   |
-| #970  | WebGL2 refuses an `f64` local kept across a barrier                              | G (variant C), D                                 | Open                                   |
+The states are those of 2026-11-03, at the pin `87af4eb0`.
+
+| Issue | Title, shortened                                                                 | Bears on                                         | Status                                                                                                 |
+| ----- | -------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index | J                                                | Fixed by #939 (`b3bf0af8`), in the pin `87af4eb0`                                                      |
+| #901  | The commit-msg hook reads a merge against its first parent                       | The implementing pull requests, not the engine   | Closed: fixed by #932 and #956                                                                         |
+| #908  | TS8070 names a static function by its emitted name                               | The refusal's wording for a unit's static helper | Fixed on `main` by #953 (`a659ae36`)                                                                   |
+| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier            | J                                                | Open                                                                                                   |
+| #459  | A WebAssembly tier between WebGL2 and the CPU                                    | K, F                                             | Open; change 0042 draft                                                                                |
+| #535  | Reverse-mode `grad` before 1.0                                                   | L                                                | Open; change 0056 accepted                                                                             |
+| #539  | A stable sort of `u32` keys with values on every tier                            | Experiment 6: one cloud's grains need no sort    | Open                                                                                                   |
+| #542  | GPU time through `typeshade/runtime`                                             | H                                                | Open                                                                                                   |
+| #543  | The cost of many dispatches                                                      | I                                                | Open                                                                                                   |
+| #944  | `new this()` in a static builder of an `abstract` class is refused (TS8035)      | M                                                | Closed: fixed by #962 (`20759ec9`), in the pin `87af4eb0`; ask M retired                               |
+| #945  | `read()` of a `Resident` of class instances returns plain objects                | N                                                | Open; answered by 0109 Amendment 1 (#960), implemented by #993 (`87af4eb0`), in the pin; ask N retired |
+| #946  | The fuse report names the plan's best tier but not the tier of each group        | P                                                | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired      |
+| #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node  | Q                                                | Open                                                                                                   |
+| #961  | The CPU tier allocates an array for the `inout` values of every method call      | S                                                | Open                                                                                                   |
+| #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns | G (variant C), D                                 | Open                                                                                                   |
+| #967  | An `f64` module constant is refused, with a misleading TS8022 after it           | G (variant C), D                                 | Open                                                                                                   |
+| #968  | The determinism report has no row for subnormal flushing                         | E                                                | Open                                                                                                   |
+| #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form      | C                                                | Open                                                                                                   |
+| #970  | WebGL2 refuses an `f64` local kept across a barrier                              | G (variant C), D                                 | Open                                                                                                   |
 
 ## 4. How a row moves
 
