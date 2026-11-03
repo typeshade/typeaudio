@@ -17,8 +17,8 @@ bun <script> --repo typeaudio --compiler <checkout> --old <commit> --new <commit
 ```
 
 - `<script>` is `scripts/downstream-impact.ts` of a compiler checkout at or after `43413f9f`
-  (compiler #1011), the commit that added `--compiler`. It need not be the pin's checkout. The
-  script of the pin `87af4eb0` has no `--compiler`.
+  (compiler #1011, for issue #1000), the commit that added `--compiler`. It need not be the pin's
+  checkout. The script of the pin `87af4eb0` has no `--compiler`.
 - `<checkout>` is a checkout of the compiler at any path, inside this repository or outside it. Its
   history holds both pins.
 - `--old` is the pin before the move. A checkout named by `--compiler` has no pin to read, so
@@ -33,9 +33,10 @@ and a checkout at `87af4eb0`. The result was exit 0, and the script printed:
 Nothing in this repository names what the compiler bump removes.
 ```
 
-Keep the checkout outside the tree of this repository. `tshc sync --check` reads the compiler's own
-shader modules under the tree, and `bun run check` then fails (observed with a symlink to a
-checkout).
+Keep the checkout outside the tree of this repository. At the pin `87af4eb0`, `tshc sync --check`
+reads the compiler's own shader modules under the tree, and `bun run check` then fails (observed
+with a symlink to a checkout). That is compiler issue #1001, fixed on the compiler's `main` by #1012
+(`96adb1e4`), after the pin.
 
 The first pin is `145666068ca5d6ecfba32aa0ea4289cf0fc3b762`, set by pull request #5. No proposal at
 that commit names `typeaudio` under `downstream`, so no proposal was recorded then.
