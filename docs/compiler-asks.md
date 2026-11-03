@@ -626,9 +626,9 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
 
 - Pressure: the partitioned convolution has four kernel functions, `pad`, `store`, `accumulate` and
   `overlapAdd`. Each is a loop that writes an element of `array<vec2>`, writes at an index other
-  than its counter, or writes two arrays. None has a WebGL2 program at the pin. On a device that
-  prefers `['webgl2', 'cpu']` they run on the CPU tier, and a block takes 5,580.98 ms at the median
-  (10 blocks) against a budget of 21.33 ms.
+  than its counter, or writes two arrays. None has a WebGL2 program at the pin `14566606`. On a
+  device that prefers `['webgl2', 'cpu']` they run on the CPU tier, and a block takes 5,580.98 ms at
+  the median (10 blocks) against a budget of 21.33 ms.
 - Compiler: the WebGL2 tier's loop forms (surface §65, "The tiers"): a draw that writes the two words
   of a `vec2` element, writes at `i + c`, or writes several arrays as several render targets.
 - Workaround: none. The four calls run on the CPU tier, and the FFT entry runs on WebGL2.
@@ -639,7 +639,8 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   `accumulate()` write an element that is not one `f32`, `i32` or `u32`. `store()` writes "line"
   other than at `i`. `overlapAdd()` "writes more than one array, and WebGL2 draws one". Record 04
   (ask A: `additive` writes at `v * block + n`) and record 06 (`keep` writes "tape" other than at
-  `i`) met the same limit. This ask was candidate ask A of record 05.
+  `i`) met the same limit. It was not run again at the pin `87af4eb0`. This ask was candidate ask A
+  of record 05.
 
 ## 3. Issues raised on the compiler
 
