@@ -6,5 +6,5 @@ import { typeshade } from 'typeshade/vite';
 // `fuse` scope plans by. The tests run on the CPU tier, with no device.
 export default defineConfig({
   plugins: [typeshade()],
-  test: { include: ['test/**/*.test.ts', 'website/audio.test.ts'] },
+  test: { include: ['test/**/*.test.ts', 'website/*.test.ts'] },
 });

@@ -23,7 +23,7 @@
     "exp:07": "bun experiments/07-sound-match/run.ts",
     "dev:website": "vite --config website/vite.config.ts",
     "build:website": "vite build --config website/vite.config.ts && bun scripts/site-docs.ts",
-    "check:website": "tsc -p website/tsconfig.json",
+    "check:website": "tshc check website && tsc -p website/tsconfig.json",
     "test:website": "bun website/check-browser.ts"
   },
   "devDependencies": {

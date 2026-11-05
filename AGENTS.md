@@ -121,12 +121,16 @@ device.
 ## Website
 
 `website/` holds the public overview and audio playground. `scripts/site-docs.ts`
-renders the design documents into static pages. The playground runs the existing
-engine in a worker, then plays rendered PCM with Web Audio.
+renders the design documents into static pages. The playground composes TypeAudio oscillator and filter units in a website-owned
+voice (`website/designer.shade.ts`). It renders banks on the selected backend,
+adds CPU delay and reverb, then plays PCM with Web Audio. `website/designer.ts`
+holds patch validation, effects, presets, and spectrum analysis.
 
 - `bun run check:website`: type-check the browser and worker code.
 - `bun run build:website`: build the site and documentation into `website/dist`.
 - `bun run test:website`: check CPU and WebGPU synthesis, playback, WAV export,
   cancellation, unavailable WebGPU, documentation, and mobile layout in Chromium.
+  It also checks CPU/WebGPU PCM parity, sound-design controls, effects comparison,
+  automatic audition, and local patch save/import/export.
 - `.github/workflows/deploy.yml`: deploy `main` to `audio.typeshade.dev` with
   Cloudflare Workers Static Assets and the existing `CLOUDFLARE_API_TOKEN` secret.

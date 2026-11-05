@@ -1,14 +1,3 @@
-/** Apply a short playback fade without changing the engine's measured peak. */
-export function fade(samples: Float32Array, sampleRate: number): Float32Array {
-  const out = samples.slice();
-  const edge = Math.min(Math.floor(sampleRate * 0.01), Math.floor(out.length / 2));
-  for (let i = 0; i < edge; i++) {
-    out[i]! *= i / edge;
-    out[out.length - 1 - i]! *= i / edge;
-  }
-  return out;
-}
-
 /** Encode mono PCM as a 16-bit WAV, clamping to the format's range. */
 export function wav(samples: Float32Array, sampleRate: number): ArrayBuffer {
   const buffer = new ArrayBuffer(44 + samples.length * 2);
@@ -26,13 +15,4 @@ export function wav(samples: Float32Array, sampleRate: number): ArrayBuffer {
     view.setInt16(44 + i * 2, Math.round(x * (x < 0 ? 32768 : 32767)), true);
   }
   return buffer;
-}
-export interface Settings {
-  backend: 'cpu' | 'webgpu'; frequency: number; voices: number;
-  cutoff: number; drive: number; duration: number; preset: string;
-}
-export function frequencies(settings: Settings): number[] {
-  return Array.from({ length: settings.voices }, (_, i) => settings.frequency *
-    (settings.preset === 'bright' ? 2 ** ([0, 7, 12, 19][i % 4]! / 12) :
-      2 ** ((i - (settings.voices - 1) / 2) * 7 / 1200)));
 }

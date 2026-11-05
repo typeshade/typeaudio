@@ -1,20 +1,22 @@
 import { createDevice } from 'typeshade/runtime';
-import { bank, Voice, plan, render, explain } from '../src/index.ts';
-import { frequencies, type Settings } from './audio.ts';
-self.onmessage = async ({ data: settings }: MessageEvent<Settings>) => {
+import { explain } from '../src/explain.ts';
+import { renderPatch } from './designer-render.ts';
+import { finishPcm, validatePatch, type RenderRequest } from './designer.ts';
+self.onmessage = async ({ data }: MessageEvent<RenderRequest>) => {
   const started = performance.now();
   try {
-    const dev = await createDevice({ prefer: [settings.backend] });
+    const patch = validatePatch(data.patch);
+    if (!['cpu','webgpu'].includes(data.backend)) throw new Error('Select CPU or WebGPU.');
+    const dev = await createDevice({ prefer: [data.backend] });
     try {
-      if (dev.tier !== settings.backend) throw new Error(`Requested ${settings.backend}, but the device selected ${dev.tier}. Select CPU explicitly to use the reference backend.`);
-      const voices = bank(dev, frequencies(settings).map(f => new Voice(f, settings.cutoff, 0.7, 48000)));
-      const p = plan(voices, { drive: settings.drive / settings.voices, gain: 0.35 });
-      const samples = await render(p, { frames: Math.round(48000 * settings.duration), block: 1024 });
-      if (!samples.every(Number.isFinite)) throw new Error('The engine returned non-finite samples. Try a different preset.');
-      const result = { samples, tier: dev.tier, peak: p.peak, milliseconds: performance.now() - started, report: explain(p.reports) };
-      self.postMessage(result, { transfer: [samples.buffer] });
+      if (dev.tier !== data.backend) throw new Error(`Requested ${data.backend}, but selected ${dev.tier}. Select CPU explicitly to use it.`);
+      const result = await renderPatch(dev, patch);
+      const { dry, wet } = finishPcm(result.samples, patch);
+      if (!wet.every(Number.isFinite) || !dry.every(Number.isFinite)) throw new Error('Non-finite audio output. Reset the patch and retry.');
+      const peak = wet.reduce((m, value) => Math.max(m, Math.abs(value)), 0);
+      const effects = [patch.delay ? 'feedback delay' : '', patch.reverb ? 'Schroeder reverb' : ''].filter(Boolean);
+      const report = explain(result.reports) + '\n\n' + (effects.length ? `CPU post-processing: ${effects.join(' → ')}. Effect tails are bounded and faded.` : 'Delay and reverb bypassed.') + '\nOutput gain and WAV export run on the CPU.';
+      self.postMessage({ dry, wet, tier: dev.tier, peak, milliseconds: performance.now() - started, report }, { transfer: [dry.buffer,wet.buffer] });
     } finally { await dev.dispose(); }
-  } catch (error) {
-    self.postMessage({ error: error instanceof Error ? error.message : String(error) });
-  }
+  } catch (error) { self.postMessage({ error: error instanceof Error ? error.message : String(error) }); }
 };
