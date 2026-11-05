@@ -57,3 +57,15 @@ For an authorized deployment from a branch:
 
 The token remains a deployment credential. It is never included in the site.
 The font files retain their IBM Plex license in `public/fonts/`.
+
+## Sound designer scope
+
+The next playground revision adds two oscillator shapes and a blend, detune,
+filter resonance and bypass, ADSR, and a drive stage. A website-owned voice
+composes TypeAudio oscillator and filter units. Existing bank, mixing, gain, and
+meter kernels run on the explicitly selected backend.
+
+Delay and reverb process rendered PCM in the worker on the CPU. Their placement
+is reported. The playground adds dry/wet comparison, waveform and spectrum views,
+automatic preview after an explicit user gesture, presets, and local patch storage.
+It renders finite clips before playback; it does not promise a live GPU callback.
