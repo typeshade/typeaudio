@@ -10,7 +10,7 @@ TypeShade compiler. The engine's public APIs and compiler pin are unchanged.
 - One to eight unison voices, a resonant lowpass with bypass, and ADSR.
 - Soft-clipping drive, feedback delay, and a damped Schroeder room reverb.
 - Six presets, bounded randomization, undo, and reset.
-- Automatic audition after an explicit gesture, loop playback, and stop.
+- Continuous Live mode, plus offline automatic audition, loop playback, and stop.
 - Aligned before/after effects comparison, waveform, spectrum, and WAV export.
 - Named local patches and validated JSON import/export.
 
@@ -31,8 +31,8 @@ It does not generate audio in a live GPU callback. Changes invalidate an older
 render. Playback requires a user gesture. Audio and saved patches stay in the
 browser. Saved patches use versioned local storage; JSON export provides a copy.
 
-The spectrum is a 2,048-frame Hann-windowed FFT near the start of the clip.
-It is a static inspection of the selected signal, not a live spectrum analyzer.
+In Render mode, the spectrum is a 2,048-frame Hann-windowed FFT near the start
+of the clip. In Live mode, an AnalyserNode shows the running waveform and spectrum.
 Render time includes device setup and compilation. It is not a benchmark.
 
 ## Development
@@ -81,9 +81,33 @@ destination unless the corresponding document is hosted here.
 The first website baseline was `649368d9511f98e4cb7217c6f19c93882c82e3e5`.
 The sound designer starts from `f869f0e41a24dfa2e8cef8cb7947a6828345e0a4`.
 
-## Live audio revision
+## Live mode
 
 A separate Live mode runs synchronous TypeAudio unit blocks in an AudioWorklet.
 Parameter updates preserve oscillator, filter, delay, and reverb state. Live mode
 uses the CPU; offline CPU/WebGPU rendering and WAV export remain available.
 No promise, worker round trip, or buffer replacement fills an audio callback.
+
+Live is the initial mode. Press Start live to enable audio. Parameter changes go
+through the worklet port without stopping playback. Continuous parameters and
+bypasses settle over approximately 12 ms; shape and transpose choices are discrete.
+Repeat envelope cycles the note hold and release. With repeat off, the note
+sustains until stopped. Retrigger restarts the envelope, retaining oscillator and
+effect state. Stop fades the output before disconnecting the processor.
+
+`live-voice.shade.ts` extends the website voice with a synchronous block method.
+One CPU host call produces up to 128 samples per voice, using the compiled
+TypeAudio oscillator and filter units. `live-dsp.ts` mixes voices and runs
+stateful drive, delay, and reverb. `live.worklet.ts` writes output before returning
+from `process()`. It never calls an asynchronous engine kernel or offline render.
+`live-audio.ts` loads one self-contained worklet module and manages its lifetime.
+
+Live mode uses a 48 kHz AudioContext and requires AudioWorklet support. Actual
+latency and CPU headroom depend on the device and browser. Render mode remains
+available when live processing is unavailable, and is the path for GPU synthesis
+and WAV export. Exported PCM is a separate render, not a recording of live edits.
+
+Live tests verify synchronous output against the TypeAudio offline render,
+continued sample clocks and changed pitch after updates, retained effect tails,
+and actual browser processing with eight voices. The browser check also verifies
+that edits reuse one AudioWorkletNode and issue no offline-render worker request.

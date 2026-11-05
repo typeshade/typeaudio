@@ -134,3 +134,9 @@ holds patch validation, effects, presets, and spectrum analysis.
   automatic audition, and local patch save/import/export.
 - `.github/workflows/deploy.yml`: deploy `main` to `audio.typeshade.dev` with
   Cloudflare Workers Static Assets and the existing `CLOUDFLARE_API_TOKEN` secret.
+
+The website also has continuous CPU Live mode. `website/live-voice.shade.ts`
+provides a synchronous block method over the existing units. `live-dsp.ts` keeps
+voice and effect state; `live.worklet.ts` fills audio output before returning.
+`live-audio.ts` manages the worklet and analyzer. The offline renderer remains
+separate. Website tests cover live state updates and actual AudioWorklet playback.

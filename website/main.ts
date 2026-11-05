@@ -1,4 +1,5 @@
 import './style.css';
+import { LiveAudio } from './live-audio.ts';
 import { wav } from './audio.ts';
 import { DEFAULT, PRESETS, SAMPLE_RATE, envelopeAt, spectrum, validatePatch, type Patch } from './designer.ts';
 const el = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
@@ -14,14 +15,80 @@ let debounce: ReturnType<typeof setTimeout> | undefined;
 let context: AudioContext | undefined, source: AudioBufferSourceNode | undefined;
 let playbackId = 0, renderId = 0, playing = false, dirty = true;
 let renderedName = 'typeaudio';
+let mode: 'live' | 'render' = 'live';
+let live: LiveAudio | undefined;
+let liveStarting = false, liveGeneration = 0, animation = 0;
+function stopLive(): void {
+  liveGeneration++; live?.stop(); live = undefined; liveStarting = false; cancelAnimationFrame(animation);
+  button('live-start').disabled = false; button('live-stop').disabled = true; button('live-retrigger').disabled = true;
+  el('live-indicator').textContent = 'CPU · AudioWorklet'; refreshTransport();
+}
+function liveDraw(): void {
+  const trace=live?.trace();if(!trace)return;
+  const canvas=el<HTMLCanvasElement>('waveform'),g=canvas.getContext('2d')!;
+  g.clearRect(0,0,canvas.width,canvas.height);g.strokeStyle='#75e3bd';g.lineWidth=1.5;g.beginPath();
+  if(view==='wave'){
+    for(let x=0;x<canvas.width;x++){const value=trace.wave[Math.floor(x/canvas.width*trace.wave.length)]!;const y=130-value*120;if(x)g.lineTo(x,y);else g.moveTo(x,y);}
+    el('axis-start').textContent='0 ms';el('axis-end').textContent='43 ms';el('axis-caption').textContent='LIVE AMPLITUDE';
+  }else{
+    for(let x=0;x<canvas.width;x++){const hz=30*(16000/30)**(x/canvas.width),bin=Math.min(trace.bins.length-1,Math.round(hz/SAMPLE_RATE*2048));const y=250-Math.max(0,Math.min(1,(trace.bins[bin]!+90)/90))*235;if(x)g.lineTo(x,y);else g.moveTo(x,y);}
+    el('axis-start').textContent='30 Hz';el('axis-end').textContent='16 kHz';el('axis-caption').textContent='LIVE SPECTRUM';
+  }
+  g.stroke();el('metric-peak').textContent=trace.wave.reduce((peak,x)=>Math.max(peak,Math.abs(x)),0).toFixed(3);
+  animation=requestAnimationFrame(liveDraw);
+}
+async function startLive(): Promise<void> {
+  stopLive();stopWorker();stopPlayback();clearTimeout(debounce);field('auto-preview').checked=false;
+  const generation=++liveGeneration;liveStarting=true;
+  button('live-start').disabled=true;button('live-stop').disabled=false;
+  status('Starting live audio…');
+  const session=new LiveAudio(message=>{
+    if(generation!==liveGeneration)return;stopLive();status(message,true);
+  },(frames,revision)=>{
+    if(generation!==liveGeneration)return;
+    el('clip-label').textContent=`LIVE · ${(frames/SAMPLE_RATE).toFixed(1)} s`;
+    el('live-indicator').dataset.frames=String(frames);el('live-indicator').dataset.revision=String(revision);
+  });live=session;
+  try{
+    const ctx=await audioContext();if(generation!==liveGeneration)return;
+    await session.start(ctx,patch,field('live-repeat').checked,monitor==='dry');
+    if(generation!==liveGeneration){session.stop();return;}
+    liveStarting=false;session.update(patch,field('live-repeat').checked,monitor==='dry');
+    button('live-retrigger').disabled=false;el('live-indicator').textContent='LIVE · CPU · 48 kHz';
+    el('metric-backend').textContent='CPU live';el('metric-time').textContent='Continuous';el('timing-label').textContent='Mode';
+    el('empty-wave').style.display='none';
+    el('report').textContent=`Continuous CPU AudioWorklet processing.
+TypeAudio oscillator and filter units run in synchronous blocks.
+Delay and reverb preserve their state between blocks.
+No offline render or GPU round trip fills the audio callback.`;
+    el('edit-status').textContent='Live: move sliders to change the running sound. Retrigger restarts the envelope.';
+    status('Live on CPU. Controls update the running sound.');refreshTransport();liveDraw();
+  }catch(error){if(generation!==liveGeneration)return;stopLive();status(`Live audio failed: ${String(error)}. Render mode remains available.`,true);}
+}
+function setMode(next:'live'|'render'): void {
+  clearTimeout(debounce);stopLive();stopWorker();stopPlayback();field('auto-preview').checked=false;mode=next;
+  el('render-toolbar').hidden=next!=='render';el('render-transport').hidden=next!=='render';el('live-toolbar').hidden=next!=='live';
+  button('mode-live').setAttribute('aria-pressed',String(next==='live'));button('mode-render').setAttribute('aria-pressed',String(next==='render'));
+  el('edit-status').textContent=next==='live'?'Press Start live, then move any slider. The running sound changes without re-rendering.':'Render a finite clip on CPU or WebGPU. Auto audition re-renders after edits.';
+  el('timing-label').textContent=next==='live'?'Mode':'Render';
+  status(next==='live'?'Ready for continuous live sound. Press Start live.':'Render mode. Choose CPU or WebGPU and render a clip.');
+  if(clip){el('clip-label').textContent=`${(clip.wet.length/SAMPLE_RATE).toFixed(2)} SEC`;draw();}else{el('clip-label').textContent='NO CLIP YET';}
+  refreshTransport();
+}
+button('live-start').addEventListener('click',()=>void startLive());
+button('live-stop').addEventListener('click',()=>{stopLive();status('Live audio stopped.');});
+button('live-retrigger').addEventListener('click',()=>live?.retrigger());
+field('live-repeat').addEventListener('change',()=>{live?.update(patch,field('live-repeat').checked,monitor==='dry');el('edit-status').textContent=field('live-repeat').checked?'The envelope repeats using Note hold and Release.':'The note sustains until stopped. Retrigger restarts the attack.';});
+button('mode-live').addEventListener('click',()=>setMode('live'));button('mode-render').addEventListener('click',()=>setMode('render'));
+
 interface SavedPatch { name: string; patch: Patch; }
 let saved: SavedPatch[] = [];
 function libraryMessage(message: string): void { el('library-status').textContent = message; }
 function selectedSamples(): Float32Array | undefined { return clip?.[monitor]; }
 function refreshTransport(): void {
-  button('play').disabled = !clip || !!worker || playing;
-  button('download').disabled = !clip || !!worker;
-  button('stop').disabled = !worker && !playing;
+  button('play').disabled = mode === 'live' || !clip || !!worker || playing;
+  button('download').disabled = mode === 'live' || !clip || !!worker;
+  button('stop').disabled = !worker && !playing && !live;
   button('render').disabled = !!worker;
 }
 function stopPlayback(): void {
@@ -88,6 +155,12 @@ function remember(): void {
 }
 function markEdited(): void {
   dirty = true;
+  if(mode==='live'){
+    live?.update(patch,field('live-repeat').checked,monitor==='dry');
+    el('edit-status').textContent=live?'Live parameters updated. Audio continues with its existing phase and effect tails.':'Patch changed. Press Start live to hear it continuously.';
+    document.querySelectorAll('.preset-card').forEach(card=>card.setAttribute('aria-pressed','false'));
+    return;
+  }
   el('edit-status').textContent = field('auto-preview').checked ? 'Edits will render and play after a short pause.' : 'Patch changed. Render to hear the latest version, or turn on Auto audition.';
   document.querySelectorAll('.preset-card').forEach(card => card.setAttribute('aria-pressed','false'));
   clearTimeout(debounce);
@@ -99,6 +172,7 @@ function markEdited(): void {
 function applyPatch(next: Patch, name?: string): void {
   patch = validatePatch(next); remember(); writeControls(); markEdited();
   if (name) field('patch-name').value = name;
+  if(mode==='live')live?.retrigger();
   field('saved-patches').value = '';
 }
 function draw(): void {
@@ -182,7 +256,7 @@ field('loop').addEventListener('change',()=>{if(source)source.loop=field('loop')
 el<HTMLFormElement>('controls').addEventListener('submit',e=>{e.preventDefault();void renderSound(false);});
 button('play').addEventListener('click',()=>void playClip());
 button('stop').addEventListener('click',()=>{
-  clearTimeout(debounce);const rendering=!!worker;stopWorker();stopPlayback();
+  clearTimeout(debounce);const rendering=!!worker;stopWorker();stopPlayback();stopLive();
   if(rendering){el('empty-wave').textContent='Render cancelled.';el('clip-label').textContent='CANCELLED';el('report').textContent='Render cancelled before completion.';}
   status(rendering?'Render cancelled. Adjust the patch and try again.':'Playback stopped.');
 });
@@ -194,7 +268,8 @@ for(const control of document.querySelectorAll<HTMLButtonElement>('[data-monitor
   monitor=control.dataset.monitor as typeof monitor;
   document.querySelectorAll<HTMLButtonElement>('[data-monitor]').forEach(b=>b.setAttribute('aria-pressed',String(b===control)));draw();
   const current=selectedSamples();if(current)el('metric-peak').textContent=current.reduce((peak,x)=>Math.max(peak,Math.abs(x)),0).toFixed(3);
-  if(playing)void playClip();
+  if(live)live.update(patch,field('live-repeat').checked,monitor==='dry');
+  else if(playing)void playClip();
 });
 for(const [key,preset] of Object.entries(PRESETS)){
   const b=document.createElement('button');b.type='button';b.className='preset-card';b.dataset.preset=key;
@@ -250,5 +325,5 @@ field('patch-file').addEventListener('change',async()=>{
     applyPatch(validatePatch(data.patch),String(data.name||'Imported patch').slice(0,40));libraryMessage('Patch imported. Render to hear it.');
   }catch(error){libraryMessage(`Import failed: ${error instanceof Error?error.message:String(error)}`);}finally{field('patch-file').value='';}
 });
-window.addEventListener('pagehide',()=>{clearTimeout(debounce);stopWorker();stopPlayback();void context?.close();context=undefined;});
-field('patch-name').value='Warm lead';writeControls();
+window.addEventListener('pagehide',()=>{stopLive();clearTimeout(debounce);stopWorker();stopPlayback();void context?.close();context=undefined;});
+field('patch-name').value='Warm lead';writeControls();refreshTransport();

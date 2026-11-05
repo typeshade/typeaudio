@@ -1,6 +1,6 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": { "lib": ["ES2022", "DOM", "DOM.Iterable"], "types": ["vite/client"] },
-  "include": ["./main.ts", "./audio.ts", "./render.worker.ts", "../src/**/*.ts"],
+  "include": ["./main.ts", "./audio.ts", "./render.worker.ts", "./live.worklet.ts", "./live-dsp.ts", "./live-audio.ts", "../src/**/*.ts"],
   "exclude": ["./vite.config.ts", "../src/**/*.shade.ts", "./*.shade.ts"]
 }
