@@ -61,6 +61,33 @@ try {
   assert.match(await unsupported.locator('#status').textContent() ?? '', /unavailable/);
   assert.equal(await unsupported.locator('#play').isDisabled(), true);
   console.log('PASS unsupported WebGPU error, without silent fallback');
+  // A distinct entry URL must not create a second runtime through a chunk's back-import.
+  const versioned = await browser.newPage();
+  await versioned.addInitScript(() => {
+    const NativeWorker = window.Worker;
+    window.Worker = class extends NativeWorker {
+      constructor(url: string | URL, options?: WorkerOptions) {
+        const entry = new URL(String(url), location.href);
+        entry.searchParams.set('entry', 'regression');
+        super(entry, options);
+      }
+    };
+  });
+  await versioned.goto('http://127.0.0.1:4178/');
+  await versioned.selectOption('#duration', '0.5');
+  for (const backend of ['cpu', 'webgpu']) {
+    await versioned.selectOption('#backend', backend);
+    await versioned.locator('#render').click();
+    await versioned.waitForFunction(() => {
+      const status = document.querySelector('#status')!;
+      return status.textContent!.includes('Render complete') || status.classList.contains('error');
+    });
+    assert.equal(await versioned.locator('#metric-backend').textContent(), backend === 'cpu' ? 'CPU' : 'WebGPU',
+      await versioned.locator('#status').textContent() ?? '');
+    assert.ok(Number(await versioned.locator('#metric-peak').textContent()) > 0.01);
+  }
+  console.log('PASS CPU and WebGPU with a query-bearing worker entry URL');
+
 } finally {
   await browser.close();
   await new Promise<void>((resolve, reject) => server.httpServer.close(error => error ? reject(error) : resolve()));
