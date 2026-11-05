@@ -25,3 +25,31 @@ The implementation starts from `main` at
 Playback requires a user action. All synthesis and audio data stay in the browser.
 The CPU tier is the portable default. WebGPU requires browser and device support.
 Changes apply to the next render. Playback uses a short edge fade to avoid clicks.
+
+## Checks
+
+1. Run `bun run check`.
+2. Run `bun run check:website`.
+3. Run `bun run test`.
+4. Run `bun run build:website`.
+5. Run `TYPESHADE_CHROMIUM=/path/to/chromium bun run test:website`.
+
+The browser check uses SwiftShader. It verifies GPU execution, but does not
+measure physical GPU performance. Screenshots are written to ignored `artifacts/`.
+The build includes four repository documents. Relative source links retain their
+GitHub destination unless the corresponding document is hosted here.
+
+## Deployment
+
+The `Deploy website` workflow builds pushes to `main`. It deploys `website/dist`
+with Wrangler 4.151.0 and the existing organization `CLOUDFLARE_API_TOKEN` secret.
+`wrangler.jsonc` connects `audio.typeshade.dev` as a custom domain. Unknown paths
+return `404.html` with HTTP 404. No application server or storage binding is used.
+
+For an authorized deployment from a branch:
+
+1. Run `bun run build:website`.
+2. Run `bunx wrangler@4.151.0 deploy`.
+
+The token remains a deployment credential. It is never included in the site.
+The font files retain their IBM Plex license in `public/fonts/`.

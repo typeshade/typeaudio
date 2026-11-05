@@ -20,10 +20,15 @@
     "exp:04": "bun experiments/04-additive/run.ts",
     "exp:05": "bun experiments/05-convolution/run.ts",
     "exp:06": "bun experiments/06-granular/run.ts",
-    "exp:07": "bun experiments/07-sound-match/run.ts"
+    "exp:07": "bun experiments/07-sound-match/run.ts",
+    "dev:website": "vite --config website/vite.config.ts",
+    "build:website": "vite build --config website/vite.config.ts && bun scripts/site-docs.ts",
+    "check:website": "tsc -p website/tsconfig.json",
+    "test:website": "bun website/check-browser.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
+    "marked": "17.0.1",
     "playwright-core": "1.64.1",
     "typescript": "5.6.3",
     "typeshade": "https://github.com/typeshade/typeshade/archive/87af4eb0d9d15f02b66b8341b72cab0944290472.tar.gz",

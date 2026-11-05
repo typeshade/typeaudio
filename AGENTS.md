@@ -117,3 +117,16 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
 CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
 and `bun run test`. Every claim of a result names the command, the date, the commit and the
 device.
+
+## Website
+
+`website/` holds the public overview and audio playground. `scripts/site-docs.ts`
+renders the design documents into static pages. The playground runs the existing
+engine in a worker, then plays rendered PCM with Web Audio.
+
+- `bun run check:website`: type-check the browser and worker code.
+- `bun run build:website`: build the site and documentation into `website/dist`.
+- `bun run test:website`: check CPU and WebGPU synthesis, playback, WAV export,
+  cancellation, unavailable WebGPU, documentation, and mobile layout in Chromium.
+- `.github/workflows/deploy.yml`: deploy `main` to `audio.typeshade.dev` with
+  Cloudflare Workers Static Assets and the existing `CLOUDFLARE_API_TOKEN` secret.
