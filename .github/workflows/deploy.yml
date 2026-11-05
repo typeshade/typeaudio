@@ -1,0 +1,30 @@
+name: Deploy website
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: deploy-website
+  cancel-in-progress: false
+jobs:
+  deploy:
+    name: Cloudflare website
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: cloudflare
+      url: https://audio.typeshade.dev/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: bun run check:website
+      - run: bun run build:website
+      - name: Deploy static assets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: bunx wrangler@4.151.0 deploy

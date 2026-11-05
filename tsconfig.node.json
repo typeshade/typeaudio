@@ -12,7 +12,9 @@
     "experiments/**/node.ts",
     "test/browser/run.ts",
     "test/fft.test.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "website/vite.config.ts",
+    "website/check-browser.ts"
   ],
   "exclude": ["**/*.shade.ts"]
 }
