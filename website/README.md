@@ -34,6 +34,10 @@ Changes apply to the next render. Playback uses a short edge fade to avoid click
 4. Run `bun run build:website`.
 5. Run `TYPESHADE_CHROMIUM=/path/to/chromium bun run test:website`.
 
+The browser check also renders with a query-bearing worker URL on both backends.
+The worker is one module, so its executor cannot load a second resident registry
+through an import back to an unversioned entry.
+
 The browser check uses SwiftShader. It verifies GPU execution, but does not
 measure physical GPU performance. Screenshots are written to ignored `artifacts/`.
 The build includes four repository documents. Relative source links retain their

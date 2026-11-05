@@ -29,3 +29,5 @@ jobs:
       - run: bun run test
       - run: bun run check:website
       - run: bun run build:website
+      - run: bunx playwright@1.64.1 install --with-deps chromium
+      - run: bun run test:website

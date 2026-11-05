@@ -4,7 +4,7 @@ import { preview } from 'vite';
 import { SOFTWARE_GPU_FLAGS } from '../scripts/browser.ts';
 import { mkdir } from 'node:fs/promises';
 const server = await preview({ configFile: 'website/vite.config.ts', preview: { host: '127.0.0.1', port: 4178, strictPort: true } });
-const browser = await chromium.launch({ executablePath: process.env['TYPESHADE_CHROMIUM'] || '/usr/bin/chromium', args: [...SOFTWARE_GPU_FLAGS, '--no-sandbox'] });
+const browser = await chromium.launch({ executablePath: process.env['TYPESHADE_CHROMIUM'] || chromium.executablePath(), args: [...SOFTWARE_GPU_FLAGS, '--no-sandbox'] });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, acceptDownloads: true });
   const errors: string[] = [];
