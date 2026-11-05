@@ -80,3 +80,10 @@ destination unless the corresponding document is hosted here.
 
 The first website baseline was `649368d9511f98e4cb7217c6f19c93882c82e3e5`.
 The sound designer starts from `f869f0e41a24dfa2e8cef8cb7947a6828345e0a4`.
+
+## Live audio revision
+
+A separate Live mode runs synchronous TypeAudio unit blocks in an AudioWorklet.
+Parameter updates preserve oscillator, filter, delay, and reverb state. Live mode
+uses the CPU; offline CPU/WebGPU rendering and WAV export remain available.
+No promise, worker round trip, or buffer replacement fills an audio callback.
