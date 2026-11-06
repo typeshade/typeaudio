@@ -1,6 +1,6 @@
 # Spatial audio: listener-relative stereo foundation
 
-Status: implemented on the review branch; CI verification in progress. The owner authorized engine work on 2026-11-06.
+Status: implemented on the review branch. PR #23 records verification receipts. The owner authorized engine work on 2026-11-06.
 Baseline: `93d9a7c6086fe7f8b80a97aef3aa2198e077cae2`, stacked on graph feedback PR #22.
 Compiler pin: `87af4eb0d9d15f02b66b8341b72cab0944290472` (unchanged).
 
@@ -121,3 +121,5 @@ CI uploads the WAV, cue description and benchmark receipt as `spatial-runtime`.
 The WAV demonstrates routing and level movement. It is not an approved cinematic sound design.
 CPU timings exclude source synthesis, geometry preparation and physical-device scheduling.
 The offline worklet check does not establish live-device deadline guarantees or perceived spatial quality.
+
+Recorded checks and timing: [2026-11-06 CI receipt](records/spatial-stereo-ci.json).
