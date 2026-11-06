@@ -76,6 +76,38 @@ describe('room stereo bus', () => {
     for (let i = 0; i < 80; i++) mixer.process([input], left, right);
     expect(left[127]).toBeLessThan(1e-8);
   });
+  it('retains a cleared source in the shared tail and makes a full reset repeatable', () => {
+    const plan = prepareRoom({ ...definition, lateGain: 1, decaySeconds: 1.5 }, 12000);
+    const mixer = new RoomMixer(plan, { capacity: 1 });
+    const pose = prepareRoomSource(plan, listener, source);
+    const input = new Float32Array(128), left = input.slice(), right = input.slice(); input[0] = 1;
+    mixer.setSource(0, pose); mixer.process([input], left, right);
+    for (let i = 0; i < 10; i++) mixer.process([], left, right);
+    mixer.clearSource(0);
+    let energy = 0;
+    for (let i = 0; i < 20; i++) {
+      mixer.process([], left, right);
+      for (let j = 0; j < 128; j++) energy += left[j] ** 2 + right[j] ** 2;
+    }
+    expect(energy).toBeGreaterThan(1e-6);
+    mixer.reset();
+    for (let i = 0; i < 20; i++) {
+      mixer.process([], left, right); expect(left.every(x => x === 0) && right.every(x => x === 0)).toBe(true);
+    }
+    mixer.setSource(0, pose);
+    const output = new Float32Array(128 * 30 * 2);
+    for (let pass = 0; pass < 2; pass++) {
+      mixer.reset();
+      for (let block = 0; block < 30; block++) {
+        mixer.process(block === 0 ? [input] : [], left, right);
+        for (let i = 0; i < 128; i++) {
+          const at = (block * 128 + i) * 2;
+          if (pass === 0) { output[at] = left[i]; output[at + 1] = right[i]; }
+          else { expect(left[i]).toBe(output[at]); expect(right[i]).toBe(output[at + 1]); }
+        }
+      }
+    }
+  });
   it('rejects a whole invalid control message and overlapping buffers before mutating state', () => {
     const mixer = new RoomMixer(room, { capacity: 1 }), reference = new RoomMixer(room, { capacity: 1 });
     mixer.setSource(0, isolated(10)); reference.setSource(0, isolated(10));
