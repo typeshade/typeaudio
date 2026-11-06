@@ -42,6 +42,7 @@
     "./graph": "./src/graph/index.ts",
     "./graph/compiler": "./src/graph/compiler/index.ts",
     "./graph/runtime": "./src/graph/runtime.ts",
-    "./feedback": "./src/feedback/index.ts"
+    "./feedback": "./src/feedback/index.ts",
+    "./spatial": "./src/spatial/index.ts"
   }
 }
