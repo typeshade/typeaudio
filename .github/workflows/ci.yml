@@ -36,3 +36,23 @@ jobs:
           path: .feedback/
       - run: bun run check:website
       - run: bun run build:website
+
+  spatial:
+    name: spatial worklet + timing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: bun x playwright-core install --with-deps chromium
+      - run: bun run test:spatial-worklet
+      - run: bun run demo:spatial
+      - run: bun run bench:spatial --out artifacts/spatial/benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: spatial-runtime
+          path: artifacts/spatial/
