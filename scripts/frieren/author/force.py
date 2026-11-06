@@ -4,7 +4,7 @@ from common import layer, bed, debris
 
 def build():
     layers = bed('force', 135.5, 149.7,
-                 [[0, 0], [.7, .65], [6, .55], [8.9, .25], [9.65, .22], [10.6, .4], [14.2, 0]])
+                 [[0, 0], [.7, .65], [6, .55], [8.9, .4], [9.65, .38], [10.6, .4], [14.2, 0]])
     layers += [
         layer('force-handling', 'FRN-030', 'cloth', 'Small bodily scale before threat', 'movement',
               138.4, .45, seed=3011, gain_db=-22, position=(-.5, 0, -2), send=.12),

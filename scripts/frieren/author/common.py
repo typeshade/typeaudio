@@ -15,7 +15,7 @@ def layer(identifier, event, family, role, bus, start, duration, *, pitch=180, d
 def bed(prefix, start, end, envelope):
     duration = end-start
     return [layer(prefix+'-air-'+str(i), 'hall', 'air', 'Continuous low hall air', 'space',
-                  start, duration, seed=701+i*719, gain_db=-20, envelope=envelope,
+                  start, duration, seed=701+i*719, gain_db=-10, envelope=envelope,
                   position=(-4 if i == 0 else 4, 1, -5), spread=.5, send=.12)
             for i in range(2)]
 

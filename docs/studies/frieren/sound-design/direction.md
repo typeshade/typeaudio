@@ -125,6 +125,10 @@ The 0.750750-second force-to-column interval belongs to the edited action, not a
 Six editable bus names are available: `space`, `energy`, `movement`, `impact`, `detail` and `debris`.
 Keep source envelopes and spatial sends separate. Stronger room send must not automatically raise the direct impact.
 Preserve the force scene's low background and the finale's closing reduction during delivery.
+Retain midrange room texture during the quiet passage. A sub-only bed can disappear on a phone.
+The draft's pre-force background measured about −64 dBFS RMS and was revised before publication.
+The revised authoring target is −50 to −35 dBFS RMS for that window, with a 16–30 dB force contrast.
+Those targets are production checks, not a substitute for an audibility or comfort review on a physical phone.
 
 The delivery pass applies a 27 Hz highpass and static gain to a complete candidate.
 It matches each A/B pair at the highest attainable level at or below −20 LUFS, with 2.5 dB true-peak headroom.
