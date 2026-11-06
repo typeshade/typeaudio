@@ -1,10 +1,10 @@
 name: compiler feedback
 on:
   pull_request:
-    paths: ['src/graph/**', 'src/feedback/**', 'fixtures/feedback/**', 'test/graph-feedback.test.ts', 'scripts/feedback.ts', 'scripts/verify-compiler.ts', 'package.json', 'bun.lock', '.github/workflows/feedback.yml']
+    paths: ['src/graph/**', 'src/feedback/**', 'fixtures/feedback/**', 'test/graph-feedback.test.ts', 'scripts/feedback.ts', 'scripts/compare-feedback.mjs', 'scripts/compare-feedback.test.mjs', 'scripts/verify-compiler.ts', 'package.json', 'bun.lock', '.github/workflows/feedback.yml']
   push:
     branches: [main]
-    paths: ['src/graph/**', 'src/feedback/**', 'fixtures/feedback/**', 'test/graph-feedback.test.ts', 'scripts/feedback.ts', 'scripts/verify-compiler.ts', 'package.json', 'bun.lock', '.github/workflows/feedback.yml']
+    paths: ['src/graph/**', 'src/feedback/**', 'fixtures/feedback/**', 'test/graph-feedback.test.ts', 'scripts/feedback.ts', 'scripts/compare-feedback.mjs', 'scripts/compare-feedback.test.mjs', 'scripts/verify-compiler.ts', 'package.json', 'bun.lock', '.github/workflows/feedback.yml']
   schedule:
     - cron: '23 5 * * 1'
   workflow_dispatch:
@@ -59,3 +59,22 @@ jobs:
         with:
           name: graph-feedback-${{ matrix.compiler }}
           path: .feedback/
+  compare:
+    name: graph candidate parity
+    needs: feedback
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: graph-feedback-pinned
+          path: .feedback/pinned
+      - uses: actions/download-artifact@v4
+        with:
+          name: graph-feedback-candidate
+          path: .feedback/candidate
+      - run: node --test scripts/compare-feedback.test.mjs
+      - run: node scripts/compare-feedback.mjs .feedback/pinned/report.json .feedback/candidate/report.json

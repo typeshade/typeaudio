@@ -63,6 +63,8 @@ underruns. Short fixture timings are diagnostic samples, not device benchmarks.
 The engine CI runs the same graph fixtures as the website. The compiler feedback
 workflow tests both the pinned compiler and a candidate source archive. It checks
 every installed compiler source file against the candidate checkout first.
+A separate parity job compares the complete fixture set, PCM fingerprints, signal
+statistics and event counts. Missing cases and changed results fail that job.
 A candidate failure does not change the pinned compiler or production website.
 
 The TypeShade downstream workflow also runs this corpus on compiler code PRs.
