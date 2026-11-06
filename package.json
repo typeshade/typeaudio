@@ -34,5 +34,11 @@
     "typeshade": "https://github.com/typeshade/typeshade/archive/87af4eb0d9d15f02b66b8341b72cab0944290472.tar.gz",
     "vite": "7.3.7",
     "vitest": "5.0.5"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./graph": "./src/graph/index.ts",
+    "./graph/compiler": "./src/graph/compiler/index.ts",
+    "./graph/runtime": "./src/graph/runtime.ts"
   }
 }
