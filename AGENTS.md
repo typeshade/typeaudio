@@ -123,9 +123,10 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
   the gradient of `grad` in four forms, per parameter count. It writes the result as JSON (`--out`);
   its records are in `docs/records/`. `bun run exp:07 --write` writes the patch's modules again.
 
-CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
-and `bun run test`. Every claim of a result names the command, the date, the commit and the
-device.
+CI (`.github/workflows/ci.yml`) runs type checks, unit and graph-feedback tests, and the legacy website checks.
+Separate jobs verify offline spatial/room worklet output, record host CPU timings, and restore one archived procedural event.
+These checks do not establish hardware GPU performance or physical audio deadlines.
+Every claim of a result names the command, the date, the commit and the device.
 
 ## Portable graphs and cross-repository feedback
 

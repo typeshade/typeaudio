@@ -3,8 +3,23 @@
 Use this procedure when the previous chat and `/workspace` tree are unavailable.
 The canonical plan is `typeshade/typeaudio`, branch `docs/immersive-audio-continuity`, starting at `docs/continuity/README.md`.
 The recovery PR is [TypeAudio #25](https://github.com/typeshade/typeaudio/pull/25), stacked on room PR #24.
-Use the repository's recovery index issue if the branch was renamed or removed after merging.
+Use [recovery index #26](https://github.com/typeshade/typeaudio/issues/26) if the branch was renamed or removed after merging.
 Never assume an absolute path from an old receipt still exists.
+
+## Verified recovery checkpoint
+
+The [verification receipt](recovery-verification.json) identifies the tested source commit and CI recovery job.
+A fresh GitHub clone installed the pinned compiler and regenerated event `air-0` without the original source directories.
+All 69 archived files passed SHA-256 verification. Invalid and clipped sample counts were zero.
+The tool also rejected a corrupted archive and an existing output directory.
+This verifies source recovery and one procedural event. Full remix, Web integration and physical-device listening were not repeated.
+
+Give a replacement agent this instruction:
+
+> Resume TypeAudio from https://github.com/typeshade/typeaudio/issues/26 and `docs/continuity/README.md`.
+> Read the repository rules, owner decisions, snapshot and roadmap before editing.
+> Reconcile remote PR status, then continue R1, the bounded real-time contract and full-chain measurement harness.
+> SwiftShader supports correctness and rough controlled comparisons; it does not establish hardware GPU performance or game deadlines.
 
 ## Recover the plan and source
 

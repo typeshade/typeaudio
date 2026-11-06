@@ -2,12 +2,13 @@
 
 Statuses refer to the 2026-11-06 checkpoint. Exact delivered commits are in [state.md](state.md).
 This is an ordered program, not authorization to silently merge every stage or to implement a draft compiler proposal.
-The current task records and verifies recovery. The next implementation task is R1.
+R0 recovery is complete; see [the verification receipt](recovery-verification.json). The next implementation task is R1.
 
 ## Completed foundations
 
 | Item | Status | Evidence |
 | --- | --- | --- |
+| Recovery plan, source archive and restore procedure (R0) | Implemented and recovery-verified, PR #25 review pending | Fresh remote clone, 69 file hashes, one procedural event, overwrite/corruption rejection and CI recovery job. |
 | Portable procedural graph and reproduction corpus | Implemented, review pending | TypeAudio #22, Web #45, compiler #1038. |
 | TypeShade language intelligence in Web code workspace | Implemented, review pending | Web #46. |
 | Listener-relative stereo bus | Implemented, review pending | TypeAudio #23, 16 spatial tests in its 63-test snapshot. |

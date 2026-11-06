@@ -4,6 +4,10 @@ This is the restart entry point for the TypeAudio immersive-audio program.
 It must remain sufficient when the chat history and the original workspace are unavailable.
 The owner requested durable recovery instructions on 2026-11-06.
 
+Start from the durable [recovery index, issue #26](https://github.com/typeshade/typeaudio/issues/26) if the workspace is gone.
+[PR #25](https://github.com/typeshade/typeaudio/pull/25) preserves this plan and its source archive remotely.
+The [recovery verification receipt](recovery-verification.json) records a fresh remote clone, 69 verified files and one regenerated procedural event.
+
 The implemented engine is on room PR #24 at `86560f83a92ff8374346157000b8a467daa39aab`.
 It builds on spatial PR #23 and graph-feedback PR #22. These pull requests are not merged.
 The compiler pin remains `87af4eb0d9d15f02b66b8341b72cab0944290472`.
@@ -28,6 +32,7 @@ Record actual adapter/backend identity for every measurement. Real-device valida
 
 ## Resume without the conversation
 
+R0 is complete: the plan, authored source and recovery procedure are remotely stored and the recovery drill passed.
 The next engine task is R1 in [the roadmap](roadmap.md): a bounded real-time contract and its measurement harness.
 R2 establishes renderer-independent 3D acoustic paths. R3 adds HRTF output.
 R5 starts with a small TypeShade SDF occlusion probe; it does not require a full acoustic solver first.
