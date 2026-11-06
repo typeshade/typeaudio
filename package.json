@@ -26,7 +26,10 @@
     "check:website": "tsc -p website/tsconfig.json",
     "test:website": "bun website/check-browser.ts",
     "feedback": "bun scripts/feedback.ts",
-    "test:feedback": "vitest run test/graph-feedback.test.ts"
+    "test:feedback": "vitest run test/graph-feedback.test.ts",
+    "test:spatial-worklet": "bun scripts/check-spatial-worklet.ts",
+    "bench:spatial": "bun scripts/bench-spatial.ts",
+    "demo:spatial": "bun scripts/render-spatial-demo.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
@@ -42,6 +45,7 @@
     "./graph": "./src/graph/index.ts",
     "./graph/compiler": "./src/graph/compiler/index.ts",
     "./graph/runtime": "./src/graph/runtime.ts",
-    "./feedback": "./src/feedback/index.ts"
+    "./feedback": "./src/feedback/index.ts",
+    "./spatial": "./src/spatial/index.ts"
   }
 }
