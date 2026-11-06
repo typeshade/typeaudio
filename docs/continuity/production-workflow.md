@@ -8,7 +8,9 @@ Status: production plan and v2 sound-study data, not a shipped editor feature. T
 
 Use the supplied local reference for analysis and the YouTube player for public viewing.
 Record the reference hash, frame rate, duration, edit boundaries and authored sound range.
-The current sound range is 0–188 seconds; the uploader end card is outside the scene.
+The historical v2 sound range is 0–188 seconds.
+The [fresh picture study](../studies/frieren/README.md) proposes 0–189.314625 seconds to preserve the closing fade before unrelated uploader material.
+This proposed endpoint does not retime the existing render automatically.
 Verify the local reference's offset against YouTube before claiming online synchronization.
 Use video time as the playback clock. Buffering, seeks, playback-rate changes and tab suspension
 must pause or reschedule external sound. The iframe is an approximate synchronization source;
@@ -97,6 +99,7 @@ Use three representative passages before expanding or revising the entire scene:
 rupture, unseen force, and the final discharge. These cover material identity, negative space,
 spatial motion, impact timing and maximum density. Limit each creative iteration to a small
 number of changes so that the next A/B test can identify their effect.
+The new study uses 20–30, 136.5–149.7 and 173–189.314625 seconds, including preparation, consequences and the closing recovery.
 
 Technical checks include finite samples, clipping/true peak, integrated loudness and range,
 mono fold-down, missing assets, render determinism and alignment. Playback tests include seeks,

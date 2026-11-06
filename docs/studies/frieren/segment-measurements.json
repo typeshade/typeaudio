@@ -1,0 +1,104 @@
+{
+  "method": "Summary of fully contained 250 ms unweighted mixed-track windows; not source-isolated loudness.",
+  "segments": [
+    {
+      "region": [
+        3.88,
+        30
+      ],
+      "label": "red section",
+      "fullWindows": 104,
+      "medianWindowRmsDbfs": -4.833277571781208,
+      "minWindowRmsDbfs": -9.048376686291833,
+      "maxWindowRmsDbfs": -2.987835287031528
+    },
+    {
+      "region": [
+        43.5,
+        60
+      ],
+      "label": "violet section",
+      "fullWindows": 66,
+      "medianWindowRmsDbfs": -7.738953351725618,
+      "minWindowRmsDbfs": -12.509611734292797,
+      "maxWindowRmsDbfs": -3.699291706254806
+    },
+    {
+      "region": [
+        82.5,
+        119
+      ],
+      "label": "attrition montage",
+      "fullWindows": 146,
+      "medianWindowRmsDbfs": -5.4129020969192805,
+      "minWindowRmsDbfs": -18.918827101931747,
+      "maxWindowRmsDbfs": -3.247550855517927
+    },
+    {
+      "region": [
+        124.8,
+        131.3
+      ],
+      "label": "Fern salvo",
+      "fullWindows": 25,
+      "medianWindowRmsDbfs": -5.1343508073359985,
+      "minWindowRmsDbfs": -9.392243205671946,
+      "maxWindowRmsDbfs": -4.022245719596555
+    },
+    {
+      "region": [
+        136.5,
+        145.18
+      ],
+      "label": "pre-force reaction",
+      "fullWindows": 34,
+      "medianWindowRmsDbfs": -20.38596030950565,
+      "minWindowRmsDbfs": -26.606330728029704,
+      "maxWindowRmsDbfs": -5.277313002328759
+    },
+    {
+      "region": [
+        145.18,
+        149.7
+      ],
+      "label": "force and contact",
+      "fullWindows": 17,
+      "medianWindowRmsDbfs": -10.006612324031135,
+      "minWindowRmsDbfs": -13.596428080935883,
+      "maxWindowRmsDbfs": -3.2716157242066704
+    },
+    {
+      "region": [
+        149.7,
+        173.5
+      ],
+      "label": "aftermath and recognition",
+      "fullWindows": 95,
+      "medianWindowRmsDbfs": -9.68879451069434,
+      "minWindowRmsDbfs": -32.16983513892415,
+      "maxWindowRmsDbfs": -4.887363871154391
+    },
+    {
+      "region": [
+        177.55,
+        183.75
+      ],
+      "label": "final discharge",
+      "fullWindows": 24,
+      "medianWindowRmsDbfs": -5.086697248443979,
+      "minWindowRmsDbfs": -7.536314224405766,
+      "maxWindowRmsDbfs": -3.1801939744933563
+    },
+    {
+      "region": [
+        183.75,
+        189.314625
+      ],
+      "label": "dissolution and close",
+      "fullWindows": 22,
+      "medianWindowRmsDbfs": -26.301562475733768,
+      "minWindowRmsDbfs": -50.329526620678806,
+      "maxWindowRmsDbfs": -5.2465524227927665
+    }
+  ]
+}
