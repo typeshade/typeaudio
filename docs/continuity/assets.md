@@ -47,6 +47,9 @@ Its recipes live in `scripts/frieren/` and `docs/studies/frieren/sound-design/`.
 It contains 47 layers, 13 programs and three A/B passages. Render source is `87295117341448ddf56e0352903f0baf6051ce85`.
 Its six masters, six AAC files and 34 stems are regenerable. Listening review remains pending.
 Publication receipts, when present, identify versioned authored R2 objects. Signed links are intentionally excluded from Git.
+The v3 [publication receipt](../studies/frieren/sound-design/publication.json) identifies 18 uploaded and hash-verified objects.
+Their private bucket prefix is `typesound/studies/frieren/v3-sound-design/6cdf40238e93936c/`.
+No reference video was uploaded by this sound-design task. The bucket access settings remain unchanged.
 The original 69-file recovery archive remains unchanged.
 
 Public reference: https://www.youtube.com/watch?v=YHCqcyX9N3s.

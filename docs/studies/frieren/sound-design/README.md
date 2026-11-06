@@ -38,6 +38,20 @@ Signal checks do not constitute a listening review.
 The full scene mix and Web timeline import remain separate production work.
 No new site or production deployment is part of this study.
 
+## Stored review assets
+
+The [publication receipt](publication.json) records 18 verified objects in the existing private R2 bucket `typesound`.
+Object prefix: `studies/frieren/v3-sound-design/6cdf40238e93936c/`.
+The objects include individual candidates, a 2 MB mobile review ZIP, aligned stems and source recipes.
+Every uploaded object was downloaded and checked against its local SHA-256.
+The source package identifies packaging revision `1b2a9ab`; the audio render remains revision `8729511`.
+
+Seven-day signed links provide access to individual review files. No bucket visibility setting changed.
+The [HTTP delivery receipt](mobile-delivery-check.json) confirms byte-range responses and content types.
+The [browser receipt](browser-playback-check.json) confirms decoding, seeking and advancing playback for all six M4A files in Chromium.
+Physical-phone playback, auditory review and live YouTube synchronization remain untested.
+Regenerate links from the stored object keys if the conversation links expire.
+
 ## Recovery
 
 Resume on branch `feat/frieren-sound-design-studies` in `typeshade/typeaudio`.

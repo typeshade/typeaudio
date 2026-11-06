@@ -76,3 +76,7 @@ It targets only `typesound/studies/frieren/v3-sound-design/<manifest-hash>/`.
 It verifies every uploaded object's SHA-256 by reading it back and rejects a conflicting existing object.
 It writes `publication.json` separately from `temporary-listening-links.json`.
 Keep the former as a durable receipt. Keep signed URLs out of Git.
+
+Run `bun scripts/frieren/checkPlayback.ts FIRST_OUTPUT` while those links remain valid.
+Set `TYPESHADE_CHROMIUM` when Chromium is not at `/usr/bin/chromium`.
+The check validates AAC playback and seeking. It does not test physical output or YouTube alignment.
