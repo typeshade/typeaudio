@@ -26,6 +26,8 @@ export class GraphDsp {
   revision = 0;
   invalidSamples = 0;
   constructor(p: GraphVoiceOptions, previous?: GraphDsp) {
+    if (!Number.isFinite(p.volume) || p.volume < 0 || p.volume > 1)
+      throw new RangeError("Graph volume must be between zero and one.");
     const g = validateGraph(p.graph);
     this.graph = g;
     this.key = graphKey(g);
@@ -67,7 +69,9 @@ export class GraphDsp {
     });
   }
   update(p: GraphVoiceOptions, _repeat = false, _dry = false) {
-    const g = p.graph!,
+    if (!Number.isFinite(p.volume) || p.volume < 0 || p.volume > 1)
+      throw new RangeError("Graph volume must be between zero and one.");
+    const g = validateGraph(p.graph),
       key = graphKey(g);
     if (key !== this.key)
       throw new Error("Graph structure changes need a new processor state.");

@@ -24,7 +24,9 @@
     "dev:website": "vite --config website/vite.config.ts",
     "build:website": "vite build --config website/vite.config.ts && bun scripts/site-docs.ts",
     "check:website": "tsc -p website/tsconfig.json",
-    "test:website": "bun website/check-browser.ts"
+    "test:website": "bun website/check-browser.ts",
+    "feedback": "bun scripts/feedback.ts",
+    "test:feedback": "vitest run test/graph-feedback.test.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
@@ -39,6 +41,7 @@
     ".": "./src/index.ts",
     "./graph": "./src/graph/index.ts",
     "./graph/compiler": "./src/graph/compiler/index.ts",
-    "./graph/runtime": "./src/graph/runtime.ts"
+    "./graph/runtime": "./src/graph/runtime.ts",
+    "./feedback": "./src/feedback/index.ts"
   }
 }

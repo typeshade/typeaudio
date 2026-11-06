@@ -10,6 +10,7 @@
     "allowImportingTsExtensions": true,
     "strict": true,
     "noEmit": true,
+    "resolveJsonModule": true,
     "types": [],
     "moduleSuffixes": [".typeshade", ""]
   },

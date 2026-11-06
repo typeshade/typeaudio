@@ -1,0 +1,106 @@
+{
+  "format": "typeaudio.graph-reproduction",
+  "version": 1,
+  "capture": "snapshot",
+  "versions": {
+    "web": "769f3e7818329e1cc936048afb56e8724f34a9d3",
+    "typeaudio": "575b42baa13ee666cc050b25da1e63720dfbf6e4",
+    "typeshade": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+    "dirty": false
+  },
+  "environment": {
+    "userAgent": "fixture: extracted from the Web procedural graph regression",
+    "platform": "portable CPU"
+  },
+  "backend": "cpu",
+  "sampleRate": 48000,
+  "blockFrames": 128,
+  "frames": 4800,
+  "volume": 0.6,
+  "graph": {
+    "version": 1,
+    "nodes": [
+      {
+        "id": "noise",
+        "kind": "noise",
+        "name": "Noise",
+        "x": 50,
+        "y": 130,
+        "values": [
+          2026
+        ],
+        "inputs": {},
+        "code": "",
+        "bypass": false
+      },
+      {
+        "id": "impact",
+        "kind": "code",
+        "name": "Code",
+        "x": 270,
+        "y": 130,
+        "values": [],
+        "inputs": {
+          "input": "noise"
+        },
+        "code": "// p0: pitch, p1: decay, p2: strength, p3: texture\nstate0 = fract(state0 + p0 * (1 + 0.6 * exp(-time * 45)) / sampleRate);\nconst body: f32 = sin(state0 * 6.28318530718) * exp(-time / max(0.01, p1));\nconst contact: f32 = input * exp(-time * 90) * p3;\nout = (body + contact) * p2 * min(1, time * 2400);",
+        "bypass": false
+      },
+      {
+        "id": "filter",
+        "kind": "lowpass",
+        "name": "Lowpass",
+        "x": 490,
+        "y": 130,
+        "values": [
+          2400
+        ],
+        "inputs": {
+          "input": "impact"
+        },
+        "code": "",
+        "bypass": false
+      },
+      {
+        "id": "output",
+        "kind": "output",
+        "name": "Output",
+        "x": 700,
+        "y": 130,
+        "values": [],
+        "inputs": {
+          "input": "filter"
+        },
+        "code": "",
+        "bypass": false
+      }
+    ],
+    "parameters": [
+      {
+        "name": "Pitch",
+        "min": 40,
+        "max": 1600,
+        "value": 180
+      },
+      {
+        "name": "Decay",
+        "min": 0.02,
+        "max": 2,
+        "value": 0.25
+      },
+      {
+        "name": "Strength",
+        "min": 0,
+        "max": 1,
+        "value": 0.6
+      },
+      {
+        "name": "Texture",
+        "min": 0,
+        "max": 1,
+        "value": 0.4
+      }
+    ]
+  },
+  "events": []
+}
