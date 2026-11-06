@@ -1,0 +1,354 @@
+{
+  "schema": "typeaudio.source-recovery",
+  "version": 1,
+  "files": [
+    {
+      "path": "ARCHIVE-README.txt",
+      "bytes": 295,
+      "sha256": "974627ef88317839a1e84f32105e8554777037c34e0ae1a52a0a040f33412806"
+    },
+    {
+      "path": "environment.json",
+      "bytes": 374,
+      "sha256": "e8bfe2cc501a4000cea520aa6179f680969e70ef43aa8d52e82b465c590c06d6"
+    },
+    {
+      "path": "frieren-sound-design-v2/README.md",
+      "bytes": 3245,
+      "sha256": "4304a309e0d123ee0130bb0f8b436303662e355762b9e632c8d2208166a6c97f"
+    },
+    {
+      "path": "frieren-sound-design-v2/analysis/mix-report.json",
+      "bytes": 517,
+      "sha256": "d98e4d0035d7c0adb7a3dbe1b072666e75f8612023e404ccdf5973346ca38cd2"
+    },
+    {
+      "path": "frieren-sound-design-v2/analysis/mobile-loudness.log",
+      "bytes": 324844,
+      "sha256": "0d348888c8c982317de9f9ae2d0ab5fb833c3c92673396ecf30f670b00ec9cd9"
+    },
+    {
+      "path": "frieren-sound-design-v2/analysis/render-report.json",
+      "bytes": 38041,
+      "sha256": "2b4de02948d8889abb083d832d1990cc24169efc106b6b91c838c91f19b33651"
+    },
+    {
+      "path": "frieren-sound-design-v2/cue-sheet.csv",
+      "bytes": 27124,
+      "sha256": "a46ba079b5211f8a96148bb332a05e95be8ff10878cc6d9a4c5c8bfd140e5cf9"
+    },
+    {
+      "path": "frieren-sound-design-v2/review/comparisons.json",
+      "bytes": 1761,
+      "sha256": "cf0737fb35100e05d71b2a8d72b0d32e2e7fb1395627a9819ea0e845829b131f"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/air.shade.ts",
+      "bytes": 1207,
+      "sha256": "7c41de0a03fa78a9b8271c15fc2a7886fc4d64500e2f86693cf8051b79db4554"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/beam.shade.ts",
+      "bytes": 1328,
+      "sha256": "fd22026cbd71265c743c8989390a019cbc4748ec782d3f2c6cd0a31f1b3dd691"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/charge.shade.ts",
+      "bytes": 1271,
+      "sha256": "7f824985d4b1ba82b001293e1146cca3f25aad6952c8303fc766beec6c1b5766"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/cloth.shade.ts",
+      "bytes": 1172,
+      "sha256": "f2d8a33762e217917b1188dea83f196e8b0e881544bc1aa2e9ea1add61782707"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/crack.shade.ts",
+      "bytes": 1200,
+      "sha256": "7e8f2cd4f67b6d689d737a5c23a0b48ca2a7b2b932a42f2677fc3b6f611c7f46"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/design.py",
+      "bytes": 4461,
+      "sha256": "955af97c65168a9cec0a2fbc281d19f561fd0b4b52a0a570eb067c8f4550dc97"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/dust.shade.ts",
+      "bytes": 1126,
+      "sha256": "5d203856a5160543bac58462b5c1f8ffe0d5db0b9643497dfac40d550ad63836"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/electric.shade.ts",
+      "bytes": 1369,
+      "sha256": "7747bf38f50eef6bd94483563d560a1f0b3f72c3447555f34ec2982a1f826be9"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/flight.shade.ts",
+      "bytes": 1297,
+      "sha256": "d3ec6c7dea502a96022ef1b4d543c96517da1fcef280028e653f153b0403637c"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/heat.shade.ts",
+      "bytes": 1407,
+      "sha256": "df8f840d6f3e4459915b1157e8716891c64f98dcc4b27de2ad82a0be96ab972b"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/mix.py",
+      "bytes": 3721,
+      "sha256": "82c718e274db8a217d9980f4dc4196b16761e7fb77753891465f3617fe1569c5"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/mobile.py",
+      "bytes": 1273,
+      "sha256": "df0f3ed0dffa0c38b5b9e157657368feb5e245fc539a6a87eebdeddf603d946e"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/package.py",
+      "bytes": 4558,
+      "sha256": "b2aaee57b408a1613b684cc1975432b64fffcd5ec96ad59738174dac836eb70d"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/programs.json",
+      "bytes": 4024,
+      "sha256": "552f486a67a25470c0e8fa5e23dbbff8ac07b47e97f53bd8cdc44d03d4663ea6"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/programs.py",
+      "bytes": 4112,
+      "sha256": "b5951a93c75527785498cc8cb986ebba569083906137a6ac449850f5731a0328"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/render.ts",
+      "bytes": 2620,
+      "sha256": "b465db5e5f3e56d183b027d0f097ab985c953998a21eba400656c7a17086676c"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/review.py",
+      "bytes": 1541,
+      "sha256": "f575dc3602f361e40f1522c0e9dcf4c2dc1cf315a6498e7475bffe9997e163f2"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/rune.shade.ts",
+      "bytes": 1242,
+      "sha256": "101c1c513b51adfbbef4d6c356687b90d18398af5a472558f78a7930101aaa61"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/session.json",
+      "bytes": 409654,
+      "sha256": "c9d01f8872421965d4a1a21a1d7abb391bae0d902dc56a39dd323bc58ff00f25"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/shard.shade.ts",
+      "bytes": 1156,
+      "sha256": "0ab1fa9e917563fa000b04a41ecf6e1e663948acfd2638169ef61eabedcdc7c1"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/spotting.py",
+      "bytes": 4057,
+      "sha256": "942c3d1cff7ce0347446e350e13568520c00dc3e9ee570fc56e35fc0370dbcc6"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/stone.shade.ts",
+      "bytes": 1237,
+      "sha256": "ad9f03e09f46d1be0f1dd782ad72ea70fc574d7ee9e9042874982cf95aede124"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/ward.shade.ts",
+      "bytes": 1308,
+      "sha256": "f20c6726890b1d119b6154d52d87df819a22ee2d9639f0cc96175801e1535562"
+    },
+    {
+      "path": "frieren-sound-design-v2/source/weight.shade.ts",
+      "bytes": 1238,
+      "sha256": "dbad975d16f58ed772543c8784ba8dc2cb08bc726053135838aa048f532c6354"
+    },
+    {
+      "path": "frieren-sound-design-v2/template-manifest.json",
+      "bytes": 2366,
+      "sha256": "ac698c1b5a2afbff81685fe1489f2b29064b402e1acf29bcbd20d6920276729c"
+    },
+    {
+      "path": "frieren-sound-design-v2/workflow.json",
+      "bytes": 2844,
+      "sha256": "f0dc3ff1b6d560c351430048694c6048cb76d704ad85edc1ec05e9654795449e"
+    },
+    {
+      "path": "frieren-sound-design/README.md",
+      "bytes": 4711,
+      "sha256": "991cdbf9f93bb5dcbde57fa7a4a11f5c27c0227407332228b91d2ef652f3bc82"
+    },
+    {
+      "path": "frieren-sound-design/analysis/mix-report.json",
+      "bytes": 334,
+      "sha256": "720d823dcabb2599a24cd5a15a189403b1e7583de0002b6ed60670a8649e5058"
+    },
+    {
+      "path": "frieren-sound-design/analysis/render-report.json",
+      "bytes": 31183,
+      "sha256": "ec7be769280b5b5a9690151791b857d2c6ceef8e6f39f00d74b4b2c9d7b1cad7"
+    },
+    {
+      "path": "frieren-sound-design/cue-sheet.csv",
+      "bytes": 9764,
+      "sha256": "4af191776a866ac6ded2b8bde74bdaa8e48ef808f98c76253854a5aabc5ba7dc"
+    },
+    {
+      "path": "frieren-sound-design/source/arc.shade.ts",
+      "bytes": 1358,
+      "sha256": "4d556bab48287c8ccf181359294d1a22ce78ff70972fad7e3ada9aa2ee128ce0"
+    },
+    {
+      "path": "frieren-sound-design/source/beam.shade.ts",
+      "bytes": 1248,
+      "sha256": "23c6f8401dbac9d121246281b5d00724bfe3621f07bf9c74b47f59a89b41ba9f"
+    },
+    {
+      "path": "frieren-sound-design/source/cloth.shade.ts",
+      "bytes": 1137,
+      "sha256": "4a8de35dc4b45102633784894b32022c5e6162715cb551d21ad74d9b77b9d276"
+    },
+    {
+      "path": "frieren-sound-design/source/design.py",
+      "bytes": 6520,
+      "sha256": "81a786ee7c8b3488d12755c06f874c6870a644819c21be4f4b86deb55f7c1d92"
+    },
+    {
+      "path": "frieren-sound-design/source/export-projects.ts",
+      "bytes": 1918,
+      "sha256": "19fe52fc9ae676781bde20789947bfe199cf9de8e6d7d35e8f60e8f77f83862b"
+    },
+    {
+      "path": "frieren-sound-design/source/fire.shade.ts",
+      "bytes": 1307,
+      "sha256": "99da576e08b9af22d25569865cd39d8533799bbada47a5798de2b59754a7d7d0"
+    },
+    {
+      "path": "frieren-sound-design/source/magic.shade.ts",
+      "bytes": 1242,
+      "sha256": "55af09faca868a2367f26e8fdbc145e420d85b595c5360cdbc8b8f16df7a9b3c"
+    },
+    {
+      "path": "frieren-sound-design/source/mix.py",
+      "bytes": 2909,
+      "sha256": "05581be14679c2bd527f3d2cedeb576adc99be6763ebe8d78528787e349c5050"
+    },
+    {
+      "path": "frieren-sound-design/source/package.py",
+      "bytes": 751,
+      "sha256": "2bd6dbf65282b2d5211c530185ba4eff13530380fde74bd0b79a1b06399c2fa2"
+    },
+    {
+      "path": "frieren-sound-design/source/pressure.shade.ts",
+      "bytes": 1213,
+      "sha256": "10fb37bd8bc7d60c944ab66ad55bba34c2d109aa5d3745ddb22dc86de1a1f747"
+    },
+    {
+      "path": "frieren-sound-design/source/programs.json",
+      "bytes": 3140,
+      "sha256": "82f84929555f2c5d64fabfc213f2a1dc0bd25000fb738cf0c5500c575e432fa2"
+    },
+    {
+      "path": "frieren-sound-design/source/render.ts",
+      "bytes": 2692,
+      "sha256": "52c697263b6a339171f8d9302dd2ed3454c101a04ce0d1f95c50e551485adb54"
+    },
+    {
+      "path": "frieren-sound-design/source/room.shade.ts",
+      "bytes": 1145,
+      "sha256": "e03235323524e3ed49cb4e6c866eca3e338fc5440cb2cad5003d4b5314b917d5"
+    },
+    {
+      "path": "frieren-sound-design/source/rumble.shade.ts",
+      "bytes": 1210,
+      "sha256": "05c256136c5320e7e4036faf2f124b7670ed86ae86a1738a07b109964d948257"
+    },
+    {
+      "path": "frieren-sound-design/source/session.json",
+      "bytes": 301634,
+      "sha256": "6fb279a6791e847cf4750e5f6cb1753174ed4c14208b65f7d856041c719c4bbb"
+    },
+    {
+      "path": "frieren-sound-design/source/shield.shade.ts",
+      "bytes": 1286,
+      "sha256": "66dca15c0cb2f390863ec8e26ff1641c0bc10982090820e1e48baec62b367820"
+    },
+    {
+      "path": "frieren-sound-design/source/spark.shade.ts",
+      "bytes": 1162,
+      "sha256": "330c097ae32784765dfb24d551faf222357f1440191cf0bf415e4866e3f43085"
+    },
+    {
+      "path": "frieren-sound-design/source/stone.shade.ts",
+      "bytes": 1199,
+      "sha256": "27ea88a2cdbfc50c26d714b76ee5fb196638ed8d69a9a3048588a2f5b7042b54"
+    },
+    {
+      "path": "frieren-sound-design/source/whoosh.shade.ts",
+      "bytes": 1236,
+      "sha256": "d77200de1617c5cc6c93e9f6ec4eb096246e29b5b42fb70cbcd79042940c8984"
+    },
+    {
+      "path": "legacy-spatial/base-commit.txt",
+      "bytes": 41,
+      "sha256": "ea0a66c3148e57c94fa69d87afe08d3a62b32211ad3211553d62e540a8b22ff8"
+    },
+    {
+      "path": "legacy-spatial/package.patch",
+      "bytes": 417,
+      "sha256": "9948b4876f2fab432d8a350951e83e4f2a011fa46f4f21ab896691e1afef5b79"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/SpatialMixer.ts",
+      "bytes": 5234,
+      "sha256": "86a8979e9254b718a774005c44ee83872df827e3cbad387d354b0ef0b0acb705"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/SpatialVoice.ts",
+      "bytes": 1176,
+      "sha256": "a3649bd3672752dd569a72bc1c7ccda48bcf00eca15d3ea4a0f18cee071806bd"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/buffersOverlap.ts",
+      "bytes": 311,
+      "sha256": "e28c745ea7d04bd5047aaec7f9aa964a5680d15aae744cfa143ac8d1c7c60536"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/index.ts",
+      "bytes": 224,
+      "sha256": "0c379449e67012dca4e0772e171fca87d059aaeff31174f5f9eeada5259ca061"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/listenerBasis.ts",
+      "bytes": 1204,
+      "sha256": "307376ceb5ff02cddf630c054698ad2592a4a3828a3f4a7bdbdd597510fd23a2"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/prepareSpatialSource.ts",
+      "bytes": 2017,
+      "sha256": "2e560aaf4e54b08becac2749193d7c07ba45048394b2ca2128c889c3d5e4da9b"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/types.ts",
+      "bytes": 1860,
+      "sha256": "08fe6cdaf2bd67748a0f7098ee9f269be1dac60769192a8328a75106b7dfc171"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/validateNumber.ts",
+      "bytes": 327,
+      "sha256": "dd83df9fb9fc04c45d4bd75022736a13a7ed1ede76bee775a4d2cf477257a641"
+    },
+    {
+      "path": "legacy-spatial/src/spatial/validateVector.ts",
+      "bytes": 415,
+      "sha256": "e743d44238ae745b2954d3ff98d03416b642ae9c37d2305bcb109f46797f1bfa"
+    },
+    {
+      "path": "web/typeaudio-sound-design-workflow.original.md",
+      "bytes": 9052,
+      "sha256": "2f917a0bb8cebc9f09a02207b4e81216d9586411680728982bdd0ceaa6f4fada"
+    }
+  ],
+  "archive": "authored-source.tar.gz",
+  "archiveBytes": 118286,
+  "archiveSha256": "0f70b11eec7ff7712180fcac3355e7aa2db698adb9df5b8322e5719d5a572579"
+}

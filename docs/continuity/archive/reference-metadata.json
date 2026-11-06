@@ -1,0 +1,15 @@
+{
+  "youtubeId": "YHCqcyX9N3s",
+  "youtubeUrl": "https://www.youtube.com/watch?v=YHCqcyX9N3s",
+  "localOriginalPath": "/workspace/scratch/frieren-sound-design/reference.mp4",
+  "bytes": 19896114,
+  "sha256": "6f1856eb09d5522f05dfbb5e813df208e99b94fe391c346139e62bb5b0fba87c",
+  "ownerProvidedObjectLocator": "typesound/videos/YTDown.com_YouTube_Media_YHCqcyX9N3s_Frieren-and-Fern-vs-Frieren-s-Clone-Part-2-Frieren-Beyond-Journey-s-End-Ep-26-En_005_480p.mp4",
+  "objectAvailability": "not rechecked in this recovery task",
+  "publicTemplatePolicy": "YouTube reference only; do not rehost reference video",
+  "authoredRangeSeconds": [
+    0,
+    188
+  ],
+  "onlineOffsetVerified": false
+}

@@ -14,6 +14,23 @@ permissions:
   contents: read
 
 jobs:
+  recovery:
+    name: recovery archive + procedural smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: python3 scripts/recovery/restore-study.py --output "$RUNNER_TEMP/typeaudio-recovery" --smoke-render
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovery-receipt
+          path: ${{ runner.temp }}/typeaudio-recovery/restoration-report.json
+
   unit:
     name: typecheck + unit
     runs-on: ubuntu-latest
