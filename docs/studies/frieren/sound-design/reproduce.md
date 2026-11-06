@@ -24,6 +24,14 @@ The picture remains an external YouTube reference. No reference soundtrack is sa
 6. Run `python3 scripts/frieren/finish.py /absolute/path/to/new-output`.
 7. Inspect `delivery/manifest.json` and listen to the six candidate mixes against their reference passages.
 
+For the recorded repeatability audit, render again into another new directory.
+Run `python3 scripts/frieren/verify.py FIRST_OUTPUT REPEATED_OUTPUT`.
+The audit checks every published file, all 34 repeated raw stems, anchor timings, A/B scope and the full-scene design coverage.
+
+After committing the packaging sources, run `python3 scripts/frieren/package_review.py FIRST_OUTPUT`.
+This creates separate mobile-review, aligned-stem and source-recipe ZIPs. It includes no reference media.
+The package receipt identifies its own Git revision separately from the audio-render revision.
+
 Both render and delivery directories must be new. The scripts refuse to overwrite existing outputs.
 An optional third render argument selects `red`, `force` or `finale`.
 Full reproduction checks all three studies. Partial renders are labelled by their exported variant list.
@@ -62,3 +70,9 @@ Use new versioned object keys if the review media is stored in the owner's `type
 The bucket's public endpoint was disabled during inspection. Do not change its access settings for this study.
 Temporary signed links can expose specific authored review assets without publishing the source video or the entire bucket.
 The existing website still needs its planned template asset route and playback integration.
+
+The optional `scripts/frieren/publish_review.py FIRST_OUTPUT` requires Python `boto3` and the configured R2 credentials.
+It targets only `typesound/studies/frieren/v3-sound-design/<manifest-hash>/`.
+It verifies every uploaded object's SHA-256 by reading it back and rejects a conflicting existing object.
+It writes `publication.json` separately from `temporary-listening-links.json`.
+Keep the former as a durable receipt. Keep signed URLs out of Git.

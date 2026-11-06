@@ -149,3 +149,20 @@ Make one meaningful revision, rerender, then repeat the same comparison.
 Expand the selected materials across the unrendered regions only after this review.
 Next unresolved designs are violet branching, dark wedges, multicolour assembly and natural movement detail.
 The full 189.314625-second mix, isolated-dialogue premix and editor playback synchronization remain unfinished.
+
+## Requirements this design gives the engine and editor
+
+| Observed production need | Current study method | Required product contract |
+| --- | --- | --- |
+| One event contains several causally ordered layers | Absolute sample starts in the offline renderer | Grouped event scheduling, with offsets preserved during edits and undo |
+| One material survives several shots | One continuous graph instance per source layer | Stable source identity, parameter automation and explicit retrigger semantics |
+| Contact and room response remain independently editable | Per-layer direct placement and scaled reflection/late targets | Separate direct, early and late controls without resetting room history |
+| Important transients remain readable when density rises | Authored source density and gains | Priority-aware voice budgets; preserve important attacks and already-playing tails |
+| A/B revisions must be attributable | One changed parameter, fixed seeds and source hashes | Versioned recipes, cache invalidation and comparable passage renders |
+| An agent must avoid claiming success from meters | Explicit signal checks and pending listening review | Separate rendered, technically verified, reviewed and selected states |
+| The Web project must reflect source edits | Source-only graphs plus labelled cached audio | Linked source/render revisions; no stale PCM silently overriding a changed graph |
+
+TypeShade compiles the scalar source programs. TypeAudio defines source lifecycle, routing and space.
+Web must preserve those identities through editing, preview, undo and review.
+The offline host currently schedules and mixes these studies. It does not prove that those product contracts are shipped.
+R1 still needs the bounded real-time source-plus-room contract and physical-device evidence.

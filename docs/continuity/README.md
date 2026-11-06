@@ -49,6 +49,11 @@ Read [the Frieren study](../studies/frieren/README.md) for 41 design regions, ve
 The analysis proposes extending the historical 188-second study to 189.314625 seconds to preserve the closing fade.
 It does not replace the old render or complete R1, R7 or R8.
 
+The subsequent [audible sound-design study](../studies/frieren/sound-design/README.md), in PR #28, adds the requested creative work.
+It designs all 41 regions and renders 47 procedural layers into three A/B passages with aligned stems.
+Read its source recipes, artifact receipts and pending listening questions before expanding to the full scene.
+It does not complete the full mix, Web integration, binaural rendering or real-time validation.
+
 ## Record maintenance
 
 Each implementation PR updates its roadmap item, source commit, checks and remaining limitations.
