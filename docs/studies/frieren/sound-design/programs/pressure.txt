@@ -1,0 +1,4 @@
+state0 = fract(state0 + (p0 + 75 * exp(-time * 38)) / sampleRate);
+state1 += 0.028 * (input - state1);
+const tone: f32 = sin(state0 * 6.2831853) * 0.43 + sin(state0 * 12.5663706) * 0.18;
+out = (tone + state1 * (0.8 + p3)) * exp(-time / p1);

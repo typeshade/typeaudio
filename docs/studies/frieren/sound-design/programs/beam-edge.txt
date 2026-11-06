@@ -1,0 +1,4 @@
+state0 += 0.025 * (input - state0);
+state1 += 0.32 * (input - state1);
+state2 += 0.0015 * (input - state2);
+out = (state1 - state0) * (0.55 + 3 * abs(state2)) * (0.87 + 0.13 * sin(time * 47.7));

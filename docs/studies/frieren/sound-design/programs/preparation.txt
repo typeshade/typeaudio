@@ -1,0 +1,4 @@
+const x: f32 = clamp(time / p2, 0, 1);
+state0 = fract(state0 + p0 * (0.8 + 0.4 * x) / sampleRate);
+state1 += 0.055 * (input - state1);
+out = (sin(state0 * 6.2831853 + 0.3 * sin(time * p0 * 7)) * 0.21 + state1 * 0.65) * x * x;
