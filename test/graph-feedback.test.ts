@@ -128,6 +128,7 @@ describe("Web → TypeAudio → TypeShade feedback", () => {
       "out = window.location;",
       "const a = [1,2]; out = a[0];",
       "out = missing;",
+      "out = pow(2, 3);",
     ]) {
       const input = validateReproduction(impact);
       input.graph.nodes.find((node) => node.kind === "code")!.code = code;
@@ -136,6 +137,28 @@ describe("Web → TypeAudio → TypeShade feedback", () => {
     const graph = validateGraph(impact.graph);
     graph.nodes.find((node) => node.kind === "code")!.inputs.input = "filter";
     expect(() => compileGraph(graph)).toThrow(/cycle/);
+  });
+
+  it("keeps the supported exponent operator after removing the obsolete pow call", () => {
+    const input = validateReproduction(impact);
+    const code = input.graph.nodes.find((node) => node.kind === "code")!;
+    const output = input.graph.nodes.find((node) => node.kind === "output")!;
+    code.code = "out = p0 ** 2;";
+    code.inputs = {};
+    output.inputs.input = code.id;
+    input.graph.nodes = [code, output];
+    input.graph.parameters[0]!.value = 0.5;
+    input.graph.parameters[0]!.min = 0;
+    const { program } = install(input);
+    const out = new Float32Array(16);
+    graphKernel(program.key)(
+      out,
+      new Float32Array(8),
+      new Uint32Array(3),
+      graphValues(input.graph),
+      16,
+    );
+    expect(Array.from(out)).toEqual(Array(16).fill(0.25));
   });
 
   it("rejects invalid versions, timing and parameters and strips unrelated payloads", () => {

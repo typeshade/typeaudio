@@ -11,7 +11,6 @@ export const SCALAR_FUNCTIONS: readonly string[] = Object.freeze([
   "sqrt",
   "exp",
   "exp2",
-  "pow",
   "tanh",
   "mix",
   "select",

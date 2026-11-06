@@ -1,5 +1,5 @@
 import ts from "typescript";
-import { HELPERS } from "./scalarFunctions.ts";
+import { FUNCTIONS } from "./scalarFunctions.ts";
 export function checkCode(code: string, name: string) {
   const source = ts.createSourceFile(
     "node.ts",
@@ -31,7 +31,8 @@ export function checkCode(code: string, name: string) {
       );
     if (
       ts.isCallExpression(node) &&
-      (!ts.isIdentifier(node.expression) || !HELPERS.has(node.expression.text))
+      (!ts.isIdentifier(node.expression) ||
+        !FUNCTIONS.has(node.expression.text))
     )
       fail(node, "Use the documented scalar math functions.");
     if (
