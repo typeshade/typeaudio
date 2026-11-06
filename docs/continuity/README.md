@@ -44,6 +44,11 @@ The owner wants immersive listening from the custom engine and explicitly exclud
 The existing website is `audio.typeshade.dev`, owned by `typeshade/web`.
 The YouTube study is a later integration milestone, not evidence that the engine already has binaural rendering.
 
+The owner requested a fresh picture analysis after this recovery checkpoint.
+Read [the Frieren study](../studies/frieren/README.md) for 41 design regions, verified timing corrections and the next creative review passages.
+The analysis proposes extending the historical 188-second study to 189.314625 seconds to preserve the closing fade.
+It does not replace the old render or complete R1, R7 or R8.
+
 ## Record maintenance
 
 Each implementation PR updates its roadmap item, source commit, checks and remaining limitations.

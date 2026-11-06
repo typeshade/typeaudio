@@ -14,6 +14,7 @@ R0 recovery is complete; see [the verification receipt](recovery-verification.js
 | Listener-relative stereo bus | Implemented, review pending | TypeAudio #23, 16 spatial tests in its 63-test snapshot. |
 | Rectangular early reflections and diffuse stereo tail | Implemented, review pending | TypeAudio #24, 19 room tests in the 82-test snapshot. |
 | Full-scene v2 sound-study source recipes | Rendered and signal-checked, listening pending | Recovery archive and production workflow. |
+| Fresh Frieren picture analysis | Visual and mixed-signal analysis complete; listening not performed | [Study](../studies/frieren/README.md), 41 design regions, 15 anchors and reference measurements; PR #27. |
 
 ## Work packages
 
