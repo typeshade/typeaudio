@@ -149,3 +149,22 @@ engine in a worker, then plays rendered PCM with Web Audio.
   cancellation, unavailable WebGPU, documentation, and mobile layout in Chromium.
 - `.github/workflows/deploy.yml`: deploy `main` to `audio.typeshade.dev` with
   Cloudflare Workers Static Assets and the existing `CLOUDFLARE_API_TOKEN` secret.
+
+## Spatial stereo bus
+
+`src/spatial/` owns listener-relative stereo processing. Its public entry is
+`typeaudio/spatial`. Prepare geometry on the control thread and send numeric targets
+to the fixed-capacity `SpatialMixer`. The runtime is synchronous and compiler-free.
+Existing compiled `GraphDsp` output supplies mono inputs at 48 kHz.
+
+- `bun run test` includes `test/spatial/` regressions.
+- `bun run test:spatial-worklet` checks an actual Chromium AudioWorklet against host PCM.
+- `bun run bench:spatial` records 1/8/32/64-source CPU bus timing with device and commit metadata.
+- `bun run demo:spatial` writes a short stereo WAV and cue description under `artifacts/spatial/`.
+- CI uploads the worklet/timing job's listening artifact and benchmark as `spatial-runtime`.
+
+See `docs/spatial-audio.md` for coordinates, models, buffer ownership and boundaries.
+This stage provides stereo pan, distance damping and authored occlusion. It does not implement
+HRTF, room reflections, Doppler or head tracking. CPU timing and offline worklet parity do not
+establish physical-device deadlines or perceived spatial quality. Spatial shader/tier parity
+remains open; the compiler pin and the procedural source path are unchanged.

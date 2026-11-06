@@ -8,9 +8,13 @@ export class SpatialVoice {
   targetPole = 0;
   filtered = 0;
   invalidSamples = 0;
+  prepared = false;
   constructor(private readonly smoothing: number) {}
   reset(): void {
-    this.left = this.right = this.pole = this.filtered = 0;
+    this.left = this.targetLeft;
+    this.right = this.targetRight;
+    this.pole = this.targetPole;
+    this.filtered = 0;
     this.invalidSamples = 0;
   }
   mix(input: Float32Array | null | undefined, left: Float32Array, right: Float32Array, frames: number): void {

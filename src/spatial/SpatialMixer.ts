@@ -41,6 +41,10 @@ export class SpatialMixer {
     voice.targetLeft = target.left;
     voice.targetRight = target.right;
     voice.targetPole = target.pole;
+    if (!voice.prepared) {
+      voice.reset();
+      voice.prepared = true;
+    }
   }
   /** Fade to silence. Keep supplying input during the fade to avoid a hard cut. */
   removeSource(slot: number): void {
@@ -52,6 +56,7 @@ export class SpatialMixer {
     const voice = this.voice(slot);
     voice.targetLeft = voice.targetRight = voice.targetPole = 0;
     voice.reset();
+    voice.prepared = false;
   }
   /** Clear DSP history and counters while preserving all prepared targets. */
   reset(): void {

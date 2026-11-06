@@ -24,6 +24,19 @@ function render(block: number) {
   return output;
 }
 describe('synchronous spatial bus', () => {
+  it('applies the first pose immediately without delaying a new transient', () => {
+    const mixer = new SpatialMixer({ capacity: 1 });
+    const x = new Float32Array(128), l = x.slice(), r = x.slice();
+    x[0] = 1;
+    mixer.setSource(0, target(1, 0));
+    mixer.process([x], l, r);
+    expect(l[0]).toBe(1); expect(r[0]).toBe(0);
+    expect(l.slice(1).every(v => v === 0)).toBe(true);
+    mixer.clearSource(0);
+    mixer.setSource(0, target(0, 1));
+    mixer.process([x], l, r);
+    expect(r[0]).toBe(1); expect(l[0]).toBe(0);
+  });
   it('matches an independent gain and lowpass recurrence synchronously', () => {
     const mixer = new SpatialMixer({ capacity: 1, smoothingSeconds: 0.01 });
     mixer.setSource(0, target(0.8, 0.3, 0.9));
@@ -31,7 +44,7 @@ describe('synchronous spatial bus', () => {
     const left = new Float32Array(128).fill(NaN), right = left.slice();
     expect(mixer.process([input], left, right)).toBeUndefined();
     const step = 1 - Math.exp(-1 / 480);
-    let l = 0, r = 0, pole = 0, z = 0;
+    let l = 0.8, r = 0.3, pole = 0.9, z = 0;
     for (let i = 0; i < input.length; i++) {
       l += (0.8 - l) * step; r += (0.3 - r) * step; pole += (0.9 - pole) * step;
       z += (input[i] - z) * (1 - pole);

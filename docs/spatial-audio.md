@@ -81,10 +81,12 @@ A source slot owns its filter and gain history. Null or absent inputs feed silen
 `clearSource` discards a slot's history immediately before reuse. `reset` preserves targets
 and clears all DSP history and counters.
 
-The default 10 ms value is a one-pole smoothing time constant, not a scheduled onset delay.
-A new voice ramps from silence. After one time constant it reaches about 63% of its target.
-Use a smaller smoothing constant for sharp transients, or establish the source pose before
-its onset by processing silent blocks. Large pose changes interpolate channel gains;
+The first target of a new or cleared source applies immediately. The spatial bus does not
+add an amplitude ramp to the source's onset. Source envelopes remain the source renderer's job.
+Subsequent targets use a 10 ms one-pole smoothing time constant by default.
+After one time constant the change reaches about 63% of its target.
+Reset clears filters and restores current coefficients to the retained target.
+Large pose changes interpolate channel gains;
 constant-power panning describes settled targets, not the intermediate crossfade.
 
 ## Models and telemetry
