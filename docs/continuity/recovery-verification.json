@@ -1,0 +1,88 @@
+{
+  "schema": "typeaudio.recovery-verification",
+  "version": 1,
+  "recordedAt": "2026-11-06T12:12:33.947082+00:00",
+  "scope": "Remote source recovery and one procedural event; not a complete production or real-time performance test.",
+  "sourceCommit": "2fc6357f07b838c61bfe24504b2c6a429fc5c302",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "archiveSha256": "0f70b11eec7ff7712180fcac3355e7aa2db698adb9df5b8322e5719d5a572579",
+  "verifiedFiles": 69,
+  "localDrill": {
+    "source": "Fresh clone from https://github.com/typeshade/typeaudio.git; no original study directory or shared node_modules.",
+    "checkout": "/tmp/typeaudio-recovery-drill-20261106",
+    "tools": {
+      "bun": "1.4.4",
+      "python": "3.12.14",
+      "git": "2.52.0",
+      "system": "Linux 6.18.57 x86_64 GNU/Linux"
+    },
+    "install": {
+      "command": "bun install --frozen-lockfile",
+      "result": "passed",
+      "installedPackages": 39,
+      "generatedHostViews": 21
+    },
+    "restoreCommand": "python3 scripts/recovery/restore-study.py --output /tmp/typeaudio-restored-study-20261106 --smoke-render",
+    "restoreReport": {
+      "date": "2026-11-06T12:05:48.871103+00:00",
+      "archiveSha256": "0f70b11eec7ff7712180fcac3355e7aa2db698adb9df5b8322e5719d5a572579",
+      "verifiedFiles": 69,
+      "engine": "/tmp/typeaudio-recovery-drill-20261106",
+      "output": "/tmp/typeaudio-restored-study-20261106",
+      "patchedCopies": [
+        "frieren-sound-design/source/render.ts",
+        "frieren-sound-design-v2/source/render.ts",
+        "frieren-sound-design-v2/source/package.py"
+      ],
+      "web": null,
+      "legacySpatial": "Preserved only; remote spatial PR #23 supersedes this interrupted state.",
+      "v1WebImports": "Require --web or manual mapping before running v1 scripts.",
+      "smokeRender": {
+        "event": "air-0",
+        "cues": 1,
+        "families": 1,
+        "engineCommit": "2fc6357f07b838c61bfe24504b2c6a429fc5c302",
+        "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+        "invalidSamples": 0,
+        "clippedSamples": 0,
+        "scope": "One recovered procedural event; no full remix, physical-device or listening claim."
+      }
+    },
+    "overwriteGuard": {
+      "result": "passed",
+      "observation": "An existing output directory was refused; its restoration report hash remained unchanged."
+    },
+    "corruptArchiveGuard": {
+      "result": "passed",
+      "observation": "A temporary archive with one changed byte failed SHA-256 verification before creating the output directory."
+    },
+    "checkoutAfterDrill": "clean"
+  },
+  "ciRecovery": {
+    "run": "https://github.com/typeshade/typeaudio/actions/runs/42214857478",
+    "job": "https://github.com/typeshade/typeaudio/actions/runs/42214857478/job/127882213904",
+    "jobName": "recovery archive + procedural smoke",
+    "conclusion": "success",
+    "completedAt": "2026-11-06T12:04:28Z",
+    "pullRequestHead": "2fc6357f07b838c61bfe24504b2c6a429fc5c302",
+    "testedMergeCommit": "c2b8c0c1e1600d70565781e2a044dc72a98b5861",
+    "verifiedFiles": 69,
+    "event": "air-0",
+    "invalidSamples": 0,
+    "clippedSamples": 0,
+    "artifact": {
+      "name": "recovery-receipt",
+      "id": 13499639094,
+      "bytes": 727
+    },
+    "evidence": "Completed job metadata and the restoration-report JSON printed in its logs; artifact blob download was not required."
+  },
+  "limits": [
+    "The CI conclusion above applies to the recovery job, not every job in the workflow.",
+    "One v2 event was regenerated. Full mixes and all stems were not regenerated in this recovery drill.",
+    "The optional --web mapping and Web PR builds were not repeated in this drill.",
+    "No R2 upload, website deployment, physical audio test or listening approval occurred.",
+    "SwiftShader is limited to functional evidence and approximate controlled comparisons; no hardware GPU performance is claimed.",
+    "GitHub availability and reacquisition of external reference or future HRTF assets remain external dependencies."
+  ]
+}
