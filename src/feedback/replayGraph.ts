@@ -10,23 +10,37 @@ export function replayGraph(raw: GraphReproduction, now?: () => number) {
   const pcm = new Float32Array(r.frames);
   const out = new Float32Array(r.blockFrames);
   const timings: { frames: number; milliseconds: number }[] = [];
-  let cursor = 0, eventIndex = 0;
+  let cursor = 0,
+    eventIndex = 0;
   while (cursor < r.frames) {
     while (r.events[eventIndex]?.frame === cursor) {
       const event = r.events[eventIndex++]!;
       if (event.type === "retrigger") dsp.retrigger();
       else {
         if (event.type === "volume") patch.volume = event.value;
-        else patch.graph.parameters.forEach((p, i) => { p.value = event.values[i]!; });
+        else
+          patch.graph.parameters.forEach((p, i) => {
+            p.value = event.values[i]!;
+          });
         dsp.update(patch);
       }
     }
-    const frames = Math.min(r.blockFrames, r.frames - cursor, (r.events[eventIndex]?.frame ?? r.frames) - cursor);
+    const frames = Math.min(
+      r.blockFrames,
+      r.frames - cursor,
+      (r.events[eventIndex]?.frame ?? r.frames) - cursor,
+    );
     const start = now?.();
     dsp.process(out, frames);
-    if (now && start !== undefined) timings.push({ frames, milliseconds: now() - start });
+    if (now && start !== undefined)
+      timings.push({ frames, milliseconds: now() - start });
     pcm.set(out.subarray(0, frames), cursor);
     cursor += frames;
   }
-  return { pcm, timings, invalidSamples: dsp.invalidSamples, updates: dsp.revision };
+  return {
+    pcm,
+    timings,
+    invalidSamples: dsp.invalidSamples,
+    updates: dsp.revision,
+  };
 }

@@ -1,4 +1,11 @@
-export type { SoundGraph, GraphNode, GraphParameter, NodeKind, Signal, NodeDefinition } from "./types.ts";
+export type {
+  SoundGraph,
+  GraphNode,
+  GraphParameter,
+  NodeKind,
+  Signal,
+  NodeDefinition,
+} from "./types.ts";
 export type { GraphProgram } from "./program.ts";
 export type { GraphVoiceOptions } from "./voiceOptions.ts";
 export { DEFINITIONS } from "./catalog.ts";

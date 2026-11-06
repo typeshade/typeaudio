@@ -1,12 +1,38 @@
 name: compiler feedback
 on:
   pull_request:
-    paths: ['src/graph/**', 'src/feedback/**', 'fixtures/feedback/**', 'test/graph-feedback.test.ts', 'scripts/feedback.ts', 'scripts/compare-feedback.mjs', 'scripts/compare-feedback.test.mjs', 'scripts/verify-compiler.ts', 'package.json', 'bun.lock', '.github/workflows/feedback.yml']
+    paths:
+      [
+        "src/graph/**",
+        "src/feedback/**",
+        "fixtures/feedback/**",
+        "test/graph-feedback.test.ts",
+        "scripts/feedback.ts",
+        "scripts/compare-feedback.mjs",
+        "scripts/compare-feedback.test.mjs",
+        "scripts/verify-compiler.ts",
+        "package.json",
+        "bun.lock",
+        ".github/workflows/feedback.yml",
+      ]
   push:
     branches: [main]
-    paths: ['src/graph/**', 'src/feedback/**', 'fixtures/feedback/**', 'test/graph-feedback.test.ts', 'scripts/feedback.ts', 'scripts/compare-feedback.mjs', 'scripts/compare-feedback.test.mjs', 'scripts/verify-compiler.ts', 'package.json', 'bun.lock', '.github/workflows/feedback.yml']
+    paths:
+      [
+        "src/graph/**",
+        "src/feedback/**",
+        "fixtures/feedback/**",
+        "test/graph-feedback.test.ts",
+        "scripts/feedback.ts",
+        "scripts/compare-feedback.mjs",
+        "scripts/compare-feedback.test.mjs",
+        "scripts/verify-compiler.ts",
+        "package.json",
+        "bun.lock",
+        ".github/workflows/feedback.yml",
+      ]
   schedule:
-    - cron: '23 5 * * 1'
+    - cron: "23 5 * * 1"
   workflow_dispatch:
     inputs:
       compiler_ref:
@@ -58,6 +84,7 @@ jobs:
         if: always()
         with:
           name: graph-feedback-${{ matrix.compiler }}
+          include-hidden-files: true
           path: .feedback/
   compare:
     name: graph candidate parity

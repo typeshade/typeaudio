@@ -85,8 +85,16 @@ export class GraphDsp {
     this.fade = 0;
   }
   process(out: Float32Array, frames = out.length, dryOut?: Float32Array) {
-    if (!Number.isInteger(frames) || frames < 1 || frames > 128 || frames > out.length || (dryOut && frames > dryOut.length))
-      throw new RangeError("Graph blocks need 1–128 frames and output buffers of that size.");
+    if (
+      !Number.isInteger(frames) ||
+      frames < 1 ||
+      frames > 128 ||
+      frames > out.length ||
+      (dryOut && frames > dryOut.length)
+    )
+      throw new RangeError(
+        "Graph blocks need 1–128 frames and output buffers of that size.",
+      );
     const smoothing = 1 - Math.exp(-frames / (48000 * 0.012));
     for (let i = 0; i < this.current.length; i++)
       this.current[i] = this.discrete.has(i)
