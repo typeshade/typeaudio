@@ -168,3 +168,21 @@ This stage provides stereo pan, distance damping and authored occlusion. It does
 HRTF, room reflections, Doppler or head tracking. CPU timing and offline worklet parity do not
 establish physical-device deadlines or perceived spatial quality. Spatial shader/tier parity
 remains open; the compiler pin and the procedural source path are unchanged.
+
+## Room acoustics
+
+`src/spatial/room/` extends the direct bus through the public `typeaudio/spatial/room` entry.
+`prepareRoom` snapshots a rectangular room. `prepareRoomSource` prepares six image-source paths.
+`RoomMixer` combines the direct bus, one `RoomVoice` per source and a shared `DiffuseTail`.
+`ReflectionTap` owns fractional reads, moving-delay crossfades and material filtering.
+Source control and room configuration remain separate from the synchronous processing path.
+
+- `bun run test` includes `test/room/` geometry, delay, state and decay regressions.
+- `bun run test:room-worklet` compares a real Chromium AudioWorklet with host PCM.
+- `bun run bench:room` records static/moving 1/8/32-source timing and bounded delay storage.
+- `bun run demo:room` writes matching dry, small-room and hall WAVs with room/cue data.
+- CI uploads these files and verification receipts as `room-runtime`.
+
+See `docs/room-acoustics.md` for the model, sample-rate contract and limitations.
+The room stage has no HRTF, Doppler, measured impulse response, directional late field or Web editor integration.
+CPU timings include observed block-budget overruns; they are not physical-device deadline guarantees.
