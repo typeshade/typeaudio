@@ -5,7 +5,7 @@ The analysis starts from the supplied reference, not from the previous synthesis
 
 Reference: https://www.youtube.com/watch?v=YHCqcyX9N3s.
 The supplied local file has SHA-256 `6f1856eb09d5522f05dfbb5e813df208e99b94fe391c346139e62bb5b0fba87c`.
-It contains 5,095 video frames at 24000/1001 fps, 854 × 480 pixels, and stereo AAC at 44,100 Hz.
+Its header declares 5,095 video frames at 24000/1001 fps, 854 × 480 pixels, and stereo AAC at 44,100 Hz.
 Its container duration is 212.578685 seconds. The existing 0–188 second study range requires a fresh boundary check.
 
 This task will record visual observations, narrative interpretation, original mixed-track signal measurements, sound-design proposals and remaining review work separately.
