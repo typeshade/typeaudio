@@ -1,21 +1,2 @@
-export const HELPERS = new Set([
-  "sin",
-  "cos",
-  "abs",
-  "min",
-  "max",
-  "clamp",
-  "fract",
-  "floor",
-  "ceil",
-  "sqrt",
-  "exp",
-  "exp2",
-  "pow",
-  "tanh",
-  "mix",
-  "select",
-  "f32",
-  "u32",
-  "i32",
-]);
+import { SCALAR_FUNCTIONS } from "../scalarFunctions.ts";
+export const HELPERS = new Set(SCALAR_FUNCTIONS);

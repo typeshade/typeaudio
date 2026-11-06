@@ -6,3 +6,4 @@ export { validateGraph } from "./validateGraph.ts";
 export { orderedNodes } from "./orderGraph.ts";
 export { graphKey } from "./graphIdentity.ts";
 export { graphValues } from "./graphParameters.ts";
+export { SCALAR_FUNCTIONS } from "./scalarFunctions.ts";
