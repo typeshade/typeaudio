@@ -1,6 +1,6 @@
 name: CI
 
-# One job: install with Bun, which runs the compiler's TypeScript sources from the pinned tarball
+# Install with Bun, which runs the compiler's TypeScript sources from the pinned tarball
 # (CLAUDE.md, "The compiler pin"), then the checks of AGENTS.md, "Checks", on the CPU tier of the
 # compiler, with no device. The browser check (`bun run test:gpu`) and the experiments need a
 # browser with WebGPU, and are not in CI.
@@ -56,3 +56,23 @@ jobs:
         with:
           name: spatial-runtime
           path: artifacts/spatial/
+
+  room:
+    name: room worklet + timing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: bun x playwright-core install --with-deps chromium
+      - run: bun run test:room-worklet
+      - run: bun run demo:room
+      - run: bun run bench:room --out artifacts/room/benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: room-runtime
+          path: artifacts/room/
