@@ -6,7 +6,12 @@ import { explain } from '../src/explain.ts';
 // fused group with the `why` of its standing apart, the GPU time where it was measured, and on
 // WebGL2 the `tier` and the `why` of a group that fell to the CPU tier (compiler change 0118).
 
-const webgpu = (gpu: boolean): FuseReport => ({
+// New compiler candidates report dispatches per group; retain those facts while
+// checking the fixture against both the pinned and candidate public report type.
+type ReportFixture = Omit<FuseReport, 'groups'> & {
+  groups: readonly (FuseReport['groups'][number] & { dispatches: number })[];
+};
+const webgpu = (gpu: boolean): ReportFixture => ({
   tier: 'webgpu',
   dispatches: 2,
   submissions: 1,
@@ -15,6 +20,7 @@ const webgpu = (gpu: boolean): FuseReport => ({
       calls: ['synth'],
       fused: false,
       tier: 'webgpu',
+      dispatches: 1,
       workgroupShapes: [[64, 1, 1]],
       ...(gpu ? { gpuTime: 210_000 } : {}),
     },
@@ -22,6 +28,7 @@ const webgpu = (gpu: boolean): FuseReport => ({
       calls: ['mixdown', 'drive', 'gain', 'peak'],
       fused: true,
       tier: 'webgpu',
+      dispatches: 1,
       why: 'synth and mixdown run as two dispatches because the trip counts differ (5 and 512)',
       workgroupShapes: [[256, 1, 1]],
       ...(gpu ? { gpuTime: 120_400 } : {}),
@@ -51,7 +58,7 @@ test('explain on WebGL2 counts draws and names the tier of each group', () => {
   // the pin `87af4eb0` gave it in headless Chromium on SwiftShader: `synth` and `peak` have no WebGL2
   // program, so they ran on the CPU tier and their `why` says so. The plan's `tier` stays the best
   // tier of its groups.
-  const webgl2: FuseReport = {
+  const webgl2: ReportFixture = {
     tier: 'webgl2',
     dispatches: 3,
     submissions: 0,
@@ -60,15 +67,17 @@ test('explain on WebGL2 counts draws and names the tier of each group', () => {
         calls: ['synth'],
         fused: false,
         tier: 'cpu',
+        dispatches: 0,
         why: 'synth runs on the CPU, it runs on the CPU, loop 1 writes more than one array, and WebGL2 draws one',
       },
-      { calls: ['mixdown'], fused: false, tier: 'webgl2', why: 'WebGL2 runs the calls apart' },
-      { calls: ['drive'], fused: false, tier: 'webgl2', why: 'WebGL2 runs the calls apart' },
-      { calls: ['gain'], fused: false, tier: 'webgl2', why: 'WebGL2 runs the calls apart' },
+      { calls: ['mixdown'], fused: false, tier: 'webgl2', dispatches: 1, why: 'WebGL2 runs the calls apart' },
+      { calls: ['drive'], fused: false, tier: 'webgl2', dispatches: 1, why: 'WebGL2 runs the calls apart' },
+      { calls: ['gain'], fused: false, tier: 'webgl2', dispatches: 1, why: 'WebGL2 runs the calls apart' },
       {
         calls: ['peak'],
         fused: false,
         tier: 'cpu',
+        dispatches: 0,
         why: 'peak runs on the CPU, it runs on the CPU, loop 1 reduces, which WebGL2 has no workgroup memory for',
       },
     ],

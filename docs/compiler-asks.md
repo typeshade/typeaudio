@@ -217,6 +217,13 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   dynamic `import()` (`src/core/fuse-record.ts`). The workaround keeps its first and third parts.
   Its second part, `cloneData`, stays in `experiments/02-worklet/` as the experiment ran it.
 
+- Web feedback update (2026-11-06 UTC): [TypeAudio PR #22](https://github.com/typeshade/typeaudio/pull/22)
+  moves the graph workaround from Web into `src/graph/compiler/`. Shared fixtures
+  verify immediate output, seeded state and parameter events. [TypeShade proposal
+  0122](https://github.com/typeshade/typeshade/pull/1037) requests an explicit synchronous
+  CPU artifact for preallocated buffers. It is a draft. The existing compiler pin
+  and the workaround remain; no adoption is recorded in `compiler-changes.md` yet.
+
 ### G. An FFT as a common module
 
 - Pressure: the partitioned convolution, the spectral effects and the analysis need one FFT held

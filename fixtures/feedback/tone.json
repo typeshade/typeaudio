@@ -1,0 +1,130 @@
+{
+  "format": "typeaudio.graph-reproduction",
+  "version": 1,
+  "capture": "sequence",
+  "versions": {
+    "web": "769f3e7818329e1cc936048afb56e8724f34a9d3",
+    "typeaudio": "575b42baa13ee666cc050b25da1e63720dfbf6e4",
+    "typeshade": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+    "dirty": false
+  },
+  "environment": {
+    "userAgent": "fixture: extracted from the Web procedural graph regression",
+    "platform": "portable CPU"
+  },
+  "backend": "cpu",
+  "sampleRate": 48000,
+  "blockFrames": 128,
+  "frames": 4800,
+  "volume": 0.6,
+  "graph": {
+    "version": 1,
+    "nodes": [
+      {
+        "id": "pitch",
+        "kind": "parameter",
+        "name": "Parameter",
+        "x": 50,
+        "y": 60,
+        "values": [
+          0
+        ],
+        "inputs": {},
+        "code": "",
+        "bypass": false
+      },
+      {
+        "id": "osc",
+        "kind": "oscillator",
+        "name": "Oscillator",
+        "x": 270,
+        "y": 90,
+        "values": [
+          220,
+          0
+        ],
+        "inputs": {
+          "frequency": "pitch"
+        },
+        "code": "",
+        "bypass": false
+      },
+      {
+        "id": "env",
+        "kind": "envelope",
+        "name": "Envelope",
+        "x": 490,
+        "y": 130,
+        "values": [
+          0.005,
+          0.3
+        ],
+        "inputs": {
+          "input": "osc"
+        },
+        "code": "",
+        "bypass": false
+      },
+      {
+        "id": "output",
+        "kind": "output",
+        "name": "Output",
+        "x": 700,
+        "y": 130,
+        "values": [],
+        "inputs": {
+          "input": "env"
+        },
+        "code": "",
+        "bypass": false
+      }
+    ],
+    "parameters": [
+      {
+        "name": "Pitch",
+        "min": 40,
+        "max": 1600,
+        "value": 180
+      },
+      {
+        "name": "Decay",
+        "min": 0.02,
+        "max": 2,
+        "value": 0.25
+      },
+      {
+        "name": "Strength",
+        "min": 0,
+        "max": 1,
+        "value": 0.6
+      },
+      {
+        "name": "Texture",
+        "min": 0,
+        "max": 1,
+        "value": 0.4
+      }
+    ]
+  },
+  "events": [
+    {
+      "frame": 1024,
+      "type": "parameters",
+      "values": [
+        600,
+        0.25,
+        0.6,
+        0.4
+      ]
+    },
+    {
+      "frame": 2048,
+      "type": "volume",
+      "value": 0.25
+    },
+    {
+      "frame": 3072,
+      "type": "retrigger"
+    }
+  ]
+}

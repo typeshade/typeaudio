@@ -15,3 +15,5 @@ __pycache__/
 # The builds of the experiments and of the browser check.
 experiments/*/out/
 /out/
+.compiler-candidate/
+.feedback/
