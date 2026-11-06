@@ -29,7 +29,10 @@
     "test:feedback": "vitest run test/graph-feedback.test.ts",
     "test:spatial-worklet": "bun scripts/check-spatial-worklet.ts",
     "bench:spatial": "bun scripts/bench-spatial.ts",
-    "demo:spatial": "bun scripts/render-spatial-demo.ts"
+    "demo:spatial": "bun scripts/render-spatial-demo.ts",
+    "test:room-worklet": "bun scripts/check-room-worklet.ts",
+    "bench:room": "bun scripts/bench-room.ts",
+    "demo:room": "bun scripts/render-room-demo.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
@@ -46,6 +49,7 @@
     "./graph/compiler": "./src/graph/compiler/index.ts",
     "./graph/runtime": "./src/graph/runtime.ts",
     "./feedback": "./src/feedback/index.ts",
-    "./spatial": "./src/spatial/index.ts"
+    "./spatial": "./src/spatial/index.ts",
+    "./spatial/room": "./src/spatial/room/index.ts"
   }
 }

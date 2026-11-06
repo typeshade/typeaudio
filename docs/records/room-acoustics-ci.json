@@ -1,0 +1,232 @@
+{
+  "date": "2026-11-06",
+  "repository": "typeshade/typeaudio",
+  "pullRequest": 24,
+  "branch": "feat/room-acoustics",
+  "sourceCommit": "09947daab1cded81f8da3c0e71e7045cc2d8c5f4",
+  "baseCommit": "7d33eb8c243e0bc6c066de348c6034c4ef42645a",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "ci": {
+    "run": "https://github.com/typeshade/typeaudio/actions/runs/42207804188",
+    "conclusion": "success",
+    "compilerFeedbackRun": "https://github.com/typeshade/typeaudio/actions/runs/42207804182",
+    "compilerFeedbackConclusion": "success",
+    "unitJob": 127858700195,
+    "roomJob": 127858700360,
+    "spatialJob": 127858700364
+  },
+  "checks": [
+    {
+      "command": "bun run check",
+      "status": "passed",
+      "notes": "Existing experiment TS8070 and Bun moduleSuffixes warnings remain; no errors."
+    },
+    {
+      "command": "bun run test",
+      "status": "passed",
+      "files": 14,
+      "tests": 82,
+      "roomTests": 19
+    },
+    {
+      "command": "bun run feedback --out .feedback/report.json",
+      "status": "passed",
+      "location": "CI"
+    },
+    {
+      "command": "bun run check:website && bun run build:website",
+      "status": "passed",
+      "location": "CI"
+    },
+    {
+      "command": "bun run test:room-worklet",
+      "status": "passed"
+    },
+    {
+      "command": "bun run demo:room",
+      "status": "passed",
+      "files": [
+        "dry.wav",
+        "small-room.wav",
+        "hall.wav",
+        "listening.json"
+      ]
+    },
+    {
+      "command": "bun run bench:room",
+      "status": "recorded",
+      "notes": "Timing is reported, not enforced as a hard real-time gate."
+    }
+  ],
+  "worklet": {
+    "date": "2026-11-06T11:07:44.781Z",
+    "commit": "0be9fd4a82a68d77e83ce93a749edd7c82b07b70",
+    "check": "room AudioWorklet",
+    "browser": "156.0.8078.4",
+    "frames": 65536,
+    "sampleRate": 48000,
+    "maxError": 0,
+    "energy": 232.75203468265767,
+    "tailEnergy": 2.9964751864407706,
+    "scope": "OfflineAudioContext, structured control data, moving delays and tail PCM parity; excludes physical device deadlines and listening quality."
+  },
+  "benchmark": {
+    "date": "2026-11-06T11:07:49.692Z",
+    "commit": "0be9fd4a82a68d77e83ce93a749edd7c82b07b70",
+    "runtime": {
+      "node": "26.3.0",
+      "bun": "1.4.4",
+      "boringssl": "41bf9b59c2ebf277a7aa427e1ecad5cc80dd4d4f",
+      "openssl": "1.1.0",
+      "llhttp": "9.4.2",
+      "libarchive": "27cbc7827172698143e440801fc0ba39ccb4f1f5",
+      "mimalloc": "92ef6587c57b262f6e6abf513f7776a2f8d12aeb",
+      "picohttpparser": "f4d94b48b31e0abae029ebeafcfd9ca0680ede58",
+      "uwebsockets": "38afee6c84fcf48c0edb2466aa4b27d287a59c30",
+      "webkit": "d6375c72affe0f70222cdcb45012b10f0bf3a9d5",
+      "zig": "04e7f6ac1e009525bc00934f20199c68f04e0a24",
+      "zlib": "12731092979c6d07f42da27da673a9f6c7b13586",
+      "tinycc": "05f0fafaa3be31e31d7b4b5c17dc60f62c991171",
+      "lolhtml": "725ce499aa9b71e38b7a2d0a9fbb6d7294a4079e",
+      "ares": "c7a3138dcfe3bb0eaaf10c0c24c36dc66dc790ab",
+      "libdeflate": "92e6a0db9fa848d742f9eb286c92afc60f2c3dda",
+      "usockets": "38afee6c84fcf48c0edb2466aa4b27d287a59c30",
+      "lshpack": "cf0f70dd10b352194c97448eb5d00b4aa484f531",
+      "zstd": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+      "v8": "14.6.202.34-node.20",
+      "uv": "1.48.0",
+      "napi": "10",
+      "icu": "78.3",
+      "unicode": "17.0",
+      "sqlite": "3.53.4",
+      "typescript": "7.0.2",
+      "modules": "147"
+    },
+    "device": {
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "platform": "linux",
+      "arch": "x64"
+    },
+    "frames": 128,
+    "sampleRate": 48000,
+    "scope": "CPU direct bus, six reflections per source, one shared tail, and prepared-target updates every eight moving blocks; excludes synthesis, geometry preparation, device scheduling, GC guarantees and output underruns.",
+    "rows": [
+      {
+        "capacity": 1,
+        "moving": false,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "delayBufferBytes": 68780,
+        "p50Ms": 0.012943999999990297,
+        "p95Ms": 0.024666000000003407,
+        "p99Ms": 0.032721000000009326,
+        "maxMs": 0.05437199999999365,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 1,
+        "moving": true,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "delayBufferBytes": 68780,
+        "p50Ms": 0.01824400000000992,
+        "p95Ms": 0.019366999999988366,
+        "p99Ms": 0.026340000000004693,
+        "maxMs": 0.03561700000000201,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 8,
+        "moving": false,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "delayBufferBytes": 194248,
+        "p50Ms": 0.11826100000001816,
+        "p95Ms": 0.1262869999999907,
+        "p99Ms": 0.1443500000000313,
+        "maxMs": 0.38835699999998496,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 8,
+        "moving": true,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "delayBufferBytes": 194248,
+        "p50Ms": 0.12172799999996187,
+        "p95Ms": 0.13044400000001133,
+        "p99Ms": 0.1679749999999558,
+        "maxMs": 0.2169659999999567,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 32,
+        "moving": false,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "delayBufferBytes": 624424,
+        "p50Ms": 0.4687380000000303,
+        "p95Ms": 0.47843600000010156,
+        "p99Ms": 0.5154749999996966,
+        "maxMs": 0.8944950000000063,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 32,
+        "moving": true,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "delayBufferBytes": 624424,
+        "p50Ms": 0.48273399999970934,
+        "p95Ms": 0.5141830000002301,
+        "p99Ms": 0.5418740000000071,
+        "maxMs": 0.6617889999997715,
+        "overBudgetBlocks": 0
+      }
+    ]
+  },
+  "artifact": {
+    "name": "room-runtime",
+    "id": 13497211847,
+    "bytes": 1059636,
+    "url": "https://github.com/typeshade/typeaudio/actions/runs/42207804188/artifacts/13497211847",
+    "notes": "CI confirmed artifact upload. The local gh download received HTTP 403 from the artifact blob host. The workflow log supplies the CI measurements; local demo files were independently generated."
+  },
+  "localTiming": {
+    "device": "AMD EPYC 9V74 80-Core Processor",
+    "runtime": "Bun 1.4.4",
+    "before": "room-initial-cpu.json",
+    "after": "room-prepared-address-cpu.json",
+    "notes": "Both original measurements are retained. Prepared-address timing reduced 32-source moving median from 0.439356 ms to 0.377876 ms. Observed overruns remain: 3/2000 static 32-source blocks and 2/2000 moving 32-source blocks after optimization. Shared-host jitter is not attributed to a specific cause."
+  },
+  "listening": {
+    "source": "Compiled procedural GraphDsp fixtures: impact and tone",
+    "durationSeconds": 10,
+    "channels": 2,
+    "sampleRate": 48000,
+    "normalization": "none",
+    "humanReview": "not performed"
+  },
+  "openItems": [
+    {
+      "item": "Physical-device deadlines, underruns and mobile listening",
+      "status": "not measured",
+      "next": "Profile the complete source-plus-room chain on target browsers and devices."
+    },
+    {
+      "item": "Spatial shader/tier parity",
+      "status": "open deviation",
+      "next": "Benchmark an equivalent shader path before changing the compiler contract."
+    },
+    {
+      "item": "Binaural HRTF and directional late field",
+      "status": "not implemented",
+      "next": "Define versioned HRTF assets and a headphone rendering contract."
+    },
+    {
+      "item": "Web editor integration",
+      "status": "not included",
+      "next": "Consume the reviewed engine API in the existing editor."
+    }
+  ]
+}

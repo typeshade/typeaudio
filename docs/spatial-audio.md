@@ -35,7 +35,7 @@ It does not modify compiler semantics or proposal 0122.
 
 ## Next stages
 
-1. Add first-order room reflections with bounded delay storage and listener-relative paths.
+1. First-order room reflections and a diffuse tail are implemented separately in [PR #24](room-acoustics.md).
 2. Add a binaural renderer and a versioned HRTF asset contract.
 3. Add scene scheduling, perceptual voice budgets and reference listening passages.
 4. Connect the existing web editor, template data and agent review loop.
