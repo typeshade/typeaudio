@@ -77,13 +77,20 @@ export function entryFunction(file: ts.SourceFile) {
 }
 export function safeName(id: string, fallback: string, used: Set<string>) {
   let name = id.replace(/[^A-Za-z0-9_]/g, "_");
-  if (
-    !/^[A-Za-z_]/.test(name) ||
-    /^(const|let|var|return|export|import|function|class|true|false|new|in|default|delete|switch|case|while|for|if|else|void|this|super|typeof|with|yield|await|break|continue|do|throw|try|catch|finally|extends)$/.test(
-      name,
-    )
-  )
-    name = fallback;
+  const scanner = ts.createScanner(ts.ScriptTarget.Latest, true);
+  function identifier(value: string) {
+    scanner.setText(value);
+    return (
+      scanner.scan() === ts.SyntaxKind.Identifier &&
+      scanner.scan() === ts.SyntaxKind.EndOfFileToken &&
+      value !== "arguments" &&
+      value !== "eval"
+    );
+  }
+  if (!identifier(name)) {
+    name = fallback.replace(/[^A-Za-z0-9_]/g, "_");
+    if (!identifier(name)) name = `_${name}`;
+  }
   const base = name;
   let count = 1;
   while (used.has(name)) name = `${base}_${count++}`;

@@ -184,3 +184,17 @@ it("projects duplicate state instances and distinct modules exporting the same c
     render(new FunctionGraphDsp(install(applied.program.document))),
   ).toEqual(render(new FunctionGraphDsp(install(graph))));
 });
+it("projects valid domain identities that are reserved language words", () => {
+  const graph = example();
+  graph.nodes[2]!.id = "null";
+  graph.output.node = "null";
+  graph.parameters[0]!.id = "enum";
+  graph.nodes[1]!.inputs.pitch = { kind: "parameter", parameter: "enum" };
+  const program = compileFunctionGraph(graph);
+  const source = projectFunctionComposition(program).source;
+  expect(source).toContain("@typeaudioNode null");
+  expect(source).toContain("@typeaudioControl enum");
+  expect(
+    compositionIdentity(applyFunctionComposition(program, source).program),
+  ).toBe(compositionIdentity(program));
+});
