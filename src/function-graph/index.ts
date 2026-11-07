@@ -16,3 +16,5 @@ export type {
 } from "./program.ts";
 export { validateFunctionDocument } from "./validateDocument.ts";
 export { validateFunctionConnections } from "./validateConnections.ts";
+export { FUNCTION_COMPOSITION_PATH } from "./composition.ts";
+export type { FunctionComposition } from "./composition.ts";
