@@ -1,0 +1,142 @@
+{
+  "schema": "typeaudio.recovery-snapshot",
+  "version": 1,
+  "capturedAt": "2026-11-06T11:53:04.760014+00:00",
+  "engineSourceCommit": "86560f83a92ff8374346157000b8a467daa39aab",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "repositories": [
+    {
+      "repository": "typeshade/typeaudio",
+      "cloneUrl": "https://github.com/typeshade/typeaudio.git",
+      "main": "575b42baa13ee666cc050b25da1e63720dfbf6e4",
+      "pullRequests": [
+        {
+          "number": 22,
+          "title": "Promote procedural graph execution and reproducible feedback into TypeAudio",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/22",
+          "head": {
+            "ref": "feat/audio-feedback-loop",
+            "sha": "93d9a7c6086fe7f8b80a97aef3aa2198e077cae2"
+          },
+          "base": {
+            "ref": "main",
+            "sha": "575b42baa13ee666cc050b25da1e63720dfbf6e4"
+          }
+        },
+        {
+          "number": 23,
+          "title": "Add listener-relative stereo spatial audio to the engine",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/23",
+          "head": {
+            "ref": "feat/spatial-audio",
+            "sha": "7d33eb8c243e0bc6c066de348c6034c4ef42645a"
+          },
+          "base": {
+            "ref": "feat/audio-feedback-loop",
+            "sha": "93d9a7c6086fe7f8b80a97aef3aa2198e077cae2"
+          }
+        },
+        {
+          "number": 24,
+          "title": "feat(spatial): add prepared room reflections and diffuse reverberation",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/24",
+          "head": {
+            "ref": "feat/room-acoustics",
+            "sha": "86560f83a92ff8374346157000b8a467daa39aab"
+          },
+          "base": {
+            "ref": "feat/spatial-audio",
+            "sha": "7d33eb8c243e0bc6c066de348c6034c4ef42645a"
+          }
+        }
+      ]
+    },
+    {
+      "repository": "typeshade/web",
+      "cloneUrl": "https://github.com/typeshade/web.git",
+      "main": "769f3e7818329e1cc936048afb56e8724f34a9d3",
+      "pullRequests": [
+        {
+          "number": 45,
+          "title": "Connect the TypeAudio studio to engine-owned graph execution and feedback",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/web/pull/45",
+          "head": {
+            "ref": "feat/typeaudio-feedback-loop",
+            "sha": "61bdf291cbd5f5dd5fdc260302c7857c4ac7f644"
+          },
+          "base": {
+            "ref": "main",
+            "sha": "769f3e7818329e1cc936048afb56e8724f34a9d3"
+          }
+        },
+        {
+          "number": 46,
+          "title": "feat(typeaudio): provide TypeShade language intelligence in the code workspace",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/web/pull/46",
+          "head": {
+            "ref": "feat/typeaudio-language-editor",
+            "sha": "8517faca763e75dec997fa9ed6f792f4563a1acb"
+          },
+          "base": {
+            "ref": "feat/typeaudio-feedback-loop",
+            "sha": "61bdf291cbd5f5dd5fdc260302c7857c4ac7f644"
+          }
+        }
+      ]
+    },
+    {
+      "repository": "typeshade/typeshade",
+      "cloneUrl": "https://github.com/typeshade/typeshade.git",
+      "main": "29900fae3255615b6b0e0cf507ecbd57b6069569",
+      "pullRequests": [
+        {
+          "number": 1037,
+          "title": "docs(changes): propose synchronous CPU kernel artifacts for preallocated buffers",
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeshade/pull/1037",
+          "head": {
+            "ref": "proposal/audio-cpu-contract",
+            "sha": "73a966c475acad27ab95fcd59b44c339fccc9458"
+          },
+          "base": {
+            "ref": "main",
+            "sha": "6e58d2a5080d7381de8bfe5ce4ce0a9bb36cb7a4"
+          }
+        },
+        {
+          "number": 1038,
+          "title": "ci: validate compiler candidates with TypeAudio graph reproductions",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeshade/pull/1038",
+          "head": {
+            "ref": "ci/typeaudio-candidate-feedback",
+            "sha": "5a6b43cf572a1f9390c8c169e57290e793707c68"
+          },
+          "base": {
+            "ref": "main",
+            "sha": "6e58d2a5080d7381de8bfe5ce4ce0a9bb36cb7a4"
+          }
+        }
+      ]
+    }
+  ]
+}

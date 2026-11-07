@@ -5,6 +5,15 @@
 Every agent must read [CLAUDE.md](./CLAUDE.md) for this repository's operating rules. This file
 is the map of the repository and of the design.
 
+## Active TypeAudio program and recovery
+
+Read [docs/continuity/README.md](docs/continuity/README.md) to resume immersive audio work without the prior chat or workspace.
+It records owner decisions, exact repository snapshots, the implementation roadmap, validation gates and source recovery procedures.
+Update that record when a task, compiler pin or cross-repository contract changes.
+The owner's 2026-11-06 benchmark rule: SwiftShader supports functional checks and approximate controlled before/after comparisons.
+It is not a hardware GPU performance indicator or evidence of game real-time guarantees.
+Keep host CPU timing, software WebGPU correctness, hardware GPU timing and physical audio measurements separate.
+
 ## Purpose
 
 TypeAudio is a GPU audio engine written in TypeScript on the TypeShade compiler
@@ -114,9 +123,10 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
   the gradient of `grad` in four forms, per parameter count. It writes the result as JSON (`--out`);
   its records are in `docs/records/`. `bun run exp:07 --write` writes the patch's modules again.
 
-CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
-and `bun run test`. Every claim of a result names the command, the date, the commit and the
-device.
+CI (`.github/workflows/ci.yml`) runs type checks, unit and graph-feedback tests, and the legacy website checks.
+Separate jobs verify offline spatial/room worklet output, record host CPU timings, and restore one archived procedural event.
+These checks do not establish hardware GPU performance or physical audio deadlines.
+Every claim of a result names the command, the date, the commit and the device.
 
 ## Portable graphs and cross-repository feedback
 
