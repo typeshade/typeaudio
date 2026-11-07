@@ -3,6 +3,13 @@
 Snapshot date: 2026-11-06. [snapshot.json](snapshot.json) records exact remote PR heads and bases.
 Re-query remote status before continuing; this file is a historical checkpoint, not a live dashboard.
 
+Priority update, 2026-11-07: the owner's first delivery milestone is editable agent output in the existing Web editor.
+[Web #47](https://github.com/typeshade/web/pull/47) adds six source-only study projects,
+code/parameter/space edits and save/reopen verification, based on Web #46.
+It consumes engine room commit `86560f83a92ff8374346157000b8a467daa39aab` with the unchanged compiler pin.
+Its [contract and status](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md)
+precede further R1 work. No new deployment or merge is implied by this checkpoint.
+
 ## Repository ownership
 
 | Repository | Responsibility | Recorded main commit |

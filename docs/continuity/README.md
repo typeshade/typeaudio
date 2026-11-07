@@ -33,6 +33,11 @@ Record actual adapter/backend identity for every measurement. Real-device valida
 ## Resume without the conversation
 
 R0 is complete: the plan, authored source and recovery procedure are remotely stored and the recovery drill passed.
+The owner's subsequent first milestone is **editable agent output in the existing Web editor**.
+Start with [Web PR #47](https://github.com/typeshade/web/pull/47) and
+[its handoff contract](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md).
+Open authored projects, edit their source and spatial settings, then save and reopen without losing changes.
+This focused handoff precedes further R1/HRTF work. It uses the implemented graph and room baseline.
 The next engine task is R1 in [the roadmap](roadmap.md): a bounded real-time contract and its measurement harness.
 R2 establishes renderer-independent 3D acoustic paths. R3 adds HRTF output.
 R5 starts with a small TypeShade SDF occlusion probe; it does not require a full acoustic solver first.
@@ -52,7 +57,10 @@ It does not replace the old render or complete R1, R7 or R8.
 The subsequent [audible sound-design study](../studies/frieren/sound-design/README.md), in PR #28, adds the requested creative work.
 It designs all 41 regions and renders 47 procedural layers into three A/B passages with aligned stems.
 Read its source recipes, artifact receipts and pending listening questions before expanding to the full scene.
-It does not complete the full mix, Web integration, binaural rendering or real-time validation.
+It does not complete the full mix, binaural rendering or real-time validation.
+The six source-only Web projects are being integrated in Web PR #47; they are not the review masters.
+They retain editable graphs, amplitude envelopes, parameters, timing, trajectories and room settings.
+The editor prepares stereo previews before playback. This is not a complete game runtime.
 
 ## Record maintenance
 

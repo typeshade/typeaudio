@@ -1,7 +1,7 @@
 {
   "schema": "typeaudio.recovery-snapshot",
   "version": 1,
-  "capturedAt": "2026-11-06T11:53:04.760014+00:00",
+  "capturedAt": "2026-11-07T00:09:50.114896+00:00",
   "engineSourceCommit": "86560f83a92ff8374346157000b8a467daa39aab",
   "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
   "repositories": [
@@ -57,6 +57,54 @@
             "ref": "feat/spatial-audio",
             "sha": "7d33eb8c243e0bc6c066de348c6034c4ef42645a"
           }
+        },
+        {
+          "number": 25,
+          "title": "docs: preserve the immersive audio plan and disaster recovery procedure",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/25",
+          "head": {
+            "ref": "docs/immersive-audio-continuity",
+            "sha": "838fcd0e21e82e7fbb8d1d38d78a05dffbaba194"
+          },
+          "base": {
+            "ref": "feat/room-acoustics",
+            "sha": "86560f83a92ff8374346157000b8a467daa39aab"
+          }
+        },
+        {
+          "number": 27,
+          "title": "docs: analyze the Frieren reference for procedural sound design",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/27",
+          "head": {
+            "ref": "analysis/frieren-picture-study",
+            "sha": "68a33d85799e4cf70a10a8f5fc211b9472043d5a"
+          },
+          "base": {
+            "ref": "docs/immersive-audio-continuity",
+            "sha": "838fcd0e21e82e7fbb8d1d38d78a05dffbaba194"
+          }
+        },
+        {
+          "number": 28,
+          "title": "feat: design and render Frieren procedural sound studies",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/28",
+          "head": {
+            "ref": "feat/frieren-sound-design-studies",
+            "sha": "33a6ffdca92f5ec3d2553b3b5e6ca7b50a08e65a"
+          },
+          "base": {
+            "ref": "analysis/frieren-picture-study",
+            "sha": "68a33d85799e4cf70a10a8f5fc211b9472043d5a"
+          }
         }
       ]
     },
@@ -96,13 +144,29 @@
             "ref": "feat/typeaudio-feedback-loop",
             "sha": "61bdf291cbd5f5dd5fdc260302c7857c4ac7f644"
           }
+        },
+        {
+          "number": 47,
+          "title": "feat(typeaudio): open and edit agent-authored sound projects",
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/web/pull/47",
+          "head": {
+            "ref": "feat/typeaudio-editable-studies",
+            "sha": "853e64a9c75676d98171d84b5c31f1607db1f30f"
+          },
+          "base": {
+            "ref": "feat/typeaudio-language-editor",
+            "sha": "8517faca763e75dec997fa9ed6f792f4563a1acb"
+          }
         }
       ]
     },
     {
       "repository": "typeshade/typeshade",
       "cloneUrl": "https://github.com/typeshade/typeshade.git",
-      "main": "29900fae3255615b6b0e0cf507ecbd57b6069569",
+      "main": "42fe4fd77bffbfec6d25be35ea14110ab9f2b54a",
       "pullRequests": [
         {
           "number": 1037,
@@ -138,5 +202,13 @@
         }
       ]
     }
-  ]
+  ],
+  "firstMilestone": {
+    "id": "E1",
+    "title": "Editable agent projects in the existing Web editor",
+    "pullRequest": "https://github.com/typeshade/web/pull/47",
+    "contract": "https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md",
+    "status": "implemented; full browser regression verification in progress",
+    "engineExpansionAfterMilestone": "R1"
+  }
 }

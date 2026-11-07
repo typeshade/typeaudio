@@ -35,7 +35,10 @@ These are signal properties, not proof of physical-phone audibility or creative 
 
 These are authored effects studies. They do not reproduce the reference dialogue or music.
 Signal checks do not constitute a listening review.
-The full scene mix and Web timeline import remain separate production work.
+The full scene mix remains separate production work. [Web PR #47](https://github.com/typeshade/web/pull/47)
+adds six editable source projects to the existing editor. Each keeps the source
+code, envelopes, parameters, timing and space. This handoff is the owner's first
+delivery milestone; the review masters remain separate listening references.
 No new site or production deployment is part of this study.
 
 ## Stored review assets
