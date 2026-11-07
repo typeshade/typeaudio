@@ -79,3 +79,9 @@ module/algorithm rewriting and a reliable professional listening critic remain o
 The next step is to validate a suitable audio-LLM/input protocol against the control
 corpus before allowing autonomous source promotion. Do not treat these prototypes as
 replacement public sound-design examples.
+
+[The verification receipt](audio-quality-verification.json) preserves actual LLM replies,
+input hashes, source manifests, 133 passing engine tests, 110 Web tests and browser results.
+[The local environment record](audio-llm-environment.json) pins installed Python packages
+and model identity. Timings vary with concurrent development work; they are observations,
+not an inference SLA or an engine real-time measurement.
