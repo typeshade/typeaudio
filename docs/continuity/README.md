@@ -8,8 +8,9 @@ Start from the durable [recovery index, issue #26](https://github.com/typeshade/
 [PR #25](https://github.com/typeshade/typeaudio/pull/25) preserves this plan and its source archive remotely.
 The [recovery verification receipt](recovery-verification.json) records a fresh remote clone, 69 verified files and one regenerated procedural event.
 
-The implemented engine is on room PR #24 at `86560f83a92ff8374346157000b8a467daa39aab`.
+The room engine baseline is PR #24 at `86560f83a92ff8374346157000b8a467daa39aab`.
 It builds on spatial PR #23 and graph-feedback PR #22. These pull requests are not merged.
+The current continuation is [function-engine PR #30](https://github.com/typeshade/typeaudio/pull/30), on `feat/typed-function-graphs`.
 The compiler pin remains `87af4eb0d9d15f02b66b8341b72cab0944290472`.
 
 ## Benchmark rule from the owner
@@ -39,7 +40,7 @@ Start with [Web PR #47](https://github.com/typeshade/web/pull/47) and
 Open authored projects, edit their source and spatial settings, then save and reopen without losing changes.
 This focused handoff precedes further R1/HRTF work. It uses the implemented graph and room baseline.
 The real-time expansion track is R1 in [the roadmap](roadmap.md): a bounded contract and its measurement harness.
-The later authoring clarification defines E2a as the engine contract needed before extending the old sample-body editor.
+The later authoring clarification produced E2a's function engine; E2b now adopts it in the existing editor.
 R2 establishes renderer-independent 3D acoustic paths. R3 adds HRTF output.
 R5 starts with a small TypeShade SDF occlusion probe; it does not require a full acoustic solver first.
 HRTF, directional reverberation, acoustic tracing, runtime voice budgets and game-wide guarantees are not delivered yet.
@@ -87,8 +88,17 @@ The owner's later authoring clarification is recorded in [Function and visual gr
 TypeShade functions and Blueprint-style node editing must be first-class ways to compose the same processing definitions.
 Read this proposal before extending the old sample-body editor. The previous binding clarification is not the final authoring architecture.
 The proposal preserves event/audio execution boundaries, per-instance state, project recovery and a future native-host integration boundary.
-Implementation is pending; no Unreal plugin or function-graph round trip is delivered yet.
+E2a's first CPU profile is implemented; no Unreal plugin or function-graph round trip is delivered yet.
 The detailed contract is proposed in [PR #29](https://github.com/typeshade/typeaudio/pull/29).
+
+Implementation continuation, 2026-11-07: [PR #30](https://github.com/typeshade/typeaudio/pull/30) adds full TypeShade modules,
+compiler-derived typed pins, stable port IDs, isolated scalar state and synchronous mono CPU execution.
+Read [the API](../function-graphs.md) and [verification receipt](function-graph-verification.json) before changing the adapter.
+The impact fixture generates sound through excitation, resonator and gain functions with helpers and imports.
+Source compilation stays outside the audio callback; actual worklet output matches host PCM.
+The compiler pin, legacy graph API, Web project version 2 and deployed website remain unchanged.
+Next, implement E2b in `web/apps/typeaudio` with explicit E2c project migration and draft-preservation gates.
+Do not present the new engine JSON as an already importable Web project.
 
 ## Record maintenance
 

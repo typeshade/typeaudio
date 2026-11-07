@@ -1,6 +1,9 @@
 # Function and visual graph authoring
 
-Status: proposed implementation contract, recorded 2026-11-07. No runtime or editor feature is delivered by this document.
+Status: owner-approved implementation direction, recorded 2026-11-07.
+E2a's first CPU engine profile is implemented in [PR #30](https://github.com/typeshade/typeaudio/pull/30).
+Read [the delivered API and limits](../function-graphs.md) and [verification receipt](function-graph-verification.json).
+E2b–E2e remain planned; no visual function editor, composition-code round trip or Unreal plugin is delivered yet.
 Owner direction: accept normal TypeShade functions and support Blueprint-style visual authoring as a first-class workflow.
 The code editor and node editor must compose the same processing definitions.
 This refines D05 and the editable agent-project milestone, E1.
@@ -12,7 +15,7 @@ The compiler pin is `87af4eb0d9d15f02b66b8341b72cab0944290472`.
 The Web clarification is `63216066bb8a2109d0c7e5b6286500b04ab39cb0`, in Web PR #47.
 The recovery base for this proposal is `6b0b1779d1bf13a17f0bf267dd0f470b62a45bcd`.
 
-Current `SoundGraph` has fixed node kinds, index-based values, one output and input links containing only node IDs.
+The preserved legacy `SoundGraph` has fixed node kinds, index-based values, one output and input links containing only node IDs.
 `validateCode.ts` rejects function declarations and non-whitelisted calls before TypeShade compilation.
 `generateGraphKernel.ts` accepts one generated function and rejects nested generated calls.
 These are adapter restrictions, not a requirement of TypeShade function authoring.
@@ -177,7 +180,7 @@ Render caches are derived artifacts. They never replace editable source or valid
 
 | Item | Implementation | Required evidence |
 | --- | --- | --- |
-| E2a | Engine-owned definition descriptors and full-module function preparation | TypeShade helper/import/type diagnostics; named pins; pure and stateful calls; synchronous output and allocation checks. |
+| E2a | Implemented first CPU profile: engine-owned descriptors and full-module function preparation, PR #30 | TypeShade helper/import/type diagnostics; stable typed pins; independent typed state; synchronous PCM and actual worklet parity; nested writeback reuse and bounded loop faults. |
 | E2b | Reusable function instances in the existing editor | Create/connect/expose controls without code; open a function; duplicate with isolated state; contextual search and Undo. |
 | E2c | Shared composition/code editing and project migration | Changes visible in both views; stable pin IDs; source preservation; invalid-draft recovery; old projects reopen without resets. |
 | E2d | Event/control integration through the R1 host contract | Deterministic trigger/parameter timing, late/overflow cases and host-independent source replay. |
@@ -188,4 +191,6 @@ Open it visually, change a named control, edit the resonator function, duplicate
 Equivalent code and visual compositions must produce matching PCM under the same backend and configuration.
 Run migration, state isolation, source-location, Undo/Redo and stale-result tests before adoption.
 Measure actual callback behavior separately from host CPU correctness and from listening quality.
-These gates are planned. Existing Web browser passes do not establish E2 completion.
+The impact source and engine execution are implemented in `fixtures/function-graph/impact.json`.
+Visual editing, project migration and cross-view operations remain planned gates.
+Existing Web browser passes do not establish E2b or E2c completion.

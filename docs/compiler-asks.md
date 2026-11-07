@@ -489,9 +489,16 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   plain loop they spent 5 ms (inference: the garbage collector).
 - Compiler: the CPU tier's code generator (Rule 11.7, surface §64): `inout` values without an
   allocation per call.
-- Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
+- Workaround: the E2a function profile adapts verified generated `inout` writebacks into reusable
+  instance scratch storage. It keeps TypeShade's processing code and rejects unrecognized ABI shapes.
+  Nested scalar/struct writebacks are compared against the unchanged compiler output.
+  This applies only to `src/function-graph/compiler/`, not the original bank renderer or every compiler backend.
+  See [the function API](function-graphs.md) and [verification receipt](continuity/function-graph-verification.json).
 - Measured by: experiment 2.
-- Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`). The
+- Status: issue #961 is closed upstream. Candidate `05e4d242803669d6503e223b4ba6099df0af5401`
+  prepares one writeback buffer per function. The pin still allocates arrays without the adapter.
+  The candidate regression observes nested buffer publications without requiring the old single-buffer shape.
+  Original timing was measured on the container only (`docs/records/02-worklet-container.md`). The
   cost of entering a call with an array, which record 05 measured on the CPU tier (its candidate ask
   C), is ask V's and not this ask's.
 

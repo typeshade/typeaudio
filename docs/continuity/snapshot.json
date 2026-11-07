@@ -2,7 +2,7 @@
   "schema": "typeaudio.recovery-snapshot",
   "version": 1,
   "capturedAt": "2026-11-07T00:14:29.792294+00:00",
-  "engineSourceCommit": "86560f83a92ff8374346157000b8a467daa39aab",
+  "engineSourceCommit": "b0236e1ad85e0b41c34579058b63f2e2f06c258e",
   "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
   "repositories": [
     {
@@ -115,11 +115,27 @@
           "html_url": "https://github.com/typeshade/typeaudio/pull/29",
           "head": {
             "ref": "docs/typed-function-graphs",
-            "sha": "7a3e3343075ebd920374c44a444bd88a45cb274e"
+            "sha": "1fa70191af99424a60488e1a2679b6ada55bc5a4"
           },
           "base": {
             "ref": "feat/frieren-sound-design-studies",
             "sha": "6b0b1779d1bf13a17f0bf267dd0f470b62a45bcd"
+          }
+        },
+        {
+          "number": 30,
+          "title": "feat: prepare typed TypeShade function graphs for synchronous audio",
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/30",
+          "head": {
+            "ref": "feat/typed-function-graphs",
+            "sha": "b0236e1ad85e0b41c34579058b63f2e2f06c258e"
+          },
+          "base": {
+            "ref": "docs/typed-function-graphs",
+            "sha": "1fa70191af99424a60488e1a2679b6ada55bc5a4"
           }
         }
       ]
@@ -259,6 +275,23 @@
     "firstProposalCommit": "7a3e3343075ebd920374c44a444bd88a45cb274e",
     "baseCommit": "6b0b1779d1bf13a17f0bf267dd0f470b62a45bcd",
     "engineCompilerPins": "unchanged",
+    "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
+  },
+  "webConsumedEngineCommit": "86560f83a92ff8374346157000b8a467daa39aab",
+  "functionEngineCheckpoint": {
+    "capturedAt": "2026-11-07T02:34:52.189830+00:00",
+    "ownerDecision": "D14",
+    "workPackage": "E2a",
+    "status": "first synchronous CPU function profile implemented and CI-verified; ready for review; E2b Web adoption pending",
+    "pullRequest": "https://github.com/typeshade/typeaudio/pull/30",
+    "branch": "feat/typed-function-graphs",
+    "sourceCommit": "b0236e1ad85e0b41c34579058b63f2e2f06c258e",
+    "baseCommit": "1fa70191af99424a60488e1a2679b6ada55bc5a4",
+    "verification": "function-graph-verification.json",
+    "api": "../function-graphs.md",
+    "compilerPinChanged": false,
+    "webProjectVersionChanged": false,
+    "deployed": false,
     "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
   }
 }

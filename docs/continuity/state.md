@@ -32,8 +32,10 @@ This is a Web correction. Engine/compiler pins, project version 2 and authored s
 Authoring direction, 2026-11-07: the owner requires normal TypeShade functions and Blueprint-style visual composition.
 The [E2 proposal](function-graph-authoring.md) is the next authoring contract to review before another sample-body extension.
 It records typed pins, reusable functions/subgraphs, isolated instance state, transaction history and separate event/audio execution.
-This is a design checkpoint in [PR #29](https://github.com/typeshade/typeaudio/pull/29).
-The current runtime, project formats, Web deployment and engine/compiler pins are unchanged.
+Design [PR #29](https://github.com/typeshade/typeaudio/pull/29) is followed by implemented E2a in [PR #30](https://github.com/typeshade/typeaudio/pull/30).
+The new function engine has its own version-1 source document; legacy graphs and Web project version 2 remain unchanged.
+Web adoption, code/graph composition editing and event scheduling remain pending. The compiler pin and Web deployment are unchanged.
+See [the delivered API](../function-graphs.md) and [verification receipt](function-graph-verification.json).
 
 ## Repository ownership
 
@@ -64,6 +66,9 @@ Other open compiler and Web pin PRs exist. They are not implicitly part of this 
 
 ## Delivered engine behavior
 
+- `src/function-graph/`: full TypeShade functions, reflected typed pins, reusable stateful instances and synchronous mono CPU processing (E2a, PR #30).
+- `fixtures/function-graph/impact.json`: source-only excitation/resonator/gain example with named controls.
+- `scripts/check-function-worklet.ts`, `bench-functions.ts`, `render-function-demo.ts`: worklet PCM parity, host timing and regenerable listening artifact.
 - `src/graph/`: portable synthesis graph, generated CPU execution and deterministic state.
 - `src/feedback/` and `fixtures/feedback/`: source-only reproductions and shared regression cases.
 - `src/spatial/`: fixed-capacity stereo mixing, listener basis, distance gain, damping and authored occlusion.
@@ -84,8 +89,8 @@ The room FDN has no directional late field. The first-order path is converted to
 ## Web behavior and remaining integration
 
 The existing application is `web/apps/typeaudio`; the engine's legacy `website/` is not the current product development destination.
-The recorded Web branch pins `sources/typeaudio` to `93d9a7c6086fe7f8b80a97aef3aa2198e077cae2`.
-Room PR #24 has not been adopted by that Web submodule.
+Web PR #47 pins `sources/typeaudio` to room commit `86560f83a92ff8374346157000b8a467daa39aab`.
+The new function engine in PR #30 has not been adopted by that Web submodule.
 
 Repository review records describe the component workspace, Tone rollback correction, synchronous live processing,
 finite render changes, node/code workspace and feedback tooling. Re-read those records and current tests before editing.
