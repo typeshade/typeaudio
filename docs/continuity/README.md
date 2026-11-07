@@ -4,6 +4,13 @@ This is the restart entry point for the TypeAudio immersive-audio program.
 It must remain sufficient when the chat history and the original workspace are unavailable.
 The owner requested durable recovery instructions on 2026-11-06.
 
+Current owner direction, 2026-11-07: implement the
+[audio quality feedback loop](audio-quality-loop.md) before further subgraph/R1 work.
+Web #45–#48 are merged and the six editable passage studies are deployed. The owner
+rejected their creative quality. Actual audio evaluation and a bounded column-impact
+revision pilot are now the priority. The historical checkpoints below remain evidence
+of technical delivery; their publication-pending statements are superseded.
+
 Start from the durable [recovery index, issue #26](https://github.com/typeshade/typeaudio/issues/26) if the workspace is gone.
 [PR #25](https://github.com/typeshade/typeaudio/pull/25) preserves this plan and its source archive remotely.
 The [recovery verification receipt](recovery-verification.json) records a fresh remote clone, 69 verified files and one regenerated procedural event.
