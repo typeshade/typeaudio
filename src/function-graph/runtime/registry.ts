@@ -15,8 +15,8 @@ const scope = globalThis as unknown as {
   __typeaudioRegisterFunction: (key: string, factory: Factory) => void;
 };
 scope.__typeaudioRegisterFunction = (key, factory) => {
-  if (factories.size >= 64 && !factories.has(key))
-    factories.delete(factories.keys().next().value!);
+  factories.delete(key);
+  if (factories.size >= 64) factories.delete(factories.keys().next().value!);
   factories.set(key, factory);
 };
 /** Registration modules are trusted compiler output, never imported project source. */
