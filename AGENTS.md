@@ -118,6 +118,25 @@ CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`,
 and `bun run test`. Every claim of a result names the command, the date, the commit and the
 device.
 
+## Portable graphs and cross-repository feedback
+
+`src/graph/` owns the procedural graph previously implemented by the Web editor.
+Its public entries are `typeaudio/graph`, `typeaudio/graph/compiler` and
+`typeaudio/graph/runtime`. The runtime entry does not import the compiler.
+`src/feedback/` validates and replays source-only graph reproductions.
+`fixtures/feedback/` is the shared Web and engine corpus; `test/graph-feedback.test.ts`
+checks immediate output, numerical references, state continuity and event replay.
+
+- `bun run feedback --out .feedback/report.json` records the shared corpus and its generated source.
+- `bun run feedback <file.json>` replays an exported Web graph snapshot without the UI.
+- `bun run test:feedback` runs graph contract regressions.
+- `.github/workflows/feedback.yml` compares the pinned compiler with a verified candidate source archive.
+
+See `docs/feedback-loop.md` for ownership, snapshot limits and version-pair promotion.
+The TypeShade private-generator adapter remains a workaround tracked by ask F;
+proposal 0122 is a draft, not an implemented compiler API. CPU timings do not
+establish hardware real-time guarantees or measured output underruns.
+
 ## Website
 
 `website/` holds the public overview and audio playground. `scripts/site-docs.ts`
