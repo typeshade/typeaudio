@@ -4,9 +4,9 @@ This engine entry prepares ordinary TypeShade functions as reusable audio proces
 The source modules retain helpers, imports, scalar types and typed instance state.
 TypeAudio supplies port metadata, connections, named controls and synchronous execution.
 
-This is E2a of [the authoring contract](continuity/function-graph-authoring.md), implemented in [PR #30](https://github.com/typeshade/typeaudio/pull/30).
-The existing Web editor has not adopted this document format yet.
-The older `typeaudio/graph` API and Web project version 2 remain unchanged.
+The first engine profile and composition API are implemented in [PR #30](https://github.com/typeshade/typeaudio/pull/30).
+The existing Web editor adopts the function format in [Web PR #47](https://github.com/typeshade/web/pull/47).
+The older `typeaudio/graph` API and legacy project semantics remain unchanged.
 
 ## Source, definitions and instances
 
@@ -166,7 +166,7 @@ Host timing and OfflineAudioContext parity do not establish physical output late
 
 Web PR #47 adopts this contract with reusable nodes, typed connections, named controls and full source modules.
 Project version 3, draft preservation and revision guards are integrated there.
-E2c composition-source operations, reusable subgraphs and explicit connected-port migration remain open.
+E2c composition-source operations and connected-input rename are implemented in the compiler entry below; Web integration continues in #47. Reusable subgraphs remain open.
 Read [the Web verification receipt](continuity/web-function-authoring-verification.json) before extending that workflow.
 Event scheduling belongs to E2d/R1. Stereo/aggregate pins, transition policies and device profiling remain open.
 An Unreal adapter needs E2e's separate native execution and buffer-contract work; no plugin is included here.
@@ -180,7 +180,7 @@ The operation snapshots the input document and reads parameter types through Typ
 Existing parameter names retain their stable port IDs and authored audio metadata.
 New scalar parameters receive unique IDs and block-rate control metadata, with zero or false defaults.
 The host can then expose these pins as named controls or explicitly change their audio roles and units.
-Removed parameters with connections or named-control bindings cause a diagnostic. Disconnect every instance before removal or renaming.
+Removed parameters with connections or named-control bindings cause a diagnostic. Disconnect every instance before removal; use the explicit rename operation below for a connected input.
 Removed constant bindings are deleted from the snapshot. Caller data is unchanged, including on failure.
 State/context mappings and entry-point names remain explicit. This operation does not infer state initializers or rename connected ports.
 Type changes still pass the normal compiler and connection validator before the host applies the result.
@@ -188,3 +188,68 @@ Type changes still pass the normal compiler and connection validator before the 
 Registration modules refresh their position in the 64-entry factory cache.
 Hosts must register every definition for a replacement sound before constructing its DSP.
 A combined layered sound must fit that registry capacity; existing DSP instances retain their executable references.
+
+## Composition source and connected input rename
+
+`projectFunctionComposition(program, previousSource?)` returns `{ source, nodes }`.
+The source is a genuine TypeShade module at `FUNCTION_COMPOSITION_PATH`,
+`/__typeaudio_network.shade.ts`. Each node location includes a file, line and column.
+The composition imports processing functions and exported state classes, passes scalar controls
+and context explicitly, and returns the output node. For example:
+
+```ts
+"use typeshade";
+/** @typeaudioDefinition gain */
+import { gain } from "./gain.shade.ts";
+
+/** @typeaudioComposition */
+export function sound(
+  /** @typeaudioControl strength */ strength: f32,
+  /** @typeaudioContext time */ time: f32
+): f32 {
+  /** @typeaudioNode level */
+  const result: f32 = gain(0.1, strength, time);
+  return result;
+}
+```
+
+The catalog supplies audio roles, rates, units and parameter metadata. A block-rate definition
+still executes at its declared rate; this source view does not replace the TypeAudio scheduler.
+Function bodies may contain supported loops and conditions. Composition maps single `const`
+call declarations and a final returned node. It accepts scalar literals, exposed controls and
+previous node outputs as ordinary call arguments. Processing expressions, branches and loops
+inside the composition entry produce located diagnostics; move that processing into a function.
+
+`applyFunctionComposition(program, source)` returns a new `{ program, composition }` after
+TypeShade language checking and TypeAudio connection validation. It never evaluates project
+source as JavaScript. It can add/remove call instances and change connections/constants/output.
+New controls and definition metadata are supplied through the graph document. State parameters
+must have the matching `inout<Class>` type; each stateful instance owns a distinct argument.
+Classes used in the composition signature must be exported. Private state classes still work
+in ordinary node playback; export them to enable composition projection.
+
+Stable `@typeaudioNode` annotations retain identity when a local variable is renamed.
+Definition, control, context and state annotations disambiguate their domain identity from
+language names. The generated source is editable; annotations are metadata, not new syntax.
+The composition file path is reserved. Source is bounded to 131,072 characters.
+
+With a previous applied source, visual projection retains unrelated module text and helpers.
+It changes managed imports, signature and call statements. Comments inside replaced arguments
+or deleted managed declarations are retained beside their enclosing statements; their exact
+position can change. Unchanged compatible source is returned byte for byte. Keep invalid or
+conflicting buffers separately and pass only the last applied source as the projection base.
+`compositionIdentity(program)` compares graph execution structure independently of node
+presentation order and omitted default bindings. A host should validate that a saved composition
+matches its applied graph before replacing a document.
+
+`renameFunctionInput(raw, definitionId, portId, newName)` uses the TypeShade language service
+for symbol edits, updates the metadata key and compiles the result before returning a new
+document. The stable port ID, connections, controls and compatible state remain intact.
+This operation changes all instances of the definition. Unrelated same-named symbols remain
+unchanged. It does not rename entry functions, state classes or arbitrary metadata.
+Hosts must resolve unapplied source drafts before this separate operation and apply its source
+and metadata together as one history entry.
+
+Composition source is optional host authoring data; the portable engine graph remains version 1.
+The Web stores it with source/drafts in project version 4 and excludes it from audio identity.
+Comment-only composition edits therefore do not invalidate audio or reset Live state.

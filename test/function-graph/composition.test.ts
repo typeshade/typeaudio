@@ -160,3 +160,27 @@ it("requires exported state only for the composition view and retains ordinary n
     render(new FunctionGraphDsp(install(graph))).some((v) => v !== 0),
   ).toBe(true);
 });
+it("projects duplicate state instances and distinct modules exporting the same class name", () => {
+  const graph = example();
+  for (const [file, name] of [
+    ["/excitation.shade.ts", "NoiseState"],
+    ["/resonator.shade.ts", "ResonatorState"],
+  ])
+    graph.modules[file!] = graph.modules[file!]!.replaceAll(name!, "State");
+  const program = compileFunctionGraph(graph);
+  const source = projectFunctionComposition(program).source;
+  const alias = /State as (\w+)/.exec(source)![1];
+  expect(alias).toBeTruthy();
+  graph.nodes.push({ ...structuredClone(graph.nodes[1]!), id: "secondBody" });
+  const added = compileFunctionGraph(graph);
+  const projected = projectFunctionComposition(
+    added,
+    source.replace("sampleRate: f32\n", "sampleRate: f32,\n"),
+  );
+  expect(projected.source).toContain(`secondBodyState: inout<${alias}>`);
+  const applied = applyFunctionComposition(added, projected.source);
+  expect(applied.program.document.nodes).toHaveLength(4);
+  expect(
+    render(new FunctionGraphDsp(install(applied.program.document))),
+  ).toEqual(render(new FunctionGraphDsp(install(graph))));
+});
