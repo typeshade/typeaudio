@@ -29,12 +29,13 @@ Local verification passed 95 unit tests and all 15 browser suites. Inspect curre
 Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
 This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
 
-## Repository ownership
-
 Authoring direction, 2026-11-07: the owner requires normal TypeShade functions and Blueprint-style visual composition.
 The [E2 proposal](function-graph-authoring.md) is the next authoring contract to review before another sample-body extension.
 It records typed pins, reusable functions/subgraphs, isolated instance state, transaction history and separate event/audio execution.
-This is a design checkpoint. The current runtime, project formats, Web deployment and engine/compiler pins are unchanged.
+This is a design checkpoint in [PR #29](https://github.com/typeshade/typeaudio/pull/29).
+The current runtime, project formats, Web deployment and engine/compiler pins are unchanged.
+
+## Repository ownership
 
 | Repository | Responsibility | Recorded main commit |
 | --- | --- | --- |

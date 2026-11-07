@@ -38,7 +38,8 @@ Start with [Web PR #47](https://github.com/typeshade/web/pull/47) and
 [its handoff contract](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md).
 Open authored projects, edit their source and spatial settings, then save and reopen without losing changes.
 This focused handoff precedes further R1/HRTF work. It uses the implemented graph and room baseline.
-The next engine task is R1 in [the roadmap](roadmap.md): a bounded real-time contract and its measurement harness.
+The real-time expansion track is R1 in [the roadmap](roadmap.md): a bounded contract and its measurement harness.
+The later authoring clarification defines E2a as the engine contract needed before extending the old sample-body editor.
 R2 establishes renderer-independent 3D acoustic paths. R3 adds HRTF output.
 R5 starts with a small TypeShade SDF occlusion probe; it does not require a full acoustic solver first.
 HRTF, directional reverberation, acoustic tracing, runtime voice budgets and game-wide guarantees are not delivered yet.
@@ -82,13 +83,14 @@ Local verification passed 95 unit tests and all 15 browser suites. Inspect curre
 Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
 This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
 
-## Record maintenance
-
 The owner's later authoring clarification is recorded in [Function and visual graph authoring](function-graph-authoring.md).
 TypeShade functions and Blueprint-style node editing must be first-class ways to compose the same processing definitions.
 Read this proposal before extending the old sample-body editor. The previous binding clarification is not the final authoring architecture.
 The proposal preserves event/audio execution boundaries, per-instance state, project recovery and a future native-host integration boundary.
 Implementation is pending; no Unreal plugin or function-graph round trip is delivered yet.
+The detailed contract is proposed in [PR #29](https://github.com/typeshade/typeaudio/pull/29).
+
+## Record maintenance
 
 Each implementation PR updates its roadmap item, source commit, checks and remaining limitations.
 Refresh `snapshot.json` after a merge, pin move or cross-repository contract change.

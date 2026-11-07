@@ -105,6 +105,22 @@
             "ref": "analysis/frieren-picture-study",
             "sha": "68a33d85799e4cf70a10a8f5fc211b9472043d5a"
           }
+        },
+        {
+          "number": 29,
+          "title": "docs: design shared TypeShade function and visual graph authoring",
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "html_url": "https://github.com/typeshade/typeaudio/pull/29",
+          "head": {
+            "ref": "docs/typed-function-graphs",
+            "sha": "7a3e3343075ebd920374c44a444bd88a45cb274e"
+          },
+          "base": {
+            "ref": "feat/frieren-sound-design-studies",
+            "sha": "6b0b1779d1bf13a17f0bf267dd0f470b62a45bcd"
+          }
         }
       ]
     },
@@ -231,6 +247,18 @@
       "Web PR #47",
       "firstMilestone"
     ],
+    "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
+  },
+  "authoringCheckpoint": {
+    "capturedAt": "2026-11-07T01:52:33.031976+00:00",
+    "ownerDecision": "D14",
+    "workPackage": "E2",
+    "status": "proposed detailed contract; not implemented",
+    "pullRequest": "https://github.com/typeshade/typeaudio/pull/29",
+    "proposal": "function-graph-authoring.md",
+    "firstProposalCommit": "7a3e3343075ebd920374c44a444bd88a45cb274e",
+    "baseCommit": "6b0b1779d1bf13a17f0bf267dd0f470b62a45bcd",
+    "engineCompilerPins": "unchanged",
     "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
   }
 }
