@@ -2,7 +2,13 @@
 
 Statuses refer to the 2026-11-06 checkpoint. Exact delivered commits are in [state.md](state.md).
 This is an ordered program, not authorization to silently merge every stage or to implement a draft compiler proposal.
-R0 recovery is complete; see [the verification receipt](recovery-verification.json). The next implementation task is R1.
+R0 recovery is complete; see [the verification receipt](recovery-verification.json).
+The later owner direction makes editable agent projects in the existing Web editor the first delivery milestone.
+[Web PR #47](https://github.com/typeshade/web/pull/47) implements this focused handoff using the current graph/room baseline.
+Its approved UX corrections and local checks are recorded in [web-ux-verification.json](web-ux-verification.json).
+The subsequent node/code clarification is recorded in [web-node-code-verification.json](web-node-code-verification.json).
+It preserves the per-sample contract; whole-graph TypeScript authoring remains future engine-owned work.
+Review current CI, then complete authorized publication and user/listening acceptance before resuming R1.
 
 ## Completed foundations
 
@@ -21,6 +27,7 @@ R0 recovery is complete; see [the verification receipt](recovery-verification.js
 | ID | Scope and repository | Dependencies | Acceptance evidence |
 | --- | --- | --- | --- |
 | R0 | Durable plan, state snapshot, source archive and recovery drill in TypeAudio | Existing source checkpoints | Fresh clone can find the plan, verify hashes and restore a procedural event. |
+| E1 | Editable agent source projects in the existing Web editor | Current graph/room baseline; Web #46 | Six source projects, code/parameter/space edits, new audio after edits, undo/redo, save/reopen/reload, stale-import rejection and mobile viewport flow. Web #47; no R1/HRTF prerequisite. |
 | R1 | Bounded real-time contract, telemetry and full-chain harness in TypeAudio | Graph runtime and room baseline | Explicit limits, event-age/overflow counters, complete DSP chain measured separately from device output. |
 | R1a | Audio-frame event queue and stale-result handling | R1 contract | Burst events, paired start/stop, late events, slot generation, out-of-order results and bounded processing. |
 | R1b | Voice priority, virtualization, stealing and quality budgets | R1a and measured costs | Deterministic selection, preserved virtual state, no hard cuts, overload policy and hysteresis. |
@@ -43,6 +50,11 @@ R5a is a small feasibility probe, not completion of GPU acoustic propagation.
 R10 does not precede useful HRTF and runtime-budget validation.
 
 ## Next task in concrete terms
+
+First finish E1 using [the Web contract](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md).
+Keep the source-only JSON in Git. Source JSON and prerecorded review audio have distinct roles.
+After an authorized Web merge/deployment, verify the same operations on the existing site and collect listening feedback.
+Do not mark the broader R7/R8 packages complete merely because E1 passes.
 
 R1 starts from the reviewed room/graph source, after reconciling remote PR status.
 It defines a runtime profile before increasing acoustic complexity.

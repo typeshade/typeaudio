@@ -1,0 +1,482 @@
+{
+  "schema": "typeaudio.sound-design-review",
+  "version": 1,
+  "sourceCommit": "87295117341448ddf56e0352903f0baf6051ce85",
+  "compiler": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "reference": {
+    "url": "https://www.youtube.com/watch?v=YHCqcyX9N3s",
+    "sha256": "6f1856eb09d5522f05dfbb5e813df208e99b94fe391c346139e62bb5b0fba87c",
+    "onlineOffsetVerified": false
+  },
+  "status": {
+    "rendered": true,
+    "signalChecked": true,
+    "listeningReviewed": false,
+    "selected": false
+  },
+  "sampleRate": 48000,
+  "channels": 2,
+  "masterBitDepth": 24,
+  "normalization": "Static gain per complete passage; shared A/B target; no per-cue normalization, compression or limiting.",
+  "perspective": "Authored stereo room proxy. No HRTF or front/back/height listening claim.",
+  "variants": [
+    {
+      "name": "red-A",
+      "label": "Compressed mineral core",
+      "sourceRangeSeconds": [
+        20,
+        30
+      ],
+      "tailHandleSeconds": 2.5,
+      "gainDb": 9.25,
+      "targetLufs": -20,
+      "signal": {
+        "sampleFrames": 600000,
+        "durationSeconds": 12.5,
+        "samplePeakDbfs": -3.7861790657043457,
+        "rmsDbfs": -25.68728887846885,
+        "monoLossDb": -0.16457748217243784,
+        "stereoCorrelation": 0.9574430134668741,
+        "nonFiniteSamples": 0,
+        "fullScaleSamples": 0
+      },
+      "wav": {
+        "integratedLufs": -20.0,
+        "truePeakDbtp": -3.55,
+        "loudnessRangeLu": 16.7
+      },
+      "aac": {
+        "integratedLufs": -20.18,
+        "truePeakDbtp": -3.87,
+        "loudnessRangeLu": 16.7
+      },
+      "decodedAacFrames": 600064,
+      "stemReconstructionMaxError": 8.940696716308594e-08,
+      "comparisonChanges": {}
+    },
+    {
+      "name": "red-B",
+      "label": "Rougher turbulent core",
+      "sourceRangeSeconds": [
+        20,
+        30
+      ],
+      "tailHandleSeconds": 2.5,
+      "gainDb": 7.4,
+      "targetLufs": -20,
+      "signal": {
+        "sampleFrames": 600000,
+        "durationSeconds": 12.5,
+        "samplePeakDbfs": -5.145318984985352,
+        "rmsDbfs": -26.12145967569623,
+        "monoLossDb": -0.16194640619717107,
+        "stereoCorrelation": 0.9618418262015934,
+        "nonFiniteSamples": 0,
+        "fullScaleSamples": 0
+      },
+      "wav": {
+        "integratedLufs": -20.01,
+        "truePeakDbtp": -4.86,
+        "loudnessRangeLu": 18.1
+      },
+      "aac": {
+        "integratedLufs": -20.18,
+        "truePeakDbtp": -5.76,
+        "loudnessRangeLu": 18.1
+      },
+      "decodedAacFrames": 600064,
+      "stemReconstructionMaxError": 5.960464477539063e-08,
+      "comparisonChanges": {
+        "red-core": {
+          "character": 0.8
+        }
+      }
+    },
+    {
+      "name": "force-A",
+      "label": "Compact pressure with body",
+      "sourceRangeSeconds": [
+        136.5,
+        149.7
+      ],
+      "tailHandleSeconds": 2.5,
+      "gainDb": 10.399999999999999,
+      "targetLufs": -27.52,
+      "signal": {
+        "sampleFrames": 753600,
+        "durationSeconds": 15.7,
+        "samplePeakDbfs": -2.5621161460876465,
+        "rmsDbfs": -32.02679746954252,
+        "monoLossDb": -0.07358303736439865,
+        "stereoCorrelation": 0.9708926153839097,
+        "nonFiniteSamples": 0,
+        "fullScaleSamples": 0
+      },
+      "wav": {
+        "integratedLufs": -27.53,
+        "truePeakDbtp": -2.55,
+        "loudnessRangeLu": 14.1
+      },
+      "aac": {
+        "integratedLufs": -27.68,
+        "truePeakDbtp": -2.43,
+        "loudnessRangeLu": 14.1
+      },
+      "decodedAacFrames": 753664,
+      "stemReconstructionMaxError": 5.960464477539063e-08,
+      "comparisonChanges": {},
+      "narrativeWindowsDbfs": {
+        "beforeForce": -41.64881656256,
+        "force": -17.92406164492057,
+        "column": -23.081288566147453
+      }
+    },
+    {
+      "name": "force-B",
+      "label": "Shorter pressure impulse",
+      "sourceRangeSeconds": [
+        136.5,
+        149.7
+      ],
+      "tailHandleSeconds": 2.5,
+      "gainDb": 10.920000000000002,
+      "targetLufs": -27.52,
+      "signal": {
+        "sampleFrames": 753600,
+        "durationSeconds": 15.7,
+        "samplePeakDbfs": -3.0917561054229736,
+        "rmsDbfs": -32.49511860331261,
+        "monoLossDb": -0.09180297994994813,
+        "stereoCorrelation": 0.9650502958855939,
+        "nonFiniteSamples": 0,
+        "fullScaleSamples": 0
+      },
+      "wav": {
+        "integratedLufs": -27.52,
+        "truePeakDbtp": -3.08,
+        "loudnessRangeLu": 13.5
+      },
+      "aac": {
+        "integratedLufs": -27.72,
+        "truePeakDbtp": -3.38,
+        "loudnessRangeLu": 13.5
+      },
+      "decodedAacFrames": 753664,
+      "stemReconstructionMaxError": 5.960464477539063e-08,
+      "comparisonChanges": {
+        "force-pressure": {
+          "decay": 0.055
+        }
+      },
+      "narrativeWindowsDbfs": {
+        "beforeForce": -41.12881641895367,
+        "force": -19.698837198982417,
+        "column": -22.562132924562587
+      }
+    },
+    {
+      "name": "finale-A",
+      "label": "Dry fibres losing coherence",
+      "sourceRangeSeconds": [
+        173,
+        189.314625
+      ],
+      "tailHandleSeconds": 2.5,
+      "gainDb": 11.55,
+      "targetLufs": -20,
+      "signal": {
+        "sampleFrames": 903102,
+        "durationSeconds": 18.814625,
+        "samplePeakDbfs": -3.224569320678711,
+        "rmsDbfs": -26.447076923981502,
+        "monoLossDb": -0.041973649403171935,
+        "stereoCorrelation": 0.9807845869447113,
+        "nonFiniteSamples": 0,
+        "fullScaleSamples": 0
+      },
+      "wav": {
+        "integratedLufs": -20.01,
+        "truePeakDbtp": -3.15,
+        "loudnessRangeLu": 18.0
+      },
+      "aac": {
+        "integratedLufs": -20.15,
+        "truePeakDbtp": -3.49,
+        "loudnessRangeLu": 18.1
+      },
+      "decodedAacFrames": 903168,
+      "stemReconstructionMaxError": 5.960464477539063e-08,
+      "comparisonChanges": {}
+    },
+    {
+      "name": "finale-B",
+      "label": "More resonant dissolution",
+      "sourceRangeSeconds": [
+        173,
+        189.314625
+      ],
+      "tailHandleSeconds": 2.5,
+      "gainDb": 11.66,
+      "targetLufs": -20,
+      "signal": {
+        "sampleFrames": 903102,
+        "durationSeconds": 18.814625,
+        "samplePeakDbfs": -3.1145689487457275,
+        "rmsDbfs": -26.41766185933417,
+        "monoLossDb": -0.042325310734882236,
+        "stereoCorrelation": 0.980645230946403,
+        "nonFiniteSamples": 0,
+        "fullScaleSamples": 0
+      },
+      "wav": {
+        "integratedLufs": -20.0,
+        "truePeakDbtp": -3.04,
+        "loudnessRangeLu": 18.0
+      },
+      "aac": {
+        "integratedLufs": -20.13,
+        "truePeakDbtp": -3.41,
+        "loudnessRangeLu": 18.2
+      },
+      "decodedAacFrames": 903168,
+      "stemReconstructionMaxError": 5.960464477539063e-08,
+      "comparisonChanges": {
+        "finale-dissolve": {
+          "character": 0.85
+        }
+      }
+    }
+  ],
+  "assets": [
+    {
+      "path": "red-A-stems/debris.wav",
+      "bytes": 3600102,
+      "sha256": "b186203186578b17e0faf3870e17e5eda716576e7aba1bfb4ca61a48ffb1b535"
+    },
+    {
+      "path": "red-A-stems/detail.wav",
+      "bytes": 3600102,
+      "sha256": "ae4c57bfab06017f0638283869b145c1c94b5b9bde7ef410ed70780ceadef441"
+    },
+    {
+      "path": "red-A-stems/energy.wav",
+      "bytes": 3600102,
+      "sha256": "0800adc0cd8b5eb2cb643c0b16438c5c81fb408cb6ce31dcfd1f1a6a53203cc8"
+    },
+    {
+      "path": "red-A-stems/impact.wav",
+      "bytes": 3600102,
+      "sha256": "ddf26376c108ef9e418dccb8524d9bf52214d3b7b0eff0c4c43649d475cef0d3"
+    },
+    {
+      "path": "red-A-stems/movement.wav",
+      "bytes": 3600102,
+      "sha256": "1f1483fd368a7b101c80401eaee6aac5c0cdadc7f2545508f7295b40c495301a"
+    },
+    {
+      "path": "red-A-stems/space.wav",
+      "bytes": 3600102,
+      "sha256": "a20978190eb50f3350c79466586c42fc0869f2bda1de82080d70b370b30056c9"
+    },
+    {
+      "path": "red-A.wav",
+      "bytes": 3600102,
+      "sha256": "2b43aacc092798ddf29105aa9b208a6ef52ba5362773f716967b00f09241c4df"
+    },
+    {
+      "path": "red-A.m4a",
+      "bytes": 264576,
+      "sha256": "77b6bcf9eece9d443d4918219fcde29793badfe5515fc86dd1d640dbf2068ca1"
+    },
+    {
+      "path": "red-B-stems/debris.wav",
+      "bytes": 3600102,
+      "sha256": "3eb4757868efded313a0069ce16f626dbe1e4dcacd36faf3129cdb85f3524089"
+    },
+    {
+      "path": "red-B-stems/detail.wav",
+      "bytes": 3600102,
+      "sha256": "01b4fdaf8646c73fe0087f149e67fc79d001400533c72a054d680a865a0112d2"
+    },
+    {
+      "path": "red-B-stems/energy.wav",
+      "bytes": 3600102,
+      "sha256": "13d029b786c221159f4324ae0ac324d5cf0f8fc075f7c3b55eb70ff53a13ba6a"
+    },
+    {
+      "path": "red-B-stems/impact.wav",
+      "bytes": 3600102,
+      "sha256": "ea40c46c48fc12a8d7dca9b8f80c6f2dc0f658e8a697ad42c043a49a8a6d5a26"
+    },
+    {
+      "path": "red-B-stems/movement.wav",
+      "bytes": 3600102,
+      "sha256": "37c6df38257ceee02597a559ce467c658630be8bca89e03d55131f0b55c08662"
+    },
+    {
+      "path": "red-B-stems/space.wav",
+      "bytes": 3600102,
+      "sha256": "bca29a577e58ddc66c41e012064393f3122418eeee8a3022f79f6e5ea9564001"
+    },
+    {
+      "path": "red-B.wav",
+      "bytes": 3600102,
+      "sha256": "a1ec8cfdad6fccb2e831e80ee2b9c30205abbebdf03077897878282e4fe32867"
+    },
+    {
+      "path": "red-B.m4a",
+      "bytes": 263654,
+      "sha256": "2c37139e76b300b4857c6f60799bae71cf92a8ae36db9f1781161ce5802a572b"
+    },
+    {
+      "path": "force-A-stems/debris.wav",
+      "bytes": 4521702,
+      "sha256": "b0e713eb087b6b33e7b9da645dffa7f2e1a72bfad02aad855417ce8a4c644f23"
+    },
+    {
+      "path": "force-A-stems/energy.wav",
+      "bytes": 4521702,
+      "sha256": "b791ea08d2011f1ed4f2099bcad6f4dbaba9d910087aab0db7fef1c26dc194da"
+    },
+    {
+      "path": "force-A-stems/impact.wav",
+      "bytes": 4521702,
+      "sha256": "f379cdc40385dde89d9598d0aed79faa27eea77296155c720dc68be4672fee23"
+    },
+    {
+      "path": "force-A-stems/movement.wav",
+      "bytes": 4521702,
+      "sha256": "3f9b6515f0d1b0e44c6f4f15642e686f671862e0201296b4231996551f85d82f"
+    },
+    {
+      "path": "force-A-stems/space.wav",
+      "bytes": 4521702,
+      "sha256": "1583021c6034798b1c614a866b78d9daa53a27a1fcfc179ff47cdb1a4733e6f8"
+    },
+    {
+      "path": "force-A.wav",
+      "bytes": 4521702,
+      "sha256": "be7e9b572cc4ac49796b71bcfdbd06f2b3da791750ef3b2904584d55b5f51a5b"
+    },
+    {
+      "path": "force-A.m4a",
+      "bytes": 339176,
+      "sha256": "a7f66c26b6271c993148b91ae29084bc35d4dd31966090e5d6cd181ea9bb5b2a"
+    },
+    {
+      "path": "force-B-stems/debris.wav",
+      "bytes": 4521702,
+      "sha256": "868c7ca460f87418cec149c389e3978641e21de6c13d81f58d307beca9876564"
+    },
+    {
+      "path": "force-B-stems/energy.wav",
+      "bytes": 4521702,
+      "sha256": "a33363d797a42974ae5cb3bbc17438649f9f39d59e230e6fb9b2fb148f5b40f1"
+    },
+    {
+      "path": "force-B-stems/impact.wav",
+      "bytes": 4521702,
+      "sha256": "729b8668e9af8614ca5fc348b5692a852482f5bca41df0fbd5277df10e0c707d"
+    },
+    {
+      "path": "force-B-stems/movement.wav",
+      "bytes": 4521702,
+      "sha256": "1bc323e805753a523596ef664f095c2b1e1076e196238a7e2400a75427a867cb"
+    },
+    {
+      "path": "force-B-stems/space.wav",
+      "bytes": 4521702,
+      "sha256": "bb7f515b0c99a79dba037ac76b55fc42d7a4ec00aa4faf8894f57ee9bd886a71"
+    },
+    {
+      "path": "force-B.wav",
+      "bytes": 4521702,
+      "sha256": "26b5e804a6c5abaf6b8003c15cca5fbfbee335b8208a3a1780db4c12ebf1238b"
+    },
+    {
+      "path": "force-B.m4a",
+      "bytes": 340119,
+      "sha256": "5c37899ad5431366d97307174ba1d3d0722d7410579c83a17d6dfb1c0b5c8e19"
+    },
+    {
+      "path": "finale-A-stems/debris.wav",
+      "bytes": 5418714,
+      "sha256": "8828478984bb8a9cffc88cda5e7909527db66e87063ac863111656f651555510"
+    },
+    {
+      "path": "finale-A-stems/detail.wav",
+      "bytes": 5418714,
+      "sha256": "4d74007d4060271952873825547441083de87ad5986763f603c986c149fb6c2b"
+    },
+    {
+      "path": "finale-A-stems/energy.wav",
+      "bytes": 5418714,
+      "sha256": "2234b9327c4c81321d0d8aee9f24eb2748e4a012db657c1a638a357dfa5ed27f"
+    },
+    {
+      "path": "finale-A-stems/impact.wav",
+      "bytes": 5418714,
+      "sha256": "dd7eea082afc7a3a0cc3ee96da0e7ee5a295b28ec88e7210ca1981f889591d9f"
+    },
+    {
+      "path": "finale-A-stems/movement.wav",
+      "bytes": 5418714,
+      "sha256": "f968ed948bbcfd008d5135c9830b93b84b91a16feabaa742bce4bf9964cafa8b"
+    },
+    {
+      "path": "finale-A-stems/space.wav",
+      "bytes": 5418714,
+      "sha256": "c53a7707c2f1509fd36072bf61b25b8504a9e032f1c997c4e43eaa4d4ca67a6e"
+    },
+    {
+      "path": "finale-A.wav",
+      "bytes": 5418714,
+      "sha256": "62fb1c219f25481635a0bc7b664eb9102ac94a64b935e8d8f5fc9ca465388157"
+    },
+    {
+      "path": "finale-A.m4a",
+      "bytes": 415220,
+      "sha256": "8143ca1f10f3c440a6b91ac66e2e9d028a9614eef860bc109cf108ccaaeebf8d"
+    },
+    {
+      "path": "finale-B-stems/debris.wav",
+      "bytes": 5418714,
+      "sha256": "5a25ce7a24d12c35dea37a5a7c10000b5ad4e6965ecb5e72ba6cbbd30fc81962"
+    },
+    {
+      "path": "finale-B-stems/detail.wav",
+      "bytes": 5418714,
+      "sha256": "578b732dd6a2ca1b2dfa5950777aa411b3b2ed7f7b95e2e031984b4e87d33186"
+    },
+    {
+      "path": "finale-B-stems/energy.wav",
+      "bytes": 5418714,
+      "sha256": "80d8abf4996ff08216643865e3035d7a69a392921af7ebf29c0b57c77c25eb3b"
+    },
+    {
+      "path": "finale-B-stems/impact.wav",
+      "bytes": 5418714,
+      "sha256": "75649d0b80e0579fe3517754738a3d0f9c3737a28ee910b99bc2330196b08b36"
+    },
+    {
+      "path": "finale-B-stems/movement.wav",
+      "bytes": 5418714,
+      "sha256": "7973ae0a71e3ec926ec836e048587e2a8006ef1c945a2c8bde153d33fa08bbca"
+    },
+    {
+      "path": "finale-B-stems/space.wav",
+      "bytes": 5418714,
+      "sha256": "0e823a36308a8ec9a0c0183c88ef2a01ae6a09f4dd2f1332156c32d716e9db52"
+    },
+    {
+      "path": "finale-B.wav",
+      "bytes": 5418714,
+      "sha256": "a7e5ab8547407e6128aaebb501bdf982abc8e0b175e8788bee07b203ab8e0fcc"
+    },
+    {
+      "path": "finale-B.m4a",
+      "bytes": 415153,
+      "sha256": "147aec6283160272da92ccbaf5ed5394b6f547f2ec077f62a57b0723f135d2db"
+    }
+  ]
+}

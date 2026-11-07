@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-06T13:23:28.814425+00:00",
+  "sourceCommit": "87295117341448ddf56e0352903f0baf6051ce85",
+  "compiler": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "pictureRegionsCovered": 41,
+  "layers": 47,
+  "anchorMappings": [
+    {
+      "layer": "red-shell",
+      "anchor": "red-fracture",
+      "absoluteSample": 1233232,
+      "errorSeconds": 3.3333333249174757e-07
+    },
+    {
+      "layer": "red-release",
+      "anchor": "red-radial-release",
+      "absoluteSample": 1237236,
+      "errorSeconds": 0.0
+    },
+    {
+      "layer": "red-expansion",
+      "anchor": "red-radial-release",
+      "absoluteSample": 1237236,
+      "errorSeconds": 0.0
+    },
+    {
+      "layer": "force-pressure",
+      "anchor": "force-response",
+      "absoluteSample": 6968962,
+      "errorSeconds": 3.3333333249174757e-07
+    },
+    {
+      "layer": "force-edge",
+      "anchor": "force-response",
+      "absoluteSample": 6968962,
+      "errorSeconds": 3.3333333249174757e-07
+    },
+    {
+      "layer": "force-body",
+      "anchor": "column-contact",
+      "absoluteSample": 7004998,
+      "errorSeconds": 3.3333333249174757e-07
+    },
+    {
+      "layer": "force-column",
+      "anchor": "column-contact",
+      "absoluteSample": 7004998,
+      "errorSeconds": 3.3333333249174757e-07
+    },
+    {
+      "layer": "finale-flash",
+      "anchor": "final-flash",
+      "absoluteSample": 8522514,
+      "errorSeconds": 0.0
+    },
+    {
+      "layer": "finale-pressure",
+      "anchor": "final-flash",
+      "absoluteSample": 8522514,
+      "errorSeconds": 0.0
+    },
+    {
+      "layer": "finale-beam",
+      "anchor": "final-established-beam",
+      "absoluteSample": 8534526,
+      "errorSeconds": 0.0
+    },
+    {
+      "layer": "finale-edge",
+      "anchor": "final-established-beam",
+      "absoluteSample": 8534526,
+      "errorSeconds": 0.0
+    }
+  ],
+  "repeatedRawStems": 34,
+  "repeatedRawStemsBitIdentical": true,
+  "deliveryFilesVerified": 46,
+  "comparisons": [
+    {
+      "study": "red",
+      "wavLoudnessDeltaLu": 0.010000000000001563,
+      "aacLoudnessDeltaLu": 0.0
+    },
+    {
+      "study": "force",
+      "wavLoudnessDeltaLu": 0.010000000000001563,
+      "aacLoudnessDeltaLu": 0.03999999999999915
+    },
+    {
+      "study": "finale",
+      "wavLoudnessDeltaLu": 0.010000000000001563,
+      "aacLoudnessDeltaLu": 0.019999999999999574
+    }
+  ],
+  "forceBackgroundTargetPassed": true,
+  "outcome": "passed",
+  "listeningReviewed": false,
+  "limits": [
+    "Same host and toolchain determinism only",
+    "No physical phone listening or YouTube offset test"
+  ]
+}

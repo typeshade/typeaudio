@@ -1,0 +1,5 @@
+const x: f32 = clamp(time / p2, 0, 1);
+state0 += (0.025 + 0.22 * sin(x * 3.14159265)) * (input - state0);
+state1 += 0.012 * (input - state1);
+const arch: f32 = sin(x * 3.14159265);
+out = (state0 - state1) * 1.8 * arch * arch;

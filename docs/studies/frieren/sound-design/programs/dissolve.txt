@@ -1,0 +1,7 @@
+const x: f32 = clamp(time / p2, 0, 1);
+state0 += 0.018 * (input - state0);
+state1 += (0.23 - 0.14 * x) * (input - state1);
+state2 = fract(state2 + p0 * (1 - 0.35 * x) / sampleRate);
+const fibre: f32 = (state1 - state0) * (0.6 + 0.4 * sin(time * 53) * sin(time * 17.7));
+const crystal: f32 = sin(state2 * 6.2831853) * 0.11 + sin(time * p0 * 10.1) * 0.07;
+out = (fibre * (1.4 - p3) + crystal * p3) * (1 - x) * (1 - x);

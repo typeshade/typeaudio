@@ -3,6 +3,32 @@
 Snapshot date: 2026-11-06. [snapshot.json](snapshot.json) records exact remote PR heads and bases.
 Re-query remote status before continuing; this file is a historical checkpoint, not a live dashboard.
 
+Priority update, 2026-11-07: the owner's first delivery milestone is editable agent output in the existing Web editor.
+[Web #47](https://github.com/typeshade/web/pull/47) adds six source-only study projects,
+code/parameter/space edits and save/reopen verification, based on Web #46.
+It consumes engine room commit `86560f83a92ff8374346157000b8a467daa39aab` with the unchanged compiler pin.
+Its [contract and status](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md)
+precede further R1 work. No new deployment or merge is implied by this checkpoint.
+Local Web verification is complete at `fad1cd07fb516d7eb1b2dc949c617606d4cdad45`.
+Read [the verification receipt](web-project-verification.json) for commands, scope and remaining limits.
+
+
+UX continuation, 2026-11-07: the owner-approved Web corrections are implemented at
+`8cfd39bfb8688c5079e353baa8b9ad3af17bc821`. Read [the correction record](https://github.com/typeshade/web/blob/8cfd39bfb8688c5079e353baa8b9ad3af17bc821/docs/reviews/typeaudio-editor-ux.md)
+and [the local UX verification receipt](web-ux-verification.json).
+Project version 2 preserves unapplied code drafts; project switches keep recoverable browser copies.
+The inspector scrolls, candidate preview preserves current work, and contextual editing retains the composition timeline.
+Mobile task panels keep playback visible. Local checks passed; verify current Web PR CI before publication.
+Review, physical-phone testing, listening feedback and authorized publication remain. No engine or compiler pin changed.
+
+Node/code continuation, 2026-11-07: Web `63216066bb8a2109d0c7e5b6286500b04ab39cb0` corrects the mismatch between canvas selection and the editable body.
+Built-in nodes show settings; one Code node exposes its per-sample body and actual input/output connections.
+Parameter completion/hover includes graph names. Drafts and code Undo survive inspection.
+Read [the relationship record](https://github.com/typeshade/web/blob/63216066bb8a2109d0c7e5b6286500b04ab39cb0/docs/reviews/typeaudio-node-code.md) and [the verification receipt](web-node-code-verification.json).
+Local verification passed 95 unit tests and all 15 browser suites. Inspect current PR CI before publication.
+Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
+This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
+
 ## Repository ownership
 
 | Repository | Responsibility | Recorded main commit |

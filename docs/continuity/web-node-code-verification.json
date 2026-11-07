@@ -1,0 +1,94 @@
+{
+  "schema": "typeaudio.node-code-verification",
+  "version": 1,
+  "recordedAt": "2026-11-07T01:39:55.175461+00:00",
+  "applicationBuildCommit": "f772ecf150ab0d91ee9afae6f98194c563122985",
+  "pullRequest": "https://github.com/typeshade/web/pull/47",
+  "engineCommit": "86560f83a92ff8374346157000b8a467daa39aab",
+  "compilerCommit": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "environment": {
+    "node": "24.19.0",
+    "bun": "1.4.4",
+    "browser": "Chrome for Testing 156.0.8078.4, headless, Debian 13",
+    "desktop": [
+      1680,
+      1050
+    ],
+    "nodeCodeMobile": [
+      390,
+      844
+    ],
+    "existingUxMobileWidths": [
+      320,
+      390
+    ],
+    "physicalDevice": false
+  },
+  "checks": {
+    "bun run check": "passed; 194 editor modules and compiler-pair test",
+    "bun run test": "95 tests in 19 files passed",
+    "bun run build": "passed",
+    "browserSuites": [
+      "workspace",
+      "state",
+      "render-device-loss",
+      "interactions",
+      "sound-design",
+      "timeline",
+      "audio-import",
+      "graph",
+      "node-workspace",
+      "code-workspace",
+      "code-language",
+      "feedback",
+      "agent-projects",
+      "editor-ux",
+      "node-code"
+    ],
+    "allListedBrowserSuites": "passed individually against the same application build; all exit codes 0",
+    "nodeCodeScriptSha256": "63deca2cbcc5b46676484cce5d651e4609e0d4cf5f0d5001e6956ea51c3ab84b",
+    "applicationSourceAfterBuild": "unchanged; follow-up changes are regression waits/assertions and documentation",
+    "regressionCorrections": [
+      "Wait for completion content after the loading widget appears.",
+      "Wait for actual error decorations after Problems updates.",
+      "Assert deleted Code tab removal instead of a fixed total tab count; built-in settings now have a tab."
+    ]
+  },
+  "reproduction": {
+    "beforeBuild": "8cfd39bfb8688c5079e353baa8b9ad3af17bc821",
+    "action": "Create procedural sound, write a Code draft, select Noise.",
+    "before": "Apply code remained visible for the unrelated Code node. Browser assertion failed as expected.",
+    "after": "Noise settings replace the editable body; selecting Code restores its draft and local Undo/Redo."
+  },
+  "nodeCodeChecks": [
+    "Built-in selection has no editable Code body or Apply action.",
+    "Selecting a Code tab selects the corresponding graph node.",
+    "Draft and code Undo/Redo survive built-in inspection.",
+    "Connection descriptions and links use actual graph IDs.",
+    "Parameter binding links focus the actual slider.",
+    "Actual TypeShade completion includes the graph parameter name.",
+    "Selecting a node exits generated output, including the same node selected previously.",
+    "Multiple selection has no unrelated editable body.",
+    "Applied Code produces progressing AudioWorklet frames.",
+    "Code remains editable within a 390px mobile viewport.",
+    "Clarified Impact local names produce bit-identical PCM to the previous source."
+  ],
+  "screenshots": [
+    "apps/typeaudio/artifacts/node-code/linked-code.png",
+    "apps/typeaudio/artifacts/node-code/linked-code-mobile.png"
+  ],
+  "ci": "Inspect current PR-head checks. Initial application checkpoint CI failed the obsolete fixed-tab-count assertion; the corrected code-workspace suite passed locally. This receipt records local verification, not final CI status.",
+  "warnings": [
+    "Existing TS8070 CPU fallback warning in the legacy synth path.",
+    "Bun moduleSuffixes warning.",
+    "Existing large compiler/Monaco bundle warning."
+  ],
+  "limits": [
+    "No whole-graph TypeScript authoring or code/node round trip.",
+    "The bounded TypeAudio sample-body contract is unchanged; it is not the full TypeShade language surface.",
+    "No independent-user acceptance or complete accessibility audit.",
+    "Mobile emulation is not physical-phone keyboard/audio validation.",
+    "Existing SwiftShader suites establish software correctness, not hardware GPU performance or game real-time guarantees.",
+    "No listening approval, engine/compiler pin change, merge or deployment."
+  ]
+}

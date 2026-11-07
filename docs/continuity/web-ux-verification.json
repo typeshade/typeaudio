@@ -1,0 +1,127 @@
+{
+  "schema": "typeaudio.editor-ux-verification",
+  "version": 1,
+  "recordedAt": "2026-11-07T01:16:35.013402+00:00",
+  "applicationBuildCommit": "554cd538ee25b5cf9a32ebf706dd78bfd839550e",
+  "firstImplementationCommit": "57b0492",
+  "pullRequest": "https://github.com/typeshade/web/pull/47",
+  "engineCommit": "86560f83a92ff8374346157000b8a467daa39aab",
+  "compilerCommit": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "environment": {
+    "node": "24.19.0",
+    "bun": "1.4.4",
+    "browser": "Chrome for Testing 156.0.8078.4, headless, Debian 13",
+    "desktop": [
+      1680,
+      1050
+    ],
+    "mobile": [
+      [
+        390,
+        844
+      ],
+      [
+        320,
+        844
+      ]
+    ],
+    "physicalDevice": false
+  },
+  "checks": {
+    "check": "passed; 191 editor modules and compiler-pair test",
+    "unit": "92 tests in 18 files passed",
+    "build": "passed",
+    "firstBuildBrowserSuites": [
+      "workspace",
+      "timeline",
+      "audio-import",
+      "graph",
+      "node-workspace",
+      "code-workspace",
+      "feedback",
+      "agent-projects",
+      "device-loss",
+      "code-language"
+    ],
+    "refinedBuildBrowserSuites": [
+      "state",
+      "interactions",
+      "sound-design",
+      "editor-ux"
+    ],
+    "allListedBrowserSuites": "passed",
+    "renameRegression": "500ms worker delay; exact renamed draft awaited and asserted",
+    "uxScriptSha256": "a723e72f0ccc20cbe1190b2eb5de74306339be5f14800d45e0fc54739de43802"
+  },
+  "uxChecks": [
+    "native inspector wheel scrolling and visible primary action",
+    "candidate preview leaves document and saved copies unchanged",
+    "pending preview cancellation",
+    "contextual editor retains timeline and composition transport",
+    "incomplete draft survives file save, fresh context, recovery and reload without applying",
+    "failed recovery checkpoint blocks replacement",
+    "failed browser autosave is visible; file download rescues current state",
+    "mobile task dimensions and persistent 44px playback targets",
+    "direct project-link entry",
+    "project save from a focused name input"
+  ],
+  "observations": {
+    "inspector": {
+      "height": 465,
+      "content": 2067,
+      "scroll": 1602
+    },
+    "390-Listen": {
+      "width": 390,
+      "height": 844,
+      "viewport": 844
+    },
+    "390-Layers": {
+      "width": 390,
+      "height": 844,
+      "viewport": 844
+    },
+    "390-Edit": {
+      "width": 390,
+      "height": 844,
+      "viewport": 844
+    },
+    "390-Projects": {
+      "width": 390,
+      "height": 844,
+      "viewport": 844
+    },
+    "320-Listen": {
+      "width": 320,
+      "height": 844,
+      "viewport": 844
+    },
+    "320-Layers": {
+      "width": 320,
+      "height": 844,
+      "viewport": 844
+    },
+    "320-Edit": {
+      "width": 320,
+      "height": 844,
+      "viewport": 844
+    },
+    "320-Projects": {
+      "width": 320,
+      "height": 844,
+      "viewport": 844
+    },
+    "portableScene": "UX edited A"
+  },
+  "ci": "Inspect the current PR checks; this is a local verification receipt.",
+  "limits": [
+    "No independent-user study or complete accessibility audit.",
+    "Mobile emulation is not physical-phone keyboard/audio validation.",
+    "No listening approval or candidate selection.",
+    "Three passage pairs, not the complete scene mix.",
+    "Prepared CPU room preview is not a game real-time guarantee.",
+    "SwiftShader results from existing suites establish functionality, not hardware GPU performance.",
+    "No production merge or deployment."
+  ],
+  "sourceReceipt": "https://github.com/typeshade/web/blob/8cfd39bfb8688c5079e353baa8b9ad3af17bc821/docs/reviews/typeaudio-editor-ux-verification.json"
+}

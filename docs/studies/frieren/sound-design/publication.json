@@ -1,0 +1,138 @@
+{
+  "date": "2026-11-06T13:26:46.198345+00:00",
+  "bucket": "typesound",
+  "prefix": "studies/frieren/v3-sound-design/6cdf40238e93936c",
+  "sourceCommit": "87295117341448ddf56e0352903f0baf6051ce85",
+  "access": "private; seven-day signed object links only",
+  "bucketVisibilityChanged": false,
+  "sourceVideoUploaded": false,
+  "websiteDeployed": false,
+  "objects": [
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/red-A.m4a",
+      "bytes": 264576,
+      "sha256": "77b6bcf9eece9d443d4918219fcde29793badfe5515fc86dd1d640dbf2068ca1",
+      "contentType": "audio/mp4",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/red-A.wav",
+      "bytes": 3600102,
+      "sha256": "2b43aacc092798ddf29105aa9b208a6ef52ba5362773f716967b00f09241c4df",
+      "contentType": "audio/x-wav",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/red-B.m4a",
+      "bytes": 263654,
+      "sha256": "2c37139e76b300b4857c6f60799bae71cf92a8ae36db9f1781161ce5802a572b",
+      "contentType": "audio/mp4",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/red-B.wav",
+      "bytes": 3600102,
+      "sha256": "a1ec8cfdad6fccb2e831e80ee2b9c30205abbebdf03077897878282e4fe32867",
+      "contentType": "audio/x-wav",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/force-A.m4a",
+      "bytes": 339176,
+      "sha256": "a7f66c26b6271c993148b91ae29084bc35d4dd31966090e5d6cd181ea9bb5b2a",
+      "contentType": "audio/mp4",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/force-A.wav",
+      "bytes": 4521702,
+      "sha256": "be7e9b572cc4ac49796b71bcfdbd06f2b3da791750ef3b2904584d55b5f51a5b",
+      "contentType": "audio/x-wav",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/force-B.m4a",
+      "bytes": 340119,
+      "sha256": "5c37899ad5431366d97307174ba1d3d0722d7410579c83a17d6dfb1c0b5c8e19",
+      "contentType": "audio/mp4",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/force-B.wav",
+      "bytes": 4521702,
+      "sha256": "26b5e804a6c5abaf6b8003c15cca5fbfbee335b8208a3a1780db4c12ebf1238b",
+      "contentType": "audio/x-wav",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/finale-A.m4a",
+      "bytes": 415220,
+      "sha256": "8143ca1f10f3c440a6b91ac66e2e9d028a9614eef860bc109cf108ccaaeebf8d",
+      "contentType": "audio/mp4",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/finale-A.wav",
+      "bytes": 5418714,
+      "sha256": "62fb1c219f25481635a0bc7b664eb9102ac94a64b935e8d8f5fc9ca465388157",
+      "contentType": "audio/x-wav",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/finale-B.m4a",
+      "bytes": 415153,
+      "sha256": "147aec6283160272da92ccbaf5ed5394b6f547f2ec077f62a57b0723f135d2db",
+      "contentType": "audio/mp4",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/finale-B.wav",
+      "bytes": 5418714,
+      "sha256": "a7e5ab8547407e6128aaebb501bdf982abc8e0b175e8788bee07b203ab8e0fcc",
+      "contentType": "audio/x-wav",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/mobile-review.zip",
+      "bytes": 2027594,
+      "sha256": "940629cf96568e7cfffdcf623b0683bacb8366626482d3e3c0691403c667b2b6",
+      "contentType": "application/zip",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/aligned-stems.zip",
+      "bytes": 46263853,
+      "sha256": "5efc6dec909576696f52c684a4a0689ff959a47f56e6297ccae05cb24c5ec409",
+      "contentType": "application/zip",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/source-recipes.zip",
+      "bytes": 123646,
+      "sha256": "5dd4142bf3d4bb38c460364af98b53b6d16bb8aacc2d94f8c2c958f14b28e722",
+      "contentType": "application/zip",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/manifest.json",
+      "bytes": 14218,
+      "sha256": "6cdf40238e93936c0c32a5ed4004050bdeefb8885be9cd7f0547592729634980",
+      "contentType": "application/json",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/README.txt",
+      "bytes": 1369,
+      "sha256": "34d57f8a7208118954fe99d0ae1599feff9c69ec487f5732c8ab1fee966e3405",
+      "contentType": "text/plain",
+      "remoteHashVerified": true
+    },
+    {
+      "key": "studies/frieren/v3-sound-design/6cdf40238e93936c/review-notes.json",
+      "bytes": 669,
+      "sha256": "84dde0b6aade1e134ed9f8750bd5c2e60247040a4e31d7cce2bc43ad52cf3054",
+      "contentType": "application/json",
+      "remoteHashVerified": true
+    }
+  ]
+}
