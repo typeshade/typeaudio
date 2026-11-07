@@ -1,0 +1,128 @@
+{
+  "schema": "typeaudio.web-composition-verification",
+  "version": 1,
+  "recordedAt": "2026-11-07T05:59:41.684578+00:00",
+  "pullRequest": "https://github.com/typeshade/web/pull/47",
+  "applicationCommit": "479fb60dae42e06411406d0063a7fc8f21d65c20",
+  "websiteTree": "1295159c1457a31dc847db1e55cfc617ff788ecb",
+  "engineCommit": "5489ac494e69b5eb2dfae63546cc7643ecfea0f0",
+  "enginePullRequest": "https://github.com/typeshade/typeaudio/pull/30",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "environment": {
+    "host": "managed Linux cloud environment",
+    "browser": "156.0.8078.4",
+    "bun": "1.4.4",
+    "pnpm": "10.28.2",
+    "hardwareAudioValidated": false
+  },
+  "checks": [
+    {
+      "command": "pnpm --filter typeaudio-site check",
+      "result": "passed",
+      "architectureModules": 226,
+      "compilerPairGuard": "passed"
+    },
+    {
+      "command": "pnpm --filter typeaudio-site test",
+      "result": "passed",
+      "tests": 108,
+      "files": 21
+    },
+    {
+      "command": "pnpm --filter typeaudio-site build",
+      "result": "passed"
+    },
+    {
+      "command": "pnpm --filter typeaudio-site test:browser",
+      "result": "passed",
+      "suites": 17,
+      "scripts": [
+        "bun website/check-workspace-browser.ts",
+        "bun website/check-state-browser.ts",
+        "bun website/check-render-device-loss.ts",
+        "bun website/check-interactions-browser.ts",
+        "bun website/check-sound-design-browser.ts",
+        "bun website/check-timeline-browser.ts",
+        "bun website/check-audio-import-browser.ts",
+        "bun website/check-graph-browser.ts",
+        "bun website/check-node-workspace-browser.ts",
+        "bun website/check-code-workspace-browser.ts",
+        "bun website/check-code-language-browser.ts",
+        "bun website/check-feedback-browser.ts",
+        "bun website/check-agent-projects-browser.ts",
+        "bun website/check-editor-ux-browser.ts",
+        "bun website/check-node-code-browser.ts",
+        "bun website/check-function-authoring-browser.ts",
+        "bun website/check-composition-browser.ts"
+      ]
+    }
+  ],
+  "compositionBrowser": {
+    "date": "2026-11-07T05:59:03.631Z",
+    "browser": "156.0.8078.4",
+    "desktop": {
+      "genuineCalls": true,
+      "projection": true,
+      "commentsAndHelpers": true,
+      "stableRename": true,
+      "undoRedo": true,
+      "completionAndDefinition": true,
+      "commentOnlyLive": true,
+      "conflictRecovery": true,
+      "staleGuard": true,
+      "projectVersion": 4,
+      "invalidDraftRoundTrip": true,
+      "mismatchedImportRejected": true,
+      "originalHash": "a5a25a94634814889bb27340838bfac440ffe33224bcf4d15ac17aa21265d28d",
+      "authoredHash": "c19bb1a2c429c75dce7dd1a2a6cd69514a0595c5b33452a903a21ce1eedb8a79",
+      "validHash": "51bbc139ecfb748897ae4517e07ceebd4d9376617ec2ceaafa0d2d42ef67ba55"
+    },
+    "mobile": {
+      "widths": [
+        390,
+        320
+      ],
+      "compositionAccessible": true,
+      "transportVisible": true,
+      "physicalDevice": false
+    },
+    "errors": []
+  },
+  "screenshots": [
+    {
+      "path": "apps/typeaudio/artifacts/composition-authoring/desktop.png",
+      "sha256": "d9f677f2f9684d3822e79cd49c9d8106d5ef98e1e9825e4a951f63392a27b7ed",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "apps/typeaudio/artifacts/composition-authoring/mobile.png",
+      "sha256": "0b53c7a3cf0dd4bddb4942681bc286170959455c11f527454cd96406f0bf54da",
+      "visuallyReviewed": true
+    }
+  ],
+  "preserved": [
+    "All six Frieren source projects and the legacy graph/module workflows",
+    "Current controls, layout and newer drafts during stale preparation",
+    "Empty and unsupported drafts, project reopen/reload and exact applied WAV",
+    "Stable connected pins and compatible state during explicit symbol rename"
+  ],
+  "formats": {
+    "engineFunctionGraph": 1,
+    "compositionProject": 4,
+    "compositionSoundFile": 3,
+    "compositionBrowserEnvelope": 3
+  },
+  "limitations": [
+    "Static const-call composition; full processing remains in function modules",
+    "Exported composition state classes",
+    "Reusable subgraphs, E2d/R1 events and native/Unreal remain separate work",
+    "Mono CPU function profile, scalar ports/state, no automatic per-control smoothing",
+    "Browser emulation only; no physical-phone deadline or listening acceptance",
+    "No merge or deployment"
+  ],
+  "knownWarnings": [
+    "Existing CPU fallback",
+    "Bun moduleSuffixes",
+    "Vite bundle sizes"
+  ]
+}

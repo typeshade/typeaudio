@@ -1,0 +1,80 @@
+{
+  "schema": "typeaudio.composition-engine-verification",
+  "version": 1,
+  "recordedAt": "2026-11-07T05:55:56.559863+00:00",
+  "engineCommit": "5489ac494e69b5eb2dfae63546cc7643ecfea0f0",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "checks": [
+    {
+      "command": "bun run check",
+      "result": "passed"
+    },
+    {
+      "command": "bun run test",
+      "result": "passed",
+      "tests": 119,
+      "files": 19
+    },
+    {
+      "command": "bun run test:function-worklet",
+      "result": "passed",
+      "receipt": {
+        "date": "2026-11-07T05:53:22.795Z",
+        "commit": "5489ac494e69b5eb2dfae63546cc7643ecfea0f0",
+        "compiler": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+        "check": "typed function AudioWorklet",
+        "browser": "156.0.8078.4",
+        "frames": 16384,
+        "sampleRate": 48000,
+        "maxError": 0,
+        "energy": 81.33363348968471,
+        "peak": 0.5392501354217529,
+        "functions": [
+          {
+            "definition": "excitation",
+            "backend": "compiled-cpu-f32",
+            "functions": [
+              "excitation"
+            ],
+            "reusedInoutArrays": 2,
+            "stepLimit": 2048
+          },
+          {
+            "definition": "resonator",
+            "backend": "compiled-cpu-f32",
+            "functions": [
+              "advance",
+              "resonator"
+            ],
+            "reusedInoutArrays": 4,
+            "stepLimit": 2048
+          },
+          {
+            "definition": "gain",
+            "backend": "compiled-cpu-f32",
+            "functions": [
+              "attack",
+              "gain"
+            ],
+            "reusedInoutArrays": 0,
+            "stepLimit": 2048
+          }
+        ],
+        "scope": "Actual OfflineAudioContext/AudioWorklet module loading, synchronous PCM, parameter updates and state reset. No compiler/eval in worklet bundle. Excludes physical device deadlines and listening approval."
+      }
+    }
+  ],
+  "scope": [
+    "Genuine TypeShade composition and graph/PCM round trips",
+    "State ownership, class aliases and reserved graph identities",
+    "Comment/helper preservation on projection",
+    "Connected symbol rename and compatible state/PCM preservation",
+    "Located invalid source and binding diagnostics"
+  ],
+  "limitations": [
+    "Static const-call composition only; full processing remains in function modules",
+    "Composition state classes must be exported",
+    "Reusable subgraphs and E2d/R1 events remain separate",
+    "No native/Unreal execution, physical-device deadline guarantee or listening approval"
+  ]
+}

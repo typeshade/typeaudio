@@ -28,7 +28,9 @@ Use the implemented engine baseline for this first handoff; do not wait for the 
 
 D14 records the owner's 2026-11-07 clarification. It refines D05 without requiring an Unreal plugin in the current Web delivery.
 The [function/graph proposal](function-graph-authoring.md) records the implementation contract, event/audio distinction and native-host boundary.
-Its detailed APIs and delivery slices are proposed; they are not shipped behavior.
+The owner subsequently instructed implementation to proceed, starting with E2a's engine contract.
+[PR #30](https://github.com/typeshade/typeaudio/pull/30) implements its first CPU profile.
+E2b–E2e remain planned. This approval does not merge the stack or publish a replacement editor.
 
 ## Real-time and performance direction
 

@@ -12,6 +12,7 @@
     "experiments/**/node.ts",
     "test/browser/run.ts",
     "test/fft.test.ts",
+    "test/quality/**/*.test.ts",
     "vitest.config.ts",
     "website/vite.config.ts",
     "website/check-browser.ts"

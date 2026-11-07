@@ -1,0 +1,208 @@
+{
+  "schema": "typeaudio.function-graph-verification",
+  "version": 1,
+  "recordedAt": "2026-11-07T02:34:52.189830+00:00",
+  "pullRequest": "https://github.com/typeshade/typeaudio/pull/30",
+  "sourceCheckpoint": "b0236e1ad85e0b41c34579058b63f2e2f06c258e",
+  "implementationCommit": "b5b74cc11612e46c0a3beeebd5ea6b5afa8eca60",
+  "functionSourceTree": "3e56822092a28de99884d5dd756ba77c72c88021",
+  "base": "1fa70191af99424a60488e1a2679b6ada55bc5a4",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "environment": {
+    "host": "managed Linux cloud environment",
+    "bun": "1.4.4",
+    "browser": "Chrome for Testing 156.0.8078.4",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "checks": [
+    {
+      "command": "bun run check",
+      "result": "passed",
+      "commit": "b5b74cc11612e46c0a3beeebd5ea6b5afa8eca60"
+    },
+    {
+      "command": "bun run test",
+      "result": "passed",
+      "files": 16,
+      "tests": 106,
+      "functionGraphTests": 24,
+      "commit": "b5b74cc11612e46c0a3beeebd5ea6b5afa8eca60"
+    },
+    {
+      "command": "bun run check:website && bun run build:website",
+      "result": "passed",
+      "ci": "https://github.com/typeshade/typeaudio/actions/runs/42329339367"
+    },
+    {
+      "command": "bun run test:function-worklet",
+      "result": "passed",
+      "report": {
+        "date": "2026-11-07T02:27:29.302Z",
+        "commit": "b5b74cc11612e46c0a3beeebd5ea6b5afa8eca60",
+        "compiler": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+        "check": "typed function AudioWorklet",
+        "browser": "156.0.8078.4",
+        "frames": 16384,
+        "sampleRate": 48000,
+        "maxError": 0,
+        "energy": 81.33363348968471,
+        "peak": 0.5392501354217529,
+        "functions": [
+          {
+            "definition": "excitation",
+            "backend": "compiled-cpu-f32",
+            "functions": [
+              "excitation"
+            ],
+            "reusedInoutArrays": 2,
+            "stepLimit": 2048
+          },
+          {
+            "definition": "resonator",
+            "backend": "compiled-cpu-f32",
+            "functions": [
+              "advance",
+              "resonator"
+            ],
+            "reusedInoutArrays": 4,
+            "stepLimit": 2048
+          },
+          {
+            "definition": "gain",
+            "backend": "compiled-cpu-f32",
+            "functions": [
+              "attack",
+              "gain"
+            ],
+            "reusedInoutArrays": 0,
+            "stepLimit": 2048
+          }
+        ],
+        "scope": "Actual OfflineAudioContext/AudioWorklet module loading, synchronous PCM, parameter updates and state reset. No compiler/eval in worklet bundle. Excludes physical device deadlines and listening approval."
+      }
+    },
+    {
+      "command": "bun run bench:functions",
+      "result": "recorded, includes observed block-interval overrun",
+      "report": {
+        "date": "2026-11-07T02:29:03.845Z",
+        "commit": "b5b74cc11612e46c0a3beeebd5ea6b5afa8eca60",
+        "runtime": "v26.3.0",
+        "cpu": "AMD EPYC 9V74 80-Core Processor",
+        "backend": "compiled CPU functions, Bun host",
+        "sampleRate": 48000,
+        "compileMs": 166.45442400000002,
+        "measurements": [
+          {
+            "voices": 1,
+            "prepareMs": 0.9436600000000226,
+            "blocks": 1000,
+            "blockFrames": 128,
+            "p50Ms": 0.022402999999997064,
+            "p95Ms": 0.025036999999997533,
+            "p99Ms": 0.06698900000003505,
+            "maxMs": 0.10612599999996064,
+            "overBlockInterval": 0
+          },
+          {
+            "voices": 8,
+            "prepareMs": 1.3671340000000214,
+            "blocks": 1000,
+            "blockFrames": 128,
+            "p50Ms": 0.19799199999999928,
+            "p95Ms": 0.29433400000004895,
+            "p99Ms": 0.39433100000007926,
+            "maxMs": 0.7295139999999947,
+            "overBlockInterval": 0
+          },
+          {
+            "voices": 32,
+            "prepareMs": 3.4571389999999838,
+            "blocks": 1000,
+            "blockFrames": 128,
+            "p50Ms": 0.812445999999909,
+            "p95Ms": 0.989706999999953,
+            "p99Ms": 1.1215310000000045,
+            "maxMs": 3.0490879999999834,
+            "overBlockInterval": 1
+          }
+        ],
+        "scope": "Host computation only; 500 warmup blocks, 1000 measured blocks per voice count. Resets occur outside timed processing. No physical audio latency, game load, browser deadline or GPU performance claim."
+      }
+    },
+    {
+      "command": "bun run demo:functions",
+      "result": "generated mono 16-bit WAV and source JSON",
+      "report": {
+        "date": "2026-11-07T02:22:22.448Z",
+        "commit": "f64c881a21126b3160c8091a984c23f6565df1ea",
+        "source": "fixtures/function-graph/impact.json",
+        "frames": 48000,
+        "sampleRate": 48000,
+        "channels": 1,
+        "peak": 0.5392501354217529,
+        "rms": 0.03759284787694712,
+        "review": "Engine execution demonstration; listening quality not approved. Engine source graph is not yet a Web project import."
+      }
+    }
+  ],
+  "compilerCandidate": {
+    "commit": "4aa6da7466c5c9a4c4f3f78f9161b676db5ef1b9",
+    "observation": "Upstream #961 is closed; this candidate prepares one writeback buffer per function. The baseline pin still needs the adapter.",
+    "regression": "Nested buffer publications are checked for reuse after a representative warmup call, independent of shared versus per-function storage.",
+    "status": "passed: check, all 106 tests and legacy graph feedback parity; no compiler pin move",
+    "observedBufferSourceCommit": "05e4d242803669d6503e223b4ba6099df0af5401",
+    "ci": "https://github.com/typeshade/typeaudio/actions/runs/42329775410"
+  },
+  "scope": [
+    "Ordinary TypeShade helper functions, virtual imports, compiler-derived scalar pins and typed per-instance state.",
+    "Stable port identity across source rename/reorder, strict type/role/rate/unit checks and cycle rejection.",
+    "Synchronous mono CPU samples, named-control state preservation, compatible-state transfer and explicit reset.",
+    "Nested scalar/struct inout PCM equals unchanged compiler execution; prepared callback storage is audited.",
+    "Runtime loop/call budgets and non-finite output/state faults silence the affected graph; disconnected nodes stay idle.",
+    "Actual OfflineAudioContext/AudioWorklet verifies module loading, parameter updates and reset without compiler/eval in its runtime bundle."
+  ],
+  "limitations": [
+    "Not yet integrated into web/apps/typeaudio. Engine JSON is not a Web project-version-2 import.",
+    "No visual function-node workflow, composition-code projection, project migration or event scheduler in this slice.",
+    "No Unreal/native plugin, GPU function runtime, aggregate pins or stereo output in this first profile.",
+    "No automatic parameter smoothing, limiter or replacement crossfade.",
+    "Source audit and reuse tests do not establish zero VM allocation. Call/loop budgets are not wall-time deadlines.",
+    "Host timing excludes game load, physical output latency and device underruns. One of 1000 measured 32-voice blocks exceeded 128/48000 seconds.",
+    "The one-second impact is an engine demonstration; no listening approval or full-scene creative completion.",
+    "Private generator remains pending public compiler proposal 0122. #961 adapter retirement requires verified pin promotion."
+  ],
+  "preservation": {
+    "legacyGraphChanged": false,
+    "webProjectVersion": 2,
+    "webChanged": false,
+    "compilerPinChanged": false,
+    "merged": false,
+    "deployed": false
+  },
+  "ciVerification": {
+    "sourceCommit": "b0236e1ad85e0b41c34579058b63f2e2f06c258e",
+    "mergeCheckout": "a70446a8aa9edccd5dbc56bea19aae4fe8dbf22c",
+    "baselineRun": "https://github.com/typeshade/typeaudio/actions/runs/42329775407",
+    "feedbackRun": "https://github.com/typeshade/typeaudio/actions/runs/42329775410",
+    "result": "all eight checks passed",
+    "checks": [
+      "typecheck + unit (106 tests), legacy website check/build",
+      "typed function worklet + timing",
+      "room worklet + timing",
+      "spatial worklet + timing",
+      "recovery archive + procedural smoke",
+      "graph feedback (pinned)",
+      "graph feedback (candidate)",
+      "graph candidate parity"
+    ],
+    "scope": "Source checkpoint precedes documentation-only handoff. Re-query newer PR-head checks before merge."
+  },
+  "documentAudit": {
+    "localLinks": "passed",
+    "snapshotAndReceiptJson": "passed",
+    "historicalReceiptsAndArchive": "unchanged",
+    "compilerLockfile": "unchanged",
+    "functionSourceTreeMatchesWorkletAndBenchmark": "passed"
+  }
+}
