@@ -8,6 +8,9 @@ The later owner direction makes editable agent projects in the existing Web edit
 Its approved UX corrections and local checks are recorded in [web-ux-verification.json](web-ux-verification.json).
 The subsequent node/code clarification is recorded in [web-node-code-verification.json](web-node-code-verification.json).
 It preserves the per-sample contract; whole-graph TypeScript authoring remains future engine-owned work.
+The owner subsequently required ordinary TypeShade functions and first-class Blueprint-style authoring.
+Read [the E2 authoring proposal](function-graph-authoring.md) before extending the sample-body model.
+E2a starts with engine-owned function/port/state contracts; event scheduling reuses R1 rather than creating a second runtime.
 Review current CI, then complete authorized publication and user/listening acceptance before resuming R1.
 
 ## Completed foundations
@@ -28,6 +31,7 @@ Review current CI, then complete authorized publication and user/listening accep
 | --- | --- | --- | --- |
 | R0 | Durable plan, state snapshot, source archive and recovery drill in TypeAudio | Existing source checkpoints | Fresh clone can find the plan, verify hashes and restore a procedural event. |
 | E1 | Editable agent source projects in the existing Web editor | Current graph/room baseline; Web #46 | Six source projects, code/parameter/space edits, new audio after edits, undo/redo, save/reopen/reload, stale-import rejection and mobile viewport flow. Web #47; no R1/HRTF prerequisite. |
+| E2 | First-class TypeShade functions and visual composition | E1 preservation rules; compiler reflection; R1 for event scheduling | [E2a–E2e](function-graph-authoring.md): typed pins, reusable stateful instances, shared code/graph edits, migration and a separate native-host feasibility gate. Proposed, not implemented. |
 | R1 | Bounded real-time contract, telemetry and full-chain harness in TypeAudio | Graph runtime and room baseline | Explicit limits, event-age/overflow counters, complete DSP chain measured separately from device output. |
 | R1a | Audio-frame event queue and stale-result handling | R1 contract | Burst events, paired start/stop, late events, slot generation, out-of-order results and bounded processing. |
 | R1b | Voice priority, virtualization, stealing and quality budgets | R1a and measured costs | Deterministic selection, preserved virtual state, no hard cuts, overload policy and hysteresis. |

@@ -84,6 +84,12 @@ This is a Web correction. Engine/compiler pins, project version 2 and authored s
 
 ## Record maintenance
 
+The owner's later authoring clarification is recorded in [Function and visual graph authoring](function-graph-authoring.md).
+TypeShade functions and Blueprint-style node editing must be first-class ways to compose the same processing definitions.
+Read this proposal before extending the old sample-body editor. The previous binding clarification is not the final authoring architecture.
+The proposal preserves event/audio execution boundaries, per-instance state, project recovery and a future native-host integration boundary.
+Implementation is pending; no Unreal plugin or function-graph round trip is delivered yet.
+
 Each implementation PR updates its roadmap item, source commit, checks and remaining limitations.
 Refresh `snapshot.json` after a merge, pin move or cross-repository contract change.
 Keep rejected directions and unresolved choices visible in the decision record.

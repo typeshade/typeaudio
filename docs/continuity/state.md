@@ -31,6 +31,11 @@ This is a Web correction. Engine/compiler pins, project version 2 and authored s
 
 ## Repository ownership
 
+Authoring direction, 2026-11-07: the owner requires normal TypeShade functions and Blueprint-style visual composition.
+The [E2 proposal](function-graph-authoring.md) is the next authoring contract to review before another sample-body extension.
+It records typed pins, reusable functions/subgraphs, isolated instance state, transaction history and separate event/audio execution.
+This is a design checkpoint. The current runtime, project formats, Web deployment and engine/compiler pins are unchanged.
+
 | Repository | Responsibility | Recorded main commit |
 | --- | --- | --- |
 | `typeshade/web` | Existing editor, UI, persistence, video transport, template loading and deployment | `769f3e7818329e1cc936048afb56e8724f34a9d3` |
