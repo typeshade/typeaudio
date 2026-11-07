@@ -41,10 +41,12 @@ blocked or inconclusive. They do not select a winner.
 
 ## Current dependency
 
-The execution environment exposes Cloudflare and GitHub credentials only. No audio
-evaluation API or local audio model is connected. A provider question is pending.
-Build the adapter, source candidates and verification while awaiting that connection.
-Do not claim a live evaluator run, autonomous improvement or listening approval until observed.
+The owner selected a local audio LLM experiment on 2026-11-07. The required evaluator
+accepts actual audio, explains audible issues and proposes source revisions. A semantic
+similarity scorer does not satisfy this request. Use a pinned Qwen2.5-Omni Thinker
+in a separate CPU environment and verify actual audio inference before claiming support.
+The actual-audio API adapter remains available but no remote provider is configured.
+Do not claim a live instruction-model evaluator run or listening approval until observed.
 
 No engine merge, compiler pin move, replacement website or production deployment is
 part of this implementation checkpoint. Use the existing Web project's import flow.

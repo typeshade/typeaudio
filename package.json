@@ -35,7 +35,8 @@
     "bench:functions": "bun scripts/bench-functions.ts",
     "demo:functions": "bun scripts/render-function-demo.ts",
     "bench:room": "bun scripts/bench-room.ts",
-    "demo:room": "bun scripts/render-room-demo.ts"
+    "demo:room": "bun scripts/render-room-demo.ts",
+    "quality": "bun scripts/quality/cli.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
@@ -55,6 +56,7 @@
     "./function-graph/compiler": "./src/function-graph/compiler/index.ts",
     "./function-graph/runtime": "./src/function-graph/runtime/index.ts",
     "./feedback": "./src/feedback/index.ts",
+    "./quality": "./src/quality/index.ts",
     "./spatial": "./src/spatial/index.ts",
     "./spatial/room": "./src/spatial/room/index.ts"
   }
