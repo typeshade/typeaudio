@@ -26,14 +26,27 @@ Built-in nodes show settings; one Code node exposes its per-sample body and actu
 Parameter completion/hover includes graph names. Drafts and code Undo survive inspection.
 Read [the relationship record](https://github.com/typeshade/web/blob/63216066bb8a2109d0c7e5b6286500b04ab39cb0/docs/reviews/typeaudio-node-code.md) and [the verification receipt](web-node-code-verification.json).
 Local verification passed 95 unit tests and all 15 browser suites. Inspect current PR CI before publication.
-Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
+At that historical sample-body checkpoint, whole-graph code authoring remained unimplemented; the function/composition continuation follows below.
 This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
 
 Authoring direction, 2026-11-07: the owner requires normal TypeShade functions and Blueprint-style visual composition.
 The [E2 proposal](function-graph-authoring.md) is the next authoring contract to review before another sample-body extension.
 It records typed pins, reusable functions/subgraphs, isolated instance state, transaction history and separate event/audio execution.
-This is a design checkpoint in [PR #29](https://github.com/typeshade/typeaudio/pull/29).
-The current runtime, project formats, Web deployment and engine/compiler pins are unchanged.
+Design [PR #29](https://github.com/typeshade/typeaudio/pull/29) is followed by implemented E2a in [PR #30](https://github.com/typeshade/typeaudio/pull/30).
+The new function engine has its own version-1 source document. Legacy graph projects retain Web version 2; function projects use version 3.
+Web adoption and the later composition continuation follow below. Event scheduling remains pending. The compiler pin and Web deployment are unchanged.
+See [the delivered API](../function-graphs.md) and [verification receipt](function-graph-verification.json).
+
+
+Composition continuation, 2026-11-07: Web `479fb60dae42e06411406d0063a7fc8f21d65c20` consumes engine `5489ac494e69b5eb2dfae63546cc7643ecfea0f0`.
+The Network tab edits genuine TypeShade calls and shares nodes, controls, drafts and Undo with the existing editor.
+Visual changes preserve unrelated source/comments. Explicit input rename preserves connected pin IDs through TypeShade symbol edits.
+Composition projects use version 4; empty/invalid drafts and stale results retain current work.
+Local checks pass 108 Web tests, all 17 browser suites, 119 engine tests and exact actual-worklet PCM.
+The engine code checkpoint also passed all eight CI jobs. No compiler pin, merge or deployment changed.
+Read [the continuation contract](composition-editing.md), [engine receipt](composition-engine-verification.json) and [Web receipt](web-composition-verification.json).
+Next: reusable subgraph packaging with typed interfaces and isolated state, followed by E2d/R1 event-frame scheduling.
+Physical-device deadlines, listening acceptance and native/Unreal execution remain open.
 
 ## Repository ownership
 
@@ -64,6 +77,9 @@ Other open compiler and Web pin PRs exist. They are not implicitly part of this 
 
 ## Delivered engine behavior
 
+- `src/function-graph/`: full TypeShade functions, reflected typed pins, reusable stateful instances and synchronous mono CPU processing (E2a, PR #30).
+- `fixtures/function-graph/impact.json`: source-only excitation/resonator/gain example with named controls.
+- `scripts/check-function-worklet.ts`, `bench-functions.ts`, `render-function-demo.ts`: worklet PCM parity, host timing and regenerable listening artifact.
 - `src/graph/`: portable synthesis graph, generated CPU execution and deterministic state.
 - `src/feedback/` and `fixtures/feedback/`: source-only reproductions and shared regression cases.
 - `src/spatial/`: fixed-capacity stereo mixing, listener basis, distance gain, damping and authored occlusion.
@@ -84,8 +100,11 @@ The room FDN has no directional late field. The first-order path is converted to
 ## Web behavior and remaining integration
 
 The existing application is `web/apps/typeaudio`; the engine's legacy `website/` is not the current product development destination.
-The recorded Web branch pins `sources/typeaudio` to `93d9a7c6086fe7f8b80a97aef3aa2198e077cae2`.
-Room PR #24 has not been adopted by that Web submodule.
+Web PR #47 now pins `sources/typeaudio` to function-engine commit `346efb4cbe7d0c288b919c6155e96ffd9bda292d`.
+Application checkpoint `6c9f0838f297cbcea684fbe1b8577624f879dee2` adds reusable function nodes, complete module editing and project version 3.
+Read [the function-authoring receipt](web-function-authoring-verification.json) for the verified configuration and remaining boundaries.
+The engine adds opt-in scalar input synchronization and registration refresh. Its source/edit API remains outside audio processing.
+E2b and the source/draft preservation portion of E2c are implemented for review. Neither repository is merged or deployed.
 
 Repository review records describe the component workspace, Tone rollback correction, synchronous live processing,
 finite render changes, node/code workspace and feedback tooling. Re-read those records and current tests before editing.

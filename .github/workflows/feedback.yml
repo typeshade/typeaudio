@@ -4,6 +4,9 @@ on:
     paths:
       [
         "src/graph/**",
+        "src/function-graph/**",
+        "test/function-graph/**",
+        "fixtures/function-graph/**",
         "src/feedback/**",
         "fixtures/feedback/**",
         "test/graph-feedback.test.ts",
@@ -20,6 +23,9 @@ on:
     paths:
       [
         "src/graph/**",
+        "src/function-graph/**",
+        "test/function-graph/**",
+        "fixtures/function-graph/**",
         "src/feedback/**",
         "fixtures/feedback/**",
         "test/graph-feedback.test.ts",

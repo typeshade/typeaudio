@@ -1,8 +1,9 @@
 # Fresh workspace recovery procedure
 
 Use this procedure when the previous chat and `/workspace` tree are unavailable.
-The canonical plan is `typeshade/typeaudio`, branch `docs/immersive-audio-continuity`, starting at `docs/continuity/README.md`.
-The recovery PR is [TypeAudio #25](https://github.com/typeshade/typeaudio/pull/25), stacked on room PR #24.
+The current plan is `typeshade/typeaudio`, branch `feat/typed-function-graphs`, starting at `docs/continuity/README.md`.
+The continuation PR is [TypeAudio #30](https://github.com/typeshade/typeaudio/pull/30).
+It retains the recovery foundation from [PR #25](https://github.com/typeshade/typeaudio/pull/25) and later design/study checkpoints.
 Use [recovery index #26](https://github.com/typeshade/typeaudio/issues/26) if the branch was renamed or removed after merging.
 Never assume an absolute path from an old receipt still exists.
 
@@ -18,7 +19,8 @@ Give a replacement agent this instruction:
 
 > Resume TypeAudio from https://github.com/typeshade/typeaudio/issues/26 and `docs/continuity/README.md`.
 > Read the repository rules, owner decisions, snapshot and roadmap before editing.
-> Reconcile remote PR status, then continue R1, the bounded real-time contract and full-chain measurement harness.
+> Reconcile remote PR status. Continue E2b Web adoption after E2a; preserve E1 drafts and source projects.
+> R1 remains the separate bounded real-time contract and full-chain measurement track.
 > SwiftShader supports correctness and rough controlled comparisons; it does not establish hardware GPU performance or game deadlines.
 
 ## Recover the plan and source
@@ -31,14 +33,14 @@ Give a replacement agent this instruction:
 ```sh
 git clone https://github.com/typeshade/typeaudio.git typeaudio
 cd typeaudio
-git fetch origin refs/pull/25/head:recovery/continuity
+git fetch origin refs/pull/30/head:recovery/continuity
 git switch recovery/continuity
 bun install --frozen-lockfile
 ```
 
 If the recovery work is merged, read its successor on main and inspect the index before selecting a historical head.
 `snapshot.json` identifies the engine source, compiler pin, Web head and compiler proposal heads.
-The recovery branch contains the room implementation through `86560f83a92ff8374346157000b8a467daa39aab`.
+The recovery branch contains the room implementation and E2a's typed function CPU profile.
 Do not replace the compiler pin with compiler main.
 
 ## Recover the Web and compiler context
@@ -47,8 +49,8 @@ Run these commands from the directory containing the recovered TypeAudio checkou
 
 ```sh
 git clone https://github.com/typeshade/web.git web
-git -C web fetch origin refs/pull/46/head:recovery/typeaudio-language-editor
-git -C web switch recovery/typeaudio-language-editor
+git -C web fetch origin refs/pull/47/head:recovery/typeaudio-editable-studies
+git -C web switch recovery/typeaudio-editable-studies
 git -C web submodule update --init sources/typeaudio
 git clone https://github.com/typeshade/typeshade.git typeshade
 git -C typeshade fetch origin refs/pull/1037/head:recovery/audio-cpu-proposal
@@ -115,13 +117,14 @@ Do not rerun costly unrelated experiments unless the next change needs them.
 
 1. Compare remote PR heads with `snapshot.json` and identify merged or superseded work.
 2. Preserve any dirty files in the recovered workspace before switching branches.
-3. Select R1 from [the roadmap](roadmap.md), or the first successor explicitly marked incomplete.
+3. Select E2b from [the roadmap](roadmap.md), preserving E1 projects and E2a's verified engine contract.
 4. Create a focused branch from the reconciled implementation base.
 5. Push an early checkpoint and open a draft PR.
 6. Record the base, compiler pin, acceptance criteria and unmeasured hardware profiles.
 7. Keep unrelated deployment, compiler pin and creative-publication work separate.
 
-No prior chat is needed to identify the next action: define bounded real-time execution and measure the full source-plus-room chain.
+The next authoring action is Web function-node adoption, with project migration and saved-draft preservation gates.
+The next runtime action is R1's bounded real-time contract and full source-plus-room measurement.
 HRTF, 3D paths and TypeShade propagation follow the dependency graph in the roadmap.
 Do not restart by creating another website or rewriting the existing editor wholesale.
 

@@ -31,6 +31,9 @@
     "bench:spatial": "bun scripts/bench-spatial.ts",
     "demo:spatial": "bun scripts/render-spatial-demo.ts",
     "test:room-worklet": "bun scripts/check-room-worklet.ts",
+    "test:function-worklet": "bun scripts/check-function-worklet.ts",
+    "bench:functions": "bun scripts/bench-functions.ts",
+    "demo:functions": "bun scripts/render-function-demo.ts",
     "bench:room": "bun scripts/bench-room.ts",
     "demo:room": "bun scripts/render-room-demo.ts"
   },
@@ -48,6 +51,9 @@
     "./graph": "./src/graph/index.ts",
     "./graph/compiler": "./src/graph/compiler/index.ts",
     "./graph/runtime": "./src/graph/runtime.ts",
+    "./function-graph": "./src/function-graph/index.ts",
+    "./function-graph/compiler": "./src/function-graph/compiler/index.ts",
+    "./function-graph/runtime": "./src/function-graph/runtime/index.ts",
     "./feedback": "./src/feedback/index.ts",
     "./spatial": "./src/spatial/index.ts",
     "./spatial/room": "./src/spatial/room/index.ts"
