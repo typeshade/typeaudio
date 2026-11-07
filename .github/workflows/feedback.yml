@@ -84,6 +84,10 @@ jobs:
           bun scripts/verify-compiler.ts .compiler-candidate
           bun run prepare
       - run: bun run check
+      - name: Install offline audio measurement dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - run: bun run test
       - run: bun run feedback --out .feedback/report.json
       - uses: actions/upload-artifact@v4
