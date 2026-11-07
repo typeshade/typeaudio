@@ -154,7 +154,7 @@
           "html_url": "https://github.com/typeshade/web/pull/47",
           "head": {
             "ref": "feat/typeaudio-editable-studies",
-            "sha": "8cfd39bfb8688c5079e353baa8b9ad3af17bc821"
+            "sha": "63216066bb8a2109d0c7e5b6286500b04ab39cb0"
           },
           "base": {
             "ref": "feat/typeaudio-language-editor",
@@ -208,10 +208,11 @@
     "title": "Editable agent projects in the existing Web editor",
     "pullRequest": "https://github.com/typeshade/web/pull/47",
     "contract": "https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md",
-    "status": "approved UX corrections implemented and locally verified; current Web CI/review pending; not deployed",
+    "status": "editable handoff, UX corrections and node/code clarification locally verified; current Web CI/review pending; not deployed",
     "engineExpansionAfterMilestone": "R1",
     "projectFileVersion": 2,
-    "uxVerification": "web-ux-verification.json"
+    "uxVerification": "web-ux-verification.json",
+    "nodeCodeVerification": "web-node-code-verification.json"
   },
   "uxCheckpoint": {
     "capturedAt": "2026-11-07T01:18:06.027345+00:00",
@@ -221,5 +222,15 @@
       "firstMilestone"
     ],
     "otherRepositoryReferences": "Retained from the earlier snapshot; re-query before merging."
+  },
+  "nodeCodeCheckpoint": {
+    "capturedAt": "2026-11-07T01:41:03.724111+00:00",
+    "webCommit": "63216066bb8a2109d0c7e5b6286500b04ab39cb0",
+    "applicationBuildCommit": "f772ecf150ab0d91ee9afae6f98194c563122985",
+    "updatedFields": [
+      "Web PR #47",
+      "firstMilestone"
+    ],
+    "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
   }
 }

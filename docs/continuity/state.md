@@ -21,6 +21,14 @@ The inspector scrolls, candidate preview preserves current work, and contextual 
 Mobile task panels keep playback visible. Local checks passed; verify current Web PR CI before publication.
 Review, physical-phone testing, listening feedback and authorized publication remain. No engine or compiler pin changed.
 
+Node/code continuation, 2026-11-07: Web `63216066bb8a2109d0c7e5b6286500b04ab39cb0` corrects the mismatch between canvas selection and the editable body.
+Built-in nodes show settings; one Code node exposes its per-sample body and actual input/output connections.
+Parameter completion/hover includes graph names. Drafts and code Undo survive inspection.
+Read [the relationship record](https://github.com/typeshade/web/blob/63216066bb8a2109d0c7e5b6286500b04ab39cb0/docs/reviews/typeaudio-node-code.md) and [the verification receipt](web-node-code-verification.json).
+Local verification passed 95 unit tests and all 15 browser suites. Inspect current PR CI before publication.
+Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
+This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
+
 ## Repository ownership
 
 | Repository | Responsibility | Recorded main commit |

@@ -6,6 +6,8 @@ R0 recovery is complete; see [the verification receipt](recovery-verification.js
 The later owner direction makes editable agent projects in the existing Web editor the first delivery milestone.
 [Web PR #47](https://github.com/typeshade/web/pull/47) implements this focused handoff using the current graph/room baseline.
 Its approved UX corrections and local checks are recorded in [web-ux-verification.json](web-ux-verification.json).
+The subsequent node/code clarification is recorded in [web-node-code-verification.json](web-node-code-verification.json).
+It preserves the per-sample contract; whole-graph TypeScript authoring remains future engine-owned work.
 Review current CI, then complete authorized publication and user/listening acceptance before resuming R1.
 
 ## Completed foundations
