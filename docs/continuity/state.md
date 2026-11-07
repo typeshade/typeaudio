@@ -12,6 +12,15 @@ precede further R1 work. No new deployment or merge is implied by this checkpoin
 Local Web verification is complete at `fad1cd07fb516d7eb1b2dc949c617606d4cdad45`.
 Read [the verification receipt](web-project-verification.json) for commands, scope and remaining limits.
 
+
+UX continuation, 2026-11-07: the owner-approved Web corrections are implemented at
+`8cfd39bfb8688c5079e353baa8b9ad3af17bc821`. Read [the correction record](https://github.com/typeshade/web/blob/8cfd39bfb8688c5079e353baa8b9ad3af17bc821/docs/reviews/typeaudio-editor-ux.md)
+and [the local UX verification receipt](web-ux-verification.json).
+Project version 2 preserves unapplied code drafts; project switches keep recoverable browser copies.
+The inspector scrolls, candidate preview preserves current work, and contextual editing retains the composition timeline.
+Mobile task panels keep playback visible. Local checks passed; verify current Web PR CI before publication.
+Review, physical-phone testing, listening feedback and authorized publication remain. No engine or compiler pin changed.
+
 ## Repository ownership
 
 | Repository | Responsibility | Recorded main commit |

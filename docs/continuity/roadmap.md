@@ -5,7 +5,8 @@ This is an ordered program, not authorization to silently merge every stage or t
 R0 recovery is complete; see [the verification receipt](recovery-verification.json).
 The later owner direction makes editable agent projects in the existing Web editor the first delivery milestone.
 [Web PR #47](https://github.com/typeshade/web/pull/47) implements this focused handoff using the current graph/room baseline.
-Complete its import → edit → playback → save → reopen checks before resuming R1.
+Its approved UX corrections and local checks are recorded in [web-ux-verification.json](web-ux-verification.json).
+Review current CI, then complete authorized publication and user/listening acceptance before resuming R1.
 
 ## Completed foundations
 

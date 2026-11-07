@@ -65,6 +65,15 @@ The [Web verification receipt](web-project-verification.json) records all six pr
 source and space edits, exact edited-WAV regeneration, persistence and the mobile viewport flow.
 Web PR #47 remains unmerged and undeployed; check its current CI/review status before publication.
 
+
+UX continuation, 2026-11-07: the owner-approved Web corrections are implemented at
+`8cfd39bfb8688c5079e353baa8b9ad3af17bc821`. Read [the correction record](https://github.com/typeshade/web/blob/8cfd39bfb8688c5079e353baa8b9ad3af17bc821/docs/reviews/typeaudio-editor-ux.md)
+and [the local UX verification receipt](web-ux-verification.json).
+Project version 2 preserves unapplied code drafts; project switches keep recoverable browser copies.
+The inspector scrolls, candidate preview preserves current work, and contextual editing retains the composition timeline.
+Mobile task panels keep playback visible. Local checks passed; verify current Web PR CI before publication.
+Review, physical-phone testing, listening feedback and authorized publication remain. No engine or compiler pin changed.
+
 ## Record maintenance
 
 Each implementation PR updates its roadmap item, source commit, checks and remaining limitations.
