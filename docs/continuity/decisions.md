@@ -20,6 +20,10 @@ Numbers in proposed implementation budgets are starting assumptions, not owner-a
 | D10 | Build a Web → TypeAudio → TypeShade feedback loop. | A Web failure must export a minimal engine reproduction with exact version-pair metadata. |
 | D11 | Support agent-led production through explicit evidence, versions and review. | Keep spotting, synthesis, technical checks, listening review and selection as distinct stages. |
 | D12 | Keep the full plan recoverable if chat and workspace disappear. | Store decisions, snapshots, recipes, recovery steps and next actions remotely. |
+| D13 | First deliver an agent-authored project that opens in the existing Web editor and remains directly editable. | Prioritize source project import, code/parameter/space edits and reliable save/reopen before further R1/HRTF expansion. |
+
+D13 records the later owner direction on 2026-11-06. It refines the sequencing of D09.
+Use the implemented engine baseline for this first handoff; do not wait for the entire immersive roadmap.
 
 ## Real-time and performance direction
 

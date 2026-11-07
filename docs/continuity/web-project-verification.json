@@ -1,0 +1,65 @@
+{
+  "schema": "typeaudio.editable-project-verification",
+  "version": 1,
+  "capturedAt": "2026-11-07T00:14:29.792746+00:00",
+  "webCommit": "fad1cd07fb516d7eb1b2dc949c617606d4cdad45",
+  "engineCommit": "86560f83a92ff8374346157000b8a467daa39aab",
+  "compilerCommit": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "sourceStudyCommit": "87295117341448ddf56e0352903f0baf6051ce85",
+  "pullRequest": "https://github.com/typeshade/web/pull/47",
+  "environment": {
+    "node": "24.19.0",
+    "bun": "1.4.4",
+    "browser": "Chromium 154.0.8037.57 on Debian 13; headless",
+    "desktopViewport": [
+      1680,
+      1050
+    ],
+    "mobileViewport": [
+      390,
+      844
+    ]
+  },
+  "checks": {
+    "typecheck": "passed; one existing TS8070 CPU fallback warning",
+    "editorArchitecture": "passed, 184 modules",
+    "compilerPair": "passed",
+    "unitTests": {
+      "files": 17,
+      "tests": 89,
+      "result": "passed"
+    },
+    "build": "passed; existing bundle-size and Bun moduleSuffixes warnings",
+    "legacyBrowserSuites": "workspace, state, device loss, interactions, sound design, timeline, audio import, graph, node workspace, code workspace and code language passed",
+    "feedbackBrowser": "passed after rebuilding the committed version stamp",
+    "agentProjectBrowser": "passed"
+  },
+  "agentProjectChecks": [
+    "All six JSON sources open and compile",
+    "All six compositions prepare nonzero stereo PCM, play and export WAV",
+    "Parameter edit changes regenerated composition PCM",
+    "Code edit updates applied source",
+    "Parameter Undo/Redo restores values",
+    "Timing, position, send, room gain and master trim remain editable",
+    "JSON export retains source without embedded PCM",
+    "Reopening the edited JSON regenerates the same WAV hash",
+    "Reload retains code, parameters, timing and space",
+    "Unsupported project version leaves current document intact",
+    "Delayed import cannot overwrite a newer room edit",
+    "390px touch/mobile viewport opens, edits, exports, opens another project, then restores the edited JSON",
+    "Mobile viewport has no page-wide horizontal overflow",
+    "No pageerror in the agent-project browser run"
+  ],
+  "notes": [
+    "The initial combined local browser run reached the feedback version-stamp assertion after a commit changed HEAD. Rebuilding that commit and rerunning feedback and agent-project suites passed. No test assertion was relaxed.",
+    "The mobile File menu could close on a queued pre-click scroll event. The hook now compares scroll positions at menu open; real subsequent scrolling still dismisses it."
+  ],
+  "limits": [
+    "Mobile viewport emulation is not physical-phone validation.",
+    "These are three passage pairs, not the full scene mix.",
+    "No listening approval, candidate selection, YouTube availability or frame-accurate synchronization is established.",
+    "Composition preparation is offline Worker processing, not a game real-time guarantee.",
+    "The source edition differs from the review masters in source taper and end-tail policy.",
+    "No production merge or deployment was performed."
+  ]
+}

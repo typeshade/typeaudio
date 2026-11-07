@@ -15,6 +15,7 @@ This is sampled-frame analysis with selected adjacent-frame checks; every decode
 | [Analysis](analysis.md) | Dramatic structure, visual causality, spatial reading and original mixed-track measurements. |
 | [Findings and corrections](findings.md) | Verified changes to the previous timing and event interpretation. |
 | [Procedural sound-design brief](sound-design-brief.md) | Material families, event behaviour, spatial routing, review passages and engine/editor requirements. |
+| [Audible sound-design studies](sound-design/README.md) | Full-scene sonic direction, 47 authored layers, three A/B passages, source recipes and measured delivery receipts. |
 | [Spotting JSON](spotting.json) / [CSV](spotting.csv) | Source regions, observations, proposals, priorities and supporting frames. |
 | [Evidence inventory](evidence.json) | Reference identity, frame PTS/hashes, sampling plans, review scope and source-file limitations. |
 | [Reproduction procedure](reproduce.md) | Commands, dependencies, outputs and verification scope for a fresh workspace. |

@@ -1,0 +1,7 @@
+state0 += 0.014 * (input - state0);
+state1 += 0.11 * (input - state1);
+state2 = fract(state2 + p0 * (1 + 0.015 * sin(time * 7.1)) / sampleRate);
+state3 = fract(state3 + p0 * 1.027 / sampleRate);
+const body: f32 = sin(state2 * 6.2831853) * 0.19 + sin(state3 * 6.2831853) * 0.11;
+const rough: f32 = (state1 - state0) * (1.1 + p3 * 1.5);
+out = tanh(state0 * 2.5 + body + rough) * (0.82 + p3 * 0.16 * sin(time * 19.3));

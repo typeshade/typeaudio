@@ -42,6 +42,16 @@ Byte-identical compressed audio is not promised across FFmpeg builds. Compare re
 
 ## External reference
 
+The newer [audible sound-design study](../studies/frieren/sound-design/README.md) is stored directly in Git, outside the historical archive.
+Its recipes live in `scripts/frieren/` and `docs/studies/frieren/sound-design/`.
+It contains 47 layers, 13 programs and three A/B passages. Render source is `87295117341448ddf56e0352903f0baf6051ce85`.
+Its six masters, six AAC files and 34 stems are regenerable. Listening review remains pending.
+Publication receipts, when present, identify versioned authored R2 objects. Signed links are intentionally excluded from Git.
+The v3 [publication receipt](../studies/frieren/sound-design/publication.json) identifies 18 uploaded and hash-verified objects.
+Their private bucket prefix is `typesound/studies/frieren/v3-sound-design/6cdf40238e93936c/`.
+No reference video was uploaded by this sound-design task. The bucket access settings remain unchanged.
+The original 69-file recovery archive remains unchanged.
+
 Public reference: https://www.youtube.com/watch?v=YHCqcyX9N3s.
 [reference-metadata.json](archive/reference-metadata.json) records the supplied local reference hash and the owner's object locator.
 The locator was provided as `typesound/videos/YTDown.com_YouTube_Media_YHCqcyX9N3s_Frieren-and-Fern-vs-Frieren-s-Clone-Part-2-Frieren-Beyond-Journey-s-End-Ep-26-En_005_480p.mp4`.

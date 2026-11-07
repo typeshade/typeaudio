@@ -1,0 +1,4 @@
+state0 += 0.025 * (input - state0);
+state1 += 0.21 * (input - state1);
+const modes: f32 = sin(time * p0 * 6.2831853) * 0.22 + sin(time * p0 * 10.24) * 0.13 + sin(time * p0 * 16.1) * 0.08;
+out = (state0 * 2.5 + modes * exp(-time * 9) + (state1 - state0) * exp(-time * 30)) * exp(-time / p1);

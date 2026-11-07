@@ -33,6 +33,11 @@ Record actual adapter/backend identity for every measurement. Real-device valida
 ## Resume without the conversation
 
 R0 is complete: the plan, authored source and recovery procedure are remotely stored and the recovery drill passed.
+The owner's subsequent first milestone is **editable agent output in the existing Web editor**.
+Start with [Web PR #47](https://github.com/typeshade/web/pull/47) and
+[its handoff contract](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md).
+Open authored projects, edit their source and spatial settings, then save and reopen without losing changes.
+This focused handoff precedes further R1/HRTF work. It uses the implemented graph and room baseline.
 The next engine task is R1 in [the roadmap](roadmap.md): a bounded real-time contract and its measurement harness.
 R2 establishes renderer-independent 3D acoustic paths. R3 adds HRTF output.
 R5 starts with a small TypeShade SDF occlusion probe; it does not require a full acoustic solver first.
@@ -48,6 +53,34 @@ The owner requested a fresh picture analysis after this recovery checkpoint.
 Read [the Frieren study](../studies/frieren/README.md) for 41 design regions, verified timing corrections and the next creative review passages.
 The analysis proposes extending the historical 188-second study to 189.314625 seconds to preserve the closing fade.
 It does not replace the old render or complete R1, R7 or R8.
+
+The subsequent [audible sound-design study](../studies/frieren/sound-design/README.md), in PR #28, adds the requested creative work.
+It designs all 41 regions and renders 47 procedural layers into three A/B passages with aligned stems.
+Read its source recipes, artifact receipts and pending listening questions before expanding to the full scene.
+It does not complete the full mix, binaural rendering or real-time validation.
+The six source-only Web projects are being integrated in Web PR #47; they are not the review masters.
+They retain editable graphs, amplitude envelopes, parameters, timing, trajectories and room settings.
+The editor prepares stereo previews before playback. This is not a complete game runtime.
+The [Web verification receipt](web-project-verification.json) records all six project imports,
+source and space edits, exact edited-WAV regeneration, persistence and the mobile viewport flow.
+Web PR #47 remains unmerged and undeployed; check its current CI/review status before publication.
+
+
+UX continuation, 2026-11-07: the owner-approved Web corrections are implemented at
+`8cfd39bfb8688c5079e353baa8b9ad3af17bc821`. Read [the correction record](https://github.com/typeshade/web/blob/8cfd39bfb8688c5079e353baa8b9ad3af17bc821/docs/reviews/typeaudio-editor-ux.md)
+and [the local UX verification receipt](web-ux-verification.json).
+Project version 2 preserves unapplied code drafts; project switches keep recoverable browser copies.
+The inspector scrolls, candidate preview preserves current work, and contextual editing retains the composition timeline.
+Mobile task panels keep playback visible. Local checks passed; verify current Web PR CI before publication.
+Review, physical-phone testing, listening feedback and authorized publication remain. No engine or compiler pin changed.
+
+Node/code continuation, 2026-11-07: Web `63216066bb8a2109d0c7e5b6286500b04ab39cb0` corrects the mismatch between canvas selection and the editable body.
+Built-in nodes show settings; one Code node exposes its per-sample body and actual input/output connections.
+Parameter completion/hover includes graph names. Drafts and code Undo survive inspection.
+Read [the relationship record](https://github.com/typeshade/web/blob/63216066bb8a2109d0c7e5b6286500b04ab39cb0/docs/reviews/typeaudio-node-code.md) and [the verification receipt](web-node-code-verification.json).
+Local verification passed 95 unit tests and all 15 browser suites. Inspect current PR CI before publication.
+Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
+This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
 
 ## Record maintenance
 
