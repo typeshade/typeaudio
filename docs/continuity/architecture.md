@@ -4,6 +4,10 @@ This is the planned architecture after the room checkpoint. It does not describe
 Existing CPU spatial DSP is an explicit open deviation from the longer-term shared TypeShade tier design.
 The compiler still owns general execution semantics; TypeAudio owns acoustic meaning and scheduling policy.
 
+The separate [function and visual graph proposal](function-graph-authoring.md) defines the shared authoring boundary.
+It includes typed function nodes, per-instance state, event/control versus audio execution and future host adapters.
+Its APIs are proposed and do not replace the implemented graph baseline in this checkpoint.
+
 ## Three execution boundaries
 
 | Boundary | Work | Required behavior |

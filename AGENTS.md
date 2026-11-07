@@ -147,6 +147,25 @@ The TypeShade private-generator adapter remains a workaround tracked by ask F;
 proposal 0122 is a draft, not an implemented compiler API. CPU timings do not
 establish hardware real-time guarantees or measured output underruns.
 
+## Typed function graphs
+
+`src/function-graph/` implements E2a through `typeaudio/function-graph`,
+`typeaudio/function-graph/compiler` and `typeaudio/function-graph/runtime`.
+The compiler entry reflects ordinary TypeShade functions and prepares a bounded synchronous CPU profile.
+The runtime owns instance state, named controls and mono processing without importing the compiler.
+`fixtures/function-graph/impact.json` is the source-only excitation/resonator/gain example.
+`test/function-graph/` covers typed connections, compiler parity, state and actual AudioWorklet execution.
+
+- `bun run test:function-worklet`: Chromium offline worklet output and control/reset parity.
+- `bun run bench:functions`: 1/8/32-voice host CPU computation timing.
+- `bun run demo:functions`: deterministic impact WAV and source document under `artifacts/functions/`.
+
+Read `docs/function-graphs.md` and `docs/continuity/function-graph-verification.json` before extending this profile.
+The private generator awaits proposal 0122; the inout adapter remains until promotion of the upstream #961 fix.
+Web PR #47 adopts this profile with visual function nodes, full source modules and project version 3.
+Read `docs/continuity/web-function-authoring-verification.json` for that integration and the source-edit API continuation.
+Composition-source editing, event scheduling and native host integration remain open.
+
 ## Website
 
 `website/` holds the public overview and audio playground. `scripts/site-docs.ts`

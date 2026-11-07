@@ -21,9 +21,16 @@ Numbers in proposed implementation budgets are starting assumptions, not owner-a
 | D11 | Support agent-led production through explicit evidence, versions and review. | Keep spotting, synthesis, technical checks, listening review and selection as distinct stages. |
 | D12 | Keep the full plan recoverable if chat and workspace disappear. | Store decisions, snapshots, recipes, recovery steps and next actions remotely. |
 | D13 | First deliver an agent-authored project that opens in the existing Web editor and remains directly editable. | Prioritize source project import, code/parameter/space edits and reliable save/reopen before further R1/HRTF expansion. |
+| D14 | Accept TypeShade function authoring and first-class Blueprint-style visual composition. | Functions, typed ports, reusable instances and state must share one authoring contract; node editing cannot be a read-only code visualization. |
 
 D13 records the later owner direction on 2026-11-06. It refines the sequencing of D09.
 Use the implemented engine baseline for this first handoff; do not wait for the entire immersive roadmap.
+
+D14 records the owner's 2026-11-07 clarification. It refines D05 without requiring an Unreal plugin in the current Web delivery.
+The [function/graph proposal](function-graph-authoring.md) records the implementation contract, event/audio distinction and native-host boundary.
+The owner subsequently instructed implementation to proceed, starting with E2a's engine contract.
+[PR #30](https://github.com/typeshade/typeaudio/pull/30) implements its first CPU profile.
+E2b–E2e remain planned. This approval does not merge the stack or publish a replacement editor.
 
 ## Real-time and performance direction
 

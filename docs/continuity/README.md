@@ -4,12 +4,22 @@ This is the restart entry point for the TypeAudio immersive-audio program.
 It must remain sufficient when the chat history and the original workspace are unavailable.
 The owner requested durable recovery instructions on 2026-11-06.
 
+Current owner direction, 2026-11-07: implement the
+[audio quality feedback loop](audio-quality-loop.md) before further subgraph/R1 work.
+Web #45–#48 are merged and the six editable passage studies are deployed. The owner
+rejected their creative quality. Actual audio evaluation and a bounded column-impact
+revision pilot are now the priority. The historical checkpoints below remain evidence
+of technical delivery; their publication-pending statements are superseded.
+
 Start from the durable [recovery index, issue #26](https://github.com/typeshade/typeaudio/issues/26) if the workspace is gone.
 [PR #25](https://github.com/typeshade/typeaudio/pull/25) preserves this plan and its source archive remotely.
 The [recovery verification receipt](recovery-verification.json) records a fresh remote clone, 69 verified files and one regenerated procedural event.
 
-The implemented engine is on room PR #24 at `86560f83a92ff8374346157000b8a467daa39aab`.
+The room engine baseline is PR #24 at `86560f83a92ff8374346157000b8a467daa39aab`.
 It builds on spatial PR #23 and graph-feedback PR #22. These pull requests are not merged.
+The current continuation is [audio quality PR #31](https://github.com/typeshade/typeaudio/pull/31), on `feat/audio-quality-loop`.
+It builds on [function-engine PR #30](https://github.com/typeshade/typeaudio/pull/30) and its verified [E2c composition editing](composition-editing.md).
+Resume the audio LLM evaluation pilot before reusable subgraph packaging. The owner's clarification requires an audio-input LLM, not semantic similarity scoring.
 The compiler pin remains `87af4eb0d9d15f02b66b8341b72cab0944290472`.
 
 ## Benchmark rule from the owner
@@ -38,7 +48,8 @@ Start with [Web PR #47](https://github.com/typeshade/web/pull/47) and
 [its handoff contract](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md).
 Open authored projects, edit their source and spatial settings, then save and reopen without losing changes.
 This focused handoff precedes further R1/HRTF work. It uses the implemented graph and room baseline.
-The next engine task is R1 in [the roadmap](roadmap.md): a bounded real-time contract and its measurement harness.
+The real-time expansion track is R1 in [the roadmap](roadmap.md): a bounded contract and its measurement harness.
+The later authoring clarification produced E2a's function engine; E2b now adopts it in Web PR #47.
 R2 establishes renderer-independent 3D acoustic paths. R3 adds HRTF output.
 R5 starts with a small TypeShade SDF occlusion probe; it does not require a full acoustic solver first.
 HRTF, directional reverberation, acoustic tracing, runtime voice budgets and game-wide guarantees are not delivered yet.
@@ -79,8 +90,40 @@ Built-in nodes show settings; one Code node exposes its per-sample body and actu
 Parameter completion/hover includes graph names. Drafts and code Undo survive inspection.
 Read [the relationship record](https://github.com/typeshade/web/blob/63216066bb8a2109d0c7e5b6286500b04ab39cb0/docs/reviews/typeaudio-node-code.md) and [the verification receipt](web-node-code-verification.json).
 Local verification passed 95 unit tests and all 15 browser suites. Inspect current PR CI before publication.
-Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
+At that historical sample-body checkpoint, whole-graph code authoring remained unimplemented; the function/composition continuation follows below.
 This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
+
+The owner's later authoring clarification is recorded in [Function and visual graph authoring](function-graph-authoring.md).
+TypeShade functions and Blueprint-style node editing must be first-class ways to compose the same processing definitions.
+Read this proposal before extending the old sample-body editor. The previous binding clarification is not the final authoring architecture.
+The proposal preserves event/audio execution boundaries, per-instance state, project recovery and a future native-host integration boundary.
+At the original E2a checkpoint, Web adoption and composition editing were pending. Their later continuation follows below; native/Unreal execution remains open.
+The detailed contract is proposed in [PR #29](https://github.com/typeshade/typeaudio/pull/29).
+
+Implementation continuation, 2026-11-07: [PR #30](https://github.com/typeshade/typeaudio/pull/30) adds full TypeShade modules,
+compiler-derived typed pins, stable port IDs, isolated scalar state and synchronous mono CPU execution.
+Read [the API](../function-graphs.md) and [verification receipt](function-graph-verification.json) before changing the adapter.
+The impact fixture generates sound through excitation, resonator and gain functions with helpers and imports.
+Source compilation stays outside the audio callback; actual worklet output matches host PCM.
+At the original E2a checkpoint, the compiler pin, legacy graph API, Web project version 2 and deployed website were unchanged.
+Web continuation, 2026-11-07: `6c9f0838f297cbcea684fbe1b8577624f879dee2` adopts engine `346efb4cbe7d0c288b919c6155e96ffd9bda292d`.
+The existing editor imports engine JSON, exposes reusable typed nodes and edits complete TypeShade modules with helper navigation.
+Named controls, source/WAV rendering, Picture editing and project version 3 use the same source data.
+Invalid drafts and delayed results preserve the applied sound. Canvas layout changes stay off the audio update path.
+Read [the new receipt](web-function-authoring-verification.json) and [Web's workflow record](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/reviews/typeaudio-function-authoring.md).
+E2b and source/draft preservation were implemented at that checkpoint. The later composition continuation adds static call editing and connected-input rename; reusable subgraphs remain.
+Review and authorized publication remain; do not restart the delivered Web integration.
+
+
+Composition continuation, 2026-11-07: Web `479fb60dae42e06411406d0063a7fc8f21d65c20` consumes engine `5489ac494e69b5eb2dfae63546cc7643ecfea0f0`.
+The Network tab edits genuine TypeShade calls and shares nodes, controls, drafts and Undo with the existing editor.
+Visual changes preserve unrelated source/comments. Explicit input rename preserves connected pin IDs through TypeShade symbol edits.
+Composition projects use version 4; empty/invalid drafts and stale results retain current work.
+Local checks pass 108 Web tests, all 17 browser suites, 119 engine tests and exact actual-worklet PCM.
+The engine code checkpoint also passed all eight CI jobs. No compiler pin, merge or deployment changed.
+Read [the continuation contract](composition-editing.md), [engine receipt](composition-engine-verification.json) and [Web receipt](web-composition-verification.json).
+Next: reusable subgraph packaging with typed interfaces and isolated state, followed by E2d/R1 event-frame scheduling.
+Physical-device deadlines, listening acceptance and native/Unreal execution remain open.
 
 ## Record maintenance
 
