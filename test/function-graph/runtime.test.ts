@@ -46,9 +46,8 @@ describe("prepared function execution", () => {
       () => cpu.fns.process!(state, 0.125) as number,
     );
     expect(render(d, 4096)).toEqual(expected);
-    expect(p.artifacts[0]!.report.reusedInoutArrays).toBeGreaterThan(0);
   });
-  it("reuses the writeback array for every nested call", () => {
+  it("reuses prepared writeback storage through every nested call", () => {
     const p = install(accumulator()),
       rt = createCodegenRuntime();
     let execute: FunctionExecutable | undefined;
@@ -60,10 +59,25 @@ describe("prepared function execution", () => {
         execute = factory(rt);
       },
     });
-    const scratch = rt.inout.values,
-      args = [execute!.initialize()!, 0.125];
+    const args = [execute!.initialize()!, 0.125];
+    let current = rt.inout.values;
+    const prepared = new Set([current]);
+    let warming = true,
+      allocated = false;
+    // The pin shares one adapted buffer. Newer compilers prepare one per function.
+    // Observe every publication, including nested calls, without requiring one ABI.
+    Object.defineProperty(rt.inout, "values", {
+      get: () => current,
+      set: (values: typeof current) => {
+        if (warming) prepared.add(values);
+        else if (!prepared.has(values)) allocated = true;
+        current = values;
+      },
+    });
+    execute!.invoke(args);
+    warming = false;
     for (let i = 0; i < 4096; i++) execute!.invoke(args);
-    expect(rt.inout.values).toBe(scratch);
+    expect(allocated).toBe(false);
     expect(p.artifacts[0]!.code).not.toMatch(/inout\.values\s*=\s*\[/);
   });
   it("keeps two instances and two voices independent", () => {

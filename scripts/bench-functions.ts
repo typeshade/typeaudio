@@ -42,6 +42,7 @@ const report = {
     encoding: "utf8",
   }).trim(),
   runtime: process.version,
+  bunVersion: Bun.version,
   cpu: cpus()[0]?.model,
   backend: "compiled CPU functions, Bun host",
   sampleRate: 48000,
