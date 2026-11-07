@@ -66,13 +66,16 @@ export async function calibrate(
       evidence.comparison.preference === test.expected &&
       evidence.comparison.confidence !== "low";
     checks.push({ name: test.name, expected: test.expected, passed, evidence });
+    if (!passed) break;
   }
   const receipt = {
     schema: "typeaudio.audio-calibration",
     version: 1,
     createdAt: new Date().toISOString(),
     identity: judge.identity,
-    passed: checks.every((c) => c.passed),
+    passed: checks.length === tests.length && checks.every((c) => c.passed),
+    plannedChecks: tests.length,
+    completedChecks: checks.length,
     checks,
     levelMatch: matched,
     professionalJudgmentValidated: false,

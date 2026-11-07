@@ -34,12 +34,12 @@ describe("actual audio transport (mocked network, not a listening test)", () => 
       const body = JSON.parse(String(init?.body)),
         parts = body.messages[0].content;
       expect(body.modalities).toEqual(["text"]);
-      expect(Buffer.from(parts[2].input_audio.data, "base64")).toEqual(
-        calls ? b : a,
-      );
-      expect(Buffer.from(parts[4].input_audio.data, "base64")).toEqual(
-        calls ? a : b,
-      );
+      expect(
+        Buffer.from(parts[2].input_audio.data, "base64").equals(calls ? b : a),
+      ).toBe(true);
+      expect(
+        Buffer.from(parts[4].input_audio.data, "base64").equals(calls ? a : b),
+      ).toBe(true);
       calls++;
       return new Response(
         JSON.stringify({

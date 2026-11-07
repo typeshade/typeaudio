@@ -51,3 +51,31 @@ Do not claim a live instruction-model evaluator run or listening approval until 
 No engine merge, compiler pin move, replacement website or production deployment is
 part of this implementation checkpoint. Use the existing Web project's import flow.
 Update this record and recovery issue #26 with concrete checks and remaining work.
+
+## Implementation checkpoint
+
+[Engine PR #31](https://github.com/typeshade/typeaudio/pull/31) contains the protocol,
+actual-audio OpenAI/local-Qwen adapters, calibration, A/B level matching, order checks,
+bounded revision controller and append-only evidence. Initial implementation commit:
+`8a18523`. [The operator guide](../audio-quality-loop.md) records commands and limits.
+
+[Web PR #49](https://github.com/typeshade/web/pull/49), implementation `3c388ba`, exports
+an evaluated source into the existing project format. It preserves duration, controls,
+room and YouTube reference. Source volume 0.7 with compensating master gain matches
+the engine's unity source profile within one PCM16 unit in the observed browser check.
+Desktop and 390px touch-emulation import, playback, room edit, save, reopen and reload
+passed. These are browser checks, not physical-phone or picture-sync verification.
+
+The first Qwen structured request exceeded its ten-minute budget. A shorter actual-audio
+probe returned in approximately 9–10 seconds per request. It described an audible
+candidate as an electronic beep but falsely called the reversed audible/silent pair silent.
+A subsequent structured request returned a prose refusal instead of the required JSON.
+The workflow retained the original candidate and did not declare a quality pass.
+These are observed model limitations under this prompt/input configuration, not proof
+that audio LLMs cannot evaluate sound. Preserve the raw replies in the verification receipt.
+
+The automatic revision path currently changes declared controls. General TypeShade
+module/algorithm rewriting and a reliable professional listening critic remain open.
+The next step is to validate a suitable audio-LLM/input protocol against the control
+corpus before allowing autonomous source promotion. Do not treat these prototypes as
+replacement public sound-design examples.

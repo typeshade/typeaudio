@@ -3,10 +3,7 @@ import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { mkdir } from "node:fs/promises";
-import {
-  validateBrief,
-  validateComparison,
-} from "../../../src/quality/index.ts";
+import { validateBrief, parseComparison } from "../../../src/quality/index.ts";
 import { decodeWav } from "../audio/wav.ts";
 import { sha256, writeReceipt } from "../receipts.ts";
 import { comparisonPrompt, PROMPT_VERSION } from "./prompt.ts";
@@ -36,7 +33,11 @@ export class LocalOmni implements AudioJudge {
     });
     this.child = spawn(
       python,
-      [fileURLToPath(new URL("../local/omni.py", import.meta.url))],
+      [
+        fileURLToPath(new URL("../local/omni.py", import.meta.url)),
+        "--trace-dir",
+        directory,
+      ],
       { stdio: ["pipe", "pipe", "inherit"] },
     );
     createInterface({ input: this.child.stdout }).on("line", (line) => {
@@ -126,7 +127,7 @@ export class LocalOmni implements AudioJudge {
       result.inputSha256?.B !== hashes.B
     )
       throw new Error("Incomplete or mismatched local audio evidence.");
-    const comparison = validateComparison(JSON.parse(result.text), brief);
+    const comparison = parseComparison(result.text, brief);
     return {
       identity: this.identity,
       resolvedModel: this.identity.model,

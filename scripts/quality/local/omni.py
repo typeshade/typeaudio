@@ -7,6 +7,7 @@ import json
 import math
 import os
 import resource
+from pathlib import Path
 import sys
 import time
 
@@ -15,11 +16,36 @@ import soundfile as sf
 from scipy.signal import resample_poly
 import torch
 import transformers
-from transformers import Qwen2_5OmniConfig, Qwen2_5OmniProcessor, Qwen2_5OmniThinkerForConditionalGeneration
+from transformers import Qwen2_5OmniConfig, Qwen2_5OmniProcessor, Qwen2_5OmniThinkerForConditionalGeneration, StoppingCriteria, StoppingCriteriaList
 
 MODEL = "Qwen/Qwen2.5-Omni-3B"
 REVISION = "f75b40e3da2003cdd6e1829b1f420ca70797c34e"
 SYSTEM = "You are Qwen, a virtual human developed by the Qwen Team, Alibaba Group, capable of perceiving auditory and visual inputs, as well as generating text and speech."
+
+
+class JsonProgress(StoppingCriteria):
+    """Stop after a complete JSON reply. Retain incomplete text for timeout diagnosis."""
+    def __init__(self, processor, start, path):
+        self.processor, self.start, self.path = processor, start, path
+        self.complete = False
+        self.tokens = 0
+
+    def __call__(self, input_ids, scores, **kwargs):
+        tokens = input_ids[0, self.start:]
+        self.tokens = len(tokens)
+        text = self.processor.decode(tokens, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+        if self.tokens == 1 or self.tokens % 32 == 0:
+            print(json.dumps({"progressTokens": self.tokens}), file=sys.stderr, flush=True)
+            if self.path:
+                self.path.write_text(text)
+        body = text.strip()
+        if body.startswith("```json\n") and body.endswith("\n```"):
+            body = body[8:-4]
+        try:
+            self.complete = isinstance(json.loads(body), dict)
+        except (ValueError, TypeError):
+            pass
+        return self.complete
 
 
 def decode_audio(encoded):
@@ -37,6 +63,7 @@ def decode_audio(encoded):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--download", action="store_true", help="Allow first download of the pinned model.")
+    parser.add_argument("--trace-dir", type=Path)
     args = parser.parse_args()
     torch.set_num_threads(min(4, os.cpu_count() or 1))
     torch.set_num_interop_threads(1)
@@ -61,6 +88,11 @@ def main():
             if len(line) > 22_000_000:
                 raise ValueError("Request exceeds its limit.")
             request = json.loads(line)
+            if not isinstance(request.get("id"), int) or not 1 <= request["id"] <= 25:
+                raise ValueError("Invalid request ID.")
+            max_tokens = request.get("maxTokens", 1600)
+            if not isinstance(max_tokens, int) or not 64 <= max_tokens <= 1600:
+                raise ValueError("Use a 64–1600 output token limit.")
             if not isinstance(request["prompt"], str) or len(request["prompt"]) > 20000:
                 raise ValueError("Invalid prompt.")
             a, hash_a = decode_audio(request["a"])
@@ -76,12 +108,17 @@ def main():
             text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
             inputs = processor(text=text, audio=[a, b], sampling_rate=16000, return_tensors="pt", padding=True)
             inputs = inputs.to(model.device).to(model.dtype)
+            print(json.dumps({"phase": "generate", "inputTokens": inputs["input_ids"].shape[1]}), file=sys.stderr, flush=True)
+            trace = args.trace_dir / f'{request["id"]:02d}.partial.txt' if args.trace_dir else None
+            progress = JsonProgress(processor, inputs["input_ids"].shape[1], trace)
             start = time.monotonic()
             with torch.inference_mode():
-                output = model.generate(**inputs, max_new_tokens=1600, do_sample=False)
+                output = model.generate(**inputs, max_new_tokens=max_tokens, do_sample=False,
+                                        eos_token_id=model.config.eos_token_id, pad_token_id=model.config.pad_token_id,
+                                        stopping_criteria=StoppingCriteriaList([progress]))
             tokens = output[0, inputs["input_ids"].shape[1]:]
             response = processor.decode(tokens, skip_special_tokens=True, clean_up_tokenization_spaces=False)
-            finished = int(tokens[-1]) == model.config.eos_token_id
+            finished = progress.complete or int(tokens[-1]) == model.config.eos_token_id
             print(json.dumps({
                 "id": request["id"], "identity": identity, "text": response, "finished": finished,
                 "inputSha256": {"A": hash_a, "B": hash_b}, "usage": {

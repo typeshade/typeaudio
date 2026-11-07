@@ -5,6 +5,7 @@ import {
   validateComparison,
   chooseCandidate,
   proposeRevision,
+  parseComparison,
 } from "../../src/quality/index.ts";
 import type { AudioComparison } from "../../src/quality/types.ts";
 
@@ -25,6 +26,14 @@ function comparison(preference: "A" | "B" = "B"): AudioComparison {
 }
 
 describe("audio quality evidence boundaries", () => {
+  it("accepts a single JSON fence and rejects prose or a second object", () => {
+    const json = JSON.stringify(comparison());
+    expect(
+      parseComparison("```json\n" + json + "\n```", brief).preference,
+    ).toBe("B");
+    expect(() => parseComparison("My opinion: " + json, brief)).toThrow();
+    expect(() => parseComparison(json + json, brief)).toThrow();
+  });
   it("rejects unknown controls, invalid timecodes and duplicate criteria", () => {
     const c = comparison();
     c.revisions = [

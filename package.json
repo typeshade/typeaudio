@@ -36,7 +36,8 @@
     "demo:functions": "bun scripts/render-function-demo.ts",
     "bench:room": "bun scripts/bench-room.ts",
     "demo:room": "bun scripts/render-room-demo.ts",
-    "quality": "bun scripts/quality/cli.ts"
+    "quality": "bun scripts/quality/cli.ts",
+    "quality:probe": "bun scripts/quality/local/probe.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",

@@ -1,8 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  validateBrief,
-  validateComparison,
-} from "../../../src/quality/index.ts";
+import { validateBrief, parseComparison } from "../../../src/quality/index.ts";
 import { decodeWav } from "../audio/wav.ts";
 import { comparisonPrompt, PROMPT_VERSION } from "./prompt.ts";
 import type { AudioJudge, JudgeInput } from "./types.ts";
@@ -88,7 +85,7 @@ export function openaiAudio(options: OpenAIAudioOptions): AudioJudge {
         throw new Error(
           "Audio evaluator returned incomplete or non-text output.",
         );
-      const comparison = validateComparison(JSON.parse(text), brief);
+      const comparison = parseComparison(text, brief);
       return {
         identity,
         resolvedModel: data.model,

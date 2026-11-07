@@ -17,8 +17,9 @@ The [recovery verification receipt](recovery-verification.json) records a fresh 
 
 The room engine baseline is PR #24 at `86560f83a92ff8374346157000b8a467daa39aab`.
 It builds on spatial PR #23 and graph-feedback PR #22. These pull requests are not merged.
-The current continuation is [function-engine PR #30](https://github.com/typeshade/typeaudio/pull/30), on `feat/typed-function-graphs`.
-The latest verified delivery is [E2c composition editing](composition-editing.md) in that PR and Web #47. Resume at reusable subgraph packaging.
+The current continuation is [audio quality PR #31](https://github.com/typeshade/typeaudio/pull/31), on `feat/audio-quality-loop`.
+It builds on [function-engine PR #30](https://github.com/typeshade/typeaudio/pull/30) and its verified [E2c composition editing](composition-editing.md).
+Resume the audio LLM evaluation pilot before reusable subgraph packaging. The owner's clarification requires an audio-input LLM, not semantic similarity scoring.
 The compiler pin remains `87af4eb0d9d15f02b66b8341b72cab0944290472`.
 
 ## Benchmark rule from the owner
