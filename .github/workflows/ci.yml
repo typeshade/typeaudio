@@ -63,6 +63,10 @@ jobs:
       # `prepare` writes the host views (`tshc sync`) that `tsc` reads.
       - run: bun install --frozen-lockfile
       - run: bun run check
+      - name: Install offline audio measurement dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - run: bun run test
       - run: bun run feedback --out .feedback/report.json
       - uses: actions/upload-artifact@v4

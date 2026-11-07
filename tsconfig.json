@@ -20,6 +20,9 @@
     "experiments/**/run.ts",
     "experiments/**/node.ts",
     "test/browser/run.ts",
-    "test/fft.test.ts"
+    "test/fft.test.ts",
+    "test/quality/audio.test.ts",
+    "test/quality/transport.test.ts",
+    "test/quality/workflow.test.ts"
   ]
 }
