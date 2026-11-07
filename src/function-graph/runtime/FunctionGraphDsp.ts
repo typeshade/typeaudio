@@ -125,7 +125,7 @@ export class FunctionGraphDsp {
     if (!plan.call.run()) throw this.nonFinite;
   }
   private readonly nonFinite = new Error(
-    "Function returned a non-finite sample.",
+    "Function produced a non-finite output or state value.",
   );
   process(out: Float32Array, frames = out.length) {
     if (

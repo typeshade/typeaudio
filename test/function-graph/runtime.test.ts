@@ -198,13 +198,13 @@ describe("prepared function execution", () => {
       port: "out",
     };
     g.modules["/unused.shade.ts"] =
-      '"use typeshade"; export function unused():f32 { while (true) {} return 0; }';
+      '"use typeshade"; export function unused(run:bool):f32 { while (run) {} return 0; }';
     g.definitions.push({
       id: "unused",
       version: 1,
       module: "/unused.shade.ts",
       export: "unused",
-      inputs: {},
+      inputs: { run: { ...control("run"), default: true } },
       output: audio("out"),
     });
     g.nodes.push({ id: "unused", definition: "unused", inputs: {} });
