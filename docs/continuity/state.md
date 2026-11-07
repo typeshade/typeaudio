@@ -26,7 +26,7 @@ Built-in nodes show settings; one Code node exposes its per-sample body and actu
 Parameter completion/hover includes graph names. Drafts and code Undo survive inspection.
 Read [the relationship record](https://github.com/typeshade/web/blob/63216066bb8a2109d0c7e5b6286500b04ab39cb0/docs/reviews/typeaudio-node-code.md) and [the verification receipt](web-node-code-verification.json).
 Local verification passed 95 unit tests and all 15 browser suites. Inspect current PR CI before publication.
-Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
+At that historical sample-body checkpoint, whole-graph code authoring remained unimplemented; the function/composition continuation follows below.
 This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
 
 Authoring direction, 2026-11-07: the owner requires normal TypeShade functions and Blueprint-style visual composition.
@@ -34,8 +34,19 @@ The [E2 proposal](function-graph-authoring.md) is the next authoring contract to
 It records typed pins, reusable functions/subgraphs, isolated instance state, transaction history and separate event/audio execution.
 Design [PR #29](https://github.com/typeshade/typeaudio/pull/29) is followed by implemented E2a in [PR #30](https://github.com/typeshade/typeaudio/pull/30).
 The new function engine has its own version-1 source document. Legacy graph projects retain Web version 2; function projects use version 3.
-Web adoption follows below. Graph-wide composition editing and event scheduling remain pending. The compiler pin and Web deployment are unchanged.
+Web adoption and the later composition continuation follow below. Event scheduling remains pending. The compiler pin and Web deployment are unchanged.
 See [the delivered API](../function-graphs.md) and [verification receipt](function-graph-verification.json).
+
+
+Composition continuation, 2026-11-07: Web `479fb60dae42e06411406d0063a7fc8f21d65c20` consumes engine `5489ac494e69b5eb2dfae63546cc7643ecfea0f0`.
+The Network tab edits genuine TypeShade calls and shares nodes, controls, drafts and Undo with the existing editor.
+Visual changes preserve unrelated source/comments. Explicit input rename preserves connected pin IDs through TypeShade symbol edits.
+Composition projects use version 4; empty/invalid drafts and stale results retain current work.
+Local checks pass 108 Web tests, all 17 browser suites, 119 engine tests and exact actual-worklet PCM.
+The engine code checkpoint also passed all eight CI jobs. No compiler pin, merge or deployment changed.
+Read [the continuation contract](composition-editing.md), [engine receipt](composition-engine-verification.json) and [Web receipt](web-composition-verification.json).
+Next: reusable subgraph packaging with typed interfaces and isolated state, followed by E2d/R1 event-frame scheduling.
+Physical-device deadlines, listening acceptance and native/Unreal execution remain open.
 
 ## Repository ownership
 

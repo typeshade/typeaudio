@@ -7,10 +7,10 @@ The later owner direction makes editable agent projects in the existing Web edit
 [Web PR #47](https://github.com/typeshade/web/pull/47) implements this focused handoff using the current graph/room baseline.
 Its approved UX corrections and local checks are recorded in [web-ux-verification.json](web-ux-verification.json).
 The subsequent node/code clarification is recorded in [web-node-code-verification.json](web-node-code-verification.json).
-It preserves the per-sample contract; whole-graph TypeScript authoring remains future engine-owned work.
+That historical checkpoint preserves the per-sample contract. The later function/composition API is engine-owned.
 The owner subsequently required ordinary TypeShade functions and first-class Blueprint-style authoring.
 Read [the E2 authoring proposal](function-graph-authoring.md) before extending the sample-body model.
-E2a is implemented in PR #30. Web PR #47 adopts it through E2b and source/draft persistence from E2c.
+E2a is implemented in PR #30. Web PR #47 adopts it through E2b and E2c static composition editing, connected-input rename and source/draft persistence.
 Event scheduling reuses R1 rather than creating a second runtime.
 Review current CI, then complete authorized publication and user/listening acceptance before resuming R1.
 
@@ -33,7 +33,7 @@ Review current CI, then complete authorized publication and user/listening accep
 | --- | --- | --- | --- |
 | R0 | Durable plan, state snapshot, source archive and recovery drill in TypeAudio | Existing source checkpoints | Fresh clone can find the plan, verify hashes and restore a procedural event. |
 | E1 | Editable agent source projects in the existing Web editor | Current graph/room baseline; Web #46 | Six source projects, code/parameter/space edits, new audio after edits, undo/redo, save/reopen/reload, stale-import rejection and mobile viewport flow. Web #47; no R1/HRTF prerequisite. |
-| E2 | First-class TypeShade functions and visual composition | E1 preservation rules; compiler reflection; R1 for event scheduling | [E2a–E2e](function-graph-authoring.md): E2a first CPU profile implemented in #30. E2b and E2c source/draft persistence are implemented in Web #47. E2c composition operations, E2d events and E2e native feasibility remain. |
+| E2 | First-class TypeShade functions and visual composition | E1 preservation rules; compiler reflection; R1 for event scheduling | [E2a–E2e](function-graph-authoring.md): E2a first CPU profile implemented in #30. E2b and E2c static composition operations are implemented in Web #47. Reusable subgraphs, E2d events and E2e native feasibility remain. |
 | R1 | Bounded real-time contract, telemetry and full-chain harness in TypeAudio | Graph runtime and room baseline | Explicit limits, event-age/overflow counters, complete DSP chain measured separately from device output. |
 | R1a | Audio-frame event queue and stale-result handling | R1 contract | Burst events, paired start/stop, late events, slot generation, out-of-order results and bounded processing. |
 | R1b | Voice priority, virtualization, stealing and quality budgets | R1a and measured costs | Deterministic selection, preserved virtual state, no hard cuts, overload policy and hysteresis. |
@@ -57,12 +57,13 @@ R10 does not precede useful HRTF and runtime-budget validation.
 
 ## Next task in concrete terms
 
-Review Web #47's function-authoring continuation and its [verification receipt](web-function-authoring-verification.json).
-Function instances, typed connections, named controls and complete TypeShade modules now share the existing editor.
-Project version 3 preserves source and drafts. Older projects retain their graph semantics.
-Next, define E2c composition-source operations, reusable subgraphs and explicit connected-port rename/migration behavior.
-Preserve current Undo, draft ownership, stable pin IDs and stale-result guards.
-Do not restart E2b or claim arbitrary TypeScript-to-graph round trips.
+Review [the composition continuation](composition-editing.md) and its exact source/verification records.
+Function instances, typed calls, named controls and complete TypeShade modules share the existing editor.
+Project version 4 preserves composition source and drafts. Older projects retain their graph semantics.
+Next, specify reusable subgraph packaging: typed external pins, dependency/definition identity, per-instance state ownership and import/version compatibility.
+Keep expansion deterministic and preserve current Undo, draft ownership, stable IDs and stale-result guards.
+After that bounded authoring slice, resume E2d through R1's event-frame queue and overload contract.
+Do not restart E2b/composition editing or claim arbitrary TypeScript-to-graph round trips.
 
 First finish E1 using [the Web contract](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md).
 Keep the source-only JSON in Git. Source JSON and prerecorded review audio have distinct roles.

@@ -11,6 +11,7 @@ The [recovery verification receipt](recovery-verification.json) records a fresh 
 The room engine baseline is PR #24 at `86560f83a92ff8374346157000b8a467daa39aab`.
 It builds on spatial PR #23 and graph-feedback PR #22. These pull requests are not merged.
 The current continuation is [function-engine PR #30](https://github.com/typeshade/typeaudio/pull/30), on `feat/typed-function-graphs`.
+The latest verified delivery is [E2c composition editing](composition-editing.md) in that PR and Web #47. Resume at reusable subgraph packaging.
 The compiler pin remains `87af4eb0d9d15f02b66b8341b72cab0944290472`.
 
 ## Benchmark rule from the owner
@@ -81,14 +82,14 @@ Built-in nodes show settings; one Code node exposes its per-sample body and actu
 Parameter completion/hover includes graph names. Drafts and code Undo survive inspection.
 Read [the relationship record](https://github.com/typeshade/web/blob/63216066bb8a2109d0c7e5b6286500b04ab39cb0/docs/reviews/typeaudio-node-code.md) and [the verification receipt](web-node-code-verification.json).
 Local verification passed 95 unit tests and all 15 browser suites. Inspect current PR CI before publication.
-Whole-graph TypeScript authoring and node/code round trips remain unimplemented.
+At that historical sample-body checkpoint, whole-graph code authoring remained unimplemented; the function/composition continuation follows below.
 This is a Web correction. Engine/compiler pins, project version 2 and authored source assets are unchanged.
 
 The owner's later authoring clarification is recorded in [Function and visual graph authoring](function-graph-authoring.md).
 TypeShade functions and Blueprint-style node editing must be first-class ways to compose the same processing definitions.
 Read this proposal before extending the old sample-body editor. The previous binding clarification is not the final authoring architecture.
 The proposal preserves event/audio execution boundaries, per-instance state, project recovery and a future native-host integration boundary.
-E2a's first CPU profile is implemented; no Unreal plugin or function-graph round trip is delivered yet.
+At the original E2a checkpoint, Web adoption and composition editing were pending. Their later continuation follows below; native/Unreal execution remains open.
 The detailed contract is proposed in [PR #29](https://github.com/typeshade/typeaudio/pull/29).
 
 Implementation continuation, 2026-11-07: [PR #30](https://github.com/typeshade/typeaudio/pull/30) adds full TypeShade modules,
@@ -102,8 +103,19 @@ The existing editor imports engine JSON, exposes reusable typed nodes and edits 
 Named controls, source/WAV rendering, Picture editing and project version 3 use the same source data.
 Invalid drafts and delayed results preserve the applied sound. Canvas layout changes stay off the audio update path.
 Read [the new receipt](web-function-authoring-verification.json) and [Web's workflow record](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/reviews/typeaudio-function-authoring.md).
-E2b and source/draft preservation are implemented. E2c composition-source operations, explicit connected-port renames and subgraphs remain.
+E2b and source/draft preservation were implemented at that checkpoint. The later composition continuation adds static call editing and connected-input rename; reusable subgraphs remain.
 Review and authorized publication remain; do not restart the delivered Web integration.
+
+
+Composition continuation, 2026-11-07: Web `479fb60dae42e06411406d0063a7fc8f21d65c20` consumes engine `5489ac494e69b5eb2dfae63546cc7643ecfea0f0`.
+The Network tab edits genuine TypeShade calls and shares nodes, controls, drafts and Undo with the existing editor.
+Visual changes preserve unrelated source/comments. Explicit input rename preserves connected pin IDs through TypeShade symbol edits.
+Composition projects use version 4; empty/invalid drafts and stale results retain current work.
+Local checks pass 108 Web tests, all 17 browser suites, 119 engine tests and exact actual-worklet PCM.
+The engine code checkpoint also passed all eight CI jobs. No compiler pin, merge or deployment changed.
+Read [the continuation contract](composition-editing.md), [engine receipt](composition-engine-verification.json) and [Web receipt](web-composition-verification.json).
+Next: reusable subgraph packaging with typed interfaces and isolated state, followed by E2d/R1 event-frame scheduling.
+Physical-device deadlines, listening acceptance and native/Unreal execution remain open.
 
 ## Record maintenance
 

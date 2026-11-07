@@ -1,8 +1,8 @@
 {
   "schema": "typeaudio.recovery-snapshot",
   "version": 1,
-  "capturedAt": "2026-11-07T03:21:44.584875+00:00",
-  "engineSourceCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
+  "capturedAt": "2026-11-07T05:59:41.684578+00:00",
+  "engineSourceCommit": "5489ac494e69b5eb2dfae63546cc7643ecfea0f0",
   "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
   "repositories": [
     {
@@ -99,7 +99,7 @@
           "html_url": "https://github.com/typeshade/typeaudio/pull/28",
           "head": {
             "ref": "feat/frieren-sound-design-studies",
-            "sha": "33a6ffdca92f5ec3d2553b3b5e6ca7b50a08e65a"
+            "sha": "6b0b1779d1bf13a17f0bf267dd0f470b62a45bcd"
           },
           "base": {
             "ref": "analysis/frieren-picture-study",
@@ -131,7 +131,7 @@
           "html_url": "https://github.com/typeshade/typeaudio/pull/30",
           "head": {
             "ref": "feat/typed-function-graphs",
-            "sha": "346efb4cbe7d0c288b919c6155e96ffd9bda292d"
+            "sha": "5489ac494e69b5eb2dfae63546cc7643ecfea0f0"
           },
           "base": {
             "ref": "docs/typed-function-graphs",
@@ -181,12 +181,12 @@
           "number": 47,
           "title": "feat(typeaudio): edit agent projects and reusable TypeShade functions",
           "state": "open",
-          "draft": true,
+          "draft": false,
           "merged": false,
           "html_url": "https://github.com/typeshade/web/pull/47",
           "head": {
             "ref": "feat/typeaudio-editable-studies",
-            "sha": "bc38b0160e4cad7986ae241da085924cf35d5a67"
+            "sha": "479fb60dae42e06411406d0063a7fc8f21d65c20"
           },
           "base": {
             "ref": "feat/typeaudio-language-editor",
@@ -198,7 +198,7 @@
     {
       "repository": "typeshade/typeshade",
       "cloneUrl": "https://github.com/typeshade/typeshade.git",
-      "main": "42fe4fd77bffbfec6d25be35ea14110ab9f2b54a",
+      "main": "f38a46bf188b70fc1ad1527feb70ffb5d73572d0",
       "pullRequests": [
         {
           "number": 1037,
@@ -279,7 +279,7 @@
     "engineCompilerPins": "unchanged",
     "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
   },
-  "webConsumedEngineCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
+  "webConsumedEngineCommit": "5489ac494e69b5eb2dfae63546cc7643ecfea0f0",
   "functionEngineCheckpoint": {
     "capturedAt": "2026-11-07T02:34:52.189830+00:00",
     "ownerDecision": "D14",
@@ -307,6 +307,18 @@
     "engineCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
     "verification": "web-function-authoring-verification.json",
     "next": "E2c composition-source operations, reusable subgraphs and explicit connected-port migration; E2d/R1 scheduling remains separate.",
-    "otherRepositoryReferences": "Older unrelated repository/PR snapshots are retained; re-query before merging."
+    "otherRepositoryReferences": "Older unrelated repository/PR snapshots are retained; re-query before merging.",
+    "supersededBy": "compositionCheckpoint"
+  },
+  "compositionCheckpoint": {
+    "capturedAt": "2026-11-07T05:59:41.684578+00:00",
+    "workPackage": "E2c static composition and connected-input rename",
+    "status": "implemented and locally verified; review/publication pending",
+    "applicationCommit": "479fb60dae42e06411406d0063a7fc8f21d65c20",
+    "engineCommit": "5489ac494e69b5eb2dfae63546cc7643ecfea0f0",
+    "engineVerification": "composition-engine-verification.json",
+    "webVerification": "web-composition-verification.json",
+    "next": "Reusable subgraph packaging with typed interfaces, stable dependencies, isolated state and versioned imports; then E2d/R1 event-frame scheduling",
+    "notes": "PR heads observed before the documentation handoff; query remote status before merging. Compiler pin unchanged."
   }
 }
