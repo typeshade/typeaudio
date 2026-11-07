@@ -666,5 +666,120 @@
     "engineMerged": false,
     "compilerPinChanged": false
   },
-  "next": "Validate an audio-LLM/input protocol against actual-audio controls, including order swaps. Broader TypeShade algorithm rewriting remains separate from bounded parameter edits."
+  "next": "Validate an audio-LLM/input protocol against actual-audio controls, including order swaps. Broader TypeShade algorithm rewriting remains separate from bounded parameter edits.",
+  "sequenceProtocolProbe": {
+    "completed": true,
+    "passed": false,
+    "expectedAudible": [
+      "A",
+      "B",
+      "both"
+    ],
+    "runtime": {
+      "model": "Qwen/Qwen2.5-Omni-3B",
+      "revision": "f75b40e3da2003cdd6e1829b1f420ca70797c34e",
+      "component": "Thinker",
+      "device": "cpu",
+      "dtype": "bfloat16",
+      "torch": "2.8.0+cpu",
+      "transformers": "4.57.6",
+      "audioLayout": "sequence",
+      "preprocessing": "PCM stereo arithmetic mean; scipy polyphase resample to 16 kHz",
+      "limitations": "Mono audio input cannot establish stereo localization or spatial listening quality."
+    },
+    "rawReplies": [
+      {
+        "id": 1,
+        "identity": {
+          "model": "Qwen/Qwen2.5-Omni-3B",
+          "revision": "f75b40e3da2003cdd6e1829b1f420ca70797c34e",
+          "component": "Thinker",
+          "device": "cpu",
+          "dtype": "bfloat16",
+          "torch": "2.8.0+cpu",
+          "transformers": "4.57.6",
+          "audioLayout": "sequence",
+          "preprocessing": "PCM stereo arithmetic mean; scipy polyphase resample to 16 kHz",
+          "limitations": "Mono audio input cannot establish stereo localization or spatial listening quality."
+        },
+        "text": "{\"audible\": \"both\", \"description\": \"Two audio clips, one silent gap in between.\"}",
+        "finished": true,
+        "modelAudioSha256": [
+          "45b8cbb5fa9b9f42ccb8ee6874c9c93ecaf188cd233b7249f0f4d7c3970fe25d"
+        ],
+        "inputSha256": {
+          "A": "8c57320feeaf54145f2ad212a176ebd432a740f59e2911e6795e686ea66dd5f1",
+          "B": "ec3650bd450cebe9985c1d4d4b59749debe34301f9f9e889171d0e49a316c89c"
+        },
+        "usage": {
+          "inputTokens": 315,
+          "outputTokens": 22,
+          "seconds": 10.868354030000773,
+          "maxRssKiB": 8021308
+        }
+      },
+      {
+        "id": 2,
+        "identity": {
+          "model": "Qwen/Qwen2.5-Omni-3B",
+          "revision": "f75b40e3da2003cdd6e1829b1f420ca70797c34e",
+          "component": "Thinker",
+          "device": "cpu",
+          "dtype": "bfloat16",
+          "torch": "2.8.0+cpu",
+          "transformers": "4.57.6",
+          "audioLayout": "sequence",
+          "preprocessing": "PCM stereo arithmetic mean; scipy polyphase resample to 16 kHz",
+          "limitations": "Mono audio input cannot establish stereo localization or spatial listening quality."
+        },
+        "text": "{\"audible\": \"both\", \"description\": \"Two audio clips, one silent in between.\"}",
+        "finished": true,
+        "modelAudioSha256": [
+          "7586ddc147dc02aefaa8cb2c9dbf1947fe717e74ad9864eb202de0e5d5424b99"
+        ],
+        "inputSha256": {
+          "A": "ec3650bd450cebe9985c1d4d4b59749debe34301f9f9e889171d0e49a316c89c",
+          "B": "8c57320feeaf54145f2ad212a176ebd432a740f59e2911e6795e686ea66dd5f1"
+        },
+        "usage": {
+          "inputTokens": 315,
+          "outputTokens": 21,
+          "seconds": 11.2633233810011,
+          "maxRssKiB": 8094520
+        }
+      },
+      {
+        "id": 3,
+        "identity": {
+          "model": "Qwen/Qwen2.5-Omni-3B",
+          "revision": "f75b40e3da2003cdd6e1829b1f420ca70797c34e",
+          "component": "Thinker",
+          "device": "cpu",
+          "dtype": "bfloat16",
+          "torch": "2.8.0+cpu",
+          "transformers": "4.57.6",
+          "audioLayout": "sequence",
+          "preprocessing": "PCM stereo arithmetic mean; scipy polyphase resample to 16 kHz",
+          "limitations": "Mono audio input cannot establish stereo localization or spatial listening quality."
+        },
+        "text": "{\"audible\": \"both\", \"description\": \"Two audio clips, one silent gap in between.\"}",
+        "finished": true,
+        "modelAudioSha256": [
+          "2d970c47943efe7e62e4735ca3d306e2f7d55256c7068f172e0459fb3013237a"
+        ],
+        "inputSha256": {
+          "A": "8c57320feeaf54145f2ad212a176ebd432a740f59e2911e6795e686ea66dd5f1",
+          "B": "8c57320feeaf54145f2ad212a176ebd432a740f59e2911e6795e686ea66dd5f1"
+        },
+        "usage": {
+          "inputTokens": 315,
+          "outputTokens": 22,
+          "seconds": 10.972677469999326,
+          "maxRssKiB": 8113356
+        }
+      }
+    ],
+    "scriptSha256": "434a774c1741a4443a6d49daeee8f3984f329614193536440f98b40e8914a7d8",
+    "note": "The sequence layout failed both audible/silent tests. No candidate was promoted."
+  }
 }

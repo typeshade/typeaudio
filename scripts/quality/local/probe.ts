@@ -8,6 +8,9 @@ import { sha256, writeReceipt } from "../receipts.ts";
 /** A short actual-audio diagnostic. Its result cannot select a production candidate. */
 const [source, output] = process.argv.slice(2),
   python = process.env.TYPEAUDIO_AUDIO_PYTHON;
+const layout = process.env.TYPEAUDIO_AUDIO_LAYOUT ?? "paired";
+if (!["paired", "sequence"].includes(layout))
+  throw new Error("Use paired or sequence audio layout.");
 if (!source || !output || !python)
   throw new Error(
     "Set TYPEAUDIO_AUDIO_PYTHON; use quality:probe CANDIDATE_DIRECTORY OUTPUT_DIRECTORY.",
@@ -31,6 +34,7 @@ await writeFile(join(directory, "audible.wav"), audible, { flag: "wx" });
 await writeFile(join(directory, "silence.wav"), silent, { flag: "wx" });
 await writeReceipt(join(directory, "request.json"), {
   prompt,
+  layout,
   maxTokens: 160,
   cases: cases.map((c) => ({
     expected: c.expected,
@@ -43,6 +47,8 @@ const child = spawn(
     fileURLToPath(new URL("./omni.py", import.meta.url)),
     "--trace-dir",
     directory,
+    "--layout",
+    layout,
   ],
   { stdio: ["pipe", "pipe", "inherit"] },
 );

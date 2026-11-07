@@ -46,6 +46,10 @@ incomplete outputs cannot promote a candidate. Local raw replies are retained fo
 Use `bun run quality:probe CANDIDATE_DIRECTORY OUTPUT_DIRECTORY` for a shorter
 audibility and order diagnostic. It retains all three raw LLM replies and PCM hashes.
 Passing this diagnostic does not replace the full calibration or establish quality.
+For an input-protocol diagnostic, set `TYPEAUDIO_AUDIO_LAYOUT=sequence` with
+`quality:probe`. It joins A and B with a 0.5-second silent gap and describes their
+time ranges. The default production adapter retains separate audio inputs.
+The recorded pilot failed the basic controls in both layouts.
 
 An optional OpenAI adapter sends actual WAVs through `input_audio`. Configure
 `OPENAI_API_KEY` and `TYPEAUDIO_AUDIO_MODEL` only when using that provider.

@@ -74,6 +74,12 @@ The workflow retained the original candidate and did not declare a quality pass.
 These are observed model limitations under this prompt/input configuration, not proof
 that audio LLMs cannot evaluate sound. Preserve the raw replies in the verification receipt.
 
+A second input-protocol probe joined A/B into one waveform with explicit time ranges.
+The model reported both segments audible even when one was silent. That layout also
+failed. The probe is reproducible through `TYPEAUDIO_AUDIO_LAYOUT=sequence`.
+The compiler-feedback CI job initially lacked FFmpeg; its workflow now installs the
+same measurement dependency as the main unit job. Current CI must be checked separately.
+
 The automatic revision path currently changes declared controls. General TypeShade
 module/algorithm rewriting and a reliable professional listening critic remain open.
 The next step is to validate a suitable audio-LLM/input protocol against the control

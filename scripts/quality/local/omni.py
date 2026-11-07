@@ -64,6 +64,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--download", action="store_true", help="Allow first download of the pinned model.")
     parser.add_argument("--trace-dir", type=Path)
+    parser.add_argument("--layout", choices=["paired", "sequence"], default="paired")
     args = parser.parse_args()
     torch.set_num_threads(min(4, os.cpu_count() or 1))
     torch.set_num_interop_threads(1)
@@ -79,6 +80,7 @@ def main():
     identity = {
         "model": MODEL, "revision": REVISION, "component": "Thinker", "device": "cpu",
         "dtype": "bfloat16", "torch": torch.__version__, "transformers": transformers.__version__,
+        "audioLayout": args.layout,
         "preprocessing": "PCM stereo arithmetic mean; scipy polyphase resample to 16 kHz",
         "limitations": "Mono audio input cannot establish stereo localization or spatial listening quality.",
     }
@@ -97,16 +99,25 @@ def main():
                 raise ValueError("Invalid prompt.")
             a, hash_a = decode_audio(request["a"])
             b, hash_b = decode_audio(request["b"])
-            conversation = [
-                {"role": "system", "content": [{"type": "text", "text": SYSTEM}]},
-                {"role": "user", "content": [
+            if args.layout == "sequence":
+                duration_a, duration_b = len(a) / 16000, len(b) / 16000
+                onset_b = duration_a + 0.5
+                layout = f'You receive one waveform containing two clips. Audio A is 0 to {duration_a} seconds. A 0.5-second silent gap follows. Audio B is {onset_b} to {onset_b + duration_b} seconds. Labels A and B refer to these time ranges. '
+                content = [{"type": "text", "text": layout + request["prompt"]}, {"type": "audio", "audio": "AB"}]
+                audios = [np.concatenate([a, np.zeros(8000, dtype=np.float32), b])]
+            else:
+                content = [
                     {"type": "text", "text": request["prompt"]},
                     {"type": "text", "text": "Audio A:"}, {"type": "audio", "audio": "A"},
                     {"type": "text", "text": "Audio B:"}, {"type": "audio", "audio": "B"},
-                ]},
+                ]
+                audios = [a, b]
+            conversation = [
+                {"role": "system", "content": [{"type": "text", "text": SYSTEM}]},
+                {"role": "user", "content": content},
             ]
             text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
-            inputs = processor(text=text, audio=[a, b], sampling_rate=16000, return_tensors="pt", padding=True)
+            inputs = processor(text=text, audio=audios, sampling_rate=16000, return_tensors="pt", padding=True)
             inputs = inputs.to(model.device).to(model.dtype)
             print(json.dumps({"phase": "generate", "inputTokens": inputs["input_ids"].shape[1]}), file=sys.stderr, flush=True)
             trace = args.trace_dir / f'{request["id"]:02d}.partial.txt' if args.trace_dir else None
@@ -121,6 +132,7 @@ def main():
             finished = progress.complete or int(tokens[-1]) == model.config.eos_token_id
             print(json.dumps({
                 "id": request["id"], "identity": identity, "text": response, "finished": finished,
+                "modelAudioSha256": [hashlib.sha256(audio.astype('<f4').tobytes()).hexdigest() for audio in audios],
                 "inputSha256": {"A": hash_a, "B": hash_b}, "usage": {
                     "inputTokens": inputs["input_ids"].shape[1], "outputTokens": len(tokens),
                     "seconds": time.monotonic() - start, "maxRssKiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
