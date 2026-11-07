@@ -61,6 +61,9 @@ It does not complete the full mix, binaural rendering or real-time validation.
 The six source-only Web projects are being integrated in Web PR #47; they are not the review masters.
 They retain editable graphs, amplitude envelopes, parameters, timing, trajectories and room settings.
 The editor prepares stereo previews before playback. This is not a complete game runtime.
+The [Web verification receipt](web-project-verification.json) records all six project imports,
+source and space edits, exact edited-WAV regeneration, persistence and the mobile viewport flow.
+Web PR #47 remains unmerged and undeployed; check its current CI/review status before publication.
 
 ## Record maintenance
 

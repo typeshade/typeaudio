@@ -9,6 +9,8 @@ code/parameter/space edits and save/reopen verification, based on Web #46.
 It consumes engine room commit `86560f83a92ff8374346157000b8a467daa39aab` with the unchanged compiler pin.
 Its [contract and status](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md)
 precede further R1 work. No new deployment or merge is implied by this checkpoint.
+Local Web verification is complete at `fad1cd07fb516d7eb1b2dc949c617606d4cdad45`.
+Read [the verification receipt](web-project-verification.json) for commands, scope and remaining limits.
 
 ## Repository ownership
 

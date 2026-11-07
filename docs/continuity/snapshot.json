@@ -1,7 +1,7 @@
 {
   "schema": "typeaudio.recovery-snapshot",
   "version": 1,
-  "capturedAt": "2026-11-07T00:09:50.114896+00:00",
+  "capturedAt": "2026-11-07T00:14:29.792294+00:00",
   "engineSourceCommit": "86560f83a92ff8374346157000b8a467daa39aab",
   "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
   "repositories": [
@@ -154,7 +154,7 @@
           "html_url": "https://github.com/typeshade/web/pull/47",
           "head": {
             "ref": "feat/typeaudio-editable-studies",
-            "sha": "853e64a9c75676d98171d84b5c31f1607db1f30f"
+            "sha": "fad1cd07fb516d7eb1b2dc949c617606d4cdad45"
           },
           "base": {
             "ref": "feat/typeaudio-language-editor",
@@ -208,7 +208,7 @@
     "title": "Editable agent projects in the existing Web editor",
     "pullRequest": "https://github.com/typeshade/web/pull/47",
     "contract": "https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md",
-    "status": "implemented; full browser regression verification in progress",
+    "status": "implemented and locally browser-verified; Web PR #47 CI/review pending; not deployed",
     "engineExpansionAfterMilestone": "R1"
   }
 }
