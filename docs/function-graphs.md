@@ -164,7 +164,27 @@ Generated files reside in `artifacts/functions/` and CI's `function-runtime` art
 The durable [verification receipt](continuity/function-graph-verification.json) records versions, scope and results.
 Host timing and OfflineAudioContext parity do not establish physical output latency, game deadlines or listening quality.
 
-E2b adopts this contract in the existing Web editor with reusable nodes, compatible pin search and named control editing.
-E2c adds shared composition/code operations, revision checks, draft preservation and explicit migration from existing projects.
+Web PR #47 adopts this contract with reusable nodes, typed connections, named controls and full source modules.
+Project version 3, draft preservation and revision guards are integrated there.
+E2c composition-source operations, reusable subgraphs and explicit connected-port migration remain open.
+Read [the Web verification receipt](continuity/web-function-authoring-verification.json) before extending that workflow.
 Event scheduling belongs to E2d/R1. Stereo/aggregate pins, transition policies and device profiling remain open.
 An Unreal adapter needs E2e's separate native execution and buffer-contract work; no plugin is included here.
+
+## Preparing source signature edits
+
+`typeaudio/function-graph/compiler` exports `synchronizeFunctionInputs(raw)` for explicit authoring operations.
+Call it before `compileFunctionGraph` when applying source edits. Ordinary imports and compilation remain strict.
+The operation snapshots the input document and reads parameter types through TypeShade.
+
+Existing parameter names retain their stable port IDs and authored audio metadata.
+New scalar parameters receive unique IDs and block-rate control metadata, with zero or false defaults.
+The host can then expose these pins as named controls or explicitly change their audio roles and units.
+Removed parameters with connections or named-control bindings cause a diagnostic. Disconnect every instance before removal or renaming.
+Removed constant bindings are deleted from the snapshot. Caller data is unchanged, including on failure.
+State/context mappings and entry-point names remain explicit. This operation does not infer state initializers or rename connected ports.
+Type changes still pass the normal compiler and connection validator before the host applies the result.
+
+Registration modules refresh their position in the 64-entry factory cache.
+Hosts must register every definition for a replacement sound before constructing its DSP.
+A combined layered sound must fit that registry capacity; existing DSP instances retain their executable references.

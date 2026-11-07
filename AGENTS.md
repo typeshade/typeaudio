@@ -162,7 +162,9 @@ The runtime owns instance state, named controls and mono processing without impo
 
 Read `docs/function-graphs.md` and `docs/continuity/function-graph-verification.json` before extending this profile.
 The private generator awaits proposal 0122; the inout adapter remains until promotion of the upstream #961 fix.
-Web project migration, visual function nodes, event scheduling and native host integration are not delivered here.
+Web PR #47 adopts this profile with visual function nodes, full source modules and project version 3.
+Read `docs/continuity/web-function-authoring-verification.json` for that integration and the source-edit API continuation.
+Composition-source editing, event scheduling and native host integration remain open.
 
 ## Website
 

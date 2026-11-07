@@ -1,8 +1,8 @@
 {
   "schema": "typeaudio.recovery-snapshot",
   "version": 1,
-  "capturedAt": "2026-11-07T00:14:29.792294+00:00",
-  "engineSourceCommit": "b0236e1ad85e0b41c34579058b63f2e2f06c258e",
+  "capturedAt": "2026-11-07T03:21:44.584875+00:00",
+  "engineSourceCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
   "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
   "repositories": [
     {
@@ -131,7 +131,7 @@
           "html_url": "https://github.com/typeshade/typeaudio/pull/30",
           "head": {
             "ref": "feat/typed-function-graphs",
-            "sha": "b0236e1ad85e0b41c34579058b63f2e2f06c258e"
+            "sha": "346efb4cbe7d0c288b919c6155e96ffd9bda292d"
           },
           "base": {
             "ref": "docs/typed-function-graphs",
@@ -179,14 +179,14 @@
         },
         {
           "number": 47,
-          "title": "feat(typeaudio): open and safely edit agent sound projects",
+          "title": "feat(typeaudio): edit agent projects and reusable TypeShade functions",
           "state": "open",
           "draft": true,
           "merged": false,
           "html_url": "https://github.com/typeshade/web/pull/47",
           "head": {
             "ref": "feat/typeaudio-editable-studies",
-            "sha": "63216066bb8a2109d0c7e5b6286500b04ab39cb0"
+            "sha": "bc38b0160e4cad7986ae241da085924cf35d5a67"
           },
           "base": {
             "ref": "feat/typeaudio-language-editor",
@@ -240,11 +240,13 @@
     "title": "Editable agent projects in the existing Web editor",
     "pullRequest": "https://github.com/typeshade/web/pull/47",
     "contract": "https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/typeaudio-editable-projects.md",
-    "status": "editable handoff, UX corrections and node/code clarification locally verified; current Web CI/review pending; not deployed",
+    "status": "editable projects and reusable TypeShade functions locally verified; current PR review/CI must be checked; not deployed",
     "engineExpansionAfterMilestone": "R1",
-    "projectFileVersion": 2,
+    "projectFileVersion": 3,
     "uxVerification": "web-ux-verification.json",
-    "nodeCodeVerification": "web-node-code-verification.json"
+    "nodeCodeVerification": "web-node-code-verification.json",
+    "legacyProjectFileVersion": 2,
+    "functionAuthoringVerification": "web-function-authoring-verification.json"
   },
   "uxCheckpoint": {
     "capturedAt": "2026-11-07T01:18:06.027345+00:00",
@@ -277,21 +279,34 @@
     "engineCompilerPins": "unchanged",
     "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
   },
-  "webConsumedEngineCommit": "86560f83a92ff8374346157000b8a467daa39aab",
+  "webConsumedEngineCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
   "functionEngineCheckpoint": {
     "capturedAt": "2026-11-07T02:34:52.189830+00:00",
     "ownerDecision": "D14",
     "workPackage": "E2a",
-    "status": "first synchronous CPU function profile implemented and CI-verified; ready for review; E2b Web adoption pending",
+    "status": "first CPU function profile with source-input synchronization and registry refresh implemented; adopted by Web PR #47",
     "pullRequest": "https://github.com/typeshade/typeaudio/pull/30",
     "branch": "feat/typed-function-graphs",
-    "sourceCommit": "b0236e1ad85e0b41c34579058b63f2e2f06c258e",
+    "sourceCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
     "baseCommit": "1fa70191af99424a60488e1a2679b6ada55bc5a4",
     "verification": "function-graph-verification.json",
     "api": "../function-graphs.md",
     "compilerPinChanged": false,
-    "webProjectVersionChanged": false,
+    "webProjectVersionChanged": true,
     "deployed": false,
-    "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging."
+    "otherRepositoryReferences": "Retained from earlier snapshots; re-query before merging.",
+    "continuationVerification": "web-function-authoring-verification.json"
+  },
+  "functionWebCheckpoint": {
+    "capturedAt": "2026-11-07T03:21:44.584875+00:00",
+    "workPackage": "E2b and E2c source/draft persistence",
+    "status": "implemented and locally verified; review/publication pending",
+    "pullRequest": "https://github.com/typeshade/web/pull/47",
+    "webCommit": "bc38b0160e4cad7986ae241da085924cf35d5a67",
+    "applicationCommit": "6c9f0838f297cbcea684fbe1b8577624f879dee2",
+    "engineCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
+    "verification": "web-function-authoring-verification.json",
+    "next": "E2c composition-source operations, reusable subgraphs and explicit connected-port migration; E2d/R1 scheduling remains separate.",
+    "otherRepositoryReferences": "Older unrelated repository/PR snapshots are retained; re-query before merging."
   }
 }

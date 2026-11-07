@@ -33,8 +33,8 @@ Authoring direction, 2026-11-07: the owner requires normal TypeShade functions a
 The [E2 proposal](function-graph-authoring.md) is the next authoring contract to review before another sample-body extension.
 It records typed pins, reusable functions/subgraphs, isolated instance state, transaction history and separate event/audio execution.
 Design [PR #29](https://github.com/typeshade/typeaudio/pull/29) is followed by implemented E2a in [PR #30](https://github.com/typeshade/typeaudio/pull/30).
-The new function engine has its own version-1 source document; legacy graphs and Web project version 2 remain unchanged.
-Web adoption, code/graph composition editing and event scheduling remain pending. The compiler pin and Web deployment are unchanged.
+The new function engine has its own version-1 source document. Legacy graph projects retain Web version 2; function projects use version 3.
+Web adoption follows below. Graph-wide composition editing and event scheduling remain pending. The compiler pin and Web deployment are unchanged.
 See [the delivered API](../function-graphs.md) and [verification receipt](function-graph-verification.json).
 
 ## Repository ownership
@@ -89,8 +89,11 @@ The room FDN has no directional late field. The first-order path is converted to
 ## Web behavior and remaining integration
 
 The existing application is `web/apps/typeaudio`; the engine's legacy `website/` is not the current product development destination.
-Web PR #47 pins `sources/typeaudio` to room commit `86560f83a92ff8374346157000b8a467daa39aab`.
-The new function engine in PR #30 has not been adopted by that Web submodule.
+Web PR #47 now pins `sources/typeaudio` to function-engine commit `346efb4cbe7d0c288b919c6155e96ffd9bda292d`.
+Application checkpoint `6c9f0838f297cbcea684fbe1b8577624f879dee2` adds reusable function nodes, complete module editing and project version 3.
+Read [the function-authoring receipt](web-function-authoring-verification.json) for the verified configuration and remaining boundaries.
+The engine adds opt-in scalar input synchronization and registration refresh. Its source/edit API remains outside audio processing.
+E2b and the source/draft preservation portion of E2c are implemented for review. Neither repository is merged or deployed.
 
 Repository review records describe the component workspace, Tone rollback correction, synchronous live processing,
 finite render changes, node/code workspace and feedback tooling. Re-read those records and current tests before editing.

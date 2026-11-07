@@ -40,7 +40,7 @@ Start with [Web PR #47](https://github.com/typeshade/web/pull/47) and
 Open authored projects, edit their source and spatial settings, then save and reopen without losing changes.
 This focused handoff precedes further R1/HRTF work. It uses the implemented graph and room baseline.
 The real-time expansion track is R1 in [the roadmap](roadmap.md): a bounded contract and its measurement harness.
-The later authoring clarification produced E2a's function engine; E2b now adopts it in the existing editor.
+The later authoring clarification produced E2a's function engine; E2b now adopts it in Web PR #47.
 R2 establishes renderer-independent 3D acoustic paths. R3 adds HRTF output.
 R5 starts with a small TypeShade SDF occlusion probe; it does not require a full acoustic solver first.
 HRTF, directional reverberation, acoustic tracing, runtime voice budgets and game-wide guarantees are not delivered yet.
@@ -96,9 +96,14 @@ compiler-derived typed pins, stable port IDs, isolated scalar state and synchron
 Read [the API](../function-graphs.md) and [verification receipt](function-graph-verification.json) before changing the adapter.
 The impact fixture generates sound through excitation, resonator and gain functions with helpers and imports.
 Source compilation stays outside the audio callback; actual worklet output matches host PCM.
-The compiler pin, legacy graph API, Web project version 2 and deployed website remain unchanged.
-Next, implement E2b in `web/apps/typeaudio` with explicit E2c project migration and draft-preservation gates.
-Do not present the new engine JSON as an already importable Web project.
+At the original E2a checkpoint, the compiler pin, legacy graph API, Web project version 2 and deployed website were unchanged.
+Web continuation, 2026-11-07: `6c9f0838f297cbcea684fbe1b8577624f879dee2` adopts engine `346efb4cbe7d0c288b919c6155e96ffd9bda292d`.
+The existing editor imports engine JSON, exposes reusable typed nodes and edits complete TypeShade modules with helper navigation.
+Named controls, source/WAV rendering, Picture editing and project version 3 use the same source data.
+Invalid drafts and delayed results preserve the applied sound. Canvas layout changes stay off the audio update path.
+Read [the new receipt](web-function-authoring-verification.json) and [Web's workflow record](https://github.com/typeshade/web/blob/feat/typeaudio-editable-studies/docs/reviews/typeaudio-function-authoring.md).
+E2b and source/draft preservation are implemented. E2c composition-source operations, explicit connected-port renames and subgraphs remain.
+Review and authorized publication remain; do not restart the delivered Web integration.
 
 ## Record maintenance
 
