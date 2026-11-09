@@ -34,14 +34,17 @@ function cmul(a: vec2, b: vec2): vec2 {
  * parts of 0. The second half of `padded` is the zero padding: the engine makes `padded` zeroed and
  * no call writes its second half.
  *
- * The loop runs over the frames and not over the points. At the compiler pin a loop over the 2,048
- * points that reads `input[j]` only under `if (j < FRAMES)` is refused by the call before it runs:
- * `pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0 to 2047.` The
- * call's check of the arrays a loop reads (compiler issue #655) does not see the guard.
+ * The loop runs over the 2,048 points and writes only under `if (j < FRAMES)`, so `input` is read
+ * only at indices 0 to 1023. The call's check of the arrays a loop reads sees the guard at the
+ * compiler pin `415b276a` (compiler issue #997, fixed by #1029). Earlier pins refused this form
+ * before it ran (`pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0
+ * to 2047.`), and this kernel looped over the frames.
  */
 export function pad(padded: array<vec2>, input: array<f32>) {
-  for (let j: u32 = 0; j < FRAMES; j++) {
-    padded[j] = vec2(input[j], 0.);
+  for (let j: u32 = 0; j < POINTS; j++) {
+    if (j < FRAMES) {
+      padded[j] = vec2(input[j], 0.);
+    }
   }
 }
 
