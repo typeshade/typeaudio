@@ -293,6 +293,39 @@ Bun version and the load average, as record 08 does.
 
 1. **The split by kind (before any code).** Render the fixture with the events of one kind at a time
    on WebGPU, and record the mean GPU time of `cues` for each. This tests the inference of section 2.
+   **Result of step 1 (2026-11-09).** Command:
+   `TYPESHADE_CHROMIUM=<chromium> bun experiments/08-sound-design/run-split.ts` (40 blocks, WebGPU on
+   SwiftShader, commit `9a423a0`, Bun 1.4.4, load average 6.61 4.79 3.89 before and 5.71 4.72 3.89
+   after). Each event starts at frame 0, so every lane sounds in every timed block. The table is the
+   mean GPU time of the group that holds `cues`, for 1 lane and for 9 lanes of one kind (the fixture's
+   first event of the kind, under nine ids).
+
+| Kind       | 1 lane (ms) | 9 lanes (ms) | Per added lane (ms) |
+| ---------- | ----------: | -----------: | ------------------: |
+| `whoosh`   |        5.06 |        13.94 |                1.11 |
+| `impact`   |        4.64 |        14.36 |                1.22 |
+| `shimmer`  |        4.91 |        14.15 |                1.16 |
+| `riser`    |        4.63 |        13.64 |                1.13 |
+| `wind`     |        5.23 |        15.15 |                1.24 |
+| `drone`    |        5.17 |        14.71 |                1.19 |
+| `footstep` |        5.22 |        13.92 |                1.09 |
+| `cloth`    |        5.19 |        14.56 |                1.17 |
+| `voice`    |        5.33 |        15.30 |                1.25 |
+
+The whole fixture at frame 0 (25 lanes) gives 33.82 ms for `cues` and a block median of 53.79 ms.
+
+**Fact.** The cost of a lane does not depend on its kind. `voice` computes `x * level` and costs as
+much as `wind`, which calls four `hash32` and four `sin` a frame. A first lane costs about 5 ms, and
+each added lane about 1.2 ms. The 25 lanes of the fixture cost about 5 + 24 x 1.2 = 34 ms, which is
+the measured 33.82 ms.
+
+**Inference, and it contradicts the inference of section 2.** The cost of `cues` on SwiftShader is
+a per-lane, per-frame cost that the kind's arithmetic hardly changes. The stateless arithmetic is
+not most of the serial cost here. Candidates, not measured: the load and the store of the whole
+`Cue` (about 180 fields) around each `tick`, and the dispatch on `kind`. Option B moves the
+arithmetic into pass 1 and leaves a per-lane, per-frame cost of the same size in `recur`, so it
+cannot be expected to cut `cues` on this machine until that cost is understood.
+
 2. **The smoke run on the container, before and after.**
    `TYPESHADE_CHROMIUM=<chromium> bun run exp:08 --tier webgpu --blocks 40 --repeat-blocks 2 --variant-seconds 0`.
    Record `cues` (33.09 ms, 71.8 %, record 08 command 2), and after the change the sum of the
