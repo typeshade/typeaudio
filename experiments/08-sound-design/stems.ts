@@ -4,6 +4,7 @@
 // (a deviation of experiment 8, in its record).
 
 import type { SoundPlan } from '../../src/plan/index.ts';
+import { eventKey } from '../../src/kinds/make.ts';
 
 /** A mono stem of `seconds` at `sr`, from `seed`: a stand-in for speech, peaking near 0.3. */
 export function speechStem(seconds: number, sr: number, seed: number): Float32Array {
@@ -45,8 +46,8 @@ export function speechStem(seconds: number, sr: number, seed: number): Float32Ar
 /** The stems of every `voice` event of `plan`, by event id. */
 export function stemsOf(plan: SoundPlan, sr: number): Record<string, Float32Array> {
   const stems: Record<string, Float32Array> = {};
-  plan.events.forEach((e, i) => {
-    if (e.kind === 'voice') stems[e.id] = speechStem(e.duration ?? 1, sr, i + 1);
-  });
+  for (const e of plan.events)
+    if (e.kind === 'voice')
+      stems[e.id] = speechStem(e.duration ?? 1, sr, eventKey(plan.seed, e.id));
   return stems;
 }
