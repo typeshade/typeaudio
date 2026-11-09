@@ -193,9 +193,11 @@ engine's own ground, inherited from the compiler's oracle and `grad`.
 - A long single dispatch loses the device (about 2 s on Windows; no reason on iOS Safari, per
   the compiler's `docs/hardware-notes.md`). Long renders are chunked under `timeBudgetMs`
   (change 0074) from the first day.
-- The WebGL2 tier has no atomics and no runtime `.length` in GLSL ES 3.00, so a histogram, a
-  scan and a compaction fall to the CPU tier there (§72), and an entry that reads an array's
-  length inside an index does not compile on WebGL2 today (compiler issue #900).
+- The WebGL2 tier has no atomics in GLSL ES 3.00, so a histogram and the whole reductions fall to
+  the next tier there (§72). The scans and the compaction run on WebGL2 since change 0072,
+  Amendment 1, with element counts the call supplies. An entry that reads an array's `.length`
+  in an index or a loop body runs on WebGL2 at the pin `415b276a` (compiler issues #900 and
+  #689, fixed; `docs/compiler-asks.md`, ask J).
 
 ## 6. The bar
 
