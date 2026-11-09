@@ -581,8 +581,10 @@ e.inout.values = u`). Inference: the allocation of ask S is gone, and the remain
   is the rest of what `explain` reads.
 - Workaround: none. `explain` gives the plan's dispatches in its totals.
 - Measured by: experiment 4 (`docs/records/04-additive-container.md`, the container).
-- Status: issues #985 (the dispatches of each group) and #992 (the scratch arrays), open. Ask U asks
-  for the same count and the arrays; ask Y adds record 06's evidence.
+- Status: answered at the pin `415b276a`: 0121 gives `group.dispatches` (#985) and 0128 gives
+  `webgpuScratch` (#992); `explain` reads both since #34 (`85c8ad69`). Observed 2026-11-09, container (`bun run exp:06 --tier webgpu --blocks 8 --warmup 1 --arms fenced`, `typeaudio` at `8833834a`, Bun 1.4.4): `explain` printed "cull: 4 dispatches", "tally: 1 dispatch", "spawn: 3 dispatches", "tally: 1 dispatch" and "play + keep: fused into one dispatch" for the last block, and "WebGPU scratch storage: 0 allocations (0 bytes), 0 reuses (0 bytes)", against the report's total of 10 dispatches (4 + 1 + 3 + 1 + 1) in 1 submission.
+  The fenced arm made no scratch allocation, so the run does not show a reuse count above 0.
+  Ask Y adds record 06's evidence.
 
 ### V. The CPU tier's cost of entering a call with a long array
 
@@ -665,12 +667,16 @@ n]", an element two iterations can share. Write at an index made from "n".` `tap
 - Compiler: `FuseReport` (surface §71) counts `dispatches` for the whole plan. A group's
   `workgroupShapes` holds one triple for a loop that pushes, which runs as count, scan and store,
   and none for the stores after a function's loops.
-- Workaround: none. `explain` (`src/explain.ts`, the function `where`) counts a group's triples as
-  its dispatches, so it prints "1 dispatch" for `cull` and "0 dispatches" for each `tally` of a
-  plan whose report counts 10 (`docs/records/06-granular-container.md`, "How the plan ran").
+- Workaround: none. Before #34, `explain` (`src/explain.ts`, the function `where`) counted a
+  group's triples as its dispatches, so it printed "1 dispatch" for `cull` and "0 dispatches" for
+  each `tally` of a plan whose report counts 10 (`docs/records/06-granular-container.md`, "How the
+  plan ran"). Since #34 it reads `group.dispatches`.
 - Measured by: experiment 6, the fuse report of each block on WebGPU.
-- Status: issue #985, open. Ask U asks for the same count and the arrays; ask Y adds record 06's
-  evidence. The wording of `explain` for such a group is open in this repository.
+- Status: answered at the pin `415b276a`: 0121 gives `group.dispatches` (#985) and 0128 gives
+  `webgpuScratch` (#992); `explain` reads both since #34 (`85c8ad69`). Observed 2026-11-09, container (`bun run exp:06 --tier webgpu --blocks 8 --warmup 1 --arms fenced`, `typeaudio` at `8833834a`, Bun 1.4.4): `explain` printed "cull: 4 dispatches", "tally: 1 dispatch", "spawn: 3 dispatches", "tally: 1 dispatch" and "play + keep: fused into one dispatch" for the last block, and "WebGPU scratch storage: 0 allocations (0 bytes), 0 reuses (0 bytes)", against the report's total of 10 dispatches (4 + 1 + 3 + 1 + 1) in 1 submission.
+  The wording of `explain` for such a group is settled: it prints the group's `dispatches`, and the
+  groups' counts add up to the report's total. Nothing is left open in this repository. Ask U
+  carries the same count and the arrays.
 
 ### Z. A plan's GPU time without a read of each plan
 
