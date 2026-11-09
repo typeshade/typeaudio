@@ -7,13 +7,13 @@
 /**
  * Copies one block into the tape, from the frame `at`.
  *
- * Workaround: the index is written `n * 1 + at`. The loop proof (surface §65, rule R3) admits a
- * write at one index whose coefficient of the counter is loop-invariant, and refuses `at + n`
- * and `n + at` with TS8070 ("an element two iterations can share"); `n * 1 + at` is admitted.
+ * The index is written `at + n`. The loop proof (surface §65, rule R3) admits it at the compiler
+ * pin `415b276a` (compiler issue #983, fixed by #994). Earlier pins refused it with TS8070 and
+ * this kernel wrote `n * 1 + at`.
  */
 export function keep(tape: array<f32>, block: array<f32>, at: u32) {
   for (let n: u32 = 0; n < block.length; n++) {
-    tape[n * 1 + at] = block[n];
+    tape[at + n] = block[n];
   }
 }
 
