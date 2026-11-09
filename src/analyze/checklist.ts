@@ -51,7 +51,8 @@ export interface ChecklistInput {
    * The layers as separate stems, each one channel (mono) or two (left, right), at the render's
    * sample rate. A layer a plan does not use may be absent. With stems, `position` and `variation`
    * read each event on its own layer's stem, and the checklist measures `duckingDb` and
-   * `layerOverlap`.
+   * `layerOverlap`. `dipDb` is read on the sum of the stems of the layers other than the hero
+   * impact's layer, and is `null` where those layers are silent before the impact.
    */
   stems?: Partial<Record<PlanLayer, readonly Float32Array[]>>;
   /**
@@ -211,16 +212,40 @@ export function checklist(input: ChecklistInput): ChecklistReport {
     ),
   );
 
-  // dynamics: the contrast of the short-term curve, and the dip before each impact.
+  // dynamics: the contrast of the short-term curve, and the dip before each impact. The dip means
+  // that the rest of the mix makes room before the hit. With stems, it is read on the sum of the
+  // stems of the layers other than the impact's, so that a build-up of the impact's own layer (a
+  // whoosh) does not read as the absence of a dip. Without stems, it is read on the mix. It is
+  // `null` where the other layers are silent in both windows (a one-layer render): nothing there
+  // can dip.
   const curve = loudnessCurve(channels, sampleRate);
   const dips: number[] = [];
+  const othersOf = new Map<PlanLayer, Float64Array>();
+  /** The mono sum of the stems of every layer but `layer`. */
+  const others = (layer: PlanLayer): Float64Array => {
+    let sum = othersOf.get(layer);
+    if (sum === undefined) {
+      sum = new Float64Array(m.length);
+      for (const l of Object.keys(stems!) as PlanLayer[]) {
+        if (l === layer) continue;
+        const x = mono(stems![l]!);
+        for (let i = 0; i < Math.min(x.length, sum.length); i++) sum[i]! += x[i]!;
+      }
+      othersOf.set(layer, sum);
+    }
+    return sum;
+  };
+  const SILENT_DB = -100;
   for (const e of events.filter(
     (v) => v.kind === 'impact' && v.intensity >= Math.min(R.heroIntensity, top),
   )) {
     const { start } = eventSpan(e);
-    const before = levelDb(m, sampleRate, start - 2, start - 0.5);
-    const lead = levelDb(m, sampleRate, start - 0.5, start - 0.05);
-    if (start >= 2 && before !== null && lead !== null) dips.push(before - lead);
+    const x = stems === undefined ? m : others(e.layer);
+    const before = levelDb(x, sampleRate, start - 2, start - 0.5);
+    const lead = levelDb(x, sampleRate, start - 0.5, start - 0.05);
+    if (start < 2 || before === null || lead === null) continue;
+    if (stems !== undefined && before <= SILENT_DB && lead <= SILENT_DB) continue;
+    dips.push(before - lead);
   }
   const dynamics: Dimension = {
     measures: {
