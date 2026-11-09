@@ -53,3 +53,40 @@ here.
   `why` of each group from the `FuseReport`, and no longer infers the tier from the absence of
   `workgroupShapes`. `test/explain.test.ts` holds a WebGL2 report in which `synth` and `peak` ran on
   the CPU tier. Ask P of `docs/compiler-asks.md` is retired.
+
+The third pin is `415b276a7408936cb483d05ca8bb39e797b05966` (2026-11-08), set by pull request #34 on
+2026-11-09. The script lists six implemented proposals that the move passes and that name
+`typeaudio`. All six are recorded here. The compiler's `main` is 86 commits after the second pin.
+
+- 0119, pull request #34: the subgroup variant (compiler #1020 and #1026, with the rules). Nothing changes in
+  the code. `peak` (`src/kernels/meter.shade.ts`) is a `max` reduction on `f32`, and the variant
+  covers it where it runs unfused. The compiler's `CHANGELOG.md` says what a device reports:
+  `device.info.subgroups` holds what the probe saw (the adapter's size range, the subgroup size,
+  the subgroup count and whether the lanes were consecutive), and `device.statistics.variants`
+  names the text the last call of each kernel function dispatched, `'subgroup'` or `'tree'`. Not
+  measured here: no code of this repository reads either member. Searched on 2026-11-09.
+- 0121, pull request #34: `explain` (`src/explain.ts`, the function `where`) reads
+  `group.dispatches` and no longer counts `workgroupShapes`. A fused group with a reduction fold
+  prints its dispatches (`fused into one loop, 2 dispatches in all`). `test/explain.test.ts` holds
+  such a report. Ask U and ask Y of `docs/compiler-asks.md` read this member. The proposal says
+  to update ask W. Ask W reads no dispatch count, and its issue #984 is still open, so it is not
+  changed by this pull request.
+- 0122, pull request #34: nothing owed, searched on 2026-11-09. No report, record or bundle
+  snapshot of this repository holds a fusion origin. `docs/records/` holds JSON and Markdown
+  records that name no origin, the tests hold no snapshot file, and no source names `hostFace`
+  origins or `originNamespace`. The word `hostFace` in `experiments/07-sound-match/` names a
+  measured arm, not the compiler option.
+- 0123, pull request #34: scalar `f64` module constants keep their precision, and the ask of issue
+  #967 is answered. Experiment 3's emulated-double FFT (variant C, `experiments/03-fft/`) could
+  write an `f64` constant where it now passes the value some other way. The experiment is not
+  changed by this pull request. A later pull request retires the workaround after a GPU run.
+- 0128, pull request #34: `explain` prints the plan's `webgpuScratch` for a plan on WebGPU, as
+  allocations and reuses with their descriptor bytes. A report without the member prints
+  `WebGPU scratch storage: not reported`, and `mergeReports` keeps that apart from zero.
+  `test/explain.test.ts` holds both. Ask U of `docs/compiler-asks.md` reads this member.
+- 0129, pull request #34: a call that reads a `Resident` whose producer failed now fails with that
+  error, and independent calls still run (issue #998). Experiment 5's record
+  (`docs/records/05-convolution-container.md`, candidate issue 2) and the row of #998 in section 3
+  of `docs/compiler-asks.md` (the ledger's "ask 2" of the proposal) need rechecking against this
+  behaviour. Neither the experiment nor the
+  record is changed by this pull request.
