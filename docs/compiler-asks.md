@@ -271,8 +271,10 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   under Compiler. Compiler issues #966 (WebGL2 does not bind the `_fp64` guard of an `f64` entry, so
   variant C never returns), #970 (an `f64` across a barrier on WebGL2) and #967 (an `f64` module
   constant, and the TS8022 that follows its refusal) record variant C's findings. #966 and #970 are
-  closed on the compiler's `main` by #1003 and #1014, after the pin; their workarounds stay until
-  the pin moves past them. Experiment 5, on the container only
+  closed on the compiler's `main` by #1003 and #1014, and the pin `415b276a` holds both. Observed on
+  2026-11-09 at that pin: `bun run exp:03 --tier webgl2 --sizes 1024` returns all six calls,
+  variant C included, and gives variant B's error against the `f64` reference. Variant C's
+  WebGL2 refusals are retired at the pin; the record's numbers are unchanged. Experiment 5, on the container only
   (`docs/records/05-convolution-container.md`, 2026-11-02, reference numbers), adds a 2,048-point
   entry in workgroup memory, 16 KiB, with the host's table, and runs it on a 10-second impulse
   response's 469 partitions and twice a block: the oracle, WebGPU and WebGL2 give the same bits for

@@ -130,7 +130,10 @@ measures ask J where the entry reads a length inside an index.
 container of a Claude Code session is recorded in `docs/records/03-fft-container.md`, as reference
 numbers: WebGPU and WebGL2 on SwiftShader, and the CPU arms in Node and Bun. The device runs are
 pending: one record per device, `docs/records/03-fft-<device>.md`. `test/fft.test.ts` holds the
-1,024-point entry to the reference on the CPU in `bun run test`.
+1,024-point entry to the reference on the CPU in `bun run test`. The record's runs did not get a
+result from variant C on WebGL2. At the pin `415b276a` it returns there (compiler #966 and #970,
+fixed by #1003 and #1014): see the status note at the top of the record. No number of the record
+changed.
 
 The harness departs from the method in four places, each recorded in the record's section "What
 departs from the method":
