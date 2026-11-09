@@ -104,7 +104,11 @@ repeated `id`.
 
 ### The kinds
 
-A kind is a unit or a preset of the vocabulary. The first kinds are:
+A kind is a unit or a preset of the vocabulary. The plan's `duration` is the sounding length of
+every kind that sustains, and the macros shape the sound within it. For a `whoosh`, `speed` sets how
+late and how fast the sweep rises within the duration. For a `riser`, `length` sets the fraction of
+the duration over which the swell rises, and the sound holds at its peak for the rest. The first
+kinds are:
 
 | Kind       | Sort       | Layer    | Macros                      |
 | ---------- | ---------- | -------- | --------------------------- |

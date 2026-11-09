@@ -263,4 +263,21 @@ describe('the cues of a plan', () => {
     };
     expect(hi(0.9)).toBeGreaterThan(hi(0.1));
   });
+
+  test.each([
+    ['whoosh', 'speed'],
+    ['riser', 'length'],
+  ])('a %s sounds for the duration whatever its %s macro', (kind, macro) => {
+    const base = { ...p.events.find((e) => e.kind === kind)!, duration: 0.2 };
+    const at = (v: number): { length: number; y: number[] } => {
+      const e = { ...base, macros: { ...base.macros, [macro]: v } };
+      return { length: makeCue(e, { sr: SR, key: 1 }).length, y: sound(e, 1) };
+    };
+    const lo = at(0.1);
+    const hi = at(0.9);
+    expect(lo.length).toBe(Math.round(0.2 * SR));
+    expect(hi.length).toBe(lo.length);
+    expect(lo.y.length).toBe(hi.y.length);
+    expect(lo.y).not.toEqual(hi.y);
+  });
 });
