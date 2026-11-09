@@ -9,10 +9,12 @@
 // and WebGL2 in headless Chromium on SwiftShader (`TYPESHADE_CHROMIUM` names the binary). Each tier
 // times every block against the 21.33 ms budget, renders the same blocks twice to count the values
 // that differ, and renders two 15-second variants that differ in one correction (every whoosh a
-// little darker), cold and warm. The CPU tier also renders the one-layer version of the plan, scores
-// both renders on the eight dimensions of the checklist and writes the stems and the mix as WAV into
-// `experiments/08-sound-design/out/` (not committed). `--blocks` is the blocks each tier renders for
-// the timed run, 0 for the whole clip; `--variant-seconds` the length of each variant. The runner
+// little darker), cold and warm. A tier that renders the whole clip (`--blocks 0`) also renders the
+// one-layer version of the plan and scores both renders on the eight dimensions of the checklist
+// (`score.ts`); a tier that renders fewer blocks writes no checklist, and its JSON says why. The CPU
+// tier writes the stems and the mix as WAV into `experiments/08-sound-design/out/` (not committed).
+// `--blocks` is the blocks each tier renders for the timed run, 0 for the whole clip;
+// `--variant-seconds` the length of each variant. The runner
 // holds each page tier's mix to the CPU tier's when both rendered the same blocks (`across.ts`),
 // writes the result as JSON and prints the tables. A number without its record is not a result: the record is `docs/records/`.
 
@@ -203,28 +205,34 @@ type Rule = {
   met: boolean | null;
 };
 type Dim = { measures: Record<string, number | null>; rules: Rule[] };
-const cpuResult = results['cpu'] as unknown as
-  | {
-      checklist?: Record<string, Record<string, Dim>>;
-      events?: { oneLayer: number; layered: number };
-    }
-  | undefined;
-if (cpuResult?.checklist) {
-  const { oneLayer, layered } = cpuResult.checklist as Record<string, Record<string, Dim>>;
+// The checklist of each tier that rendered the whole clip, the same table for each (`score.ts`).
+for (const [tier, r] of Object.entries(results)) {
+  const scored = r as unknown as {
+    checklist?:
+      | { skipped: string }
+      | { oneLayer: Record<string, Dim>; layered: Record<string, Dim> };
+    events?: { oneLayer: number; layered: number };
+  };
+  if (scored.checklist === undefined) continue;
+  if ('skipped' in scored.checklist) {
+    console.log(`\n${tier}: no checklist. ${scored.checklist.skipped}`);
+    continue;
+  }
+  const { oneLayer, layered } = scored.checklist;
   console.log(
-    `\nThe eight dimensions: one-layer render (${cpuResult.events!.oneLayer} events) | layered render (${cpuResult.events!.layered} events)\n`,
+    `\n${tier}: the eight dimensions: one-layer render (${scored.events!.oneLayer} events) | layered render (${scored.events!.layered} events)\n`,
   );
   console.log('| Dimension | Measure | One layer | Layered | Rule | One layer | Layered |');
   console.log('| --- | --- | ---: | ---: | --- | --- | --- |');
-  for (const d of Object.keys(layered!)) {
-    const rules = new Map(layered![d]!.rules.map((r) => [r.measure, r]));
-    for (const [m, v] of Object.entries(layered![d]!.measures)) {
-      const o = oneLayer![d]!.measures[m];
+  for (const d of Object.keys(layered)) {
+    const rules = new Map(layered[d]!.rules.map((r) => [r.measure, r]));
+    for (const [m, v] of Object.entries(layered[d]!.measures)) {
+      const o = oneLayer[d]!.measures[m];
       const rule = rules.get(m);
       const bound = rule ? `${rule.min ?? ''}..${rule.max ?? ''} ${rule.unit}` : '';
       const mark = (met: boolean | null | undefined): string =>
         met === undefined ? '' : met === null ? 'n/a' : met ? 'met' : 'fails';
-      const other = oneLayer![d]!.rules.find((r) => r.measure === m);
+      const other = oneLayer[d]!.rules.find((r) => r.measure === m);
       console.log(
         `| ${d} | ${m} | ${num(o, 3)} | ${num(v, 3)} | ${bound} | ${mark(other?.met)} | ${mark(rule?.met)} |`,
       );

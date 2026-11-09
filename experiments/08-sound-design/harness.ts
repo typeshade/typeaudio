@@ -10,6 +10,7 @@ import { validatePlan, type SoundPlan } from '../../src/plan/index.ts';
 import { toBase64 } from '../03-fft/signals.ts';
 import plan from './plan.json';
 import { stemsOf } from './stems.ts';
+import { renderOneLayer, scoreRenders, type Scores } from './score.ts';
 import { timingOf, tiersOf, type BlockTiming, type Options } from './options.ts';
 
 export { DEFAULTS, tiersOf, type Options, type Tier } from './options.ts';
@@ -85,6 +86,14 @@ export interface Result {
   readonly repeat?: { readonly blocks: number; readonly values: number; readonly differ: number };
   /** A device made for the pair, so the first render builds the pipelines (cold), then the pair again (warm). */
   readonly variants?: { readonly cold: VariantRun; readonly warm: VariantRun };
+  /**
+   * The checklist of the one-layer and the layered render (`score.ts`), on a tier that rendered the
+   * whole clip. On any other tier `checklist` holds `skipped`, the reason no checklist was written.
+   */
+  readonly events?: Scores['events'];
+  readonly oneLayerMaster?: Scores['oneLayerMaster'];
+  readonly checklist?: Scores['checklist'] | { readonly skipped: string };
+  readonly verdicts?: Scores['verdicts'];
   /** A step that stopped, with the sentence it stopped on, word for word. */
   readonly failed: { readonly step: string; readonly message: string }[];
 }
@@ -100,13 +109,14 @@ function differing(a: readonly Float32Array[], b: readonly Float32Array[]): numb
 }
 
 /**
- * Runs experiment 8 on `o.tier`. `keep` receives the render of the full run, which Node's entry
- * analyzes. A step that throws is recorded in `failed` and the next step runs.
+ * Runs experiment 8 on `o.tier`. `keep` receives the render of the full run and, when the tier
+ * rendered the whole clip, the one-layer render, which Node's entry writes as files. A step that
+ * throws is recorded in `failed` and the next step runs.
  */
 export async function runTier(
   o: Options,
   progress: (line: string) => void = () => {},
-  keep?: (r: Rendered) => void,
+  keep?: (layered: Rendered, one?: Rendered) => void,
 ): Promise<Result> {
   const failed: { step: string; message: string }[] = [];
   const sound = validatePlan(plan);
@@ -128,6 +138,9 @@ export async function runTier(
   let full: FullRun | undefined;
   let repeat: Result['repeat'];
   let variants: Result['variants'];
+  let layeredRender: Rendered | undefined;
+  let scores: Scores | undefined;
+  let unscored = 'the full render did not run';
   try {
     // 1. The plan, rendered through the whole chain, every block timed.
     try {
@@ -166,11 +179,31 @@ export async function runTier(
       progress(
         `${o.tier} full render: ${full.blocks} blocks, median ${full.timing.ms.median.toFixed(2)} ms, p95 ${full.timing.ms.p95.toFixed(2)} ms, ${full.timing.over} over ${BLOCK_BUDGET_MS.toFixed(2)} ms, ${(hostMs / 1000).toFixed(1)} s`,
       );
-      keep?.(r);
+      layeredRender = r;
     } catch (e) {
       failed.push({ step: 'full render', message: String(e) });
       progress(`${o.tier} full render: ${String(e)}`);
     }
+    // 1b. The checklist of both renders, on the same inputs as the CPU arm: only on the whole clip, since a
+    // short render has a different master gain (`across.ts`).
+    let one: Rendered | undefined;
+    if (layeredRender !== undefined && o.blocks > 0) {
+      unscored = `the tier rendered ${o.blocks} blocks, not the whole clip; a short render has a different master gain (across.ts)`;
+    } else if (layeredRender !== undefined) {
+      try {
+        const t0 = performance.now();
+        const rendered = await renderOneLayer(dev, sound);
+        one = rendered.one;
+        scores = scoreRenders(sound, rendered.flat, one, layeredRender);
+        progress(
+          `${o.tier} checklists: ${((performance.now() - t0) / 1000).toFixed(1)} s, one layer ${rendered.flat.events.length} events, layered ${sound.events.length} events`,
+        );
+      } catch (e) {
+        failed.push({ step: 'checklist', message: String(e) });
+        unscored = `the checklist stopped: ${String(e)}`;
+      }
+    }
+    if (layeredRender !== undefined) keep?.(layeredRender, one);
     // 2. The same blocks twice, on the same device: the values that differ.
     try {
       const blocks = o.repeatBlocks;
@@ -226,6 +259,7 @@ export async function runTier(
     ...(full === undefined ? {} : { full }),
     ...(repeat === undefined ? {} : { repeat }),
     ...(variants === undefined ? {} : { variants }),
+    ...(scores ?? { checklist: { skipped: unscored } }),
     failed,
   };
 }
