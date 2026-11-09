@@ -15,9 +15,8 @@
 // angle on the device (variant A); `Table`, a table the host computes in doubles and uploads
 // (variant B); `Double`, `sin` and `cos` of an emulated double on the device (surface §39),
 // narrowed to `f32` (variant C). The sizes are module constants: the entries read no `.length`
-// inside an index, the form the WebGL2 pass program at the pin leaves undeclared
-// (docs/compiler-asks.md, J; compiler issue #900). A module constant cannot be an `f64` at the pin
-// ("must be f32, i32, u32, or bool for now"), so variant C writes 2π as an `f64` literal.
+// inside an index (docs/compiler-asks.md, J). Variant C reads 2π from the module constant
+// `TAU_DOUBLE: f64`, which change 0123 admits (compiler issue #967).
 //
 // Experiment 5 (docs/experiments.md, section 5) adds a medium transform, 2,048 points: a block of
 // 1,024 frames zero-padded to twice its length, the transform of a partitioned convolution. It
@@ -27,6 +26,8 @@
 
 /** One full turn, in radians. */
 const TAU: f32 = 6.283185307179586;
+/** One full turn, in radians, as an `f64` (variant C), which keeps all its digits. */
+const TAU_DOUBLE: f64 = 6.283185307179586;
 /** The invocations of a workgroup. Each workgroup runs one transform. */
 const THREADS: u32 = 256;
 
@@ -106,7 +107,7 @@ function onDevice(t: u32, step: f32): vec2 {
  * keep in an invocation's state at the pin ("a f64 cannot be kept in state").
  */
 function inDouble(t: u32, turn: f32): vec2 {
-  const angle = f64(f32(t) * turn) * f64(6.283185307179586);
+  const angle = f64(f32(t) * turn) * TAU_DOUBLE;
   return vec2(f32(cos(angle)), f32(sin(angle)));
 }
 

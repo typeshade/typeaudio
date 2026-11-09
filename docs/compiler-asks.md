@@ -274,7 +274,12 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   closed on the compiler's `main` by #1003 and #1014, and the pin `415b276a` holds both. Observed on
   2026-11-09 at that pin: `bun run exp:03 --tier webgl2 --sizes 1024` returns all six calls,
   variant C included, and gives variant B's error against the `f64` reference. Variant C's
-  WebGL2 refusals are retired at the pin; the record's numbers are unchanged. Experiment 5, on the container only
+  WebGL2 refusals are retired at the pin; the record's numbers are unchanged.
+  Retired at the pin `415b276a`, 2026-11-09: the inline `f64(6.283185307179586)` of variant C is
+  now `const TAU_DOUBLE: f64 = 6.283185307179586;` (compiler issue #967, change 0123). `bun run
+exp:03 --tier all --sizes 1024,4096 --variants double --repeats 1` ran with both forms: the
+  oracle, WebGPU and WebGL2 gave the same bits in all 12 outputs (two sizes, two directions, three
+  arms; 0 ULPs apart). The CPU tier refuses the entry at a barrier with either form. Experiment 5, on the container only
   (`docs/records/05-convolution-container.md`, 2026-11-02, reference numbers), adds a 2,048-point
   entry in workgroup memory, 16 KiB, with the host's table, and runs it on a 10-second impulse
   response's 469 partitions and twice a block: the oracle, WebGPU and WebGL2 give the same bits for
@@ -336,10 +341,18 @@ and the experiment that measures it (`docs/experiments.md`). Every row is a cand
   This is a smoke run and not a record: the harness runs its probes before its calls and has no
   option to drop them, so one call of the 1,024-point entry ran with the probes. #689 is open, and
   the workaround stays until it closes.
-  Kept, 2026-11-09: #689 is fixed by #1069 (`c0afa047`), which the pin `415b276a` holds, but the
-  length-as-parameter workaround is not one of the items this pull request retires, and no GPU run
-  of the plain form was made. It stays until a run shows the plain form on WebGL2 with the same
-  result.
+  Retired at the pin `415b276a`, 2026-11-09 (headless Chromium on SwiftShader, commit `af4d2b9`
+  plus the working tree, Bun 1.4.4): #689 is fixed by #1069 (`c0afa047`), which the pin holds.
+  Finding: no kernel of experiments 03 and 06 or of `src/` takes an array's length as a separate
+  `u32` parameter, so no parameter was left to retire. The plain forms were already in the code.
+  `bun run exp:03 --tier all --sizes 1024 --variants table --repeats 1`: `wrapProbe`,
+  `ys[i] = xs[i % xs.length]`, gave the exact result in 12 of 12 values on the CPU tier, WebGPU and
+  WebGL2. `bun run exp:06 --tier <tier> --blocks 8 --warmup 1 --arms fenced` on the three tiers:
+  on WebGL2 `play` ran as a WebGL2 draw (1 dispatch), with no `arrayLength` refusal, and the
+  WebGL2 tape has the same bits as the WebGPU tape (9,216 of 9,216 samples; the CPU tier differs
+  by up to 7.44e-5, the `sin` and `cos` difference record 06 states). `cull` and `spawn` still
+  have no WebGL2 tier, since they push (change 0078). The sentence of record 06 above is what
+  used to fail. The records' numbers are unchanged.
   Experiment 6 (`docs/records/06-granular-container.md`): `play` of `src/kernels/grains.shade.ts`
   reads `grains.length` in its loop body, and on WebGL2 alone it is refused with `play(): no tier
 it may use can run it (webgl2: it runs on the CPU, its GLSL did not emit: glsl-es300: arrayLength
@@ -699,7 +712,7 @@ The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the 
 | #900  | The WebGL2 pass program drops `_phx_len_table` for a length read inside an index                                     | J                                                                          | Fixed by #939 (`b3bf0af8`), in the pin `87af4eb0`                                                                                                                                                                                                         |
 | #901  | The commit-msg hook reads a merge against its first parent                                                           | The implementing pull requests, not the engine                             | Closed: fixed by #932 and #956                                                                                                                                                                                                                            |
 | #908  | TS8070 names a static function by its emitted name                                                                   | The refusal's wording for a unit's static helper                           | Fixed on `main` by #953 (`a659ae36`)                                                                                                                                                                                                                      |
-| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier                                                | J                                                                          | Fixed by #1069 (`c0afa047`), in the pin `415b276a`; the workaround stays until a later pull request retires the code                                                                                                                                      |
+| #689  | A kernel loop that reads another array's `.length` has no WebGL2 tier                                                | J                                                                          | Fixed by #1069 (`c0afa047`), in the pin `415b276a`; retired at the pin `415b276a`, 2026-11-09: no kernel took a length as a parameter, and the plain forms `wrapProbe` (`xs.length` in an index) and `play` (`grains.length`) run on WebGL2 (ask J)       |
 | #459  | A WebAssembly tier between WebGL2 and the CPU                                                                        | K, F                                                                       | Open; change 0042 draft                                                                                                                                                                                                                                   |
 | #535  | Reverse-mode `grad` before 1.0                                                                                       | L                                                                          | Open; change 0056 accepted                                                                                                                                                                                                                                |
 | #539  | A stable sort of `u32` keys with values on every tier                                                                | Experiment 6: one cloud's grains need no sort                              | Open                                                                                                                                                                                                                                                      |
@@ -711,7 +724,7 @@ The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the 
 | #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node                                      | Q                                                                          | Open                                                                                                                                                                                                                                                      |
 | #961  | The CPU tier allocates an array for the `inout` values of every method call                                          | S                                                                          | Fixed by #1035 (`4f70703b`), in the pin `415b276a`; re-measurement pending                                                                                                                                                                                |
 | #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                     | G (variant C), D                                                           | Closed: fixed by #1003 (`92c3d2ff`), in the pin `415b276a`; retired at the pin `415b276a`: variant C returns on WebGL2 at 1,024 points with variant B's error (2026-11-09)                                                                                |
-| #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                               | G (variant C), D                                                           | Answered by 0123 (#1051, `29900fae`), in the pin `415b276a`; the workaround stays until a later pull request retires it                                                                                                                                   |
+| #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                               | G (variant C), D                                                           | Answered by 0123 (#1051, `29900fae`), in the pin `415b276a`; retired at the pin `415b276a`, 2026-11-09: variant C reads `const TAU_DOUBLE: f64`, with the same bits as the inline literal on the oracle, WebGPU and WebGL2 (ask G)                        |
 | #968  | The determinism report has no row for subnormal flushing                                                             | E                                                                          | Open                                                                                                                                                                                                                                                      |
 | #969  | A device's `sin`/`cos` may use all of the 2^-11 bound; a bounded-error form                                          | C                                                                          | Open                                                                                                                                                                                                                                                      |
 | #970  | WebGL2 refuses an `f64` local kept across a barrier                                                                  | G (variant C), D                                                           | Closed: fixed by #1014 (`130c4bf9`), in the pin `415b276a`; retired at the pin `415b276a`: variant C runs on WebGL2 with its `f64` inside the twiddle helper, and the call returns (2026-11-09)                                                           |
