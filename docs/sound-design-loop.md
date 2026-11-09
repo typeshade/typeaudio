@@ -188,7 +188,8 @@ The guards also include one that acts before an impact:
   are attenuated by 6 dB. A hero impact is an `impact` event whose `intensity` is at or above the
   checklist's hero threshold (`R.heroIntensity` of `src/analyze/checklist.ts`, capped at the
   highest `intensity` of the plan, as `checklist` caps it). The attenuation falls over 0.4 s and
-  ends 0.05 s before the onset. It holds through the onset, then recovers over 0.3 s after it. The
+  ends 0.05 s before the onset. The fall is fast first: an exponential approach in dB with a time
+  constant of one fifth of the fall. It holds through the onset, then recovers over 0.3 s after it. The
   impact's own layer is not ducked. `dialogue` is not ducked: dialogue ducks the other layers and
   never the reverse. When two impacts overlap, the deeper attenuation holds. These numbers are the
   defaults of the renderer, and they are named constants in `src/spatial/duck.ts`.

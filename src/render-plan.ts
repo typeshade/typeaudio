@@ -19,6 +19,7 @@ import { eventKey, makeCue } from './kinds/make.ts';
 import { Spatial, history, layers, pack, place, sendSum, strips } from './spatial/spatial.shade.ts';
 import { BLOCK, WIDTH, impulseResponse, spatialOf, stripOf } from './spatial/room.ts';
 import { Reverb } from './spatial/reverb.ts';
+import { duckActive, duckGains, duckSources } from './spatial/duck.ts';
 import { limiterGain, normalizationGain } from './master.ts';
 
 /** The sample rate of a render: a renderer fact, not a plan field. */
@@ -190,6 +191,19 @@ export async function renderPlan(
   const stripL = make(5 * BLOCK);
   const stripR = make(5 * BLOCK);
   const stripS = make(5 * BLOCK);
+  // The gain of each layer for the block: the pre-impact ducking (`src/spatial/duck.ts`). All ones
+  // until a block needs more; the guards off, always all ones.
+  const duckGain = make(5 * BLOCK);
+  const ones = new Float32Array(5 * BLOCK).fill(1);
+  duckGain.write(ones);
+  const duck = guards
+    ? duckSources(
+        events,
+        placed.map((p) => p.start),
+      )
+    : [];
+  const gainBlock = new Float32Array(5 * BLOCK);
+  let ducked = false;
   const send = make(BLOCK);
   const out = make(12 * BLOCK);
   const none = make(2 * BLOCK);
@@ -231,13 +245,20 @@ export async function renderPlan(
         inputs.write(fill);
         fed = live.length > 0;
       }
+      // The gain of the layers for this block, written only while a duck is in or near the block.
+      const active = duckActive(duck, at, sr);
+      if (active || ducked) {
+        if (active) duckGains(gainBlock, duck, at, sr);
+        duckGain.write(active ? gainBlock : ones);
+        ducked = active;
+      }
       [hist, prev] = [prev, hist];
       const report = await dev.fuse(() => {
         cues(raws, cueBank.instances, inputs, BLOCK);
         history(hist, prev, raws);
         place(laneL, laneR, laneS, hist, laneBank.instances, binaural);
         layers(layL, layR, layS, laneL, laneR, laneS, laneBank.instances);
-        strips(stripL, stripR, stripS, layL, layR, layS, stripBank.instances);
+        strips(stripL, stripR, stripS, layL, layR, layS, duckGain, stripBank.instances);
         sendSum(send, stripS);
         reverb?.block(send);
         pack(out, stripL, stripR, wet);

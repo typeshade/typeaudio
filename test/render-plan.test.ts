@@ -3,6 +3,15 @@ import { createDevice, type Device } from 'typeshade/runtime';
 import { onePlan, renderPlan, SAMPLE_RATE, SNAP_WINDOW } from '../src/render-plan.ts';
 import { integratedLoudness, truePeak, checklist } from '../src/analyze/index.ts';
 import { validatePlan, type PlanEvent } from '../src/plan/index.ts';
+import {
+  attenuationDb,
+  DUCK_DB,
+  DUCK_FALL,
+  DUCK_LEAD,
+  DUCK_RECOVER,
+  duckGains,
+  duckSources,
+} from '../src/spatial/duck.ts';
 import fixture from '../experiments/08-sound-design/plan.json';
 
 // The layered render on the CPU tier, on small plans in a fabric room (a 0.5 s impulse response, so
@@ -255,6 +264,159 @@ describe('renderPlan on the CPU tier', { timeout: 120000 }, () => {
       stems: withVoice.stems,
     });
     expect(q.dynamics.measures.duckingDb).not.toBeNull();
+  });
+
+  describe('the pre-impact ducking guard (docs/sound-design-loop.md, "The guards")', () => {
+    const ONSET = 3;
+    const wind = ev('bed', 0, {
+      kind: 'wind',
+      layer: 'ambience',
+      macros: { gust: 0, howl: 0 },
+      duration: 4.5,
+      intensity: 0.6,
+      position: { x: 0, y: 0, distance: 6 },
+    });
+    const hit = ev('hit', ONSET, { intensity: 0.9 });
+    const voice = ev('v', 2.8, {
+      kind: 'voice',
+      layer: 'dialogue',
+      macros: {},
+      duration: 0.5,
+      position: { x: 0, y: 0, distance: 2 },
+    });
+    const plan = (events: PlanEvent[]): unknown =>
+      mini(events, { clip: { duration: 4.5, fps: 24 }, picture: { cuts: [], motion: [] } });
+    // The master scales every stem by one gain. `raw` takes it out, so that a render with the
+    // impact and one without compare on the guard alone. The limiter stays out of these plans.
+    const raw = (r: Awaited<ReturnType<typeof renderPlan>>, x: Float32Array): Float32Array => {
+      expect(r.master.limiterMinDb).toBe(0);
+      const k = 10 ** (-r.master.normalizeDb / 20);
+      return x.map((v) => v * k);
+    };
+    const maxDiff = (a: Float32Array, b: Float32Array): number => {
+      let m = 0;
+      for (let i = 0; i < a.length; i++) m = Math.max(m, Math.abs(a[i]! - b[i]!));
+      return m;
+    };
+    const dbBetween = (a: Float32Array, b: Float32Array, from: number, to: number): number =>
+      10 * Math.log10(energy(a, at(from), at(to)) / energy(b, at(from), at(to)));
+
+    test('the ambience stem drops by 6 dB before the onset and recovers within 0.3 s after it', async () => {
+      const without = await renderPlan(dev, plan([wind]), { reverb: false });
+      const withHit = await renderPlan(dev, plan([wind, hit]), { reverb: false });
+      const a = raw(without, without.stems.ambience[0]);
+      const b = raw(withHit, withHit.stems.ambience[0]);
+      // Before the fall: no change.
+      expect(Math.abs(dbBetween(a, b, ONSET - 2, ONSET - 0.5))).toBeLessThan(0.1);
+      // The hold: the last 0.05 s before the onset, and the onset itself, are down by 6 dB.
+      expect(dbBetween(a, b, ONSET - DUCK_LEAD, ONSET)).toBeCloseTo(DUCK_DB, 1);
+      // The fall: each 0.05 s step down the window 0.45 s to 0.05 s before the onset is deeper.
+      let last = 0;
+      for (let t = ONSET - 0.45; t < ONSET - DUCK_LEAD - 1e-9; t += 0.05) {
+        const down = dbBetween(a, b, t, t + 0.05);
+        expect(down).toBeGreaterThan(last - 0.01);
+        expect(down).toBeLessThanOrEqual(DUCK_DB + 0.1);
+        last = down;
+      }
+      expect(last).toBeGreaterThan(DUCK_DB - 1);
+      // The recovery: down at the onset, back to 0 dB within 0.3 s.
+      expect(dbBetween(a, b, ONSET, ONSET + 0.05)).toBeGreaterThan(DUCK_DB - 0.5);
+      expect(Math.abs(dbBetween(a, b, ONSET + DUCK_RECOVER, ONSET + 1))).toBeLessThan(0.1);
+    });
+
+    test("the impact's own stem and a voice stem are not ducked", async () => {
+      const stems = { v: speech(0.5) };
+      const alone = await renderPlan(dev, plan([hit, voice]), { reverb: false, stems });
+      const full = await renderPlan(dev, plan([wind, hit, voice]), { reverb: false, stems });
+      // `effects` holds the impact alone, and `dialogue` the voice alone: the bed changes neither.
+      // The voice sits after the onset, so the impact's recovery is not in its window.
+      expect(
+        maxDiff(raw(full, full.stems.effects[0]), raw(alone, alone.stems.effects[0])),
+      ).toBeLessThan(1e-6);
+      expect(energy(full.stems.dialogue[0])).toBeGreaterThan(0);
+      // The voice sounds through the fall, the hold and the recovery: its stem is as it is without the hit.
+      const noHit = await renderPlan(dev, plan([wind, voice]), { reverb: false, stems });
+      const a = raw(full, full.stems.dialogue[0]);
+      const b = raw(noHit, noHit.stems.dialogue[0]);
+      expect(maxDiff(a, b)).toBeLessThan(1e-6);
+    });
+
+    test('the checklist reads the dip and meets its rule, and the render is the same bits twice', async () => {
+      const p = plan([wind, hit]);
+      const one = await renderPlan(dev, p, { reverb: false });
+      const two = await renderPlan(dev, p, { reverb: false });
+      expect(one.mix[0]).toEqual(two.mix[0]);
+      expect(one.stems.ambience[1]).toEqual(two.stems.ambience[1]);
+      const r = checklist({
+        channels: one.mix,
+        sampleRate: SR,
+        plan: validatePlan(p),
+        stems: one.stems,
+      });
+      const dip = r.dynamics.measures.dipDb!;
+      expect(dip).toBeGreaterThan(3);
+      expect(dip).toBeLessThan(DUCK_DB + 0.1);
+      expect(r.dynamics.rules.find((x) => x.measure === 'dipDb')?.met).toBe(true);
+    });
+
+    test('with the guards off, nothing ducks', async () => {
+      const off = await renderPlan(dev, plan([wind, hit]), { reverb: false, guards: false });
+      const ref = await renderPlan(dev, plan([wind]), { reverb: false, guards: false });
+      expect(off.stems.ambience[0]).toEqual(ref.stems.ambience[0]);
+    });
+  });
+
+  describe('duckGains', () => {
+    const plain = (id: string, over: Partial<PlanEvent>): PlanEvent => ev(id, 0, over);
+
+    test('picks the heroes by the checklist rule, and only impacts', () => {
+      const events = [
+        plain('a', { intensity: 0.9 }),
+        plain('b', { intensity: 0.5 }),
+        plain('c', { intensity: 0.9, kind: 'whoosh', macros: { speed: 0.5, brightness: 0.5 } }),
+      ];
+      expect(duckSources(events, [10, 20, 30])).toEqual([{ start: 10, layer: 2 }]);
+      // No event reaches 0.8: the cap at the highest intensity makes the top impact a hero.
+      expect(
+        duckSources([plain('a', { intensity: 0.6 }), plain('b', { intensity: 0.4 })], [1, 2]),
+      ).toEqual([{ start: 1, layer: 2 }]);
+    });
+
+    test('the curve has the constants of the rule', () => {
+      expect(attenuationDb(-(DUCK_LEAD + DUCK_FALL) - 0.01)).toBe(0);
+      expect(attenuationDb(-DUCK_LEAD)).toBeCloseTo(DUCK_DB, 9);
+      expect(attenuationDb(0)).toBeCloseTo(DUCK_DB, 9);
+      expect(attenuationDb(DUCK_RECOVER)).toBe(0);
+      expect(attenuationDb(DUCK_RECOVER / 2)).toBeCloseTo(DUCK_DB / 2, 9);
+    });
+
+    test('the deeper attenuation holds where two impacts overlap, and a source skips its own layer', () => {
+      const start = 1024 * 50;
+      const a = { start, layer: 2 };
+      const b = { start: start + 4800, layer: 1 };
+      const block = (sources: { start: number; layer: number }[], at: number): Float32Array => {
+        const out = new Float32Array(5 * 1024);
+        duckGains(out, sources, at, SAMPLE_RATE);
+        return out;
+      };
+      // Blocks from the fall of `a` to the recovery of `b`.
+      for (let at = start - 1024 * 22; at < start + 4800 + 1024 * 15; at += 1024) {
+        const both = block([a, b], at);
+        const onlyA = block([a], at);
+        const onlyB = block([b], at);
+        for (let l = 0; l < 5; l++)
+          for (let n = 0; n < 1024; n++) {
+            const i = l * 1024 + n;
+            expect(both[i]).toBe(Math.min(onlyA[i]!, onlyB[i]!));
+          }
+        for (let n = 0; n < 1024; n++) expect(both[n]).toBe(1); // dialogue
+        for (let n = 0; n < 1024; n++) expect(onlyA[2 * 1024 + n]).toBe(1); // a's own layer
+        for (let n = 0; n < 1024; n++) expect(onlyB[1 * 1024 + n]).toBe(1); // b's own layer
+      }
+      // At the onset of `a`, the layers other than its own are down by `DUCK_DB`.
+      const g = block([a], start - 512)[3 * 1024 + 512]!;
+      expect(g).toBeCloseTo(10 ** (-DUCK_DB / 20), 6);
+    });
   });
 
   test('the master sets the loudness and holds the true peak under the limit', async () => {

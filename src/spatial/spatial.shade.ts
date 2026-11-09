@@ -208,7 +208,9 @@ export class Strip {
 /**
  * The guards for every layer, lane `l` being layer `l`: the sidechain is layer 0, dialogue, before
  * its own guards (`inL[n] + inR[n]`, read apart from the lane's own frames); each layer's frames
- * pass through its shelf and are scaled by its ducking gain. Dialogue's `depth` is 1.
+ * pass through its shelf and are scaled by its ducking gain and by `gain`, the host's gain for the
+ * frame (`gain[l * 1,024 + n]`, linear: the pre-impact ducking of `src/spatial/duck.ts`, 1 for none).
+ * Dialogue's `depth` is 1.
  */
 export function strips(
   outL: array<f32>,
@@ -217,14 +219,16 @@ export function strips(
   inL: array<f32>,
   inR: array<f32>,
   inS: array<f32>,
+  gain: array<f32>,
   bank: array<Strip>,
 ) {
   for (let l: u32 = 0; l < bank.length; l++) {
     for (let n: u32 = 0; n < BLOCK; n++) {
       const g = bank[l].duck(abs(inL[n]) + abs(inR[n]));
-      outL[l * BLOCK + n] = bank[l].left.tick(inL[l * BLOCK + n]) * g;
-      outR[l * BLOCK + n] = bank[l].right.tick(inR[l * BLOCK + n]) * g;
-      outS[l * BLOCK + n] = bank[l].sendBus.tick(inS[l * BLOCK + n]) * g;
+      const h = g * gain[l * BLOCK + n];
+      outL[l * BLOCK + n] = bank[l].left.tick(inL[l * BLOCK + n]) * h;
+      outR[l * BLOCK + n] = bank[l].right.tick(inR[l * BLOCK + n]) * h;
+      outS[l * BLOCK + n] = bank[l].sendBus.tick(inS[l * BLOCK + n]) * h;
     }
   }
 }
