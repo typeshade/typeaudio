@@ -8,8 +8,7 @@
 
 This is the third container run of experiment 8. The first is `docs/records/08-sound-design-container.md`
 (record 08). The second is `docs/records/08-sound-design-container-2.md` (record 08-2, pull request #58,
-commit `eef3eba5`, still in review when this run started; this record read its branch
-`claude/exp8-container-2`). The owner decided on 2026-11-09 to run the container again after the kinds'
+commit `eef3eba5`, in review when this run started and merged as `54a8084` while this run wrote its record). The owner decided on 2026-11-09 to run the container again after the kinds'
 variation, the duration contract, the `dipDb` measure, the review fixes and the pre-impact ducking guard
 landed, and to make that commit the reference commit of the device runs. Pull request #57 then changed the
 kinds' kernels, so the owner asked for this run at `7ecf6764`, and this commit is the reference commit.
@@ -67,7 +66,7 @@ Fact: the load was higher than in records 08 (1.3 to 2.0) and 08-2 (1.6 to 3.3),
 averages are the container's, not the run's alone. The WebGPU "after" and "before" rows of command 2 are the
 same numbers, as the runner wrote them.
 
-Waiting for the browser (rule of `typeaudio-common.md`, "Processes"): `pgrep -fa chrome-headless-shell` showed
+Waiting for the browser (the rule of the run: one whole-clip browser render at a time in the container): `pgrep -fa chrome-headless-shell` showed
 no browser before command 1 started (13:15 UTC), and none before command 2 started (14:12 UTC), so this run
 did not wait. The runner starts each tier's browser by itself, and this run could not check the second browser
 tier between the CPU tier and the WebGPU tier. The log of command 1 shows no closed page. Not checked: whether
@@ -144,7 +143,7 @@ for the sentence "gather and gather run as two dispatches because gather writes 
 128000)".
 
 Fact: the fuse report (what `explain` prints) gave one kernel group for each of the nine kinds present in the plan (eight dispatches, as
-`whooshes+impacts` fuse) and nine `gather` groups, as the brief expected. Inference: the nine `gather`
+`whooshes+impacts` fuse) and nine `gather` groups, as expected. Inference: the nine `gather`
 groups cost 1.77 ms and the kinds cost 2.94 ms, so the split by kind costs 4.71 ms against the 33.52 ms of
 `cues` in record 08-2. The fixed groups (`accumulate2`, `place`, `fftStage`, `history`) are now 64 % of the
 GPU time.
@@ -280,8 +279,7 @@ master's gain.
 
 ## Against record 08
 
-Record 08 ran at `0f7572a2` (command 1) and `45b9e4b6` (command 2). Record 08-2 (pull request #58, still open when
-this run started) ran at `eef3eba5` (command 1) and `47606dce` (command 2). This record ran at `7ecf6764`. The pull
+Record 08 ran at `0f7572a2` (command 1) and `45b9e4b6` (command 2). Record 08-2 (pull request #58, merged as `54a8084`) ran at `eef3eba5` (command 1) and `47606dce` (command 2). This record ran at `7ecf6764`. The pull
 requests between record 08's commit in `main` (`aa30ef6c`, pull request #38) and this commit, from
 `git log --oneline aa30ef6c..origin/main` (read at `7ecf6764`):
 
@@ -458,9 +456,9 @@ record 08-2, read against this run.
     each tier by itself. This run checked before command 1 and before command 2 only (see "The devices"). Open.
     No tier of the run lost its page, and the logs show no error. Next action: none unless a record shows a lost
     page.
-15. **The second container run is not in `main`.** Record 08-2 (pull request #58) was in review when this run
-    started, so "Against record 08" reads its numbers from its branch `claude/exp8-container-2` at its head
-    `67ae2c5`. Open until #58 lands. Next action: re-read the table against the merged record.
+15. **Record 08-2 was in review when this run started.** Pull request #58 merged as `54a8084` while this record
+    was written. "Against record 08" reads the merged files (the blob of the record is the blob of its branch).
+    Closed.
 
 ## Open items
 
@@ -476,4 +474,7 @@ record 08-2, read against this run.
 
 ## Checks of this pull request
 
-See the pull request body for the commands, the dates and the results.
+- `bun run check`, 2026-11-09, `7ecf6764` plus this pull request's documents and the merge of `54a8084`, Bun 1.4.4: exit 0.
+- `bun run test`, the same configuration: 18 files, 168 tests passed.
+- `bun run test:gpu`: not run. No kernel, unit, render or `explain` code changed; this pull request holds documents and the JSON of the harness.
+- `bunx prettier --config /home/user/typeshade/.prettierrc.json --check` on the three `.md` files this pull request writes or touches: see the pull request body.
