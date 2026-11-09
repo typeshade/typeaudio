@@ -70,7 +70,7 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
 | `experiments/07-sound-match/`                    | Experiment 7: the FM patch and its loss written by a generator, the four forms of the gradient, the harness and its runner                                      |
 | `src/plan/`                                      | The plan of experiment 8: its types, the kind table (`kinds.ts`) and `validatePlan`; only a validated plan reaches a renderer                                   |
 | `src/analyze/`                                   | The analyzers of experiment 8, host-side and pure: loudness, true peak, spectral tilt, onsets, correlation, similarity and `checklist`                          |
-| `experiments/08-sound-design/`                   | Experiment 8: the fixture plan `plan.json`, a 30-second scene of 23 events in five layers (the renderer is a later pull request)                                |
+| `experiments/08-sound-design/`                   | Experiment 8: the fixture plan `plan.json`, a 30-second scene of 25 events in five layers (the renderer is a later pull request)                                |
 | `scripts/`                                       | The Vite build, the headless Chromium and the CPU time of its threads, which the browser check and the experiments share                                        |
 
 ## Baselines
