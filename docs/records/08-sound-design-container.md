@@ -221,6 +221,8 @@ drone are still sounding there, and the guards do not make silence, a plan does.
 `variation.maxSimilarity` is too tight for these kinds, or the kinds vary too little. Both
 need a listener or a change of the kinds to decide.
 
+The `dipDb` measure changed at `b4607e1eb2218db2a1dca54f4a071fc95a6794a6` (pull request #44): it now reads the layers other than the impact's. The numbers above are the old measure's.
+
 ### Two variants of the A/B step
 
 Two plans that differ in one correction (`{"kind": "whoosh", "set": {"macros": {"brightness": 0.4},
