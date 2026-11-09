@@ -9,15 +9,16 @@ devices yet.
 
 ## Status
 
-| #   | Experiment                                                 | Decides                                                   | Status                                                                                                  |
-| --- | ---------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I  | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending  |
-| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K    | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending     |
-| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J              | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending         |
-| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending    |
-| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G   | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending |
-| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                     | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending    |
-| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending |
+| #   | Experiment                                                 | Decides                                                                       | Status                                                                                                  |
+| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I                      | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending  |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K                        | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending     |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J                                  | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending         |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I                     | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending    |
+| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                       | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending    |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending |
+| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | method written 2026-11-09; harness not started                                                          |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -304,3 +305,42 @@ departs from the method":
   invocation that the CPU arms time.
 - The frame loop runs over the envelope's segments, and over each segment's frames inside it, so a
   level is looked up once a segment; the frames total 1,024 at every count.
+
+## 8. A layered, spatial render of a hand-written plan
+
+The design of the loop that this experiment tests is `docs/sound-design-loop.md`. That note defines
+the layers, the event fields, the kinds and the eight checklist dimensions that this section uses.
+
+**Question.** Take a hand-written plan of 30 seconds for a described fantasy scene. It has about 20
+events in five layers. Does the engine render the layers, place them in space and mix them under
+the guards within the block budget on each tier? Does the checklist separate a one-layer render
+from a layered one?
+
+**Decides.** The plan format. The first spatialization units. The analyzers. Whether the two
+variants of the A/B loop render in under a second.
+
+**Method.**
+
+1. Write the plan by hand: 30 seconds, about 20 events, five layers, a room and a listener. Give
+   each event a position. Place a stem for `dialogue`.
+2. Write a one-layer version of the plan: the same moments, one `effects` sound at each.
+3. Render each layer alone and the mix, on WebGPU, on WebGL2 and on the CPU tier. Count the blocks
+   that go over the block budget on each tier.
+4. Apply the spatial units to each event: distance attenuation, air absorption, early reflections,
+   a reverb send and a binaural render.
+5. Apply the guards: the loudness target and true peak, ducking under dialogue, the frequency
+   slots, onsets snapped to given cut times, variation and no clipping.
+6. Measure the eight checklist dimensions on the one-layer render and on the layered render. Report
+   each dimension's two numbers.
+7. Render two variants of 15 seconds that differ in one macro of one kind. Time the pair, warm and
+   cold.
+8. Render the same plan twice on each tier. Count the values that differ.
+9. Write the record.
+
+**What it does not do.** It does no picture analysis: the cut times and the screen positions are
+written by hand. It uses no model. It has no listeners yet. A study of the A/B loop with three lay
+users is step two, on the owner's devices.
+
+**Status.** Method written 2026-11-09; harness not started. The numbers will be recorded on the
+container of an agent session as reference numbers. The device runs will follow: one record per
+device, `docs/records/08-sound-design-<device>.md`.
