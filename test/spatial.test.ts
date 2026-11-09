@@ -317,8 +317,10 @@ describe('layers, strips, sendSum and pack', () => {
         noise(5 * BLOCK, 30 + b, 0.3),
       ];
       const [ol, or, os] = [zeros(5 * BLOCK), zeros(5 * BLOCK), zeros(5 * BLOCK)];
-      await strips(ol, or, os, resident(l), resident(r), resident(s), bankStrips);
-      const want = refStrips(refs, l, r, s);
+      // The host's gain: noise between 0.5 and 1 (the pre-impact ducking, `src/spatial/duck.ts`).
+      const gain = noise(5 * BLOCK, 40 + b, 0.25).map((v) => 0.75 + v);
+      await strips(ol, or, os, resident(l), resident(r), resident(s), resident(gain), bankStrips);
+      const want = refStrips(refs, l, r, s, gain);
       expect(await ol.read()).toEqual(want.l);
       expect(await or.read()).toEqual(want.r);
       expect(await os.read()).toEqual(want.s);
@@ -345,7 +347,16 @@ describe('layers, strips, sendSum and pack', () => {
       let out = new Float32Array(0);
       for (let b = 0; b < 40; b++) {
         const [ol, or, os] = [zeros(5 * BLOCK), zeros(5 * BLOCK), zeros(5 * BLOCK)];
-        await strips(ol, or, os, resident(input), resident(input), resident(input), bankOf);
+        await strips(
+          ol,
+          or,
+          os,
+          resident(input),
+          resident(input),
+          resident(input),
+          resident(new Float32Array(5 * BLOCK).fill(1)),
+          bankOf,
+        );
         out = await ol.read();
       }
       return out;

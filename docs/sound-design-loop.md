@@ -182,6 +182,18 @@ An expert's ear does five things by hand. The engine does them by rule:
 4. Onsets snapped to the picture's cuts and motion peaks, within a small window.
 5. Variation between repeated events of one kind, and no clipping.
 
+The guards also include one that acts before an impact:
+
+- **Ducking before a hero impact.** Before each hero impact, the layers other than the impact's
+  are attenuated by 6 dB. A hero impact is an `impact` event whose `intensity` is at or above the
+  checklist's hero threshold (`R.heroIntensity` of `src/analyze/checklist.ts`, capped at the
+  highest `intensity` of the plan, as `checklist` caps it). The attenuation falls over 0.4 s and
+  ends 0.05 s before the onset. The fall is fast first: an exponential approach in dB with a time
+  constant of one fifth of the fall. It holds through the onset, then recovers over 0.3 s after it. The
+  impact's own layer is not ducked. `dialogue` is not ducked: dialogue ducks the other layers and
+  never the reverse. When two impacts overlap, the deeper attenuation holds. These numbers are the
+  defaults of the renderer, and they are named constants in `src/spatial/duck.ts`.
+
 A guard acts on the render, not on the plan. The plan states the intent. The guard states the
 craft.
 
@@ -207,16 +219,16 @@ The checklist has eight dimensions. Each has an amateur symptom, an expert prope
 automatic measure. The analyzers compute the measures. Each dimension has a short name, which the
 analyzers use as its field name.
 
-| Name        | Amateur symptom                   | Expert property                                                  | Automatic measure                                                                                                            |
-| ----------- | --------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `layers`    | One sound per hero event.         | Three to seven sounds per hero event.                            | The count of events that sound within 100 ms of a hero event. The count of distinct layers among them is reported beside it. |
-| `dynamics`  | A flat loudness curve.            | Silence before an impact, build-ups, ducking under dialogue.     | The loudness curve: depth of the dip before each impact. Ducking in dB, measured on the stems.                               |
-| `balance`   | Mud, and no top.                  | No pile-up at 200 to 400 Hz. Air above 10 kHz.                   | The spectral tilt, and the overlap of the layers' bands, measured on the stems.                                              |
-| `space`     | Dry, or one reverb on everything. | Reverb ratio and channel correlation matched to the room.        | The reverb-to-direct ratio, measured on the mix against the dry render, and the inter-channel correlation.                   |
-| `position`  | Everything in the centre.         | The sound follows the object on the screen.                      | The pan trajectory against the event's screen coordinates, measured on the event's layer stem.                               |
-| `sync`      | The sound is late.                | A whoosh starts before its impact. An impact lands on the frame. | The onset against the cut and the motion peak, in ms.                                                                        |
-| `variation` | The same sample on every step.    | Repeated events differ.                                          | The similarity between the events of one kind, measured on their layer stem.                                                 |
-| `master`    | Loud and clipped, or quiet.       | The loudness target, a true peak under the limit, and glue.      | LUFS, true peak, the crest factor and the count of clipped samples. The last two are the measure of glue.                    |
+| Name        | Amateur symptom                   | Expert property                                                  | Automatic measure                                                                                                                         |
+| ----------- | --------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `layers`    | One sound per hero event.         | Three to seven sounds per hero event.                            | The count of events that sound within 100 ms of a hero event. The count of distinct layers among them is reported beside it.              |
+| `dynamics`  | A flat loudness curve.            | Silence before an impact, build-ups, ducking under dialogue.     | The loudness curve: the depth of the dip before each impact, on the layers other than the impact's. Ducking in dB, measured on the stems. |
+| `balance`   | Mud, and no top.                  | No pile-up at 200 to 400 Hz. Air above 10 kHz.                   | The spectral tilt, and the overlap of the layers' bands, measured on the stems.                                                           |
+| `space`     | Dry, or one reverb on everything. | Reverb ratio and channel correlation matched to the room.        | The reverb-to-direct ratio, measured on the mix against the dry render, and the inter-channel correlation.                                |
+| `position`  | Everything in the centre.         | The sound follows the object on the screen.                      | The pan trajectory against the event's screen coordinates, measured on the event's layer stem.                                            |
+| `sync`      | The sound is late.                | A whoosh starts before its impact. An impact lands on the frame. | The onset against the cut and the motion peak, in ms.                                                                                     |
+| `variation` | The same sample on every step.    | Repeated events differ.                                          | The similarity between the events of one kind, measured on their layer stem.                                                              |
+| `master`    | Loud and clipped, or quiet.       | The loudness target, a true peak under the limit, and glue.      | LUFS, true peak, the crest factor and the count of clipped samples. The last two are the measure of glue.                                 |
 
 The renderer returns each layer as a stem, and the mix without the reverb as the dry render. The
 analyzers measure ducking, the overlap of bands, the reverb-to-direct ratio, `position` and
@@ -276,3 +288,5 @@ iteration. It is not fidelity.
 
 Items 1 and 2 are the work of experiment 8's plan format and analyzers. Experiment 8 tests the
 first spatialization units and the speed.
+
+The design note for item 5, spreading an event over several lanes, is `docs/lanes.md`.

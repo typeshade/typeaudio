@@ -278,6 +278,86 @@ describe('the checklist with stems and a dry render', { timeout: 60000 }, () => 
     expect(flat.dynamics.rules.find((x) => x.measure === 'duckingDb')!.met).toBe(false);
   });
 
+  describe('the dip before an impact', () => {
+    const src = structuredClone(plan) as any;
+    src.events = [
+      {
+        id: 'hit',
+        t: 5,
+        kind: 'impact',
+        layer: 'effects',
+        intensity: 0.9,
+        position: { x: 0, y: 0, distance: 5 },
+        macros: {},
+      },
+    ];
+    const q = validatePlan(src);
+    const at = 5 * FS;
+    const dip = (c: Parameters<typeof checklist>[0]) => checklist(c).dynamics.measures.dipDb;
+    /** A bed at amplitude 0.1; `drop` multiplies it from 0.5 s before the impact. */
+    const bed = (drop: number) => {
+      const x = sine(100, 8, 0.1);
+      for (let i = at - Math.round(0.5 * FS); i < x.length; i++) x[i]! *= drop;
+      return x;
+    };
+    /** A whoosh that swells from silence to 0.2 over the 2 s before the impact. */
+    const whoosh = () => {
+      const x = sine(700, 8, 0.2);
+      for (let i = 0; i < x.length; i++)
+        x[i]! *= Math.min(1, Math.max(0, (i - (at - 2 * FS)) / (2 * FS)));
+      return x;
+    };
+    const sum = (a: Float32Array, b: Float32Array) => a.map((v, i) => v + b[i]!);
+
+    test('reads the layers other than the impact layer: a bed that ducks by 10 dB', () => {
+      const ducked = bed(10 ** (-10 / 20));
+      const tail = new Float32Array(ducked.length);
+      const r = dip({
+        channels: [sum(ducked, tail)],
+        sampleRate: FS,
+        plan: q,
+        stems: { ambience: [ducked], effects: [tail] },
+      });
+      expect(r).toBeCloseTo(10, 0);
+    });
+
+    test('does not read the swell of a whoosh in the impact layer as a negative dip', () => {
+      const flat = bed(1);
+      const w = whoosh();
+      const stems = { ambience: [flat], effects: [w] };
+      const mix = sum(flat, w);
+      expect(dip({ channels: [mix], sampleRate: FS, plan: q, stems })).toBeCloseTo(0, 0);
+      const r = checklist({ channels: [mix], sampleRate: FS, plan: q, stems });
+      expect(r.dynamics.rules.find((x) => x.measure === 'dipDb')!.met).toBe(false);
+    });
+
+    test('without stems reads the mix as before: the swell is a negative dip', () => {
+      const mix = sum(bed(1), whoosh());
+      expect(dip({ channels: [mix], sampleRate: FS, plan: q })!).toBeLessThan(-1);
+    });
+
+    test('reads null where the other layers are silent', () => {
+      const w = whoosh();
+      const r = checklist({
+        channels: [w],
+        sampleRate: FS,
+        plan: q,
+        stems: { effects: [w] },
+      });
+      expect(r.dynamics.measures.dipDb).toBeNull();
+      expect(r.dynamics.rules.find((x) => x.measure === 'dipDb')!.met).toBeNull();
+      const silent = new Float32Array(w.length);
+      expect(
+        dip({
+          channels: [w],
+          sampleRate: FS,
+          plan: q,
+          stems: { effects: [w], ambience: [silent] },
+        }),
+      ).toBeNull();
+    });
+  });
+
   test('measures the overlap of the layers bands', () => {
     const low = white(n, 1);
     const same = checklist({
