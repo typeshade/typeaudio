@@ -51,6 +51,7 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
 | `docs/experiments.md`       | The experiments in order, with their status and what each decides                                                         |
 | `docs/sound-design-loop.md` | The design of the sound-design loop: a model writes a plan, the engine renders it; the plan format and the checklist      |
 | `docs/records/`             | The record of each run of an experiment: the command, the commit, the pin, the device, the numbers                        |
+| `docs/device-runs.md`       | The procedure of a device run on the owner's machine, and the record it leaves                                            |
 | `compiler-changes.md`       | The compiler proposals this repository has handled, recorded when the pin moves                                           |
 
 ## The code

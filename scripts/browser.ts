@@ -1,5 +1,7 @@
 // Headless Chromium with WebGPU on SwiftShader, as the compiler's gates launch it
 // (`scripts/gate-browser.ts` there): the same flags, and `TYPESHADE_CHROMIUM` to name the binary.
+// `TYPESHADE_GPU=device` opens a visible window on the machine's own GPU instead, with Chrome's
+// default flags (the device mode of `docs/device-runs.md`); it needs a display.
 // A page loads a directory served over http from 127.0.0.1, a secure context, which WebGPU needs.
 // The page is cross-origin isolated (COOP and COEP), which gives `performance.now()` its fine
 // resolution: Chromium coarsens it to 100 microseconds otherwise.
@@ -17,6 +19,26 @@ export const SOFTWARE_GPU_FLAGS = [
   '--use-vulkan=swiftshader',
   '--enable-features=Vulkan',
 ];
+
+/**
+ * The options of `chromium.launch` for a mode. `TYPESHADE_GPU` unset or `swiftshader`: headless,
+ * on SwiftShader. `TYPESHADE_GPU=device`: a window on the machine's own GPU, with no flag of the
+ * software path. `TYPESHADE_CHROMIUM` names the binary in both modes.
+ */
+export function launchOptions(
+  env: Record<string, string | undefined>,
+  args: readonly string[],
+): { executablePath: string | undefined; headless: boolean; args: string[] } {
+  const mode = env['TYPESHADE_GPU'];
+  const executablePath = env['TYPESHADE_CHROMIUM'] || undefined;
+  if (mode === undefined || mode === 'swiftshader') {
+    return { executablePath, headless: true, args: [...SOFTWARE_GPU_FLAGS, ...args] };
+  }
+  if (mode === 'device') {
+    return { executablePath, headless: false, args: [...args] };
+  }
+  throw new Error(`TYPESHADE_GPU must be "swiftshader" (the default) or "device", not "${mode}".`);
+}
 
 const TYPES: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -59,10 +81,7 @@ export async function inPage<T>(
   await new Promise<void>((ready) => server.listen(0, '127.0.0.1', ready));
   const address = server.address();
   const port = typeof address === 'object' && address !== null ? address.port : 0;
-  const browser = await chromium.launch({
-    executablePath: process.env['TYPESHADE_CHROMIUM'] || undefined,
-    args: [...SOFTWARE_GPU_FLAGS, ...args],
-  });
+  const browser = await chromium.launch(launchOptions(process.env, args));
   try {
     const page = await browser.newPage();
     page.on('console', (message) => log(message.text()));

@@ -349,3 +349,4 @@ users is step two, on the owner's devices.
 `docs/records/08-sound-design-container.md`: reference numbers on the CPU, and WebGPU and WebGL2 on
 SwiftShader. The device runs will follow: one record per device,
 `docs/records/08-sound-design-<device>.md`.
+The procedure of a device run is `docs/device-runs.md`.
