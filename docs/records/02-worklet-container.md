@@ -279,6 +279,7 @@ These are facts of this run.
      `TypeError: import() is disallowed on WorkletGlobalScope.`
 
    With both changes, `render()` ran, and every frame had the bits of `refRender`.
+
 7. No bundle holds the WebGL2 tier's dynamic import (`src/runtime/runtime.ts:613`). The split
    engine bundle has one dynamic import, the planner's. The engine bundle is 663,993 bytes, 3.3
    times the kernel bundle. The planner's chunk alone is 379,630 bytes.
@@ -296,6 +297,8 @@ These are facts of this run.
     at 512 voices. They spent 181 during `host` at 256 voices, and 5 during `plain` at 512.
 12. The generated code returns the `inout` values of each method call in a new array:
     `e.inout.values = [...]` in the bundle. `Voice.tick` makes three such calls a sample.
+    Status: compiler issue #961 is fixed in the pin `415b276a`. `docs/compiler-asks.md`, ask S, holds
+    the re-measurement of 2026-11-09. The numbers of this record stay as measured.
 13. In real time, the audio clock kept pace with the wall clock (0.989 to 1.009) where the CPU of
     the render thread stayed below 0.7. The underruns over 3 s:
     - `plain`: none at any count. At 512 voices its thread's CPU was 0.574.
