@@ -532,9 +532,18 @@ has no GLSL ES 3.00 spelling (no storage buffers, no runtime-sized arrays)).` Th
   allocation per call.
 - Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
 - Measured by: experiment 2.
-- Status: issue #961. Measured on the container only (`docs/records/02-worklet-container.md`). The
-  cost of entering a call with an array, which record 05 measured on the CPU tier (its candidate ask
-  C), is ask V's and not this ask's.
+- Status: issue #961, fixed by #1035 (`4f70703b`), in the pin `415b276a`. Measured on the container
+  only (`docs/records/02-worklet-container.md`). Re-measured at the pin `415b276a`, 2026-11-09,
+  container: 4.752 ms against 1.260 ms a quantum at 512 voices (3.8×; record 02 at its pin: 5.024
+  against 1.457, 3.4×). Command: `TYPESHADE_CHROMIUM=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell bun run exp:02 --parts offline --voices 512 --variants plain,kernel`
+  (3 repetitions, median; `typeaudio` at `8833834a`, Bun 1.4.4). Fact: the kernel arm costs 5.4 %
+  less and the reference arm 13.5 % less than at the earlier pin, and the ratio did not fall (the
+  container is shared; the load average was 2.91 before the run and 4.00 after). Fact: the
+  generated `kernel` bundle holds no `inout.values = [...]`. Each method call now writes its
+  values into an array allocated once, `Array(n)`, in the scope of the module (`u[0] = p, ...,
+e.inout.values = u`). Inference: the allocation of ask S is gone, and the remaining cost of the
+  kernel arm lies elsewhere. The cost of entering a call with an array, which record 05 measured
+  on the CPU tier (its candidate ask C), is ask V's and not this ask's.
 
 ### T. A sum over the lanes of each frame on the GPU
 
@@ -722,7 +731,7 @@ The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the 
 | #945  | `read()` of a `Resident` of class instances returns plain objects                                                    | N                                                                          | Open; answered by 0109 Amendment 1 (#960), implemented by #993 (`87af4eb0`), in the pin; ask N retired                                                                                                                                                    |
 | #946  | The fuse report names the plan's best tier but not the tier of each group                                            | P                                                                          | Open; answered by change 0118 (#959), implemented by #990 (`480b6a64`), in the pin; ask P retired                                                                                                                                                         |
 | #947  | A source tarball pin has no `dist/`: `tshc` and the Vite plugin fail under Node                                      | Q                                                                          | Open                                                                                                                                                                                                                                                      |
-| #961  | The CPU tier allocates an array for the `inout` values of every method call                                          | S                                                                          | Fixed by #1035 (`4f70703b`), in the pin `415b276a`; re-measurement pending                                                                                                                                                                                |
+| #961  | The CPU tier allocates an array for the `inout` values of every method call                                          | S                                                                          | Fixed by #1035 (`4f70703b`), in the pin `415b276a`; re-measured 2026-11-09: the bundle holds no `inout.values = [...]`; 4.752 against 1.260 ms a quantum at 512 voices (3.8×), see ask S                                                                  |
 | #966  | WebGL2 does not bind the `_fp64` guard of an `f64` entry; the call never returns                                     | G (variant C), D                                                           | Closed: fixed by #1003 (`92c3d2ff`), in the pin `415b276a`; retired at the pin `415b276a`: variant C returns on WebGL2 at 1,024 points with variant B's error (2026-11-09)                                                                                |
 | #967  | An `f64` module constant is refused, with a misleading TS8022 after it                                               | G (variant C), D                                                           | Answered by 0123 (#1051, `29900fae`), in the pin `415b276a`; retired at the pin `415b276a`, 2026-11-09: variant C reads `const TAU_DOUBLE: f64`, with the same bits as the inline literal on the oracle, WebGPU and WebGL2 (ask G)                        |
 | #968  | The determinism report has no row for subnormal flushing                                                             | E                                                                          | Open                                                                                                                                                                                                                                                      |
