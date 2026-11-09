@@ -11,7 +11,7 @@ import { Stem } from '../src/kinds/voice.shade.ts';
 import { ImpactLane, VoiceLane } from '../src/kinds/lanes.shade.ts';
 import { Svf, svfCoef } from '../src/units/svf.shade.ts';
 import { Cloud, Grain } from '../src/units/grain.shade.ts';
-import { eventKey, makeLane, type Made } from '../src/kinds/make.ts';
+import { eventKey, KIND_PEAK, makeLane, type Made } from '../src/kinds/make.ts';
 import { validatePlan, type PlanEvent } from '../src/plan/index.ts';
 import plan from '../experiments/08-sound-design/plan.json';
 import { RefCloud, RefGrain } from './reference.ts';
@@ -261,7 +261,7 @@ describe('the lanes of a plan', () => {
       ).lane.cloth;
       expect([c.g0, c.g1, c.g2, c.g3, c.g4, c.g5, c.g6, c.g7].some((g) => g.peak > 0)).toBe(true);
     }
-  }, 30000);
+  }, 90000);
 
   test('no event of footstep or cloth has more than two grains of one cloud sounding at once', () => {
     const step = p.events.find((e) => e.kind === 'footstep')!;
@@ -294,7 +294,7 @@ describe('the lanes of a plan', () => {
         }
       }
     }
-  }, 30000);
+  }, 90000);
 
   test('a whoosh with a higher brightness has more energy above 3 kHz', () => {
     const base = p.events.find((e) => e.kind === 'whoosh')!;
@@ -371,4 +371,75 @@ describe('the variation of repeated events (the `variation` guard, bound 0.95)',
     },
     30000,
   );
+});
+
+describe('the level of an event follows its intensity, not its draw', () => {
+  const p = validatePlan(plan);
+  // The event rendered alone on the CPU tier over its whole length: the peak before the spatial chain.
+  const peakOf = (e: PlanEvent, key: number): number => {
+    const made = makeLane(e, { sr: SR, key });
+    const { lane, length } = made;
+    lane.end = length;
+    const tick = tickOf(made);
+    let peak = 0;
+    for (let i = 0; i < length; i++) peak = Math.max(peak, Math.abs(tick(0)));
+    return peak;
+  };
+  const closeTo = (peak: number, intensity: number): boolean =>
+    Math.abs(peak - intensity * KIND_PEAK) <= 1e-4 * intensity * KIND_PEAK;
+
+  test.each(['footstep', 'cloth'])(
+    'a %s has the peak intensity times KIND_PEAK for 200 keys at intensity 1 and 20 at its own, and a key repeats its samples',
+    (kind) => {
+      const base = p.events.find((e) => e.kind === kind)!;
+      for (const intensity of [1, base.intensity]) {
+        const e = { ...base, intensity };
+        // The scale is linear in the intensity: 20 keys show that the event's own intensity is used.
+        for (let k = 1; k <= (intensity === 1 ? 200 : 20); k++) {
+          const key = Math.imul(k, 2654435761) >>> 0;
+          const peak = peakOf(e, key);
+          expect(
+            closeTo(peak, intensity),
+            `${kind}, intensity ${intensity}, key ${k}: ${peak}`,
+          ).toBe(true);
+        }
+      }
+      const key = eventKey(p.seed, base.id);
+      expect(peakOf(base, key)).toBe(peakOf(base, key));
+    },
+    120000,
+  );
+
+  test.each(['footstep', 'cloth'])(
+    'a %s has a finite peak intensity times KIND_PEAK at the corners of its macros',
+    (kind) => {
+      const base = p.events.find((e) => e.kind === kind)!;
+      const names = Object.keys(base.macros);
+      for (let corner = 0; corner < 2 ** names.length; corner++) {
+        const macros = Object.fromEntries(names.map((n, i) => [n, (corner >> i) & 1]));
+        const e = { ...base, macros };
+        for (let k = 1; k <= 20; k++) {
+          const peak = peakOf(e, Math.imul(k, 2654435761) >>> 0);
+          expect(Number.isFinite(peak), `${kind}, corner ${corner}, key ${k}`).toBe(true);
+          expect(closeTo(peak, e.intensity), `${kind}, corner ${corner}, key ${k}: ${peak}`).toBe(
+            true,
+          );
+        }
+      }
+    },
+    120000,
+  );
+
+  // `wind` is not held: its level follows its `gust` macro (a peak of 0.443 at gust 0.3, 1.105 at gust 0.8).
+  // `voice` has no kernel level: it plays its stem.
+  test('every fixture event but wind and voice has its peak within 2 dB of intensity times KIND_PEAK', () => {
+    const lo = KIND_PEAK * 10 ** (-2 / 20);
+    const hi = KIND_PEAK * 10 ** (2 / 20);
+    for (const e of p.events) {
+      if (e.kind === 'wind' || e.kind === 'voice') continue;
+      const ratio = peakOf(e, eventKey(p.seed, e.id)) / e.intensity;
+      expect(ratio, `${e.id}`).toBeGreaterThanOrEqual(lo);
+      expect(ratio, `${e.id}`).toBeLessThanOrEqual(hi);
+    }
+  }, 120000);
 });

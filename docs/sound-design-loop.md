@@ -128,6 +128,12 @@ grains of one cloud sound at the same time (N = 2). It skips a drawn start that 
 The draw stays deterministic from the event's key. Two grains still make a thud with a crunch, or a
 cloth burst. A third at the same moment only adds a spike of the sum of their peaks.
 
+The level of an event follows its intensity, not its draw. `footstep` and `cloth` are drawn from a
+cloud, so the peak of the drawn grains differs from key to key. `makeLane` scales the grains it
+drew so that the event's peak before the spatial chain is its intensity times 0.5 (`KIND_PEAK`),
+whatever the key. The macros and the draw still shape the sound: the thud against the crunch, the
+pitches, the lengths and the starts.
+
 The list is a starting set. Each experiment and each later change may add kinds.
 
 ### An event
