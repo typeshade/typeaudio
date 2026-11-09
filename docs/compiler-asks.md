@@ -723,6 +723,49 @@ On 2026-11-09, at the pin `415b276a`, the container run of experiment 8 ran 32 o
 
 Inference: the sentences that name an element that is not one `f32`, `i32` or `u32` describe the `vec2` element this ask names, because the declarations of `fftStage` and `accumulate2` in `src/spatial/fft.shade.typeshade.ts` take `array<vec2>`. The two `history` and `pack` groups are not this ask's: record 08 says folding their branches into one store fixes them, which is an open item of the engine, not a compiler ask.
 
+### AB. A `.shade.ts` module that imports another is rebuilt when the other changes
+
+- Pressure: a test that reads a module through an importing module (`Whoosh` through `Cue`) reads
+  the old compile of the importing module after the imported file changed. A person reads a value
+  that the edit already changed. Nothing in the run says the module is stale.
+- Compiler: the Vite plugin, `typeshade/vite` (`src/vite.ts` at the pin `415b276a`). Its `transform`
+  hook hands each file that a module imports to `addWatchFile`, so that an edit rebuilds the module
+  (Rule 3.9). Vitest 5.0.5 caches each transformed module on the file system (`fsModuleCache`,
+  `node_modules/.vitest-cache`). Inference: the cache key is the content of the module itself, and
+  the cache does not use the files that `addWatchFile` names. We did not read Vitest's source, so
+  we do not know which side is wrong.
+- Workaround: `bun run test --fsModuleCache false`, or `rm -rf node_modules/.vitest-cache`. Deleting
+  `node_modules/.vite` does not help.
+- Measured by: the reproduction below, 2026-11-09, at `eef3eba`, Bun 1.4.4, Vitest 5.0.5, pin
+  `415b276a`. The agent of pull request #49 saw the same on 2026-11-09 and wrote that touching
+  `cue.shade.ts` cleared it. We did not see that: `touch` changed nothing, and a change of the
+  content of `cue.shade.ts` cleared it.
+- Status: candidate, not yet filed: the Vite plugin does not invalidate a `.shade.ts` module when a
+  `.shade.ts` module it imports changes. Next action: read Vitest's cache key, then file the issue
+  on `typeshade/typeshade` against the side that owns it.
+
+Reproduction. The probe is a test file `test/zz-stale.test.ts`, not committed. It builds a `Cue`
+with `kind = 0` and `cue.whoosh = new Whoosh().shape(48000, 4000, 400, 1, 0.5, 0.5, 1, 7)`, ticks
+4,000 frames and sums `Math.abs` of the samples. A second test sums the same ticks of a `Whoosh`
+read directly. Each step ran `bun run test test/zz-stale.test.ts`.
+
+| Step                                                | Sum through `Cue` | Sum of `Whoosh` directly |
+| --------------------------------------------------- | ----------------- | ------------------------ |
+| 1. No edit                                          | 243.534           | not read                 |
+| 2. `PI` in `src/kinds/whoosh.shade.ts` set to `3.0` | 243.534 (stale)   | 259.382                  |
+| 3. `rm -rf node_modules/.vite`                      | 243.534 (stale)   | 259.382                  |
+| 4. `touch src/kinds/cue.shade.ts`                   | 243.534 (stale)   | 259.382                  |
+| 5. A comment appended to `cue.shade.ts`             | 259.382           | 259.382                  |
+| 6. That comment removed                             | 243.534 (stale)   | 259.382                  |
+| 7. `bun run test ... --fsModuleCache false`         | 259.382           | 259.382                  |
+| 8. `rm -rf node_modules/.vitest-cache`              | 259.382           | 259.382                  |
+| 9. `PI` restored in `whoosh.shade.ts`               | 259.382 (stale)   | 243.534                  |
+| 10. `rm -rf node_modules/.vitest-cache`             | 243.534           | 243.534                  |
+
+Step 6 shows the cache is keyed by the content of `cue.shade.ts`: the old entry returns when the
+old content returns. Step 9 shows the same fault in the other direction. At the end, `src/` was
+restored with `git checkout src`.
+
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
@@ -766,6 +809,7 @@ The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the 
 | #1009 | A static field read beside a parameter of its emitted name                                                           | Not read by an ask                                                         | Case 1 (a static field the file writes) fixed by #1042 (`f7aaf725`); case 2 (a static field, an enum member or a namespace constant read beside a parameter of its emitted name) fixed by #1022 (`b76407d5`); both in the pin `415b276a`                                                                                                                                                                                                                                                               |
 | #1017 | `compileModuleJs` runs a reverse-mode derivative with a loop in the interpreter                                      | L                                                                          | Fixed by #1019 (`e30bbe57`), in the pin `415b276a`; retired at the pin `415b276a`: `generateModuleJs(...).fallbacks` is empty for the reverse-mode derivative at 3 to 100 parameters, and the `probe` arm is removed (2026-11-09)                                                                                                                                                                                                                                                                      |
 | #1018 | The pipeline of a reverse-mode derivative with a frame loop grows past usable with the parameter count (SwiftShader) | L                                                                          | Open                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| none  | A `.shade.ts` module is not rebuilt when a `.shade.ts` module it imports changes (candidate, not yet filed)          | AB                                                                         | Candidate, not yet filed; reproduced 2026-11-09, see ask AB                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## 4. How a row moves
 
