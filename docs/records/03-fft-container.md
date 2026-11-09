@@ -6,6 +6,16 @@
 > the pin runs and refuses. They do not stand for a GPU's `sin`, `cos` or subnormal handling. The
 > device runs of experiment 3 are pending (`docs/experiments.md`, section 3).
 
+> **Status of variant C on WebGL2: runs at the pin `415b276a` (observed 2026-11-09).** This record's
+> run, at the first pin, did not get a result from it (compiler #966, #970). Those issues are fixed
+> by #1003 and #1014, and the pin holds both. The command `bun run exp:03 --tier webgl2 --sizes 1024`
+> returned all six calls, forward and inverse of the three variants, in 0.4 to 1.2 seconds each, with
+> no invalid draw. Variant C gave the same error against the `f64` reference as variant B for the
+> noise, impulse and decay signals (1.31 and 4.14 ULPs largest, forward and inverse) and for the
+> `quiet` signal (239.08 and 244.15 ULPs). 2,046 of its 2,048 twiddles were the twiddle rounded to
+> the nearest `f32`. The numbers of this record are unchanged, and the sentences below that say
+> variant C did not return stay as the record of the first run.
+
 ## The run
 
 | Item         | Value                                                                                                                                                                                                                               |

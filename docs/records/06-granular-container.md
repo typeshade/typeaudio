@@ -65,7 +65,9 @@ Inference: the numbers hold that load, the 99th percentiles and the maxima more 
   5. `play`: the list is rendered into the block, `min(count[0], grains.length)` grains summed in
      the list's order for each frame, into a scratch array.
   6. `keep`: the block is copied into the tape (the harness's kernel). Its index is written
-     `n * 1 + at`, because the loop proof refuses `at + n` (ask X of `docs/compiler-asks.md`).
+     `at + n`. The record's runs wrote `n * 1 + at`, because the loop proof then refused `at + n`
+     (ask X of `docs/compiler-asks.md`); the pin `415b276a` admits it, and the kernel retired the
+     workaround without a change of the tape.
 - The two lists (`Resident<Grain[]>` of 2,048 grains) and their counts (`Resident<Uint32Array>`)
   are swapped each block. The log (2 words a block) and the tape (1,024 samples a block) stay on
   the device. Each arm reads the tape, the log and the last list once, after its last block.

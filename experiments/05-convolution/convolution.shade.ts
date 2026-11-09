@@ -34,29 +34,30 @@ function cmul(a: vec2, b: vec2): vec2 {
  * parts of 0. The second half of `padded` is the zero padding: the engine makes `padded` zeroed and
  * no call writes its second half.
  *
- * The loop runs over the frames and not over the points. At the compiler pin a loop over the 2,048
- * points that reads `input[j]` only under `if (j < FRAMES)` is refused by the call before it runs:
- * `pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0 to 2047.` The
- * call's check of the arrays a loop reads (compiler issue #655) does not see the guard.
+ * The loop runs over the 2,048 points and writes only under `if (j < FRAMES)`, so `input` is read
+ * only at indices 0 to 1023. The call's check of the arrays a loop reads sees the guard at the
+ * compiler pin `415b276a` (compiler issue #997, fixed by #1029). Earlier pins refused this form
+ * before it ran (`pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0
+ * to 2047.`), and this kernel looped over the frames.
  */
 export function pad(padded: array<vec2>, input: array<f32>) {
-  for (let j: u32 = 0; j < FRAMES; j++) {
-    padded[j] = vec2(input[j], 0.);
+  for (let j: u32 = 0; j < POINTS; j++) {
+    if (j < FRAMES) {
+      padded[j] = vec2(input[j], 0.);
+    }
   }
 }
 
 /**
  * Writes the spectrum of the newest block into slot `slot` of the delay line `line`.
  *
- * The index is written `j * 1 + slot * POINTS`. At the compiler pin the proof of rule R3 refuses
- * `slot * POINTS + j` with TS8070 ("an element two iterations can share") and runs the loop on the
- * CPU; it accepts one index whose coefficient of the counter is written out (compiler issue #983).
- * Compiler change 0095 (accepted, not implemented at the pin) accepts both, and checks this form at
- * the call.
+ * The index is written `slot * POINTS + j`. The loop proof of rule R3 admits it at the compiler pin
+ * `415b276a` (compiler issue #983, fixed by #994). Earlier pins refused it with TS8070 and this
+ * kernel wrote `j * 1 + slot * POINTS`.
  */
 export function store(line: array<vec2>, spectrum: array<vec2>, slot: u32) {
   for (let j: u32 = 0; j < POINTS; j++) {
-    line[j * 1 + slot * POINTS] = spectrum[j];
+    line[slot * POINTS + j] = spectrum[j];
   }
 }
 
