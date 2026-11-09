@@ -276,3 +276,5 @@ iteration. It is not fidelity.
 
 Items 1 and 2 are the work of experiment 8's plan format and analyzers. Experiment 8 tests the
 first spatialization units and the speed.
+
+The design note for item 5, spreading an event over several lanes, is `docs/lanes.md`.
