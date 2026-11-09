@@ -395,11 +395,11 @@ as TypeCV ran it for change 0074:
 
 1. Write the workaround in this repository first.
 2. Measure it on devices and keep the record ids.
-3. Raise the general part as an issue on `typeshade/typeshade`.
-4. Open a proposal in the compiler's `changes/`, `status: draft`, with `downstream: typeaudio`
-   naming what this repository retires.
-5. When the proposal is implemented, move the pin, record the id in `compiler-changes.md`, and
-   retire the workaround.
+3. Raise the general part as an issue on `typeshade/typeshade` that asks for compiler work.
+4. Let the compiler side decide how to meet it.
+5. Ask for a language change only as the last resort, when compiler work cannot meet the need.
+6. When the work is implemented, move the pin.
+7. Record any proposal id in `compiler-changes.md` and retire the workaround.
 
 The audio-shaped pressures the compiler did not get from graphics and vision: time recurrence,
 subnormals, the precision of transcendentals, the worklet, and the metadata channel from a

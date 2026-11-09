@@ -6,14 +6,23 @@ The compiler is `typeshade/typeshade`. Its proposals live in its `changes/` dire
 the other record: it lists the proposals this repository has handled, when the compiler pin
 moves.
 
+An ask is a request for compiler work, raised as an issue on `typeshade/typeshade`. The compiler
+side decides how to meet it: an optimization, a lowering, a numerical relaxation, a tuning
+parameter or a report needs no language change. A proposal that changes the language is the last
+resort, and it says why compiler work cannot meet the need (compiler `changes/README.md`, "A need
+from a downstream repository"). Nothing domain-shaped is asked of the language (compiler
+`docs/dx.md`, principle 7). The rows below that name a proposal were raised before this rule
+(2026-11-09). They stay as recorded.
+
 The loop is `docs/vision.md`, section 10. A row moves through these states:
 
 | State                                        | Meaning                                                                                              |
 | -------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | candidate                                    | The pressure is named. Nothing is measured.                                                          |
 | measured                                     | A workaround exists here. A record names the device, the date, the commit and the numbers.           |
-| issue #N                                     | The general part is raised on `typeshade/typeshade`.                                                 |
-| proposal NNNN (draft, accepted, implemented) | The lifecycle state of the compiler proposal, as its `status` line says.                             |
+| issue #N                                     | The general part is raised on `typeshade/typeshade` as a request for compiler work.                  |
+| fixed #N                                     | The compiler side met the need without a language change. The fix is on the compiler's `main`.       |
+| proposal NNNN (draft, accepted, implemented) | The lifecycle state of the compiler proposal, as its `status` line says. The last resort.            |
 | retired                                      | The pin moved past the implementation, `compiler-changes.md` records the id, the workaround is gone. |
 
 The letters and the ids are stable. A new ask takes the next free letter. After Z, an ask takes
@@ -698,7 +707,11 @@ The states are those of 2026-11-03, at the pin `87af4eb0`.
 2. Run the experiment on a device.
 3. Write the record: the command, the date, the commit, the pin, the device and the numbers.
 4. Set the row's status to `measured`, with the record's id.
-5. Raise the general part as an issue on `typeshade/typeshade`. Set the status to `issue #N`.
-6. Open a proposal in the compiler's `changes/`, `status: draft`, with `downstream: typeaudio`.
-7. When the proposal is implemented, move the pin and record the id in `compiler-changes.md`.
-8. Retire the workaround. Set the status to `retired`.
+5. Raise the general part on `typeshade/typeshade` as an issue that asks for compiler work.
+6. State the need, the workaround and the record's id in the issue.
+7. Set the row's status to `issue #N`.
+8. When the compiler side fixes the issue, set the status to `fixed #N`.
+9. Ask for a proposal only when the compiler side finds that compiler work cannot meet the need.
+10. When the fix or the proposal is implemented, move the pin.
+11. Record a proposal's id in `compiler-changes.md` when it names `typeaudio` under `downstream`.
+12. Retire the workaround. Set the status to `retired`.

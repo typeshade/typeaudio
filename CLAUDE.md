@@ -37,10 +37,11 @@ compliance or certification.
   repository's baseline of the compiler. `docs/vision.md` at a commit is the design baseline.
 - Change control. Change a baseline only through a pull request. A change to the design (the
   principles, the bar, the architecture, what is not promised) needs the owner's go-ahead in the
-  conversation before it is merged. A change this engine needs from the compiler is a change
-  proposal in the compiler's `changes/` directory, with `downstream: typeaudio` in its front
-  matter; `docs/compiler-asks.md` records each one with its status. One record carries one
-  change, so two unrelated changes are two pull requests.
+  conversation before it is merged. A need this engine has of the compiler is an issue on
+  `typeshade/typeshade` that asks for compiler work. The compiler side decides how to meet it. A
+  compiler proposal that changes the language is the last resort (compiler `changes/README.md`,
+  "A need from a downstream repository"). `docs/compiler-asks.md` records each ask with its
+  status. One record carries one change, so two unrelated changes are two pull requests.
 - Status accounting. A status report names each request and each change with its identifiers:
   not started, in progress or done. List each open item with its reason and its next action.
 - Verification and audit. Support a claim of completion with the checks that ran: the command,
@@ -55,9 +56,12 @@ compliance or certification.
   experience wins. Throughput is the engine's business, and `explain` reports it.
   `docs/vision.md` states the principles and the reviewer's question for each.
 - **The compiler owns the general part.** A workaround is written in this repository first and
-  measured on devices. The general part is then asked of the compiler as a proposal, and this
-  repository retires its workaround when the proposal is implemented and the pin moves. Nothing
-  domain-shaped is asked of the language (compiler `docs/dx.md`, principle 7).
+  measured on devices. The general part is then asked of the compiler as an issue for compiler
+  work: an optimization, a lowering, a numerical relaxation, a tuning parameter or a report. The
+  compiler side decides. A language change (an author-facing name, rule, code or form) is the
+  last resort, and its proposal says why compiler work cannot meet the need. This repository
+  retires its workaround when the work is implemented and the pin moves. Nothing domain-shaped
+  is asked of the language (compiler `docs/dx.md`, principle 7).
 
 ## The compiler pin
 

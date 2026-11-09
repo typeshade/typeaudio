@@ -27,7 +27,7 @@ To work on it:
   one block as one `fuse` plan, banks and buses on the device, events, the transports, and the
   decisions the owner takes.
 - [`docs/compiler-asks.md`](docs/compiler-asks.md): the compiler proposals TypeAudio rests on and
-  the ones it asks for, each with its status.
+  its asks of the compiler, each with its status.
 - [`docs/experiments.md`](docs/experiments.md): the experiments, in order, with their status;
   [`docs/records/`](docs/records/) holds the record of each run.
 - [`compiler-changes.md`](compiler-changes.md): the proposals of the compiler this repository

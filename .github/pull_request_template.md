@@ -1,5 +1,6 @@
 <!-- CLAUDE.md: a change to the design needs the owner's go-ahead; a change that needs the
-compiler names its proposal in the compiler's `changes/`. -->
+compiler names its issue on `typeshade/typeshade`, and its proposal in the compiler's `changes/`
+only when a language change is the last resort. -->
 
 ## What and why
 
