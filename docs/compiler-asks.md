@@ -755,7 +755,9 @@ Inference: the sentences that name an element that is not one `f32`, `i32` or `u
   Vitest's key ignores the watcher's list. We do not ask Vitest for a change. The plugin can
   fold the content of the imported files into the key, or return `false` for a `.shade.ts`
   module. We did not run that fix.
-- Workaround: `bun run test --fsModuleCache false`, or `rm -rf node_modules/.vitest-cache`. Deleting
+- Workaround: the repository's test command carries the workaround since pull request #60:
+  `fsModuleCache: false` in the `test` block of `vitest.config.ts`. It goes when the pin moves past
+  the fix of #1130. Without it, `rm -rf node_modules/.vitest-cache` clears a stale entry. Deleting
   `node_modules/.vite` does not help.
 - Measured by: the reproduction below, 2026-11-09, at `eef3eba`, Bun 1.4.4, Vitest 5.0.5, pin
   `415b276a`. The agent of pull request #49 saw the same on 2026-11-09 and wrote that touching
@@ -764,8 +766,8 @@ Inference: the sentences that name an element that is not one `f32`, `i32` or `u
 - Status: filed as typeshade/typeshade#1130, 2026-11-09, with the key above, the hook and the
   reproduction. Open. Next action: the compiler adds `configureVitest` with
   `defineCacheKeyGenerator` to `typeshade/vite`. The workaround stays until the pin moves past
-  the fix. Proposal, not done: put `--fsModuleCache false` into the `test` script of
-  `package.json`. The owner decides.
+  the fix. Done: the repository's test command carries the workaround since pull request #60
+  (`fsModuleCache: false` in `vitest.config.ts`), as the owner decided on 2026-11-09.
 
 Reproduction. The probe is a test file `test/zz-stale.test.ts`, not committed. It builds a `Cue`
 with `kind = 0` and `cue.whoosh = new Whoosh().shape(48000, 4000, 400, 1, 0.5, 0.5, 1, 7)`, ticks
