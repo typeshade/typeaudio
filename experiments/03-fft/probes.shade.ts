@@ -27,9 +27,10 @@ export const scaleProbe = compute([64], function scaleProbe(
 });
 
 /**
- * A length read inside an index (docs/compiler-asks.md, J): `ys[i] = xs[i % xs.length]`, the form
- * the WebGL2 pass program at the pin leaves undeclared (compiler issue #900). The FFT entries avoid
- * it; this probe keeps it, to measure it.
+ * A length read inside an index (docs/compiler-asks.md, J): `ys[i] = xs[i % xs.length]`. This is the
+ * plain form, with no length parameter. The WebGL2 pass program left it undeclared before the pin
+ * `87af4eb0` (compiler issue #900), and at the pin `415b276a` it runs on all three tiers. The FFT
+ * entries read no length; this probe keeps the form, to measure it.
  */
 export const wrapProbe = compute([64], function wrapProbe(
   gid: builtin<"global_invocation_id", vec3u>,
