@@ -7,7 +7,7 @@ the other record: it lists the proposals this repository has handled, when the c
 moves.
 
 An ask is a request for compiler work, raised as an issue on `typeshade/typeshade`. The compiler
-side decides how to meet it: an optimization, a lowering, a numerical relaxation, a tuning
+side decides how to meet it: an optimization the compiler can prove exact, a lowering, a tuning
 parameter or a report needs no language change. A proposal that changes the language is the last
 resort, and it says why compiler work cannot meet the need (compiler `changes/README.md`, "A need
 from a downstream repository"). Nothing domain-shaped is asked of the language (compiler

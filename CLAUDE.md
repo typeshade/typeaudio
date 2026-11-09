@@ -57,11 +57,11 @@ compliance or certification.
   `docs/vision.md` states the principles and the reviewer's question for each.
 - **The compiler owns the general part.** A workaround is written in this repository first and
   measured on devices. The general part is then asked of the compiler as an issue for compiler
-  work: an optimization, a lowering, a numerical relaxation, a tuning parameter or a report. The
-  compiler side decides. A language change (an author-facing name, rule, code or form) is the
-  last resort, and its proposal says why compiler work cannot meet the need. This repository
-  retires its workaround when the work is implemented and the pin moves. Nothing domain-shaped
-  is asked of the language (compiler `docs/dx.md`, principle 7).
+  work: an optimization the compiler can prove exact, a lowering, a tuning parameter or a
+  report. The compiler side decides. A language change (an author-facing name, rule, code or
+  form) is the last resort, and its proposal says why compiler work cannot meet the need. This
+  repository retires its workaround when the work is implemented and the pin moves. Nothing
+  domain-shaped is asked of the language (compiler `docs/dx.md`, principle 7).
 
 ## The compiler pin
 
