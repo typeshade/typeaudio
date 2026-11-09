@@ -1,9 +1,16 @@
 # Spreading an event over several lanes
 
-> **Status: a proposal, for the owner to decide.** No code changes with this note. The owner
-> decided on 2026-11-09 that the next engine work is to spread an event over several lanes. This
-> note shows what changes, one example before and after, and three options with their costs, as the
-> owner's rule OD-4 asks. The owner picks the design before anything is implemented.
+> **Status: decided on 2026-11-09.** No code changes with this note. The owner decided that the next
+> engine work is to spread an event over several lanes. The owner answered the four questions of
+> section 7 as follows.
+>
+> - **Decision 1.** Build option B first.
+> - **Decision 2.** The closed-form phase may change the bits of the render, with new goldens. A
+>   stated tolerance is checked once against the accumulated phase. The precision of long events is
+>   measured, and an integer turns counter is added if the measurement asks for it.
+> - **Decision 3.** The howl of `wind` takes a second pair of scratch arrays in `recur`, not a
+>   component lane.
+> - **Decision 4.** Option C is a separate note, written after the device measurement of option B.
 
 Labels in this note: **Fact** is read from a record or from the code. **Inference** is reasoned
 from facts and is not measured. **Proposal** is a design choice for the owner.
@@ -306,10 +313,15 @@ note, which changes no code.
 ## 7. What the owner decides
 
 1. The option: B first (the recommendation), A, or C.
+   **Decision:** option B first.
 2. Whether a closed-form phase may change the bits of the render, with new goldens, in exchange for
    the frame-parallel form.
+   **Decision:** yes, with a stated tolerance checked once and new goldens; the precision of long
+   events is measured first, and an integer turns counter is added if it is needed.
 3. For `wind`: one more pair of arrays for the howl, or a component lane for it.
+   **Decision:** a second pair of scratch arrays in `recur`.
 4. Whether C, for offline renders only, is a separate note after B.
+   **Decision:** yes, a separate note, after the device measurement of option B.
 
 ## 8. What the design does not change
 
