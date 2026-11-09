@@ -55,14 +55,21 @@ All times are in seconds from the start of the clip. All positions are in the li
 
 Plan fields:
 
-| Field     | Type   | Meaning                                                               |
-| --------- | ------ | --------------------------------------------------------------------- |
-| `version` | number | The plan format version. It is `1`.                                   |
-| `clip`    | object | `duration` in seconds and `fps`.                                      |
-| `scene`   | object | `room` and `listener`, as below.                                      |
-| `master`  | object | Optional. `lufs` (default -23) and `truePeak` in dBTP (default -1).   |
-| `events`  | array  | The events, in any order. The engine sorts them by `t`, then by `id`. |
-| `seed`    | number | The seed of every random choice. The default is `0`.                  |
+| Field     | Type   | Meaning                                                                                  |
+| --------- | ------ | ---------------------------------------------------------------------------------------- |
+| `version` | number | The plan format version. It is `1`.                                                      |
+| `clip`    | object | `duration` in seconds and `fps`.                                                         |
+| `scene`   | object | `room` and `listener`, as below.                                                         |
+| `master`  | object | Optional. `lufs` (default -23) and `truePeak` in dBTP (default -1).                      |
+| `picture` | object | Optional. `cuts` and `motion`: the cuts and the peaks of motion, each a list of seconds. |
+| `events`  | array  | The events, in any order. The engine sorts them by `t`, then by `id`.                    |
+| `seed`    | number | The seed of every random choice. The default is `0`.                                     |
+
+The plan has no sample rate. The sample rate is a fact of the renderer: it renders at 48 kHz and
+returns the rate with the render. The analyzers take the rate as an argument.
+
+The renderer snaps the onset of an event to a time of `picture` when the two are within 40 ms. The
+checklist reads the same times for `sync`.
 
 Scene fields:
 
@@ -192,16 +199,25 @@ The checklist has eight dimensions. Each has an amateur symptom, an expert prope
 automatic measure. The analyzers compute the measures. Each dimension has a short name, which the
 analyzers use as its field name.
 
-| Name        | Amateur symptom                   | Expert property                                                  | Automatic measure                                                       |
-| ----------- | --------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `layers`    | One sound per hero event.         | Three to seven layers per hero event.                            | The count of layers that sound within 100 ms of a hero event.           |
-| `dynamics`  | A flat loudness curve.            | Silence before an impact, build-ups, ducking under dialogue.     | The loudness curve: depth of the dip before each impact, ducking in dB. |
-| `balance`   | Mud, and no top.                  | No pile-up at 200 to 400 Hz. Air above 10 kHz.                   | The spectral tilt, and the overlap of the layers' bands.                |
-| `space`     | Dry, or one reverb on everything. | Reverb ratio and channel correlation matched to the room.        | The reverb-to-direct ratio, and the inter-channel correlation.          |
-| `position`  | Everything in the centre.         | The sound follows the object on the screen.                      | The pan trajectory against the event's screen coordinates.              |
-| `sync`      | The sound is late.                | A whoosh starts before its impact. An impact lands on the frame. | The onset against the cut and the motion peak, in ms.                   |
-| `variation` | The same sample on every step.    | Repeated events differ.                                          | The similarity between the events of one kind.                          |
-| `master`    | Loud and clipped, or quiet.       | The loudness target, a true peak under the limit, and glue.      | LUFS, true peak, and the crest factor.                                  |
+| Name        | Amateur symptom                   | Expert property                                                  | Automatic measure                                                                                                            |
+| ----------- | --------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `layers`    | One sound per hero event.         | Three to seven sounds per hero event.                            | The count of events that sound within 100 ms of a hero event. The count of distinct layers among them is reported beside it. |
+| `dynamics`  | A flat loudness curve.            | Silence before an impact, build-ups, ducking under dialogue.     | The loudness curve: depth of the dip before each impact. Ducking in dB, measured on the stems.                               |
+| `balance`   | Mud, and no top.                  | No pile-up at 200 to 400 Hz. Air above 10 kHz.                   | The spectral tilt, and the overlap of the layers' bands, measured on the stems.                                              |
+| `space`     | Dry, or one reverb on everything. | Reverb ratio and channel correlation matched to the room.        | The reverb-to-direct ratio, measured on the mix against the dry render, and the inter-channel correlation.                   |
+| `position`  | Everything in the centre.         | The sound follows the object on the screen.                      | The pan trajectory against the event's screen coordinates, measured on the event's layer stem.                               |
+| `sync`      | The sound is late.                | A whoosh starts before its impact. An impact lands on the frame. | The onset against the cut and the motion peak, in ms.                                                                        |
+| `variation` | The same sample on every step.    | Repeated events differ.                                          | The similarity between the events of one kind, measured on their layer stem.                                                 |
+| `master`    | Loud and clipped, or quiet.       | The loudness target, a true peak under the limit, and glue.      | LUFS, true peak, the crest factor and the count of clipped samples. The last two are the measure of glue.                    |
+
+The renderer returns each layer as a stem, and the mix without the reverb as the dry render. The
+analyzers measure ducking, the overlap of bands, the reverb-to-direct ratio, `position` and
+`variation` on these. A measure on the mix alone would blur events that overlap in time. The
+analyzers read the mix only where no stem is given.
+
+Every threshold of the rules is a starting value. The runs of experiment 8 record which thresholds
+the one-layer render fails and the layered render meets. A threshold changes only through a record
+of a run.
 
 The analyzers need no model and no listener. The numbers are facts about a render. Whether they
 match what a person likes is an inference, and only a study on listeners can test it.

@@ -7,7 +7,13 @@ export type {
   Rule,
 } from './checklist.ts';
 export { channelCorrelation } from './correlation.ts';
-export { integratedLoudness, loudnessContrast, loudnessCurve, truePeak } from './loudness.ts';
+export {
+  integratedLoudness,
+  loudnessContrast,
+  loudnessCurve,
+  peakEnvelope,
+  truePeak,
+} from './loudness.ts';
 export { detectOnsets, syncErrors } from './onsets.ts';
 export type { SyncError } from './onsets.ts';
 export { eventSimilarity } from './similarity.ts';
