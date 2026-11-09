@@ -66,8 +66,11 @@ for (const [i, report] of blocks.entries()) {
 console.log(`\nexplain(plan.reports) on WebGPU:\n${gpu!.explain}\n`);
 
 // The layered render (experiment 8): an impact, a whoosh and a shimmer through the spatial chain and
-// the reverb, on WebGPU and on the CPU tier. The tolerance is 2^-11 of the CPU tier's peak: the
-// kinds use `sin`, `cos` and `exp`, and the filters carry the difference from sample to sample.
+// the reverb, on WebGPU and on the CPU tier. The tolerance is 4 x 2^-11 of the CPU tier's peak.
+// Surface section 38 bounds each `sin`, `cos` and `exp` at 2^-11 per operation. The layered chain
+// runs many of them in series (filters, envelopes, the reverb), and the whole-clip comparison of
+// record 08 observed 6.4e-4 of a peak 0.486, which is 2.7 x 2^-11. The earlier bound of exactly
+// 2^-11 passed on a short render by luck.
 const spatialPage = await bundle({
   entry: 'test/browser/page-spatial.ts',
   outDir: 'out/browser-spatial',
@@ -88,11 +91,11 @@ for (const [name, a, b] of [
   ['reverb return, left', sg!.wet[0], sc!.wet[0]],
   ['reverb return, right', sg!.wet[1], sc!.wet[1]],
 ] as const) {
-  const room = peakOf(b) * 2 ** -11;
+  const room = peakOf(b) * 4 * 2 ** -11;
   const d = largest(a, b);
   check(
     peakOf(b) > 0.01 && d <= room,
-    `${name}: WebGPU is the CPU tier's within 2^-11 of its peak ${peakOf(b).toFixed(3)}: largest difference ${d.toExponential(3)}, ${same(a, b)} of ${a.length} the same bits`,
+    `${name}: WebGPU is the CPU tier's within 4 x 2^-11 of its peak ${peakOf(b).toFixed(3)} (bound ${room.toExponential(3)}): largest difference ${d.toExponential(3)}, ${same(a, b)} of ${a.length} the same bits`,
   );
 }
 check(
