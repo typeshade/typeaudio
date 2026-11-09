@@ -30,6 +30,7 @@ import {
   refSvfCoef,
 } from './reference-kinds.ts';
 import { noise } from '../src/kinds/noise.shade.ts';
+import { eventSimilarity } from '../src/analyze/index.ts';
 
 // Each kind on the CPU tier, built with `new` on the host (compiler change 0109) and held to the
 // plain-JavaScript reference bit for bit. `Math.sin`, `Math.exp` and `Math.cos` are the same
@@ -280,4 +281,32 @@ describe('the cues of a plan', () => {
     expect(lo.y.length).toBe(hi.y.length);
     expect(lo.y).not.toEqual(hi.y);
   });
+});
+
+describe('the variation of repeated events (the `variation` guard, bound 0.95)', () => {
+  const p = validatePlan(plan);
+  // The event rendered alone on the CPU tier, for up to one second: the length `eventSimilarity` reads.
+  const alone = (e: PlanEvent, key: number): Float32Array => {
+    const { cue, length } = makeCue(e, { sr: SR, key });
+    cue.end = length;
+    return Float32Array.from(run(Math.min(length, SR), () => cue.tick(0)));
+  };
+  // The keys of four events of the plan: the ids of the fixture's repeated events.
+  const keys = ['step-1', 'step-2', 'whoosh-a', 'impact-b'].map((id) => eventKey(p.seed, id));
+
+  test.each(['footstep', 'cloth', 'impact', 'whoosh'])(
+    'two %s events that differ only in their key are less similar than 0.95, and a key repeats its bits',
+    (kind) => {
+      const base = p.events.find((e) => e.kind === kind)!;
+      const takes = keys.map((k) => alone(base, k));
+      for (let i = 0; i < takes.length; i++)
+        for (let j = i + 1; j < takes.length; j++)
+          expect(
+            eventSimilarity(takes[i]!, takes[j]!, SR).similarity,
+            `${kind}, keys ${i} and ${j}`,
+          ).toBeLessThan(0.95);
+      expect(alone(base, keys[0]!)).toEqual(takes[0]);
+    },
+    30000,
+  );
 });

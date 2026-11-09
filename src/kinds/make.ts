@@ -135,36 +135,40 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
   switch (e.kind) {
     case 'whoosh': {
       length = frames(e.duration ?? 0.5, sr);
-      const f0 = 250 * (0.9 + 0.2 * j(1));
-      const f1 = (800 + 6000 * m.brightness!) * (0.7 + 0.3 * e.intensity);
+      // Each take moves the start centre by up to 8 %, the end centre (the brightness) and the damping by up
+      // to 10 %, and the speed of the sweep by up to 12 %.
+      const f0 = 250 * (0.92 + 0.16 * j(1));
+      const f1 = (800 + 6000 * m.brightness!) * (0.7 + 0.3 * e.intensity) * (0.9 + 0.2 * j(2));
       cue.whoosh = new Whoosh().shape(
         sr,
         length,
         f0,
         Math.log(f1 / f0),
-        m.speed!,
-        0.6,
+        Math.min(1, m.speed! * (0.88 + 0.24 * j(4))),
+        0.6 * (0.9 + 0.2 * j(3)),
         2.2 * lvl,
         key,
       );
       break;
     }
     case 'impact': {
-      const tau = 0.12 + 0.9 * m.decay!;
+      // Each take moves the pitch and the depth of the pitch fall by up to 8 %, each decay and the fall's
+      // rate by up to 12 %, and the noise's brightness, the click's length and each level by up to 10 %.
+      const tau = (0.12 + 0.9 * m.decay!) * (0.88 + 0.24 * j(2));
       length = frames(Math.min(6 * tau, 4), sr);
-      const base = (35 + 55 * (1 - m.weight!)) * (0.94 + 0.12 * j(1));
+      const base = (35 + 55 * (1 - m.weight!)) * (0.92 + 0.16 * j(1));
       cue.impact = new Impact().shape(
         key,
         base / sr,
-        2,
-        1 / (0.04 * sr),
+        2 * (0.92 + 0.16 * j(5)),
+        1 / (0.04 * (0.88 + 0.24 * j(6)) * sr),
         1 / (tau * sr),
-        1 / ((0.05 + 0.25 * m.decay!) * sr),
-        0.04 + 0.5 * m.crack!,
-        24 + 96 * m.crack!,
+        1 / ((0.05 + 0.25 * m.decay!) * (0.88 + 0.24 * j(4)) * sr),
+        (0.04 + 0.5 * m.crack!) * (0.9 + 0.2 * j(3)),
+        (24 + 96 * m.crack!) * (0.9 + 0.2 * j(7)),
         (0.6 + 0.4 * m.weight!) * lvl,
-        0.9 * lvl,
-        0.8 * m.crack! * lvl,
+        0.9 * (0.9 + 0.2 * j(8)) * lvl,
+        0.8 * m.crack! * (0.9 + 0.2 * j(9)) * lvl,
       );
       break;
     }
@@ -237,17 +241,23 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
       break;
     }
     case 'footstep': {
-      const pace = 1.3 - 0.6 * m.pace!;
+      // Each take moves the thud's pitch by up to 8 %, the grain lengths by up to 12 %, the crunch's
+      // band by up to 10 %, the pace by up to 12 % and the thud's weight by up to 25 %.
+      const pace = (1.3 - 0.6 * m.pace!) * (0.88 + 0.24 * j(26));
+      const pitch = 0.92 + 0.16 * j(21);
+      const band = 0.9 + 0.2 * j(24);
+      const thudLen = 0.88 + 0.24 * j(22);
+      const crunchLen = 0.88 + 0.24 * j(25);
       const thud = new Cloud(sr)
         .density(100)
-        .lengths(0.04, 0.09)
-        .pitches(50, 90 + 120 * (1 - m.weight!))
-        .level((0.5 + 0.5 * m.weight!) * lvl)
+        .lengths(0.04 * thudLen, 0.09 * thudLen)
+        .pitches(50 * pitch, (90 + 120 * (1 - m.weight!)) * pitch)
+        .level((0.5 + 0.5 * m.weight!) * (0.75 + 0.5 * j(23)) * lvl)
         .seed(mix32(key, 11));
       const crunch = new Cloud(sr)
         .density(60 / pace)
-        .lengths(0.004, 0.02)
-        .pitches(900 + 1500 * m.surface!, 2500 + 3500 * m.surface!)
+        .lengths(0.004 * crunchLen, 0.02 * crunchLen)
+        .pitches((900 + 1500 * m.surface!) * band, (2500 + 3500 * m.surface!) * band)
         .level(0.3 * lvl)
         .seed(mix32(key, 12));
       // The thud takes the first three slots, the crunch the rest.
@@ -259,15 +269,19 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
       break;
     }
     case 'cloth': {
-      const window = 0.3 * (1.3 - 0.8 * m.speed!);
+      // Each take moves the band by up to 10 %, the grain lengths by up to 12 %, the window by up to
+      // 12 % and the lowpass (the brightness) by up to 10 %.
+      const window = 0.3 * (1.3 - 0.8 * m.speed!) * (0.88 + 0.24 * j(31));
+      const band = 0.9 + 0.2 * j(32);
+      const len = 0.88 + 0.24 * j(33);
       const cloud = new Cloud(sr)
         .density(8 / window)
-        .lengths(0.01, 0.04)
-        .pitches(1500 + 2500 * m.fabric!, 4000 + 4000 * m.fabric!)
+        .lengths(0.01 * len, 0.04 * len)
+        .pitches((1500 + 2500 * m.fabric!) * band, (4000 + 4000 * m.fabric!) * band)
         .level(0.15 * lvl)
         .seed(mix32(key, 13));
       const unit = new Cloth();
-      unit.lp.k = 0.6 - 0.4 * m.fabric!;
+      unit.lp.k = (0.6 - 0.4 * m.fabric!) * (0.9 + 0.2 * j(34));
       length = drawGrains(unit, cloud, window, sr, 0, 8) + 1;
       cue.cloth = unit;
       break;
