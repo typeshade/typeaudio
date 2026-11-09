@@ -34,6 +34,8 @@ event's key is a hash of the seed and its id, not of its place in the sorted lis
 than the history is left out. A footstep or a cloth always has a grain. A new run on the fixture
 differs from this record in its noise, its grains and its checklist values.
 
+The kinds' variation changed at `1bb03d3` (pull request #49). The numbers above are the earlier kinds'.
+
 ## The devices
 
 | Item     | CPU tier (Node)                                         | WebGPU                                                                                                                                               | WebGL2                                                                                       |

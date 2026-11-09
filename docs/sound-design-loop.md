@@ -107,8 +107,9 @@ repeated `id`.
 A kind is a unit or a preset of the vocabulary. The plan's `duration` is the sounding length of
 every kind that sustains, and the macros shape the sound within it. For a `whoosh`, `speed` sets how
 late and how fast the sweep rises within the duration. For a `riser`, `length` sets the fraction of
-the duration over which the swell rises, and the sound holds at its peak for the rest. The first
-kinds are:
+the duration over which the swell rises, and the sound holds at its peak for the rest. Every kind
+draws its take from the event's key within its macro ranges, so repeated events differ (the
+`variation` guard). The first kinds are:
 
 | Kind       | Sort       | Layer    | Macros                      |
 | ---------- | ---------- | -------- | --------------------------- |
