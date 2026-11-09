@@ -1,7 +1,7 @@
 // The layered render of a sound plan (docs/sound-design-loop.md; docs/experiments.md, section 8).
-// The plan is validated, its events sorted; every event becomes a lane of one bank of cues, placed
+// The plan is validated, its events sorted; every event becomes a lane of the bank of its kind, placed
 // by the spatial chain into its layer, and each block of 1,024 frames is one `dev.fuse` scope of
-// the kernels of `src/kinds/cue.shade.ts`, `src/spatial/spatial.shade.ts` and `src/spatial/reverb.ts`.
+// the kernels of `src/kinds/lanes.shade.ts`, `src/spatial/spatial.shade.ts` and `src/spatial/reverb.ts`.
 // The master (`src/master.ts`) then measures the mix, scales it to the plan's loudness target and
 // limits its true peak. The render is deterministic: the same plan gives the same bits on a tier.
 
@@ -14,8 +14,28 @@ import {
   type PlanLayer,
   type SoundPlan,
 } from './plan/index.ts';
-import { Cue, cues } from './kinds/cue.shade.ts';
-import { eventKey, makeCue } from './kinds/make.ts';
+import {
+  cloths,
+  drones,
+  footsteps,
+  gather,
+  impacts,
+  risers,
+  shimmers,
+  voices,
+  whooshes,
+  winds,
+  type ClothLane,
+  type DroneLane,
+  type FootstepLane,
+  type ImpactLane,
+  type RiserLane,
+  type ShimmerLane,
+  type VoiceLane,
+  type WhooshLane,
+  type WindLane,
+} from './kinds/lanes.shade.ts';
+import { KIND_INDEX, eventKey, makeLane, type Made } from './kinds/make.ts';
 import { Spatial, history, layers, pack, place, sendSum, strips } from './spatial/spatial.shade.ts';
 import { BLOCK, WIDTH, impulseResponse, spatialOf, stripOf } from './spatial/room.ts';
 import { Reverb } from './spatial/reverb.ts';
@@ -142,14 +162,17 @@ export async function renderPlan(
   const events = plan.events;
   const lanes = events.length;
 
-  // One cue and one lane of the chain for each event.
-  const instances: Cue[] = [];
+  // One lane of its kind's bank and one lane of the chain for each event. `kinds` and `slots` say,
+  // for event `i`, which bank holds its lane and at which place; `gather` reads them.
+  const byKind: Made['lane'][][] = Object.keys(KIND_INDEX).map(() => []);
+  const kinds = new Uint32Array(lanes);
+  const slots = new Uint32Array(lanes);
   const places: Spatial[] = [];
   const placed: Rendered['placed'] = [];
-  const stems: { lane: number; start: number; data: Float32Array }[] = [];
+  const stems: { slot: number; start: number; data: Float32Array }[] = [];
   events.forEach((e, i) => {
     const stem = options.stems?.[e.id];
-    const made = makeCue(e, {
+    const made = makeLane(e, {
       sr,
       key: eventKey(plan.seed, e.id),
       ...(stem === undefined ? {} : { stem }),
@@ -157,15 +180,33 @@ export async function renderPlan(
     const t = guards ? snapped(plan, e.t) : e.t;
     const anchor = Math.round(t * sr);
     const start = Math.max(0, e.sync === 'arrive' ? anchor - made.length : anchor);
-    made.cue.start = start;
-    made.cue.end = start + made.length;
-    instances.push(made.cue);
+    made.lane.start = start;
+    made.lane.end = start + made.length;
+    const k = KIND_INDEX[made.kind];
+    kinds[i] = k;
+    slots[i] = byKind[k]!.length;
+    byKind[k]!.push(made.lane);
     places.push(spatialOf(e, plan.scene, { spatial, sr }));
     placed.push({ id: e.id, start, end: start + made.length });
-    if (e.kind === 'voice' && stem !== undefined) stems.push({ lane: i, start, data: stem });
+    if (e.kind === 'voice' && stem !== undefined)
+      stems.push({ slot: slots[i]!, start, data: stem });
   });
 
-  const cueBank = bank(dev, instances);
+  // A bank for each kind that has an event: `bank()` refuses an empty array, and a kind with no
+  // event has no call.
+  const present = Object.values(KIND_INDEX).filter((k) => byKind[k]!.length > 0);
+  const has = (k: number): boolean => (present as number[]).includes(k);
+  const bankOf = <T extends Made['lane']>(k: number) =>
+    has(k) ? bank(dev, byKind[k] as T[]) : undefined;
+  const whooshBank = bankOf<WhooshLane>(KIND_INDEX.whoosh);
+  const impactBank = bankOf<ImpactLane>(KIND_INDEX.impact);
+  const shimmerBank = bankOf<ShimmerLane>(KIND_INDEX.shimmer);
+  const riserBank = bankOf<RiserLane>(KIND_INDEX.riser);
+  const windBank = bankOf<WindLane>(KIND_INDEX.wind);
+  const droneBank = bankOf<DroneLane>(KIND_INDEX.drone);
+  const footstepBank = bankOf<FootstepLane>(KIND_INDEX.footstep);
+  const clothBank = bankOf<ClothLane>(KIND_INDEX.cloth);
+  const voiceBank = bankOf<VoiceLane>(KIND_INDEX.voice);
   const laneBank = bank(dev, places);
   const stripBank = bank(
     dev,
@@ -178,8 +219,14 @@ export async function renderPlan(
     arrays.push(a);
     return a;
   };
-  const inputs = make(lanes * BLOCK);
+  // The stems of the voice lanes, a row for each lane of the voice bank; the output of each kind's
+  // kernel, a row for each lane of its bank (a kind with no event has none); and `raws`, a row for each event.
+  const rows = (k: number): number => Math.max(1, byKind[k]!.length) * BLOCK;
+  const inputs = make(rows(KIND_INDEX.voice));
   const raws = make(lanes * BLOCK);
+  const outs = Object.values(KIND_INDEX).map((k) => make(has(k) ? rows(k) : 1));
+  const kindIdx = dev.array(kinds);
+  const slotIdx = dev.array(slots);
   let hist = make(lanes * WIDTH);
   let prev = make(lanes * WIDTH);
   const laneL = make(lanes * BLOCK);
@@ -236,11 +283,11 @@ export async function renderPlan(
       // The stems of the voice events that sound in this block.
       const live = stems.filter((s) => s.start < at + BLOCK && s.start + s.data.length > at);
       if (live.length > 0 || fed) {
-        const fill = new Float32Array(lanes * BLOCK);
+        const fill = new Float32Array(rows(KIND_INDEX.voice));
         for (const s of live) {
           const from = Math.max(at - s.start, 0);
           const to = Math.min(at + BLOCK - s.start, s.data.length);
-          fill.set(s.data.subarray(from, to), s.lane * BLOCK + (s.start + from - at));
+          fill.set(s.data.subarray(from, to), s.slot * BLOCK + (s.start + from - at));
         }
         inputs.write(fill);
         fed = live.length > 0;
@@ -254,7 +301,18 @@ export async function renderPlan(
       }
       [hist, prev] = [prev, hist];
       const report = await dev.fuse(() => {
-        cues(raws, cueBank.instances, inputs, BLOCK);
+        // One call for each kind that has an event, each over its own bank; then one `gather` for each
+        // of those kinds puts its events' blocks in their rows of `raws`.
+        if (whooshBank) whooshes(outs[KIND_INDEX.whoosh]!, whooshBank.instances, BLOCK);
+        if (impactBank) impacts(outs[KIND_INDEX.impact]!, impactBank.instances, BLOCK);
+        if (shimmerBank) shimmers(outs[KIND_INDEX.shimmer]!, shimmerBank.instances, BLOCK);
+        if (riserBank) risers(outs[KIND_INDEX.riser]!, riserBank.instances, BLOCK);
+        if (windBank) winds(outs[KIND_INDEX.wind]!, windBank.instances, BLOCK);
+        if (droneBank) drones(outs[KIND_INDEX.drone]!, droneBank.instances, BLOCK);
+        if (footstepBank) footsteps(outs[KIND_INDEX.footstep]!, footstepBank.instances, BLOCK);
+        if (clothBank) cloths(outs[KIND_INDEX.cloth]!, clothBank.instances, BLOCK);
+        if (voiceBank) voices(outs[KIND_INDEX.voice]!, voiceBank.instances, inputs, BLOCK);
+        for (const k of present) gather(raws, kindIdx, slotIdx, outs[k], k, BLOCK);
         history(hist, prev, raws);
         place(laneL, laneR, laneS, hist, laneBank.instances, binaural);
         layers(layL, layR, layS, laneL, laneR, laneS, laneBank.instances);
@@ -275,6 +333,8 @@ export async function renderPlan(
     }
   } finally {
     for (const a of arrays) dev.release(a);
+    dev.release(kindIdx);
+    dev.release(slotIdx);
     reverb?.release();
   }
 

@@ -32,9 +32,30 @@ export { Drone } from './kinds/drone.shade.ts';
 export { Footstep } from './kinds/footstep.shade.ts';
 export { Cloth } from './kinds/cloth.shade.ts';
 export { Stem } from './kinds/voice.shade.ts';
-export { Cue, cues } from './kinds/cue.shade.ts';
+export {
+  Lane,
+  WhooshLane,
+  ImpactLane,
+  ShimmerLane,
+  RiserLane,
+  WindLane,
+  DroneLane,
+  FootstepLane,
+  ClothLane,
+  VoiceLane,
+  whooshes,
+  impacts,
+  shimmers,
+  risers,
+  winds,
+  drones,
+  footsteps,
+  cloths,
+  voices,
+  gather,
+} from './kinds/lanes.shade.ts';
 export { noise } from './kinds/noise.shade.ts';
-export { eventKey, KIND_GAIN, KIND_INDEX, makeCue } from './kinds/make.ts';
+export { eventKey, KIND_GAIN, KIND_INDEX, makeLane } from './kinds/make.ts';
 export type { Made, MakeOptions } from './kinds/make.ts';
 export {
   Spatial,

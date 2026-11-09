@@ -1,13 +1,14 @@
 // The three forms of the `cues` kernel on one tier (docs/lanes.md, "Step 1b: the overhead"): the
-// kernel of `src/kinds/cue.shade.ts`, the hoisted, wide and narrow forms of `overhead.shade.ts`.
+// kernel of `experiments/08-sound-design/cue.shade.ts`, the hoisted, wide and narrow forms of `overhead.shade.ts`.
 // Each form runs 1 lane and 9 lanes of the fixture's first `whoosh`, under other ids, for 40 blocks
 // after 3 blocks of warm-up. A row holds the mean GPU time of the call's group where the device
 // measured one (WebGPU) and the median host time of the block's `fuse` scope.
 
 import { createDevice, type Device } from 'typeshade/runtime';
 import { bank } from '../../src/bank.ts';
-import { Cue, cues } from '../../src/kinds/cue.shade.ts';
-import { eventKey, makeCue } from '../../src/kinds/make.ts';
+import { Cue, cues } from './cue.shade.ts';
+import { eventKey } from '../../src/kinds/make.ts';
+import { makeCue } from './cue.ts';
 import { validatePlan } from '../../src/plan/index.ts';
 import { BLOCK } from '../../src/spatial/room.ts';
 import { SAMPLE_RATE } from '../../src/render-plan.ts';

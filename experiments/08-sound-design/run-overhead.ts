@@ -2,7 +2,7 @@
 //
 //   TYPESHADE_CHROMIUM=<chromium> bun experiments/08-sound-design/run-overhead.ts [blocks]
 //
-// It prints the load average and one table: for the kernel of `src/kinds/cue.shade.ts`, the hoisted
+// It prints the load average and one table: for the kernel of `experiments/08-sound-design/cue.shade.ts`, the hoisted
 // form and the narrow form, 1 lane and 9 lanes of `whoosh`, on WebGPU (GPU time) and on the CPU
 // tier (host time). The default is 40 blocks.
 
