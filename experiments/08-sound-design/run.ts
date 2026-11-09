@@ -13,8 +13,8 @@
 // both renders on the eight dimensions of the checklist and writes the stems and the mix as WAV into
 // `experiments/08-sound-design/out/` (not committed). `--blocks` is the blocks each tier renders for
 // the timed run, 0 for the whole clip; `--variant-seconds` the length of each variant. The runner
-// holds each page tier's mix to the CPU tier's over the frames both rendered, writes the result as
-// JSON and prints the tables. A number without its record is not a result: the record is `docs/records/`.
+// holds each page tier's mix to the CPU tier's when both rendered the same blocks (`across.ts`),
+// writes the result as JSON and prints the tables. A number without its record is not a result: the record is `docs/records/`.
 
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
@@ -25,6 +25,7 @@ import { bundle, ROOT } from '../../scripts/bundle.ts';
 import { inPage } from '../../scripts/browser.ts';
 import { fromBase64 } from '../03-fft/signals.ts';
 import { DEFAULTS, type Options, type Tier } from './options.ts';
+import { compareMixes, type AcrossEntry } from './across.ts';
 import type { Result } from './harness.ts';
 
 const TIERS: Tier[] = ['cpu', 'webgpu', 'webgl2'];
@@ -130,41 +131,22 @@ if (pageTiers.length > 0) {
   }
 }
 
-// Each page tier's mix against the CPU tier's, over the frames both rendered.
-const across: Record<string, unknown> = {};
+// Each page tier's mix against the CPU tier's. The two must be renders of the same blocks: the
+// master's gain is the loudness of the render's own length (`across.ts`).
+const across: Record<string, AcrossEntry> = {};
 const cpuMix = tiers.includes('cpu')
   ? new Float32Array(Uint8Array.from(await readFile(join(outDir, 'cpu.mix.f32'))).buffer)
   : undefined;
 for (const tier of pageTiers) {
   const r = results[tier]!;
-  if (r.full?.mix === undefined || cpuMix === undefined) continue;
-  const mix = fromBase64(r.full.mix);
-  const frames = r.full.frames;
-  const cpuFrames = cpuMix.length / 2;
-  const n = Math.min(frames, cpuFrames);
-  let differ = 0;
-  let largest = 0;
-  let peak = 0;
-  let sq = 0;
-  let dq = 0;
-  for (let c = 0; c < 2; c++)
-    for (let i = 0; i < n; i++) {
-      const a = mix[c * frames + i]!;
-      const b = cpuMix[c * cpuFrames + i]!;
-      if (!Object.is(a, b)) differ++;
-      largest = Math.max(largest, Math.abs(a - b));
-      peak = Math.max(peak, Math.abs(b));
-      sq += b * b;
-      dq += (a - b) * (a - b);
-    }
-  across[`${tier}-cpu`] = {
-    frames: n,
-    values: 2 * n,
-    differ,
-    largest,
-    peak,
-    relativeRms: Math.sqrt(dq / sq),
-  };
+  if (r.full?.mix === undefined) continue;
+  if (cpuMix !== undefined)
+    across[`${tier}-cpu`] = compareMixes(
+      fromBase64(r.full.mix),
+      r.full.frames,
+      cpuMix,
+      cpuMix.length / 2,
+    );
   delete (r.full as { mix?: string }).mix;
 }
 record['across'] = across;
@@ -206,13 +188,12 @@ for (const [tier, r] of Object.entries(results)) {
     );
   for (const f of r.failed) console.log(`${tier}: ${f.step} stopped: ${f.message}`);
 }
-for (const [pair, d] of Object.entries(across) as [
-  string,
-  { values: number; differ: number; largest: number; peak: number; relativeRms: number },
-][]) {
-  console.log(
-    `${pair}: ${d.differ} of ${d.values} values differ (largest ${d.largest.toExponential(2)} of a peak ${d.peak.toFixed(3)}, relative RMS ${d.relativeRms.toExponential(2)})`,
-  );
+for (const [pair, d] of Object.entries(across)) {
+  if ('skipped' in d) console.log(`${pair}: not compared. ${d.skipped}`);
+  else
+    console.log(
+      `${pair}: ${d.differ} of ${d.values} values differ (largest ${d.largest.toExponential(2)} of a peak ${d.peak.toFixed(3)}, relative RMS ${d.relativeRms.toExponential(2)})`,
+    );
 }
 type Rule = {
   measure: string;
