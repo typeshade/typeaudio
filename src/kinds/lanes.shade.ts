@@ -244,51 +244,26 @@ export function voices(out: array<f32>, lanes: array<VoiceLane>, inputs: array<f
 }
 
 /**
- * Puts each event's block in its row of `raws`: event `i` reads the row `slots[i]` of the `out` of
- * its kind `kinds[i]` (`w0` whoosh, `w1` impact, `w2` shimmer, `w3` riser, `w4` wind, `w5` drone,
- * `w6` footstep, `w7` cloth, `w8` voice) and writes `raws[i * block + n]`. A kind with no event
- * gets any array: it is not read.
+ * Puts the blocks of one kind in their rows of `raws`: event `i` of kind `kind` reads the row
+ * `slots[i]` of `src`, the `out` of that kind's kernel, and writes `raws[i * block + n]`. The events
+ * of other kinds are left as they are, so the host calls it once for each kind that has an event.
+ * It takes one source and not nine, because a kernel of twelve storage buffers is more than WebGPU's
+ * eight for a compute stage.
  */
 export function gather(
   raws: array<f32>,
   kinds: array<u32>,
   slots: array<u32>,
-  w0: array<f32>,
-  w1: array<f32>,
-  w2: array<f32>,
-  w3: array<f32>,
-  w4: array<f32>,
-  w5: array<f32>,
-  w6: array<f32>,
-  w7: array<f32>,
-  w8: array<f32>,
+  src: array<f32>,
+  kind: u32,
   block: u32,
 ) {
   for (let i: u32 = 0; i < kinds.length; i++) {
-    const k = kinds[i];
-    const r = slots[i] * block;
-    for (let n: u32 = 0; n < block; n++) {
-      let y: f32 = 0;
-      if (k == 0) {
-        y = w0[r + n];
-      } else if (k == 1) {
-        y = w1[r + n];
-      } else if (k == 2) {
-        y = w2[r + n];
-      } else if (k == 3) {
-        y = w3[r + n];
-      } else if (k == 4) {
-        y = w4[r + n];
-      } else if (k == 5) {
-        y = w5[r + n];
-      } else if (k == 6) {
-        y = w6[r + n];
-      } else if (k == 7) {
-        y = w7[r + n];
-      } else {
-        y = w8[r + n];
+    if (kinds[i] == kind) {
+      const r = slots[i] * block;
+      for (let n: u32 = 0; n < block; n++) {
+        raws[i * block + n] = src[r + n];
       }
-      raws[i * block + n] = y;
     }
   }
 }

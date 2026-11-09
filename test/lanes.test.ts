@@ -100,43 +100,26 @@ describe('the kernel of each kind', () => {
     }
   });
 
-  test('gather puts the row of each event in its place in raws, whatever the order of the kinds', async () => {
-    // Events 0..5 in an order that mixes two kinds: A B A B B A.
+  test('gather puts the rows of one kind in their places in raws and leaves the other rows', async () => {
+    // Events 0 to 5 in an order that mixes two kinds: A B A B B A. The rows of B hold a sentinel.
     const kinds = new Uint32Array([0, 1, 0, 1, 1, 0]);
     const slots = new Uint32Array([0, 0, 1, 1, 2, 2]);
-    const w = (base: number, rows: number): Float32Array =>
-      Float32Array.from({ length: rows * BLOCK }, (_, i) => base + i);
-    const w0 = w(1000, 3);
-    const w1 = w(5000, 3);
-    const rest = Array.from({ length: 7 }, () => dev.array(new Float32Array(BLOCK)));
-    const a0 = dev.array(w0);
-    const a1 = dev.array(w1);
-    const raws = dev.array(6 * BLOCK, 'f32');
+    const src = Float32Array.from({ length: 3 * BLOCK }, (_, i) => 1000 + i);
+    const a = dev.array(src);
+    const raws = dev.array(new Float32Array(6 * BLOCK).fill(SENTINEL));
     const k = dev.array(kinds);
     const s = dev.array(slots);
     await dev.fuse(() => {
-      gather(
-        raws,
-        k,
-        s,
-        a0,
-        a1,
-        rest[0]!,
-        rest[1]!,
-        rest[2]!,
-        rest[3]!,
-        rest[4]!,
-        rest[5]!,
-        rest[6]!,
-        BLOCK,
-      );
+      gather(raws, k, s, a, 0, BLOCK);
     });
     const got = await raws.read();
     for (let i = 0; i < 6; i++) {
-      const src = kinds[i] === 0 ? w0 : w1;
-      expect(Array.from(got.subarray(i * BLOCK, (i + 1) * BLOCK))).toEqual(
-        Array.from(src.subarray(slots[i]! * BLOCK, (slots[i]! + 1) * BLOCK)),
-      );
+      const row = Array.from(got.subarray(i * BLOCK, (i + 1) * BLOCK));
+      const want =
+        kinds[i] === 0
+          ? Array.from(src.subarray(slots[i]! * BLOCK, (slots[i]! + 1) * BLOCK))
+          : Array.from({ length: BLOCK }, () => SENTINEL);
+      expect(row, `event ${i}`).toEqual(want);
     }
   });
 });
@@ -177,7 +160,7 @@ describe('renderPlan with one bank for each kind', { timeout: 120000 }, () => {
     ]);
     for (const other of ['impacts', 'risers', 'winds', 'drones', 'footsteps', 'cloths', 'voices'])
       expect(calls).not.toContain(other);
-    expect(calls).toContain('gather');
+    expect(calls.filter((x) => x === 'gather')).toHaveLength(2);
   });
 
   test("the order of the events does not change an event's sound, and an event of a third kind joins without moving the others", async () => {

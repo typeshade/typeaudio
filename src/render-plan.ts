@@ -194,9 +194,10 @@ export async function renderPlan(
 
   // A bank for each kind that has an event: `bank()` refuses an empty array, and a kind with no
   // event has no call.
-  const present = (k: number): boolean => byKind[k]!.length > 0;
+  const present = Object.values(KIND_INDEX).filter((k) => byKind[k]!.length > 0);
+  const has = (k: number): boolean => (present as number[]).includes(k);
   const bankOf = <T extends Made['lane']>(k: number) =>
-    present(k) ? bank(dev, byKind[k] as T[]) : undefined;
+    has(k) ? bank(dev, byKind[k] as T[]) : undefined;
   const whooshBank = bankOf<WhooshLane>(KIND_INDEX.whoosh);
   const impactBank = bankOf<ImpactLane>(KIND_INDEX.impact);
   const shimmerBank = bankOf<ShimmerLane>(KIND_INDEX.shimmer);
@@ -219,22 +220,11 @@ export async function renderPlan(
     return a;
   };
   // The stems of the voice lanes, a row for each lane of the voice bank; the output of each kind's
-  // kernel, a row for each lane of its bank (a kind with no event gets one frame, which `gather`
-  // does not read); and `raws`, a row for each event.
+  // kernel, a row for each lane of its bank (a kind with no event has none); and `raws`, a row for each event.
   const rows = (k: number): number => Math.max(1, byKind[k]!.length) * BLOCK;
   const inputs = make(rows(KIND_INDEX.voice));
   const raws = make(lanes * BLOCK);
-  const outs = Object.values(KIND_INDEX).map((k) => make(rows(k))) as [
-    Floats,
-    Floats,
-    Floats,
-    Floats,
-    Floats,
-    Floats,
-    Floats,
-    Floats,
-    Floats,
-  ];
+  const outs = Object.values(KIND_INDEX).map((k) => make(has(k) ? rows(k) : 1));
   const kindIdx = dev.array(kinds);
   const slotIdx = dev.array(slots);
   let hist = make(lanes * WIDTH);
@@ -311,8 +301,8 @@ export async function renderPlan(
       }
       [hist, prev] = [prev, hist];
       const report = await dev.fuse(() => {
-        // One call for each kind that has an event, each over its own bank; then `gather` puts each
-        // event's block in its row of `raws`.
+        // One call for each kind that has an event, each over its own bank; then one `gather` for each
+        // of those kinds puts its events' blocks in their rows of `raws`.
         if (whooshBank) whooshes(outs[KIND_INDEX.whoosh]!, whooshBank.instances, BLOCK);
         if (impactBank) impacts(outs[KIND_INDEX.impact]!, impactBank.instances, BLOCK);
         if (shimmerBank) shimmers(outs[KIND_INDEX.shimmer]!, shimmerBank.instances, BLOCK);
@@ -322,21 +312,7 @@ export async function renderPlan(
         if (footstepBank) footsteps(outs[KIND_INDEX.footstep]!, footstepBank.instances, BLOCK);
         if (clothBank) cloths(outs[KIND_INDEX.cloth]!, clothBank.instances, BLOCK);
         if (voiceBank) voices(outs[KIND_INDEX.voice]!, voiceBank.instances, inputs, BLOCK);
-        gather(
-          raws,
-          kindIdx,
-          slotIdx,
-          outs[0],
-          outs[1],
-          outs[2],
-          outs[3],
-          outs[4],
-          outs[5],
-          outs[6],
-          outs[7],
-          outs[8],
-          BLOCK,
-        );
+        for (const k of present) gather(raws, kindIdx, slotIdx, outs[k], k, BLOCK);
         history(hist, prev, raws);
         place(laneL, laneR, laneS, hist, laneBank.instances, binaural);
         layers(layL, layR, layS, laneL, laneR, laneS, laneBank.instances);

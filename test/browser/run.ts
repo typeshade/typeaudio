@@ -103,7 +103,7 @@ check(
   `a block of the layered render is one submission on WebGPU (${sg!.submissions} submissions, ${sg!.dispatches} dispatches)`,
 );
 // The plan holds an impact, a whoosh and a shimmer: one kernel call for each kind that has an event
-// (`impacts`, `whooshes`, `shimmers`), the gather that puts their rows in `raws`, and no call for the
+// (`impacts`, `whooshes`, `shimmers`), a `gather` for each of them that puts its rows in `raws`, and no call for the
 // six kinds with no event or for the retired one-bank `cues`.
 const calls = sg!.groups.flatMap((g) => g.split(' ')[0]!.split('+'));
 check(
