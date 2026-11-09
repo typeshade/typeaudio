@@ -90,7 +90,10 @@ export interface MakeOptions {
 
 const frames = (seconds: number, sr: number): number => Math.max(1, Math.round(seconds * sr));
 
-/** Draws grains of `cloud` over `window` seconds into the slots `from` to `to` of `unit`; returns the last frame. */
+/**
+ * Draws grains of `cloud` over `window` seconds into the slots `from` to `to` of `unit`, at least
+ * one; returns the last frame.
+ */
 function drawGrains(
   unit: Footstep | Cloth,
   cloud: Cloud,
@@ -109,6 +112,13 @@ function drawGrains(
       unit[names[slot++]!] = g;
       end = Math.max(end, g.start + g.length);
     }
+  }
+  if (slot === from) {
+    // The draw started no grain in the window (a chance of e^-3 to e^-8 by cloud): the cloud's
+    // grain at the first frame stands in, so that no footstep lacks its thud and no event is silent.
+    const g: Grain = cloud.grain(0, cloud.draw(0));
+    unit[names[slot]!] = g;
+    end = g.start + g.length;
   }
   return end;
 }

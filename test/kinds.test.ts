@@ -227,6 +227,28 @@ describe('the cues of a plan', () => {
     expect(sound(steps[0]!)).toEqual(a);
   });
 
+  test('every footstep has a thud and a crunch, and every cloth a grain, whatever the key', () => {
+    const base = p.events.find((e) => e.kind === 'footstep')!;
+    const cloth = p.events.find((e) => e.kind === 'cloth')!;
+    // The thud's draw starts no grain in its window for about 1 key in 9 at pace 1.
+    const slow = { ...base, macros: { ...base.macros, pace: 1 } };
+    for (let key = 1; key <= 150; key++) {
+      const f = makeCue(slow, { sr: SR, key: Math.imul(key, 2654435761) >>> 0 }).cue.footstep;
+      expect(
+        [f.g0, f.g1, f.g2].some((g) => g.peak > 0),
+        `thud, key ${key}`,
+      ).toBe(true);
+      expect(
+        [f.g3, f.g4, f.g5, f.g6, f.g7].some((g) => g.peak > 0),
+        `crunch, key ${key}`,
+      ).toBe(true);
+    }
+    for (let key = 1; key <= 100; key++) {
+      const c = makeCue(cloth, { sr: SR, key: Math.imul(key, 2654435761) >>> 0 }).cue.cloth;
+      expect([c.g0, c.g1, c.g2, c.g3, c.g4, c.g5, c.g6, c.g7].some((g) => g.peak > 0)).toBe(true);
+    }
+  }, 30000);
+
   test('a whoosh with a higher brightness has more energy above 3 kHz', () => {
     const base = p.events.find((e) => e.kind === 'whoosh')!;
     const hi = (m: number): number => {
