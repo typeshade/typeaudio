@@ -1,8 +1,9 @@
 'use typeshade';
 
 // The kind `riser`: a sine whose pitch rises exponentially and noise through a lowpass whose cutoff
-// rises too, both under a quadratic swell that ends at the length. `length` sets the swell's span,
-// `pitch` the end pitch.
+// rises too, both under a quadratic swell. The swell rises over `len` frames and then holds at its
+// peak until the event ends. `length` sets the fraction of the duration the rise occupies, `pitch`
+// the end pitch.
 
 import { Sine } from '../units/oscillator.shade.ts';
 import { Svf, svfCoef } from '../units/svf.shade.ts';
@@ -12,6 +13,7 @@ export class Riser {
   age: u32 = 0;
   key: u32 = 1;
   sr: f32 = 48000;
+  /** The frames of the rise: the swell holds at its peak after them. */
   len: f32 = 1;
   sine: Sine = new Sine();
   svf: Svf = new Svf();

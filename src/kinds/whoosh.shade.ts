@@ -1,7 +1,7 @@
 'use typeshade';
 
 // The kind `whoosh` (docs/sound-design-loop.md, "The kinds"): noise through a bandpass whose centre
-// sweeps up, under a raised-sine envelope. `speed` sets how early the sweep rises, `brightness` how
+// sweeps up, under a raised-sine envelope. `speed` sets how late and how fast the sweep rises within the length, `brightness` how
 // high it ends. The host (`src/kinds/make.ts`) turns the macros into the numbers of `shape`.
 
 import { Svf, svfCoef } from '../units/svf.shade.ts';

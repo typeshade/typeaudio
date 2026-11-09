@@ -221,6 +221,8 @@ drone are still sounding there, and the guards do not make silence, a plan does.
 `variation.maxSimilarity` is too tight for these kinds, or the kinds vary too little. Both
 need a listener or a change of the kinds to decide.
 
+The `dipDb` measure changed at `b4607e1eb2218db2a1dca54f4a071fc95a6794a6` (pull request #44): it now reads the layers other than the impact's. The numbers above are the old measure's.
+
 ### Two variants of the A/B step
 
 Two plans that differ in one correction (`{"kind": "whoosh", "set": {"macros": {"brightness": 0.4},
@@ -292,8 +294,9 @@ Each item has its disposition: closed, made part of the design by an amendment, 
    not, so that an onset keeps its time in the picture. Closed, as a design choice.
 8. **`whoosh` and `riser` lengths.** The sounding length is the plan's `duration` times a factor of
    the macros (`speed` for the whoosh, `length` for the riser), and `arrive` ends that sound at `t`.
-   The checklist reads the span from the plan's `duration`. Open. Next action: the owner decides
-   whether the note says so.
+   The checklist reads the span from the plan's `duration`. Deviation 8 is closed at 56e88f1 (pull
+   request #46): `whoosh` and `riser` sound for the plan's `duration`. The numbers above are the
+   earlier kinds'.
 9. **The one-layer plan.** "The same moments, one effects sound at each" is read as one `impact` for
    each moment, a moment being events within 0.1 s (`onePlan`). Closed as an interpretation. Another
    reading, one `impact` for every event, would leave `layers.eventsPerHero` equal on the two renders.
