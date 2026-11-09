@@ -10,7 +10,7 @@
 
 /** The frames of a block. */
 const BLOCK: u32 = 1024;
-/** The frames of history kept before a block: 85 ms, longer than any early reflection. */
+/** The frames of history kept before a block: 85 ms. `spatialOf` leaves out a reflection later than this. */
 const HIST: u32 = 4096;
 /** The frames one lane's history array holds: the history, then the block. */
 const WIDTH: u32 = 5120;

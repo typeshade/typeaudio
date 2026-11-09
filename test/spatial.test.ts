@@ -224,6 +224,29 @@ describe('place', () => {
     expect(soft.r0).toBeLessThan(host.r0);
   });
 
+  test('a reflection later than the history is left out, and every reflection of a room it covers is kept', () => {
+    const at = (size: [number, number, number]) =>
+      spatialOf(
+        event({ distance: 2 }),
+        { ...scene, room: { size, material: 'stone' } },
+        { spatial: true, sr: SR },
+      );
+    // 60 by 40 by 15 m: the four wall reflections arrive 94 to 195 ms after the direct sound, and
+    // the history holds 85 ms. They were moved to the end of the history, all at the same time.
+    const hall = at([60, 40, 15]);
+    expect([hall.r0, hall.r1, hall.r2, hall.r3]).toEqual([0, 0, 0, 0]);
+    expect(hall.r4).toBeGreaterThan(0);
+    expect(hall.r5).toBeGreaterThan(0);
+    // 18 by 24 by 9 m, the fixture's room: every delay is under the history, and all six sound.
+    const stone = at([18, 24, 9]);
+    expect([stone.r0, stone.r1, stone.r2, stone.r3, stone.r4, stone.r5].every((g) => g > 0)).toBe(
+      true,
+    );
+    expect(Math.max(stone.d0, stone.d1, stone.d2, stone.d3, stone.d4, stone.d5)).toBeLessThan(
+      HIST - 96,
+    );
+  });
+
   test('the binaural stage delays and shadows the far ear, and leaves the near ear as the pan does', async () => {
     const dry = await impulse(event({ x: 0.9, distance: 2 }), 0);
     const bin = await impulse(event({ x: 0.9, distance: 2 }), 1);
