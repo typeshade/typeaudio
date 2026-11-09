@@ -7,7 +7,12 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { cpus, platform, release } from 'node:os';
 import { join } from 'node:path';
 import { createDevice } from 'typeshade/runtime';
-import { checklist, DEFAULT_RULES, DIMENSIONS, type ChecklistReport } from '../../src/analyze/index.ts';
+import {
+  checklist,
+  DEFAULT_RULES,
+  DIMENSIONS,
+  type ChecklistReport,
+} from '../../src/analyze/index.ts';
 import { LAYERS, validatePlan } from '../../src/plan/index.ts';
 import { onePlan, renderPlan, SAMPLE_RATE, type Rendered } from '../../src/render-plan.ts';
 import plan from './plan.json';
@@ -26,7 +31,12 @@ const result = await runTier({ ...options, tier: 'cpu' }, log, (r) => {
 });
 const cpu = cpus();
 const out: Record<string, unknown> = {
-  environment: { node: process.version, cpu: cpu[0]?.model ?? 'unknown', cores: cpu.length, os: `${platform()} ${release()}` },
+  environment: {
+    node: process.version,
+    cpu: cpu[0]?.model ?? 'unknown',
+    cores: cpu.length,
+    os: `${platform()} ${release()}`,
+  },
   ...result,
   rules: DEFAULT_RULES,
 };
@@ -44,8 +54,20 @@ if (layered !== undefined) {
 
   const t0 = performance.now();
   const reports: Record<string, ChecklistReport> = {
-    oneLayer: checklist({ channels: one.mix, sampleRate: sr, plan: flat, stems: one.stems, dry: one.dry }),
-    layered: checklist({ channels: layered.mix, sampleRate: sr, plan: sound, stems: layered.stems, dry: layered.dry }),
+    oneLayer: checklist({
+      channels: one.mix,
+      sampleRate: sr,
+      plan: flat,
+      stems: one.stems,
+      dry: one.dry,
+    }),
+    layered: checklist({
+      channels: layered.mix,
+      sampleRate: sr,
+      plan: sound,
+      stems: layered.stems,
+      dry: layered.dry,
+    }),
   };
   log(`cpu checklists: ${((performance.now() - t0) / 1000).toFixed(1)} s`);
   out['events'] = { oneLayer: flat.events.length, layered: sound.events.length };
@@ -53,11 +75,21 @@ if (layered !== undefined) {
   out['oneLayerMaster'] = one.master;
 
   // Which rules the one-layer render fails and the layered render meets, and the rest.
-  const verdicts: { dimension: string; measure: string; oneLayer: boolean | null; layered: boolean | null }[] = [];
+  const verdicts: {
+    dimension: string;
+    measure: string;
+    oneLayer: boolean | null;
+    layered: boolean | null;
+  }[] = [];
   for (const d of DIMENSIONS)
     for (const rule of reports['layered']![d].rules) {
       const other = reports['oneLayer']![d].rules.find((r) => r.measure === rule.measure);
-      verdicts.push({ dimension: d, measure: rule.measure, oneLayer: other?.met ?? null, layered: rule.met });
+      verdicts.push({
+        dimension: d,
+        measure: rule.measure,
+        oneLayer: other?.met ?? null,
+        layered: rule.met,
+      });
     }
   out['verdicts'] = verdicts;
 
@@ -73,7 +105,10 @@ if (layered !== undefined) {
   await write('mix.wav', layered.mix);
   await write('mix-one-layer.wav', one.mix);
   // The mix as raw f32 (left, then right) for the runner's comparison across tiers.
-  await writeFile(join(options.outDir, 'cpu.mix.f32'), new Uint8Array(Float32Array.from([...layered.mix[0], ...layered.mix[1]]).buffer));
+  await writeFile(
+    join(options.outDir, 'cpu.mix.f32'),
+    new Uint8Array(Float32Array.from([...layered.mix[0], ...layered.mix[1]]).buffer),
+  );
   files.push('cpu.mix.f32');
   out['files'] = files;
   out['stems'] = Object.keys(stemsOf(sound, sr));

@@ -2,7 +2,7 @@
 //
 //   bun run exp:08 [--tier all|cpu,webgpu,webgl2] [--blocks cpu=0,webgpu=0,webgl2=40]
 //                  [--repeat-blocks cpu=150,webgpu=150,webgl2=20]
-//                  [--variant-seconds cpu=2,webgpu=15,webgl2=1] [--out <file.json>]
+//                  [--variant-seconds cpu=2,webgpu=15,webgl2=0.5] [--out <file.json>]
 //
 // It renders `plan.json` (30 seconds, 25 events, five layers) through the kinds, the spatial chain,
 // the reverb and the guards (`src/render-plan.ts`), on three tiers: the CPU tier in Node, and WebGPU
@@ -35,12 +35,17 @@ for (let i = 2; i < process.argv.length; i += 2) {
   const key = process.argv[i]!;
   const value = process.argv[i + 1];
   if (!key.startsWith('--') || value === undefined) {
-    throw new Error(`run.ts: "${key}" is not an option with a value; see the usage at the top of the file.`);
+    throw new Error(
+      `run.ts: "${key}" is not an option with a value; see the usage at the top of the file.`,
+    );
   }
   args.set(key.slice(2), value);
 }
-const tiers = ((args.get('tier') ?? 'all') === 'all' ? TIERS : (args.get('tier')!.split(',') as Tier[]));
-for (const t of tiers) if (!TIERS.includes(t)) throw new Error(`run.ts: --tier takes cpu, webgpu, webgl2 or all; got "${t}".`);
+const tiers =
+  (args.get('tier') ?? 'all') === 'all' ? TIERS : (args.get('tier')!.split(',') as Tier[]);
+for (const t of tiers)
+  if (!TIERS.includes(t))
+    throw new Error(`run.ts: --tier takes cpu, webgpu, webgl2 or all; got "${t}".`);
 
 /** An option of `tier=n` pairs, or one number for every tier. */
 function perTier(name: string, fallback: Record<Tier, number>): Record<Tier, number> {
@@ -50,19 +55,23 @@ function perTier(name: string, fallback: Record<Tier, number>): Record<Tier, num
   for (const part of text.split(',')) {
     const [k, v] = part.includes('=') ? part.split('=') : ['all', part];
     const n = Number(v);
-    if (!Number.isInteger(n) || n < 0) throw new Error(`run.ts: --${name} takes whole numbers; got "${part}".`);
+    if (!Number.isFinite(n) || n < 0)
+      throw new Error(`run.ts: --${name} takes numbers of 0 or more; got "${part}".`);
     for (const t of k === 'all' ? TIERS : [k as Tier]) out[t] = n;
   }
   return out;
 }
 const blocks = perTier('blocks', { cpu: 0, webgpu: 0, webgl2: 40 });
 const repeatBlocks = perTier('repeat-blocks', { cpu: 150, webgpu: 150, webgl2: 20 });
-const variantSeconds = perTier('variant-seconds', { cpu: 2, webgpu: 15, webgl2: 1 });
+const variantSeconds = perTier('variant-seconds', { cpu: 2, webgpu: 15, webgl2: 0.5 });
 const outFile = args.get('out') ?? join(ROOT, HERE, 'out/result.json');
 const outDir = join(ROOT, HERE, 'out');
 
-const git = (...a: string[]): string => execFileSync('git', a, { cwd: ROOT, encoding: 'utf8' }).trim();
-const pkg = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8')) as { devDependencies: Record<string, string> };
+const git = (...a: string[]): string =>
+  execFileSync('git', a, { cwd: ROOT, encoding: 'utf8' }).trim();
+const pkg = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8')) as {
+  devDependencies: Record<string, string>;
+};
 const cpu = cpus();
 const record: Record<string, unknown> = {
   experiment: '08-sound-design',
@@ -71,7 +80,12 @@ const record: Record<string, unknown> = {
   dirty: git('status', '--porcelain', '--untracked-files=no') !== '',
   pin: pkg.devDependencies['typeshade'],
   buildInfo,
-  machine: { cpu: cpu[0]?.model ?? 'unknown', cores: cpu.length, os: `${platform()} ${release()}`, bun: process.versions['bun'] ?? null },
+  machine: {
+    cpu: cpu[0]?.model ?? 'unknown',
+    cores: cpu.length,
+    os: `${platform()} ${release()}`,
+    bun: process.versions['bun'] ?? null,
+  },
   options: { blocks, repeatBlocks, variantSeconds },
 };
 const loads: Record<string, { before: number[]; after: number[] }> = {};
@@ -88,25 +102,39 @@ const optionsFor = (tier: Tier): Options => ({
 const results: Record<string, Result & Record<string, unknown>> = {};
 await mkdir(outDir, { recursive: true });
 if (tiers.includes('cpu')) {
-  const main = await bundle({ entry: `${HERE}/node.ts`, outDir: `${HERE}/out/node`, target: 'node' });
+  const main = await bundle({
+    entry: `${HERE}/node.ts`,
+    outDir: `${HERE}/out/node`,
+    target: 'node',
+  });
   const before = loadavg();
-  results['cpu'] = JSON.parse(await runNode(await nodeBinary(), [main, JSON.stringify({ ...optionsFor('cpu'), outDir })])) as Result & Record<string, unknown>;
+  results['cpu'] = JSON.parse(
+    await runNode(await nodeBinary(), [main, JSON.stringify({ ...optionsFor('cpu'), outDir })]),
+  ) as Result & Record<string, unknown>;
   loads['cpu'] = { before, after: loadavg() };
 }
 const pageTiers = tiers.filter((t): t is 'webgpu' | 'webgl2' => t !== 'cpu');
 if (pageTiers.length > 0) {
-  const page = await bundle({ entry: `${HERE}/browser.ts`, outDir: `${HERE}/out/web`, target: 'web' });
+  const page = await bundle({
+    entry: `${HERE}/browser.ts`,
+    outDir: `${HERE}/out/web`,
+    target: 'web',
+  });
   type Page = { runSoundDesign(o: Options): Promise<unknown> };
   for (const tier of pageTiers) {
     const before = loadavg();
-    results[tier] = (await inPage(dirname(page), (p) => p.evaluate((o) => (globalThis as unknown as Page).runSoundDesign(o), optionsFor(tier)))) as Result & Record<string, unknown>;
+    results[tier] = (await inPage(dirname(page), (p) =>
+      p.evaluate((o) => (globalThis as unknown as Page).runSoundDesign(o), optionsFor(tier)),
+    )) as Result & Record<string, unknown>;
     loads[tier] = { before, after: loadavg() };
   }
 }
 
 // Each page tier's mix against the CPU tier's, over the frames both rendered.
 const across: Record<string, unknown> = {};
-const cpuMix = tiers.includes('cpu') ? new Float32Array(Uint8Array.from(await readFile(join(outDir, 'cpu.mix.f32'))).buffer) : undefined;
+const cpuMix = tiers.includes('cpu')
+  ? new Float32Array(Uint8Array.from(await readFile(join(outDir, 'cpu.mix.f32'))).buffer)
+  : undefined;
 for (const tier of pageTiers) {
   const r = results[tier]!;
   if (r.full?.mix === undefined || cpuMix === undefined) continue;
@@ -129,7 +157,14 @@ for (const tier of pageTiers) {
       sq += b * b;
       dq += (a - b) * (a - b);
     }
-  across[`${tier}-cpu`] = { frames: n, values: 2 * n, differ, largest, peak, relativeRms: Math.sqrt(dq / sq) };
+  across[`${tier}-cpu`] = {
+    frames: n,
+    values: 2 * n,
+    differ,
+    largest,
+    peak,
+    relativeRms: Math.sqrt(dq / sq),
+  };
   delete (r.full as { mix?: string }).mix;
 }
 record['across'] = across;
@@ -138,32 +173,66 @@ await mkdir(dirname(outFile), { recursive: true });
 await writeFile(outFile, `${JSON.stringify(record, null, 2)}\n`);
 
 // The tables.
-const num = (v: number | null | undefined, d = 2): string => (v === null || v === undefined ? 'n/a' : v.toFixed(d));
-console.log('\n| Tier | Device tier | Blocks | Median (ms) | p95 (ms) | Max (ms) | First (ms) | Over 21.33 ms | Real time | Dispatches | Submissions |');
-console.log('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |');
+const num = (v: number | null | undefined, d = 2): string =>
+  v === null || v === undefined ? 'n/a' : v.toFixed(d);
+console.log(
+  '\n| Tier | Device tier | Blocks | Median (ms) | p95 (ms) | Max (ms) | First (ms) | Over 21.33 ms | Real time | Reverb prepare (s) | Dispatches | Submissions |',
+);
+console.log('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |');
 for (const [tier, r] of Object.entries(results)) {
   const f = r.full;
   if (f === undefined) {
-    console.log(`| ${tier} | ${r.tier} | not run: ${r.failed.map((x) => x.message).join('; ').slice(0, 120)} |`);
+    console.log(
+      `| ${tier} | ${r.tier} | not run: ${r.failed
+        .map((x) => x.message)
+        .join('; ')
+        .slice(0, 120)} |`,
+    );
     continue;
   }
   const t = f.timing;
-  console.log(`| ${tier} | ${f.reportTier} | ${f.blocks} | ${num(t.ms.median)} | ${num(t.ms.p95)} | ${num(t.ms.max)} | ${num(t.firstMs)} | ${t.over} | ${num(t.realTime, 3)}x | ${f.dispatches.last} | ${f.submissions} |`);
+  console.log(
+    `| ${tier} | ${f.reportTier} | ${f.blocks} | ${num(t.ms.median)} | ${num(t.ms.p95)} | ${num(t.ms.max)} | ${num(t.firstMs)} | ${t.over} | ${num(t.realTime, 3)}x | ${num(f.reverbPrepareMs / 1000, 1)} | ${f.dispatches.last} | ${f.submissions} |`,
+  );
 }
 for (const [tier, r] of Object.entries(results)) {
-  if (r.repeat) console.log(`${tier}: the same ${r.repeat.blocks} blocks twice: ${r.repeat.differ} of ${r.repeat.values} values differ`);
-  if (r.variants) console.log(`${tier}: two ${r.variants.cold.seconds} s variants: cold ${num(r.variants.cold.pairMs / 1000)} s, warm ${num(r.variants.warm.pairMs / 1000)} s`);
+  if (r.repeat)
+    console.log(
+      `${tier}: the same ${r.repeat.blocks} blocks twice: ${r.repeat.differ} of ${r.repeat.values} values differ`,
+    );
+  if (r.variants)
+    console.log(
+      `${tier}: two ${r.variants.cold.seconds} s variants: cold ${num(r.variants.cold.pairMs / 1000)} s, warm ${num(r.variants.warm.pairMs / 1000)} s`,
+    );
   for (const f of r.failed) console.log(`${tier}: ${f.step} stopped: ${f.message}`);
 }
-for (const [pair, d] of Object.entries(across) as [string, { values: number; differ: number; largest: number; peak: number; relativeRms: number }][]) {
-  console.log(`${pair}: ${d.differ} of ${d.values} values differ (largest ${d.largest.toExponential(2)} of a peak ${d.peak.toFixed(3)}, relative RMS ${d.relativeRms.toExponential(2)})`);
+for (const [pair, d] of Object.entries(across) as [
+  string,
+  { values: number; differ: number; largest: number; peak: number; relativeRms: number },
+][]) {
+  console.log(
+    `${pair}: ${d.differ} of ${d.values} values differ (largest ${d.largest.toExponential(2)} of a peak ${d.peak.toFixed(3)}, relative RMS ${d.relativeRms.toExponential(2)})`,
+  );
 }
-type Rule = { measure: string; min: number | null; max: number | null; unit: string; met: boolean | null };
+type Rule = {
+  measure: string;
+  min: number | null;
+  max: number | null;
+  unit: string;
+  met: boolean | null;
+};
 type Dim = { measures: Record<string, number | null>; rules: Rule[] };
-const cpuResult = results['cpu'] as unknown as { checklist?: Record<string, Record<string, Dim>>; events?: { oneLayer: number; layered: number } } | undefined;
+const cpuResult = results['cpu'] as unknown as
+  | {
+      checklist?: Record<string, Record<string, Dim>>;
+      events?: { oneLayer: number; layered: number };
+    }
+  | undefined;
 if (cpuResult?.checklist) {
   const { oneLayer, layered } = cpuResult.checklist as Record<string, Record<string, Dim>>;
-  console.log(`\nThe eight dimensions: one-layer render (${cpuResult.events!.oneLayer} events) | layered render (${cpuResult.events!.layered} events)\n`);
+  console.log(
+    `\nThe eight dimensions: one-layer render (${cpuResult.events!.oneLayer} events) | layered render (${cpuResult.events!.layered} events)\n`,
+  );
   console.log('| Dimension | Measure | One layer | Layered | Rule | One layer | Layered |');
   console.log('| --- | --- | ---: | ---: | --- | --- | --- |');
   for (const d of Object.keys(layered!)) {
@@ -172,9 +241,12 @@ if (cpuResult?.checklist) {
       const o = oneLayer![d]!.measures[m];
       const rule = rules.get(m);
       const bound = rule ? `${rule.min ?? ''}..${rule.max ?? ''} ${rule.unit}` : '';
-      const mark = (met: boolean | null | undefined): string => (met === undefined ? '' : met === null ? 'n/a' : met ? 'met' : 'fails');
+      const mark = (met: boolean | null | undefined): string =>
+        met === undefined ? '' : met === null ? 'n/a' : met ? 'met' : 'fails';
       const other = oneLayer![d]!.rules.find((r) => r.measure === m);
-      console.log(`| ${d} | ${m} | ${num(o, 3)} | ${num(v, 3)} | ${bound} | ${mark(other?.met)} | ${mark(rule?.met)} |`);
+      console.log(
+        `| ${d} | ${m} | ${num(o, 3)} | ${num(v, 3)} | ${bound} | ${mark(other?.met)} | ${mark(rule?.met)} |`,
+      );
     }
   }
 }
@@ -189,7 +261,9 @@ async function nodeBinary(): Promise<string> {
     const real = await realpath(candidate).catch(() => undefined);
     if (real !== undefined && !/(^|[/\\])bun(\.exe)?$/.test(real)) return candidate;
   }
-  throw new Error('run.ts: found no Node on PATH, only Bun. Install Node 22, or name it with NODE_BINARY.');
+  throw new Error(
+    'run.ts: found no Node on PATH, only Bun. Install Node 22, or name it with NODE_BINARY.',
+  );
 }
 
 /** Runs Node on `argv` and resolves to its stdout; its stderr is this process's. */
@@ -199,6 +273,8 @@ function runNode(node: string, argv: string[]): Promise<string> {
     let out = '';
     child.stdout.setEncoding('utf8').on('data', (chunk: string) => (out += chunk));
     child.on('error', fail);
-    child.on('close', (code) => (code === 0 ? done(out) : fail(new Error(`node exited with ${code}`))));
+    child.on('close', (code) =>
+      code === 0 ? done(out) : fail(new Error(`node exited with ${code}`)),
+    );
   });
 }

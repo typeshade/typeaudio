@@ -24,14 +24,43 @@ declare global {
 const PLAN = {
   version: 1,
   clip: { duration: 1, fps: 24 },
-  scene: { room: { size: [6, 8, 3], material: 'fabric' }, listener: { position: [0, 1.6, 0], yaw: 0 } },
+  scene: {
+    room: { size: [6, 8, 3], material: 'fabric' },
+    listener: { position: [0, 1.6, 0], yaw: 0 },
+  },
   master: { lufs: -23, truePeak: -1 },
   seed: 5,
   picture: { cuts: [], motion: [] },
   events: [
-    { id: 'hit', t: 0.05, kind: 'impact', layer: 'effects', intensity: 0.9, position: { x: -0.5, y: 0, distance: 6 }, macros: { weight: 0.6, decay: 0.2, crack: 0.5 } },
-    { id: 'sweep', t: 0.15, kind: 'whoosh', layer: 'effects', intensity: 0.7, position: { x: 0.6, y: 0, distance: 3 }, macros: { speed: 0.5, brightness: 0.6 }, duration: 0.3 },
-    { id: 'chime', t: 0.3, kind: 'shimmer', layer: 'effects', intensity: 0.6, position: { x: 0, y: 0, distance: 10 }, macros: { density: 0.5, height: 0.5 }, duration: 0.25 },
+    {
+      id: 'hit',
+      t: 0.05,
+      kind: 'impact',
+      layer: 'effects',
+      intensity: 0.9,
+      position: { x: -0.5, y: 0, distance: 6 },
+      macros: { weight: 0.6, decay: 0.2, crack: 0.5 },
+    },
+    {
+      id: 'sweep',
+      t: 0.15,
+      kind: 'whoosh',
+      layer: 'effects',
+      intensity: 0.7,
+      position: { x: 0.6, y: 0, distance: 3 },
+      macros: { speed: 0.5, brightness: 0.6 },
+      duration: 0.3,
+    },
+    {
+      id: 'chime',
+      t: 0.3,
+      kind: 'shimmer',
+      layer: 'effects',
+      intensity: 0.6,
+      position: { x: 0, y: 0, distance: 10 },
+      macros: { density: 0.5, height: 0.5 },
+      duration: 0.25,
+    },
   ],
 };
 

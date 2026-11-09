@@ -11,7 +11,10 @@ declare global {
 globalThis.runSoundDesign = async (options) => {
   const result = await runTier(options, (line) => console.log(line));
   return {
-    environment: { userAgent: navigator.userAgent, crossOriginIsolated: globalThis.crossOriginIsolated },
+    environment: {
+      userAgent: navigator.userAgent,
+      crossOriginIsolated: globalThis.crossOriginIsolated,
+    },
     ...result,
   };
 };

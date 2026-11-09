@@ -24,6 +24,7 @@ export function wavBytes(channels: readonly Float32Array[], sampleRate: number):
   v.setUint16(34, 32, true);
   text(36, 'data');
   v.setUint32(40, data, true);
-  for (let i = 0; i < frames; i++) for (let c = 0; c < n; c++) v.setFloat32(44 + (i * n + c) * 4, channels[c]![i]!, true);
+  for (let i = 0; i < frames; i++)
+    for (let c = 0; c < n; c++) v.setFloat32(44 + (i * n + c) * 4, channels[c]![i]!, true);
   return new Uint8Array(buffer);
 }

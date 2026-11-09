@@ -37,7 +37,8 @@ export interface Stats {
 
 export function statsOf(xs: readonly number[]): Stats {
   const sorted = [...xs].sort((a, b) => a - b);
-  const rank = (p: number): number => sorted[Math.max(0, Math.ceil((p / 100) * sorted.length) - 1)]!;
+  const rank = (p: number): number =>
+    sorted[Math.max(0, Math.ceil((p / 100) * sorted.length) - 1)]!;
   return {
     median: rank(50),
     p95: rank(95),

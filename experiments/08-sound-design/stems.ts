@@ -9,7 +9,7 @@ import type { SoundPlan } from '../../src/plan/index.ts';
 export function speechStem(seconds: number, sr: number, seed: number): Float32Array {
   const n = Math.round(seconds * sr);
   const out = new Float32Array(n);
-  const pitch = 105 + 25 * ((seed >>> 0) % 7) / 6;
+  const pitch = 105 + (25 * ((seed >>> 0) % 7)) / 6;
   const syllable = 3.2 + 0.2 * ((seed >>> 3) % 5);
   // Two resonators (a vowel's first two formants) on a sawtooth buzz.
   const formants = [
@@ -17,13 +17,13 @@ export function speechStem(seconds: number, sr: number, seed: number): Float32Ar
     { f: 1250, q: 8 },
   ].map(({ f, q }) => {
     const w = (2 * Math.PI * f) / sr;
-    const r = Math.exp(-Math.PI * (f / q) / sr);
+    const r = Math.exp((-Math.PI * (f / q)) / sr);
     return { a1: 2 * r * Math.cos(w), a2: -r * r, z1: 0, z2: 0, gain: 1 - r };
   });
   let phase = 0;
   for (let i = 0; i < n; i++) {
     const t = i / sr;
-    phase = (phase + pitch * (1 + 0.04 * Math.sin(2 * Math.PI * 5 * t)) / sr) % 1;
+    phase = (phase + (pitch * (1 + 0.04 * Math.sin(2 * Math.PI * 5 * t))) / sr) % 1;
     const buzz = 2 * phase - 1;
     let y = 0;
     for (const r of formants) {

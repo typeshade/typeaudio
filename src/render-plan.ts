@@ -62,6 +62,8 @@ export interface Rendered {
   blockMs: number[];
   /** The fuse report of each block. */
   reports: FuseReport[];
+  /** The host time of the partitions' transform before the first block, in milliseconds; 0 with no reverb. */
+  reverbPrepareMs: number;
   /** The tier the first report names. */
   tier: string;
   /** Where each event was placed, in frames: id, start and end. */
@@ -192,6 +194,7 @@ export async function renderPlan(
   const out = make(12 * BLOCK);
   const none = make(2 * BLOCK);
 
+  const prepareStart = performance.now();
   const reverb =
     (options.reverb ?? spatial)
       ? await (async () => {
@@ -199,6 +202,7 @@ export async function renderPlan(
           return Reverb.create(dev, ir.left, ir.right);
         })()
       : undefined;
+  const reverbPrepareMs = reverb === undefined ? 0 : performance.now() - prepareStart;
   const wet = reverb?.wet ?? none;
   const binaural = options.binaural ? 1 : 0;
 
@@ -292,6 +296,7 @@ export async function renderPlan(
     master: { lufsBefore, normalizeDb, limiterMinDb },
     blockMs,
     reports,
+    reverbPrepareMs,
     tier: reports[0]?.tier ?? 'none',
     placed,
   };

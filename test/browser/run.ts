@@ -23,7 +23,10 @@ const ROOM = 2 ** -11;
 const page = await bundle({ entry: 'test/browser/page.ts', outDir: 'out/browser', target: 'web' });
 type Page = { renderBoth(v: number, f: number, b: number): Promise<Side[]> };
 const [gpu, cpu] = await inPage(dirname(page), (p) =>
-  p.evaluate(([v, f, b]) => (globalThis as unknown as Page).renderBoth(v!, f!, b!), [VOICES, FRAMES, BLOCK]),
+  p.evaluate(
+    ([v, f, b]) => (globalThis as unknown as Page).renderBoth(v!, f!, b!),
+    [VOICES, FRAMES, BLOCK],
+  ),
 );
 
 const failures: string[] = [];
@@ -65,10 +68,19 @@ console.log(`\nexplain(plan.reports) on WebGPU:\n${gpu!.explain}\n`);
 // The layered render (experiment 8): an impact, a whoosh and a shimmer through the spatial chain and
 // the reverb, on WebGPU and on the CPU tier. The tolerance is 2^-11 of the CPU tier's peak: the
 // kinds use `sin`, `cos` and `exp`, and the filters carry the difference from sample to sample.
-const spatialPage = await bundle({ entry: 'test/browser/page-spatial.ts', outDir: 'out/browser-spatial', target: 'web' });
+const spatialPage = await bundle({
+  entry: 'test/browser/page-spatial.ts',
+  outDir: 'out/browser-spatial',
+  target: 'web',
+});
 type SpatialPage = { spatialBoth(): Promise<SpatialSide[]> };
-const [sg, sc] = await inPage(dirname(spatialPage), (p) => p.evaluate(() => (globalThis as unknown as SpatialPage).spatialBoth()));
-check(sg!.tier === 'webgpu' && sc!.tier === 'cpu', `the layered render ran on ${sg!.tier} and on ${sc!.tier}`);
+const [sg, sc] = await inPage(dirname(spatialPage), (p) =>
+  p.evaluate(() => (globalThis as unknown as SpatialPage).spatialBoth()),
+);
+check(
+  sg!.tier === 'webgpu' && sc!.tier === 'cpu',
+  `the layered render ran on ${sg!.tier} and on ${sc!.tier}`,
+);
 const peakOf = (x: readonly number[]): number => x.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
 for (const [name, a, b] of [
   ['effects stem, left', sg!.effects[0], sc!.effects[0]],
@@ -78,9 +90,15 @@ for (const [name, a, b] of [
 ] as const) {
   const room = peakOf(b) * 2 ** -11;
   const d = largest(a, b);
-  check(peakOf(b) > 0.01 && d <= room, `${name}: WebGPU is the CPU tier's within 2^-11 of its peak ${peakOf(b).toFixed(3)}: largest difference ${d.toExponential(3)}, ${same(a, b)} of ${a.length} the same bits`);
+  check(
+    peakOf(b) > 0.01 && d <= room,
+    `${name}: WebGPU is the CPU tier's within 2^-11 of its peak ${peakOf(b).toFixed(3)}: largest difference ${d.toExponential(3)}, ${same(a, b)} of ${a.length} the same bits`,
+  );
 }
-check(sg!.submissions === 1, `a block of the layered render is one submission on WebGPU (${sg!.submissions} submissions, ${sg!.dispatches} dispatches)`);
+check(
+  sg!.submissions === 1,
+  `a block of the layered render is one submission on WebGPU (${sg!.submissions} submissions, ${sg!.dispatches} dispatches)`,
+);
 console.log(`the last block's groups on WebGPU: ${sg!.groups.join(', ')}\n`);
 if (failures.length > 0) {
   console.error(`${failures.length} check(s) failed.`);

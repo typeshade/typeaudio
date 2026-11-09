@@ -15,7 +15,10 @@ import { timingOf, tiersOf, type BlockTiming, type Options } from './options.ts'
 export { DEFAULTS, tiersOf, type Options, type Tier } from './options.ts';
 
 /** The correction of the note's example: every whoosh a little darker and louder. */
-export const CORRECTION = { kind: 'whoosh', set: { macros: { brightness: 0.4 }, intensity: 0.85 } } as const;
+export const CORRECTION = {
+  kind: 'whoosh',
+  set: { macros: { brightness: 0.4 }, intensity: 0.85 },
+} as const;
 
 /** The plan with the correction applied to every event of its kind and no other. */
 export function corrected(p: SoundPlan): SoundPlan {
@@ -23,7 +26,11 @@ export function corrected(p: SoundPlan): SoundPlan {
     ...p,
     events: p.events.map((e) =>
       e.kind === CORRECTION.kind
-        ? { ...e, intensity: CORRECTION.set.intensity, macros: { ...e.macros, ...CORRECTION.set.macros } }
+        ? {
+            ...e,
+            intensity: CORRECTION.set.intensity,
+            macros: { ...e.macros, ...CORRECTION.set.macros },
+          }
         : e,
     ),
   };
@@ -45,6 +52,8 @@ export interface FullRun {
   readonly groups: readonly GroupSummary[];
   readonly master: Rendered['master'];
   readonly hostMs: number;
+  /** The transform of the reverb's partitions before the first block, in milliseconds. */
+  readonly reverbPrepareMs: number;
   /** base64 of the mix's `f32`s: the left channel, then the right. */
   readonly mix?: string;
 }
@@ -61,7 +70,10 @@ export interface Result {
   readonly tier: string;
   readonly requested: string;
   readonly info?: DeviceInfo;
-  readonly device?: { readonly tier: string; readonly skipped: readonly { tier: string; reason: string }[] };
+  readonly device?: {
+    readonly tier: string;
+    readonly skipped: readonly { tier: string; reason: string }[];
+  };
   readonly limits?: Readonly<Record<string, number>>;
   readonly full?: FullRun;
   readonly repeat?: { readonly blocks: number; readonly values: number; readonly differ: number };
@@ -98,7 +110,11 @@ export async function runTier(
   try {
     dev = await createDevice({ prefer });
   } catch (e) {
-    return { tier: o.tier, requested: o.tier, failed: [{ step: 'createDevice', message: String(e) }] };
+    return {
+      tier: o.tier,
+      requested: o.tier,
+      failed: [{ step: 'createDevice', message: String(e) }],
+    };
   }
   const info = dev.info;
   const device = { tier: dev.tier, skipped: dev.skipped };
@@ -110,7 +126,10 @@ export async function runTier(
     // 1. The plan, rendered through the whole chain, every block timed.
     try {
       const start = performance.now();
-      const r = await renderPlan(dev, plan, { stems, ...(o.blocks > 0 ? { blocks: o.blocks } : {}) });
+      const r = await renderPlan(dev, plan, {
+        stems,
+        ...(o.blocks > 0 ? { blocks: o.blocks } : {}),
+      });
       const hostMs = performance.now() - start;
       const last = r.reports[r.reports.length - 1]!;
       full = {
@@ -123,6 +142,7 @@ export async function runTier(
         groups: last.groups.map((g) => ({ calls: g.calls.join('+'), fused: g.fused })),
         master: r.master,
         hostMs,
+        reverbPrepareMs: r.reverbPrepareMs,
         ...(o.returnMix ? { mix: toBase64(Float32Array.from([...r.mix[0], ...r.mix[1]])) } : {}),
       };
       progress(
@@ -146,31 +166,39 @@ export async function runTier(
   } finally {
     await dev.dispose();
   }
-  // 3. Two variants, on a device of their own: the pair cold, then the pair warm.
-  try {
-    const vdev = await createDevice({ prefer });
+  // 3. Two variants, on a device of their own: the pair cold, then the pair warm. 0 seconds skips it.
+  if (o.variantSeconds > 0)
     try {
-      const blocks = Math.ceil((o.variantSeconds * SAMPLE_RATE) / BLOCK);
-      const pair = async (): Promise<VariantRun> => {
-        const times: number[] = [];
-        for (const p of [sound, corrected(sound)]) {
-          const t = performance.now();
-          await renderPlan(vdev, p, { stems, blocks });
-          times.push(performance.now() - t);
-        }
-        return { seconds: o.variantSeconds, blocks, ms: [times[0]!, times[1]!], pairMs: times[0]! + times[1]! };
-      };
-      const cold = await pair();
-      progress(`${o.tier} variants cold: ${(cold.pairMs / 1000).toFixed(2)} s for ${o.variantSeconds} s each`);
-      const warm = await pair();
-      progress(`${o.tier} variants warm: ${(warm.pairMs / 1000).toFixed(2)} s`);
-      variants = { cold, warm };
-    } finally {
-      await vdev.dispose();
+      const vdev = await createDevice({ prefer });
+      try {
+        const blocks = Math.ceil((o.variantSeconds * SAMPLE_RATE) / BLOCK);
+        const pair = async (): Promise<VariantRun> => {
+          const times: number[] = [];
+          for (const p of [sound, corrected(sound)]) {
+            const t = performance.now();
+            await renderPlan(vdev, p, { stems, blocks });
+            times.push(performance.now() - t);
+          }
+          return {
+            seconds: o.variantSeconds,
+            blocks,
+            ms: [times[0]!, times[1]!],
+            pairMs: times[0]! + times[1]!,
+          };
+        };
+        const cold = await pair();
+        progress(
+          `${o.tier} variants cold: ${(cold.pairMs / 1000).toFixed(2)} s for ${o.variantSeconds} s each`,
+        );
+        const warm = await pair();
+        progress(`${o.tier} variants warm: ${(warm.pairMs / 1000).toFixed(2)} s`);
+        variants = { cold, warm };
+      } finally {
+        await vdev.dispose();
+      }
+    } catch (e) {
+      failed.push({ step: 'variants', message: String(e) });
     }
-  } catch (e) {
-    failed.push({ step: 'variants', message: String(e) });
-  }
   return {
     tier: dev.tier,
     requested: o.tier,
