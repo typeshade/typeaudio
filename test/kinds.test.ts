@@ -198,7 +198,7 @@ describe('a cue', () => {
 
 describe('the cues of a plan', () => {
   const p = validatePlan(plan);
-  const sound = (e: PlanEvent, i: number, key = eventKey(p.seed, i)): number[] => {
+  const sound = (e: PlanEvent, key = eventKey(p.seed, e.id)): number[] => {
     const { cue, length } = makeCue(e, { sr: SR, key });
     cue.end = length;
     return run(Math.min(length, 6000), () => cue.tick(0));
@@ -206,9 +206,9 @@ describe('the cues of a plan', () => {
 
   test('every kind of the fixture sounds, with a finite peak under 2', () => {
     const kinds = new Set<string>();
-    p.events.forEach((e, i) => {
+    p.events.forEach((e) => {
       if (e.kind === 'voice') return;
-      const y = sound(e, i);
+      const y = sound(e);
       kinds.add(e.kind);
       expect(y.every(Number.isFinite)).toBe(true);
       expect(energy(y)).toBeGreaterThan(0);
@@ -220,17 +220,17 @@ describe('the cues of a plan', () => {
   });
 
   test('repeated events of one kind differ through their keys, and the same key repeats', () => {
-    const steps = p.events.map((e, i) => [e, i] as const).filter(([e]) => e.kind === 'footstep');
-    const a = sound(steps[0]![0], steps[0]![1]);
-    const b = sound({ ...steps[0]![0] }, steps[1]![1], eventKey(p.seed, steps[1]![1]));
+    const steps = p.events.filter((e) => e.kind === 'footstep');
+    const a = sound(steps[0]!);
+    const b = sound({ ...steps[0]! }, eventKey(p.seed, steps[1]!.id));
     expect(a).not.toEqual(b);
-    expect(sound(steps[0]![0], steps[0]![1])).toEqual(a);
+    expect(sound(steps[0]!)).toEqual(a);
   });
 
   test('a whoosh with a higher brightness has more energy above 3 kHz', () => {
     const base = p.events.find((e) => e.kind === 'whoosh')!;
     const hi = (m: number): number => {
-      const y = sound({ ...base, macros: { ...base.macros, brightness: m } }, 0, 1);
+      const y = sound({ ...base, macros: { ...base.macros, brightness: m } }, 1);
       let prev = 0;
       let e = 0;
       for (const v of y) {

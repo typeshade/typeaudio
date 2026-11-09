@@ -1,6 +1,7 @@
 // The host half of the kinds: it turns one plan event into one `Cue` (`cue.shade.ts`). The macros
 // of docs/sound-design-loop.md, "The kinds", become the numbers of each unit's `shape`. Every
-// draw is a function of the event's key, so an edit to one event changes that event only, and two
+// draw is a function of the event's key (a hash of the seed and the event's id), so an edit to one
+// event changes that event only, even when it moves the event in the sorted list, and two
 // events of one kind differ through their keys (the `variation` dimension).
 
 import type { PlanEvent } from '../plan/types.ts';
@@ -57,8 +58,18 @@ export function mix32(a: number, b: number): number {
 /** A draw in [0, 1) from a key and a salt. */
 export const draw = (key: number, salt: number): number => mix32(key, salt) / 4294967296;
 
-/** The key of the event at `index` of a plan with `seed`. */
-export const eventKey = (seed: number, index: number): number => mix32(seed >>> 0, index + 1);
+/** A hash of a string to [0, 2^32): FNV-1a over its UTF-16 code units. */
+function hashId(id: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 0x01000193);
+  return h >>> 0;
+}
+
+/**
+ * The key of the event `id` of a plan with `seed`. It depends on the id and not on the event's place
+ * in the sorted list, so adding, removing or moving another event leaves it as it was.
+ */
+export const eventKey = (seed: number, id: string): number => mix32(seed >>> 0, hashId(id));
 
 /** The gain of an event: intensity times the kind's calibration. */
 const level = (e: PlanEvent): number => e.intensity * (KIND_GAIN[e.kind] ?? 1);
