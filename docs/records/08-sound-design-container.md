@@ -96,6 +96,7 @@ no ducking, no shelves, no snap, no loudness target and no limiter.
 **The checklist.** The analyzers of `src/analyze/` score each render with its stems and its dry
 render (the stems summed). `DEFAULT_RULES` holds the thresholds, `layerOverlap` 0.7 or less,
 `duckingDb` 3 or more and `reverbRatioDb` -20 to 0 among the new ones. They are starting values.
+Since b206a91 (pull request #50) the harness scores the checklist on every tier that renders the whole clip.
 
 ## The numbers
 
