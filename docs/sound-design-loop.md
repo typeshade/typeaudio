@@ -182,6 +182,17 @@ An expert's ear does five things by hand. The engine does them by rule:
 4. Onsets snapped to the picture's cuts and motion peaks, within a small window.
 5. Variation between repeated events of one kind, and no clipping.
 
+The guards also include one that acts before an impact:
+
+- **Ducking before a hero impact.** Before each hero impact, the layers other than the impact's
+  are attenuated by 6 dB. A hero impact is an `impact` event whose `intensity` is at or above the
+  checklist's hero threshold (`R.heroIntensity` of `src/analyze/checklist.ts`, capped at the
+  highest `intensity` of the plan, as `checklist` caps it). The attenuation falls over 0.4 s and
+  ends 0.05 s before the onset. It holds through the onset, then recovers over 0.3 s after it. The
+  impact's own layer is not ducked. `dialogue` is not ducked: dialogue ducks the other layers and
+  never the reverse. When two impacts overlap, the deeper attenuation holds. These numbers are the
+  defaults of the renderer, and they are named constants in `src/spatial/duck.ts`.
+
 A guard acts on the render, not on the plan. The plan states the intent. The guard states the
 craft.
 
