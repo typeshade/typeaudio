@@ -110,6 +110,9 @@ bank during a run; it reads it at the end, or never.
   value (§26). Two banks of equal lane count fuse when their kernels write different outputs
   (F2, F4); unequal counts run as two dispatches. A closed set of kinds in one lane is a `kind`
   field and a `switch` (change 0097 lowers an untaken arm to an `if`).
+  The layered render of experiment 8 does not use that form: it holds one bank and one kernel for each
+  kind (`src/kinds/lanes.shade.ts`), each kernel with the lane hoisted out of the frame loop, because on
+  SwiftShader the nine arms cost a lane 1.26 ms whatever its kind (`docs/lanes.md`, steps 1 and 1b).
 - Per-lane parameters are fields. Per-block parameters are scalar arguments of the kernel.
   Per-frame automation is a shape F input array.
 - A unit's constructor runs on the CPU tier at `new`, so a host-built instance has run its

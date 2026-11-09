@@ -11,6 +11,11 @@
 > - **Decision 3.** The howl of `wind` takes a second pair of scratch arrays in `recur`, not a
 >   component lane.
 > - **Decision 4.** Option C is a separate note, written after the device measurement of option B.
+>
+> **Decision of 2026-11-09, after steps 1 and 1b.** The engine takes one bank and one kernel for each
+> kind, with the lane's element hoisted out of the frame loop (`src/kinds/lanes.shade.ts`). Option B is
+> paused until the device measurement. The result of this step is "Step 2: one bank per kind (result)"
+> in section 6.
 
 Labels in this note: **Fact** is read from a record or from the code. **Inference** is reasoned
 from facts and is not measured. **Proposal** is a design choice for the owner.
@@ -228,14 +233,42 @@ cost of option C. It does not give WebGL2 a program for `recur`.
 
 `store` fuses into the eleventh `fftStage`, so 33 calls run as 32 dispatches.
 
-**Inference.** The plan after option B (37 calls, 33 dispatches), by facts F1 to F5 of surface
-section 71. `explain` confirms it or does not.
+**Fact.** The plan after step 2 (one bank and one kernel for each kind), as `explain(plan.reports)`
+printed it for the fixture on WebGPU (SwiftShader, 4 blocks, guards off, 2026-11-09, head `7601ab1`).
+It has 48 calls and 48 dispatches. Groups 1 to 8 are the kernels of the kinds, groups 9 to 17 are the
+nine `gather` calls (one for each kind with an event), and groups 18 to 48 are `history` to `pack`,
+unchanged.
 
-| Calls                                   | Loop shape | Lanes or trip count  | Change     |
-| --------------------------------------- | ---------- | -------------------- | ---------- |
-| `direct`, `drive`, `coef`, `env`        | F          | 25,600, one dispatch | new        |
-| `recur`                                 | V          | 25 lanes             | was `cues` |
-| the other 32 calls, `history` to `pack` |            |                      | unchanged  |
+```text
+  1. whooshes + impacts: fused into one dispatch, 0.563 ms GPU
+  2. shimmers: 1 dispatch, 0.873 ms GPU
+     impacts and shimmers run as two dispatches because the trip counts differ (4 and 3)
+  3. risers: 1 dispatch, 0.186 ms GPU
+     shimmers and risers run as two dispatches because the trip counts differ (3 and 1)
+  4. winds: 1 dispatch, 0.244 ms GPU
+  5. drones: 1 dispatch, 0.132 ms GPU
+  6. footsteps: 1 dispatch, 0.339 ms GPU
+  7. cloths: 1 dispatch, 0.402 ms GPU
+  8. voices: 1 dispatch, 0.165 ms GPU
+  9. gather: 1 dispatch, 0.179 ms GPU
+     voices and gather run as two dispatches because the trip counts differ (3 and 25)
+ 10. gather: 1 dispatch, 0.244 ms GPU
+     gather and gather run as two dispatches because gather writes an array gather also writes
+ 11. to 17. gather: 1 dispatch each, 0.054 to 0.465 ms GPU
+ 18. history: 1 dispatch, 2.430 ms GPU
+     gather and history run as two dispatches because the trip counts differ (25 and 128000)
+ 19. to 48. place ... pack: as in record 08
+```
+
+Each group from 3 to 17 carries a line of the same two forms ("the trip counts differ" with the two
+counts, or "gather writes an array gather also writes"), which the listing leaves out. The trip count
+of a kernel is the lane count of its bank: 4 whoosh, 4 impact, 3 shimmer, 1 riser, 2 wind, 3 drone,
+4 footstep, 1 cloth and 3 voice. `whooshes` and `impacts` have 4 lanes each and fuse into one
+dispatch. The other seven stand apart, because their lane counts differ.
+
+**Inference, paused with option B.** The plan after option B (37 calls, 33 dispatches), by facts F1
+to F5 of surface section 71, stays as the design for the device measurement. It replaces `cues` with
+`direct`, `drive`, `coef`, `env` and `recur`, and it is not built.
 
 ### One kind: `impact`
 
@@ -404,6 +437,72 @@ remove the cost of the branches not taken, since the measurement does not say wh
    `TYPESHADE_CHROMIUM=<chromium> bun run exp:08 --tier webgpu --blocks 40 --repeat-blocks 2 --variant-seconds 0`.
    Record `cues` (33.09 ms, 71.8 %, record 08 command 2), and after the change the sum of the
    pass 1 group and `recur`. Run it at least three times, since the container is shared.
+
+   **Step 2: one bank per kind (result), 2026-11-09.** Command, run in each worktree:
+   `TYPESHADE_CHROMIUM=<chromium> bun run exp:08 --tier webgpu --blocks 40 --repeat-blocks 2 --variant-seconds 0`,
+   and `--tier cpu --blocks 40` for the CPU tier. Three runs each, one after the other, with no
+   other browser running during the runs. Configuration: SwiftShader in headless Chromium (the
+   Chromium of `TYPESHADE_CHROMIUM`), Bun 1.4.4, pin `415b276a`, load average 3.1 to 3.5 (one minute)
+   during the runs. Before: commit `c3f778f2`. After: commit `7601ab1` of pull request #57, and the
+   edits of this document. The "kernels" column is the mean GPU time over the 40 blocks of the group
+   that holds `cues` before, and of the groups of the eight kernels of the kinds present after (the
+   fixture has all nine kinds; the sum is of the groups of `whooshes` to `voices`). The "gather"
+   column is the nine `gather` groups, which have no counterpart before.
+
+   | Tier and run     | Kernels (ms) | Gather (ms) | All groups (ms) | Block median (ms) | Block p95 (ms) |
+   | ---------------- | -----------: | ----------: | --------------: | ----------------: | -------------: |
+   | WebGPU, before 1 |        34.70 |           - |           50.15 |             56.34 |          65.18 |
+   | WebGPU, before 2 |        33.37 |           - |           47.66 |             52.88 |          67.89 |
+   | WebGPU, before 3 |        33.44 |           - |           48.37 |             54.23 |          65.48 |
+   | WebGPU, after 1  |         1.96 |        1.61 |           18.85 |             25.09 |          32.59 |
+   | WebGPU, after 2  |         1.96 |        1.61 |           17.74 |             23.15 |          31.06 |
+   | WebGPU, after 3  |         1.98 |        1.56 |           18.37 |             24.14 |          30.77 |
+   | CPU, before 1    |            - |           - |               - |           1287.15 |        1449.20 |
+   | CPU, before 2    |            - |           - |               - |           1352.70 |        1817.06 |
+   | CPU, before 3    |            - |           - |               - |           1375.62 |        1597.81 |
+   | CPU, after 1     |            - |           - |               - |           1331.07 |        1472.26 |
+   | CPU, after 2     |            - |           - |               - |           1393.74 |        1598.70 |
+   | CPU, after 3     |            - |           - |               - |           1432.56 |        1605.82 |
+
+   **Fact.** The mean of the three runs on WebGPU: the kernels fall from 33.84 ms to 1.97 ms, and with
+   the gathers to 3.56 ms. All groups fall from 48.73 ms to 18.99 ms, and the block median from 54.48
+   ms to 24.13 ms. No run reaches the 21.33 ms budget: 39 of 40 blocks are over it in each run. The
+   dispatches of a block rise from 32 to 48. On the CPU tier the mean of the block medians is 1,338.5
+   ms before and 1,385.8 ms after, 3.5 % more. The runs overlap (1,287 to 1,376 before, 1,331 to 1,433
+   after), and the CPU tier has no GPU time.
+
+   **Fact.** The step 1 prediction was about 0.06 ms a lane. The kernels cost 1.97 ms for 25 lanes,
+   0.08 ms a lane, and 0.14 ms a lane with the gathers.
+
+   **Fact.** The render holds the bits of `c3f778f2` on the CPU tier. The first 40 blocks of the
+   fixture (`renderPlan`, CPU tier, guards on), written as `Float32Array` for the five layer stems and
+   the mix and the wet return (14 files, 573,440 values), are the same for both commits: `cmp` found
+   0 differing files of 14, and the SHA-256 of the concatenation is `32f00ad5c823...` for both.
+   The files are 2.2 MB, so the check is a one-time check and not a committed test. The committed
+   test `test/lanes.test.ts` holds each kernel to its lane ticked by the host, bit for bit.
+
+   **Inference.** The nine arms in the frame loop were the cost, as step 1b inferred. The hoisted loop
+   and one kind a bank take it from 1.26 ms to 0.08 ms a lane. The remaining block time on WebGPU is
+   now the other groups: `accumulate2` 7.6 ms, `history` 2.4 ms and `place` 2.4 ms in the explain
+   run above.
+
+   **Compiler finding 1 (open).** A kernel of shape V whose store index is not made from `v` alone
+   runs on the CPU. Reproduction: the three forms
+   `o[(base + v) * block + n] = lanes[v].tick()`, `o[rows[v] * block + n] = lanes[v].tick()` and
+   `o[c.row * block + n] = c.tick()` each give, from `tshc check` at the pin `415b276a`:
+   `warning TS8070: This loop runs on the CPU because line 125 writes "o[(base + v) * block + n]", an
+element two iterations can share. Write at an index made from "v".` The form
+   `o[v * block + n] = c.tick()` gives no warning. So each kernel writes its own `out` at `v`, and
+   `gather` copies the rows to `raws`. That costs 1.59 ms and 9 dispatches on SwiftShader.
+
+   **Compiler finding 2 (open).** `tshc check` and the host do not refuse a kernel of 12 storage
+   buffers, and WebGPU does. A `gather` over nine sources failed `bun run test:gpu` with:
+   `The number of storage buffers (12) in the Compute stage exceeds the maximum per-stage limit (8).`
+   `gather` takes one source for this reason, and the render calls it for each kind.
+
+   **Fact.** Each `gather` stands apart from the one before: "gather and gather run as two dispatches
+   because gather writes an array gather also writes".
+
 3. **The device run on the owner's GPU.** `bun run exp:08` with the defaults, on WebGPU. The option
    passes when the median and p95 of the block time are below 21.33 ms. Record the `gpuTime` of each
    group, so that `cues` and its successors are visible.
