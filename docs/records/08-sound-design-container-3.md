@@ -399,6 +399,8 @@ record 08-2 and this record:
    id-based event key of #43 gives it four grains that start within 8 ms of each other, and they sum. This run
    renders the same bits as `eef3eba5` (see above), so the fact holds for this commit. Open: the clump is a draw of
    grain starts, and the record names no change of the kinds that spreads them.
+   The level of a footstep and a cloth follows its intensity since f7ce2e1 (pull request #65); the numbers above are
+   before it.
 6. Small moves with no single cause named: `dynamics.contrastLu`, `balance.mudShare`, `balance.layerOverlap`,
    `space.correlation`, `space.reverbRatioDb`, `position.panCorrelation` and `balance.tiltDbPerOctave`. No verdict
    of these measures changed. Listed as open, as in record 08-2.
@@ -449,6 +451,8 @@ record 08-2, read against this run.
 9. **The one-layer plan.** Closed as an interpretation, as in record 08.
 10. **Levels of the kinds** (`KIND_GAIN`) were set from the peaks of the fixture's events, not by ear. Open. The
     higher peak of the layered render (see "Against record 08", item 5) may bear on it.
+    The level of a footstep and a cloth is scaled to its intensity since f7ce2e1 (pull request #65); the numbers above
+    are before it.
 11. **The note's status sentence** ("Nothing in this note is built yet") is unchanged. Open. Next action: the owner.
 12. **The `webgl2-cpu` entry of `across` in command 1's JSON.** Closed: the harness refuses the comparison and
     writes the reason (#43). Command 2 holds the valid comparison.
