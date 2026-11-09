@@ -9,37 +9,37 @@
 
 ## The run
 
-| Item         | Value |
-| ------------ | ----- |
-| Experiment   | 5, a 10-second partitioned convolution (`docs/experiments.md`, section 5) |
-| Command      | `TYPESHADE_CHROMIUM=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell bun run exp:05 --out docs/records/05-convolution-container.json` |
-| Options      | The defaults of `experiments/05-convolution/run.ts`: every arm; noise blocks `webgpu=1000,webgl2=10,oracle=3`; tails `webgpu=full+jump,webgl2=jump,oracle=jump`; the impulses `full` and `quiet`; 60 seconds a block and 900 seconds for the transform of the partitions on a page arm; the partitions' spectra compared |
-| Date         | 2026-11-02, from 19:39:14 UTC, 32 minutes 9 seconds: the CPU tier 13 s, WebGPU 2 minutes 26 seconds, WebGL2 12 minutes 2 seconds, the oracle 17 minutes 15 seconds |
-| Commit       | `7e74c2bef69ca9bdb7140ec5aaa44a93673db015` of `typeshade/typeaudio`, branch `claude/exp-05-convolution` (pull request #14), with a clean tree |
-| Compiler pin | `typeshade` in `package.json`: the source tarball of `typeshade/typeshade` at `145666068ca5d6ecfba32aa0ea4289cf0fc3b762` (`buildInfo.version` 0.1.0, `buildInfo.revision` null) |
-| Tools        | Bun 1.4.4, Node v22.23.4, Vite 7.3.7, playwright-core 1.64.1 |
+| Item         | Value                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Experiment   | 5, a 10-second partitioned convolution (`docs/experiments.md`, section 5)                                                                                                                                                                                                                                                                                                                                                                     |
+| Command      | `TYPESHADE_CHROMIUM=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell bun run exp:05 --out docs/records/05-convolution-container.json`                                                                                                                                                                                                                                                        |
+| Options      | The defaults of `experiments/05-convolution/run.ts`: every arm; noise blocks `webgpu=1000,webgl2=10,oracle=3`; tails `webgpu=full+jump,webgl2=jump,oracle=jump`; the impulses `full` and `quiet`; 60 seconds a block and 900 seconds for the transform of the partitions on a page arm; the partitions' spectra compared                                                                                                                      |
+| Date         | 2026-11-02, from 19:39:14 UTC, 32 minutes 9 seconds: the CPU tier 13 s, WebGPU 2 minutes 26 seconds, WebGL2 12 minutes 2 seconds, the oracle 17 minutes 15 seconds                                                                                                                                                                                                                                                                            |
+| Commit       | `7e74c2bef69ca9bdb7140ec5aaa44a93673db015` of `typeshade/typeaudio`, branch `claude/exp-05-convolution` (pull request #14), with a clean tree                                                                                                                                                                                                                                                                                                 |
+| Compiler pin | `typeshade` in `package.json`: the source tarball of `typeshade/typeshade` at `145666068ca5d6ecfba32aa0ea4289cf0fc3b762` (`buildInfo.version` 0.1.0, `buildInfo.revision` null)                                                                                                                                                                                                                                                               |
+| Tools        | Bun 1.4.4, Node v22.23.4, Vite 7.3.7, playwright-core 1.64.1                                                                                                                                                                                                                                                                                                                                                                                  |
 | Raw data     | `docs/records/05-convolution-container.json`: the options and sizes, the impulse response's levels, each arm's time per block (every block's host and GPU time), the fuse reports, the device's statistics, the transform of the partitions, the noise run and the tails against their references and between the arms, the kernel check, the refusals, the determinism rows, each device's `DeviceInfo` and the load average around each arm |
-| Outputs      | The run writes the bits of the noise runs' and the tails' outputs to `experiments/05-convolution/out/raw.json`, which Git ignores |
+| Outputs      | The run writes the bits of the noise runs' and the tails' outputs to `experiments/05-convolution/out/raw.json`, which Git ignores                                                                                                                                                                                                                                                                                                             |
 
 ## The devices
 
-| Item     | CPU tier (the host face)                                                                       | Oracle                     | WebGPU                                                                                                                                                                                                                                                         | WebGL2                                                                                       |
-| -------- | ---------------------------------------------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Host     | Intel Xeon Processor @ 2.10 GHz, 4 cores, 1 thread per core; Ubuntu 24.04.5 LTS, Linux 6.18.44 | the same                   | the same                                                                                                                                                                                                                                                       | the same                                                                                     |
-| Runtime  | Node v22.23.4                                                                                  | Bun 1.4.4 (JavaScriptCore) | Chrome Headless Shell 153.0.8010.12, cross-origin isolated                                                                                                                                                                                                     | the same                                                                                     |
-| Graphics | none                                                                                           | none                       | SwiftShader: vendor `google`, architecture `swiftshader`, a fallback adapter; features `core-features-and-limits` and `timestamp-query`; `maxComputeWorkgroupStorageSize` 16,384 bytes. The bare device: `core-features-and-limits` only                          | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver) |
+| Item     | CPU tier (the host face)                                                                       | Oracle                     | WebGPU                                                                                                                                                                                                                                   | WebGL2                                                                                       |
+| -------- | ---------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Host     | Intel Xeon Processor @ 2.10 GHz, 4 cores, 1 thread per core; Ubuntu 24.04.5 LTS, Linux 6.18.44 | the same                   | the same                                                                                                                                                                                                                                 | the same                                                                                     |
+| Runtime  | Node v22.23.4                                                                                  | Bun 1.4.4 (JavaScriptCore) | Chrome Headless Shell 153.0.8010.12, cross-origin isolated                                                                                                                                                                               | the same                                                                                     |
+| Graphics | none                                                                                           | none                       | SwiftShader: vendor `google`, architecture `swiftshader`, a fallback adapter; features `core-features-and-limits` and `timestamp-query`; `maxComputeWorkgroupStorageSize` 16,384 bytes. The bare device: `core-features-and-limits` only | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver) |
 
 The container is shared with other agent sessions, and the run did not reserve it. While it ran,
 other sessions ran the compiler's test suites: at 19:42, 19:51 and 20:05 UTC `ps` showed their
 Vitest and Prettier processes among the busiest. The load average over 1, 5 and 15 minutes, on 4
 cores:
 
-| When                     | Before         | After          |
-| ------------------------ | -------------- | -------------- |
-| The CPU tier (Node)      | 10.05, 9.33, 9.41  | 9.80, 9.29, 9.39   |
-| WebGPU                   | 9.74, 9.29, 9.39   | 16.42, 11.77, 10.27 |
-| WebGL2                   | 16.42, 11.77, 10.27 | 15.76, 15.04, 13.05 |
-| The oracle               | 15.76, 15.04, 13.05 | 12.07, 13.87, 14.22 |
+| When                | Before              | After               |
+| ------------------- | ------------------- | ------------------- |
+| The CPU tier (Node) | 10.05, 9.33, 9.41   | 9.80, 9.29, 9.39    |
+| WebGPU              | 9.74, 9.29, 9.39    | 16.42, 11.77, 10.27 |
+| WebGL2              | 16.42, 11.77, 10.27 | 15.76, 15.04, 13.05 |
+| The oracle          | 15.76, 15.04, 13.05 | 12.07, 13.87, 14.22 |
 
 The load bears on the times. The bits do not depend on it.
 
@@ -50,14 +50,14 @@ frames, is cut into 469 partitions of 1,024 frames. The last partition holds 768
 Each partition, zero-padded to 2,048 points, is transformed once (method step 1). Each block of
 1,024 input frames is then six calls, in this order (method step 2):
 
-| Call             | Kind                                     | What it does                                                                                               |
-| ---------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `pad`            | kernel function, a loop over 1,024 lanes | writes the block as the real parts of the first 1,024 of 2,048 points; the second half stays zero           |
-| `fftMediumTable` | `@compute` entry, one workgroup          | the forward transform of the 2,048 points                                                                  |
-| `store`          | kernel function, a loop over 2,048 lanes | writes the spectrum into its slot of the frequency-domain delay line, a ring of 469 spectra                |
+| Call             | Kind                                     | What it does                                                                                                            |
+| ---------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `pad`            | kernel function, a loop over 1,024 lanes | writes the block as the real parts of the first 1,024 of 2,048 points; the second half stays zero                       |
+| `fftMediumTable` | `@compute` entry, one workgroup          | the forward transform of the 2,048 points                                                                               |
+| `store`          | kernel function, a loop over 2,048 lanes | writes the spectrum into its slot of the frequency-domain delay line, a ring of 469 spectra                             |
 | `accumulate`     | kernel function, a loop over 2,048 lanes | bin `j`: the sum over the 469 partitions `p` of the delay line's spectrum `p` blocks old times partition `p`'s spectrum |
-| `fftMediumTable` | `@compute` entry, one workgroup          | the inverse transform, scaled by 1 / 2,048                                                                 |
-| `overlapAdd`     | kernel function, a loop over 1,024 lanes | the output: the first half of the inverse transform plus the second half that the block before left        |
+| `fftMediumTable` | `@compute` entry, one workgroup          | the inverse transform, scaled by 1 / 2,048                                                                              |
+| `overlapAdd`     | kernel function, a loop over 1,024 lanes | the output: the first half of the inverse transform plus the second half that the block before left                     |
 
 The kernel functions are `experiments/05-convolution/convolution.shade.ts`. Two of them are written
 around the compiler at the pin (section "Refusals, and calls that did not return"): `store` wrote
@@ -91,11 +91,11 @@ magnitude 9.94e-4.
 
 **The inputs.**
 
-| Input   | What it is                                                                                              | Used for                         |
-| ------- | ------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `noise` | `2u - 1`, `u` from `generator(0x5eed0006)`, block after block from the first                             | the time per block (step 3)      |
-| `full`  | 1 at frame 1 of block 0, 0 elsewhere. Its transform is the twiddles, not ones, so each product of the multiply-accumulate rounds | the tail (step 4)                |
-| `quiet` | 2^-112 at frame 1 of block 0. The last second of its response lies across the smallest normal, 2^-126    | the tail's subnormals (step 4)   |
+| Input   | What it is                                                                                                                       | Used for                       |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `noise` | `2u - 1`, `u` from `generator(0x5eed0006)`, block after block from the first                                                     | the time per block (step 3)    |
+| `full`  | 1 at frame 1 of block 0, 0 elsewhere. Its transform is the twiddles, not ones, so each product of the multiply-accumulate rounds | the tail (step 4)              |
+| `quiet` | 2^-112 at frame 1 of block 0. The last second of its response lies across the smallest normal, 2^-126                            | the tail's subnormals (step 4) |
 
 The response to an impulse at frame 1 is the impulse response, delayed by one frame and scaled by
 the impulse. It ends at frame 480,000, in block 468. **The last second** is frames 432,001 to
@@ -130,12 +130,12 @@ as subnormals and an arm holds as 0 ("flushed").
 
 **The arms.**
 
-| Arm      | What runs                                                                                                                                                                                                                                                                                                                                                  |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cpu`    | The host face's CPU tier in Node: the harness bundled with Vite and the compiler's plugin. At the pin it refuses the FFT entry, so it runs the kernel check alone: each kernel function once on seeded inputs (`signals.ts`, `checkInputs`), the FFT entry, and one block as a fuse plan on a CPU device.                                                    |
+| Arm      | What runs                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cpu`    | The host face's CPU tier in Node: the harness bundled with Vite and the compiler's plugin. At the pin it refuses the FFT entry, so it runs the kernel check alone: each kernel function once on seeded inputs (`signals.ts`, `checkInputs`), the FFT entry, and one block as a fuse plan on a CPU device.                                                                                                                           |
 | `oracle` | The compiler's oracle in Bun (`experiments/05-convolution/oracle.ts`, which follows experiment 3's `oracleOf` for two modules): the FFT entry by `compileModuleJs(compile(source).module, { precision: 'f32' }).dispatch`, in the passes the WebGL2 tier runs (surface §25); the kernel functions as written, through the same module's `fns`. It runs the kernel check's calls on the same inputs, for the bit-for-bit comparison. |
-| `webgpu` | The harness bundled for a page, in headless Chromium, on a device of `createDevice({ prefer: ['webgpu'] })`, which has `timestamp-query`. Then the transform and the noise run again on a device of the default adapter requested with no feature ("bare"): a plan on a device with the feature reads its timestamps back before it resolves (compiler issue #986). |
-| `webgl2` | The same page in a fresh browser, on a device of `createDevice({ prefer: ['webgl2', 'cpu'] })`: a call that WebGL2 cannot run falls to the CPU tier, as in experiment 1. The kernel check runs on WebGL2 alone, so that it records why.                                                                                                                       |
+| `webgpu` | The harness bundled for a page, in headless Chromium, on a device of `createDevice({ prefer: ['webgpu'] })`, which has `timestamp-query`. Then the transform and the noise run again on a device of the default adapter requested with no feature ("bare"): a plan on a device with the feature reads its timestamps back before it resolves (compiler issue #986).                                                                 |
+| `webgl2` | The same page in a fresh browser, on a device of `createDevice({ prefer: ['webgl2', 'cpu'] })`: a call that WebGL2 cannot run falls to the CPU tier, as in experiment 1. The kernel check runs on WebGL2 alone, so that it records why.                                                                                                                                                                                             |
 
 ## The numbers
 
@@ -174,12 +174,12 @@ The medians of the groups sum to 27.88 ms; the median of the blocks' sums is 31.
 The fuse report of the last noise block on WebGPU: `tier` `webgpu`, 6 dispatches, 1 submission, no
 group fused.
 
-| Group | Calls            | Workgroup shapes | `why`                                                                                                                    |
-| ----: | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
-|     1 | `pad`            | `[64, 1, 1]`     | none                                                                                                                     |
-|     2 | `fftMediumTable` | `[256, 1, 1]`    | `pad and fftMediumTable run as two dispatches because fftMediumTable is an entry call, which forms a group of its own`    |
-|     3 | `store`          | `[64, 1, 1]`     | `fftMediumTable and store run as two dispatches because fftMediumTable is an entry call, which forms a group of its own`  |
-|     4 | `accumulate`     | `[64, 1, 1]`     | ``store and accumulate run as two dispatches because accumulate reads `line[slot * POINTS + j]` (line 79)``             |
+| Group | Calls            | Workgroup shapes | `why`                                                                                                                         |
+| ----: | ---------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+|     1 | `pad`            | `[64, 1, 1]`     | none                                                                                                                          |
+|     2 | `fftMediumTable` | `[256, 1, 1]`    | `pad and fftMediumTable run as two dispatches because fftMediumTable is an entry call, which forms a group of its own`        |
+|     3 | `store`          | `[64, 1, 1]`     | `fftMediumTable and store run as two dispatches because fftMediumTable is an entry call, which forms a group of its own`      |
+|     4 | `accumulate`     | `[64, 1, 1]`     | ``store and accumulate run as two dispatches because accumulate reads `line[slot * POINTS + j]` (line 79)``                   |
 |     5 | `fftMediumTable` | `[256, 1, 1]`    | `accumulate and fftMediumTable run as two dispatches because fftMediumTable is an entry call, which forms a group of its own` |
 |     6 | `overlapAdd`     | `[64, 1, 1]`     | `fftMediumTable and overlapAdd run as two dispatches because fftMediumTable is an entry call, which forms a group of its own` |
 
@@ -189,15 +189,15 @@ carry no `why` there, and no group says that it ran on the CPU tier.
 
 ### Memory
 
-| What the engine holds on the device                                         |          Bytes |       MiB |
-| --------------------------------------------------------------------------- | -------------: | --------: |
-| The partitions' spectra, 469 × 2,048 complex `f32`s                         |      7,684,096 |      7.33 |
-| The frequency-domain delay line, 469 × 2,048 complex `f32`s                 |      7,684,096 |      7.33 |
-| Four spectra of scratch: `padded`, `spectrum`, `sum` and `frames`            |         65,536 |      0.06 |
-| The twiddle table, 1,024 complex `f32`s                                     |          8,192 |      0.01 |
-| Three blocks: the input, the output and the overlap-add's tail              |         12,288 |      0.01 |
-| **The sum, computed from the sizes**                                        | **15,454,208** | **14.74** |
-| `dev.statistics.liveBytes`, after the engine was made and at the end, on WebGPU and on WebGL2 | 15,454,208 | 14.74 |
+| What the engine holds on the device                                                           |          Bytes |       MiB |
+| --------------------------------------------------------------------------------------------- | -------------: | --------: |
+| The partitions' spectra, 469 × 2,048 complex `f32`s                                           |      7,684,096 |      7.33 |
+| The frequency-domain delay line, 469 × 2,048 complex `f32`s                                   |      7,684,096 |      7.33 |
+| Four spectra of scratch: `padded`, `spectrum`, `sum` and `frames`                             |         65,536 |      0.06 |
+| The twiddle table, 1,024 complex `f32`s                                                       |          8,192 |      0.01 |
+| Three blocks: the input, the output and the overlap-add's tail                                |         12,288 |      0.01 |
+| **The sum, computed from the sizes**                                                          | **15,454,208** | **14.74** |
+| `dev.statistics.liveBytes`, after the engine was made and at the end, on WebGPU and on WebGL2 |     15,454,208 |     14.74 |
 
 The runtime counts 10 live arrays and 0 pooled bytes on each device, and 11 allocations: the
 padded partitions, 7,684,096 bytes more, live only while the partitions are transformed, and the
@@ -227,12 +227,12 @@ the rounded reference ("max ULP"), and the values that are the reference rounded
 ULP is that of a value near 0, where the ULP of each value shrinks without bound and the error of a
 transform does not (record 03, section "The method").
 
-| Arm           | Blocks | Error (ULP at peak) | Relative RMS | Max ULP   | Exact                 |
-| ------------- | -----: | ------------------- | ------------ | --------: | --------------------- |
-| WebGPU        |  1,000 | 5.49 / 0.802        | 5.07e-7      | 4,081,652 | 58,759 of 1,024,000   |
-| WebGPU (bare) |  1,000 | 5.49 / 0.802        | 5.07e-7      | 4,081,652 | 58,759 of 1,024,000   |
-| WebGL2        |     10 | 1.62 / 0.269        | 2.15e-7      | 13,817    | 1,185 of 10,240       |
-| Oracle        |      3 | 1.78 / 0.299        | 2.09e-7      | 13,817    | 346 of 3,072          |
+| Arm           | Blocks | Error (ULP at peak) | Relative RMS |   Max ULP | Exact               |
+| ------------- | -----: | ------------------- | ------------ | --------: | ------------------- |
+| WebGPU        |  1,000 | 5.49 / 0.802        | 5.07e-7      | 4,081,652 | 58,759 of 1,024,000 |
+| WebGPU (bare) |  1,000 | 5.49 / 0.802        | 5.07e-7      | 4,081,652 | 58,759 of 1,024,000 |
+| WebGL2        |     10 | 1.62 / 0.269        | 2.15e-7      |    13,817 | 1,185 of 10,240     |
+| Oracle        |      3 | 1.78 / 0.299        | 2.09e-7      |    13,817 | 346 of 3,072        |
 
 Between every pair of arms, over the blocks both ran (1,000, 10 or 3), 0 values differ in any bit.
 No output holds a subnormal or a 0.
@@ -241,39 +241,39 @@ No output holds a subnormal or a 0.
 
 The reference's last second, rounded to `f32`:
 
-| Impulse | Subnormal values | Zeros | Peak    | Smallest magnitude |
-| ------- | ---------------: | ----: | ------: | -----------------: |
-| `full`  |                0 |     0 | 9.94e-4 |            7.70e-9 |
-| `quiet` |            4,216 |     0 | 1.92e-37 |          1.48e-42 |
+| Impulse | Subnormal values | Zeros |     Peak | Smallest magnitude |
+| ------- | ---------------: | ----: | -------: | -----------------: |
+| `full`  |                0 |     0 |  9.94e-4 |            7.70e-9 |
+| `quiet` |            4,216 |     0 | 1.92e-37 |           1.48e-42 |
 
 Each run's last second against the reference, and its subnormals. "Flushed": the values the oracle
 holds as subnormals and the run holds as 0. "After the response": the 255 frames of block 468 after
 frame 480,000, whose reference is 0: their subnormals, their zeros and their largest magnitude.
 
-| Impulse | Run          | Error (ULP at peak)     | Relative RMS | Max ULP   | Exact  | Subnormal | Zero  | Flushed | After the response |
-| ------- | ------------ | ----------------------- | ------------ | --------: | -----: | --------: | ----: | ------: | ------------------ |
-| `full`  | oracle, jump | 3.25 / 0.489            | 1.76e-7      | 65,092    | 7,845  | 0         | 0     |         | 0, 1, 1.15e-10     |
-| `full`  | WebGPU, full | 3.25 / 0.489            | 1.76e-7      | 65,092    | 7,845  | 0         | 0     | 0       | 0, 1, 1.15e-10     |
-| `full`  | WebGPU, jump | 3.25 / 0.489            | 1.76e-7      | 65,092    | 7,845  | 0         | 0     | 0       | 0, 1, 1.15e-10     |
-| `full`  | WebGL2, jump | 3.25 / 0.489            | 1.76e-7      | 65,092    | 7,845  | 0         | 0     | 0       | 0, 1, 1.15e-10     |
-| `quiet` | oracle, jump | 3.25 / 0.489            | 1.76e-7      | 42        | 8,002  | 4,216     | 0     |         | 234, 21, 2.24e-44  |
-| `quiet` | WebGPU, full | 526,148.25 / 24,486.945 | 2.46e-2      | 8,418,372 | 1      | 0         | 4,215 | 4,209   | 0, 255, 0          |
-| `quiet` | WebGPU, jump | 526,148.25 / 24,486.945 | 2.46e-2      | 8,418,372 | 1      | 0         | 4,215 | 4,209   | 0, 255, 0          |
-| `quiet` | WebGL2, jump | 525,017.56 / 23,572.712 | 2.46e-2      | 8,400,281 | 4      | 0         | 4,216 | 4,213   | 0, 255, 0          |
+| Impulse | Run          | Error (ULP at peak)     | Relative RMS |   Max ULP | Exact | Subnormal |  Zero | Flushed | After the response |
+| ------- | ------------ | ----------------------- | ------------ | --------: | ----: | --------: | ----: | ------: | ------------------ |
+| `full`  | oracle, jump | 3.25 / 0.489            | 1.76e-7      |    65,092 | 7,845 |         0 |     0 |         | 0, 1, 1.15e-10     |
+| `full`  | WebGPU, full | 3.25 / 0.489            | 1.76e-7      |    65,092 | 7,845 |         0 |     0 |       0 | 0, 1, 1.15e-10     |
+| `full`  | WebGPU, jump | 3.25 / 0.489            | 1.76e-7      |    65,092 | 7,845 |         0 |     0 |       0 | 0, 1, 1.15e-10     |
+| `full`  | WebGL2, jump | 3.25 / 0.489            | 1.76e-7      |    65,092 | 7,845 |         0 |     0 |       0 | 0, 1, 1.15e-10     |
+| `quiet` | oracle, jump | 3.25 / 0.489            | 1.76e-7      |        42 | 8,002 |     4,216 |     0 |         | 234, 21, 2.24e-44  |
+| `quiet` | WebGPU, full | 526,148.25 / 24,486.945 | 2.46e-2      | 8,418,372 |     1 |         0 | 4,215 |   4,209 | 0, 255, 0          |
+| `quiet` | WebGPU, jump | 526,148.25 / 24,486.945 | 2.46e-2      | 8,418,372 |     1 |         0 | 4,215 |   4,209 | 0, 255, 0          |
+| `quiet` | WebGL2, jump | 525,017.56 / 23,572.712 | 2.46e-2      | 8,400,281 |     4 |         0 | 4,216 |   4,213 | 0, 255, 0          |
 
 Each count of the last second is of 48,000 values. Between the runs, over the last second: the values
 whose bits differ, the most `f32`s between two values of the same frame, the largest difference in
 ULPs at the window's peak, the relative RMS of the difference, and the values that differ after the
 response.
 
-| Impulse | Runs                          | Differ           | Max ULP   | Largest (ULP at peak) | Relative RMS | After |
-| ------- | ----------------------------- | ---------------- | --------: | --------------------: | ------------ | ----: |
-| `full`  | every pair of the four runs   | 0 of 48,000      | 0         | 0                     | 0            | 0     |
-| `quiet` | oracle and WebGPU, full       | 48,000 of 48,000 | 8,418,369 | 526,148.06            | 2.46e-2      | 237   |
-| `quiet` | oracle and WebGPU, jump       | 48,000 of 48,000 | 8,418,369 | 526,148.06            | 2.46e-2      | 237   |
-| `quiet` | oracle and WebGL2             | 47,997 of 48,000 | 8,400,282 | 525,017.62            | 2.46e-2      | 236   |
-| `quiet` | WebGPU, full and jump         | 0 of 48,000      | 0         | 0                     | 0            | 0     |
-| `quiet` | WebGPU and WebGL2             | 44,580 of 48,000 | 8,429,716 | 526,857.25            | 2.43e-3      | 72    |
+| Impulse | Runs                        | Differ           |   Max ULP | Largest (ULP at peak) | Relative RMS | After |
+| ------- | --------------------------- | ---------------- | --------: | --------------------: | ------------ | ----: |
+| `full`  | every pair of the four runs | 0 of 48,000      |         0 |                     0 | 0            |     0 |
+| `quiet` | oracle and WebGPU, full     | 48,000 of 48,000 | 8,418,369 |            526,148.06 | 2.46e-2      |   237 |
+| `quiet` | oracle and WebGPU, jump     | 48,000 of 48,000 | 8,418,369 |            526,148.06 | 2.46e-2      |   237 |
+| `quiet` | oracle and WebGL2           | 47,997 of 48,000 | 8,400,282 |            525,017.62 | 2.46e-2      |   236 |
+| `quiet` | WebGPU, full and jump       | 0 of 48,000      |         0 |                     0 | 0            |     0 |
+| `quiet` | WebGPU and WebGL2           | 44,580 of 48,000 | 8,429,716 |            526,857.25 | 2.43e-3      |    72 |
 
 ### The kernel check
 
@@ -282,14 +282,14 @@ and the spectra at full size, 469 slots, against the oracle's `fns` on the same 
 whose bits differ, and the host time of the call with its read-back. `store` also counts the values
 outside its slot that changed.
 
-| Call                                    | CPU tier (Node)                            | WebGPU                                    | WebGL2 alone | Oracle's `fns` |
-| --------------------------------------- | ------------------------------------------ | ----------------------------------------- | ------------ | -------------: |
-| `pad`                                   | 0 of 4,096 differ; 5.2 ms                  | 0 of 4,096 differ; 30.2 ms                | refused      |        0.04 ms |
-| `store`                                 | 0 of 4,096 differ, 0 outside; 962.1 ms     | 0 of 4,096 differ, 0 outside; 66.3 ms     | refused      |        0.19 ms |
-| `accumulate`                            | 0 of 4,096 differ; 3,663.8 ms              | 0 of 4,096 differ; 91.4 ms                | refused      |     2,101.5 ms |
-| `overlapAdd`                            | 0 of 2,048 differ; 1.5 ms                  | 0 of 2,048 differ; 16.6 ms                | refused      |        0.12 ms |
-| `fftMediumTable`                        | refused                                    | ran, 2,019.8 ms                           | ran, 432.4 ms |   (the spectra) |
-| a block as a fuse plan, on a CPU device | refused                                    |                                           |              |                |
+| Call                                    | CPU tier (Node)                        | WebGPU                                | WebGL2 alone  | Oracle's `fns` |
+| --------------------------------------- | -------------------------------------- | ------------------------------------- | ------------- | -------------: |
+| `pad`                                   | 0 of 4,096 differ; 5.2 ms              | 0 of 4,096 differ; 30.2 ms            | refused       |        0.04 ms |
+| `store`                                 | 0 of 4,096 differ, 0 outside; 962.1 ms | 0 of 4,096 differ, 0 outside; 66.3 ms | refused       |        0.19 ms |
+| `accumulate`                            | 0 of 4,096 differ; 3,663.8 ms          | 0 of 4,096 differ; 91.4 ms            | refused       |     2,101.5 ms |
+| `overlapAdd`                            | 0 of 2,048 differ; 1.5 ms              | 0 of 2,048 differ; 16.6 ms            | refused       |        0.12 ms |
+| `fftMediumTable`                        | refused                                | ran, 2,019.8 ms                       | ran, 432.4 ms |  (the spectra) |
+| a block as a fuse plan, on a CPU device | refused                                |                                       |               |                |
 
 The `fftMediumTable` calls of the check are not held to the oracle: the transform of the partitions
 holds the same entry to it on 469 workgroups.
@@ -326,6 +326,7 @@ At run time:
   The WebGL2 arm's device has the CPU tier after WebGL2, so in its blocks these four calls run on
   the CPU tier and the FFT entry on WebGL2. The fuse report does not say which group ran where
   (`docs/compiler-asks.md`, P).
+
 - No call of a page arm failed to return within its bound.
 
 While the kernels were written, at the pin:
@@ -523,6 +524,16 @@ Rule 11.8 says a read of a `Resident` a failed call writes throws its error; it 
 later call that reads it. An engine that queues a block's calls without awaiting each one gets a
 silent wrong block. Observed in a development run of this harness on WebGPU, whose fallback to
 plain calls returned blocks of zeros; reproduced as above on the CPU tier.
+
+Status: answered by compiler change 0129 (#1092, `415b276a`), in the pin `415b276a`. Rechecked at
+the pin, 2026-11-09, on the CPU tier (Vitest with the compiler's plugin, Bun 1.4.4) and on WebGPU
+(headless Chromium on SwiftShader). `padTo` is no longer refused at the pin (candidate issue 1,
+#997, is fixed), so the reproduction used a producer that is still refused: `readAll(out, xs)`
+copies 8 elements of `xs`, which holds 4. The queued `twice(d, c)` on the output of `readAll`
+rejects with the failed input's reason, `TypeError: readAll(): parameter "xs" holds 4 elements,
+and loop 1 reads it at indices 0 to 7.`. A read of `d` rejects with the same sentence. An
+independent `twice(e, ...)` queued after both resolves, and `e.read()` gives eight 2s. The queued
+call does not run on stale output. `docs/compiler-asks.md`, the row of #998, holds the line.
 
 **Candidate ask A, now ask AA. WebGL2 loops for the convolution's kernels.** On WebGL2 a kernel loop
 that writes an `array<vec2>`, writes at an index other than its counter, or writes two arrays has no
