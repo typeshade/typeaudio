@@ -84,9 +84,12 @@ export function spatialOf(e: PlanEvent, scene: PlanScene, o: SpatialOptions): Sp
   const taps = walls.map((wall) => {
     const path = Math.sqrt(d * d + 4 * wall * wall);
     const frames = Math.round(((path - d) / SOUND) * o.sr);
+    // A reflection later than the history holds is left out: the reverb carries that time. Moved
+    // to the end of the history it would be an echo at the wrong time, at its full gain.
+    const inHistory = frames <= HIST - 96;
     return {
       frames: Math.min(Math.max(frames, 96), HIST - 96),
-      gain: material.reflect * 0.9 * Math.min(1, d / path),
+      gain: inHistory ? material.reflect * 0.9 * Math.min(1, d / path) : 0,
     };
   });
   [s.d0, s.d1, s.d2, s.d3, s.d4, s.d5] = taps.map((t) => t.frames) as [

@@ -150,7 +150,7 @@ export async function renderPlan(
     const stem = options.stems?.[e.id];
     const made = makeCue(e, {
       sr,
-      key: eventKey(plan.seed, i),
+      key: eventKey(plan.seed, e.id),
       ...(stem === undefined ? {} : { stem }),
     });
     const t = guards ? snapped(plan, e.t) : e.t;

@@ -132,6 +132,24 @@ describe('renderPlan on the CPU tier', { timeout: 120000 }, () => {
     expect(b.stems.effects[0]).not.toEqual(a.stems.effects[0]);
   });
 
+  test('an event keeps its sound when another event is added before it in the sorted list', async () => {
+    // Adding "a" at t = 0.1 moves "b" from the first place of the sorted list to the second.
+    const wind = ev('b', 0.3, {
+      kind: 'wind',
+      layer: 'ambience',
+      macros: { gust: 0.6, howl: 0.5 },
+      duration: 0.6,
+    });
+    const alone = await renderPlan(dev, mini([wind]), { guards: false, reverb: false });
+    const added = await renderPlan(dev, mini([ev('a', 0.1), wind]), {
+      guards: false,
+      reverb: false,
+    });
+    expect(energy(alone.stems.ambience[0])).toBeGreaterThan(0);
+    expect(added.stems.ambience[0]).toEqual(alone.stems.ambience[0]);
+    expect(added.stems.ambience[1]).toEqual(alone.stems.ambience[1]);
+  });
+
   test('a sync of arrive ends the sound at t, and an onset starts it at t', async () => {
     const r = await renderPlan(
       dev,
