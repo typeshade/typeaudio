@@ -26,7 +26,7 @@ The loop is `docs/vision.md`, section 10. A row moves through these states:
 | retired                                      | The pin moved past the implementation, `compiler-changes.md` records the id, the workaround is gone. |
 
 The letters and the ids are stable. A new ask takes the next free letter. After Z, an ask takes
-two letters, in order: AA, AB, AC. A row never changes its letter.
+two letters, in order: AA, AB, AC, AD, AE. A row never changes its letter.
 
 ## 1. The proposals this engine rests on
 
@@ -812,12 +812,57 @@ restored with `git checkout src`.
 - Status: issue #1128 filed 2026-11-09, open. Next action: when the compiler side fixes the issue, set
   the status to `fixed #1128`, then retire the hand-written hoist (`docs/lanes.md`, section 4).
 
+### AD. A store at `(base + v) * block + n` is admitted when `base` is loop-invariant
+
+- Pressure: each per-kind kernel of `src/kinds/lanes.shade.ts` would write its lanes' rows into
+  `raws` at its own base. The compiler refuses that store (TS8070), so each kernel writes its own
+  `out` at `v`, and nine `gather` dispatches copy the rows to `raws`. Measured on WebGPU
+  (SwiftShader, mean of three runs, 2026-11-09, pull request #57): the nine `gather` groups cost
+  1.59 ms a block.
+- Compiler: the loop proof of Rule 8.22 (surface section 65, rule R3). The forms
+  `o[(base + v) * block + n]`, `o[v * block + n + base]` and `o[base * block + v * block + n]` are
+  refused. `o[v * block + n]` is accepted. Inference: each refused form is `v * block + n + c`, with
+  `c` loop-invariant, and the proof of `v * block + n` covers it. Ask: admit a store at
+  `v * block + n + c` when `block` and `c` are loop-invariant and `n` is below `block`. The compiler
+  can prove this exact. Not asked here: a store through a value read from memory, `rows[v]` or
+  `c.row`, which the compiler cannot prove disjoint without a contract (inference).
+- Workaround: the `gather` kernel of `src/kinds/lanes.shade.ts`, which copies each kind's rows.
+- Measured by: pull request #57 (head `8f05dd2`, merged as `7ecf676`). `tshc check` at pin
+  `415b276a`, 2026-11-09: three TS8070 warnings, reproduced in issue #1136 with the module and the
+  command.
+- Status: issue #1136 filed 2026-11-09, open. Next action: when the compiler side fixes the issue,
+  set the status to `fixed #1136`, then retire the `gather` kernels.
+
+### AE. A kernel over WebGPU's storage-buffer limit is refused or falls to the next tier
+
+- Pressure: a `gather` kernel of nine sources, twelve storage buffers, passed `tshc check` and the
+  CPU tier at pin `415b276a`. On WebGPU it failed at the first dispatch, with the sentence
+  `The number of storage buffers (12) in the Compute stage exceeds the maximum per-stage limit (8).`
+  (pull request #57, Deviation 2, 2026-11-09). The compile gave no sign.
+- Compiler: the tier choice (Rule 11.8) and the storage-buffer limit. Rule 11.13 (F5) bounds the
+  arrays of a fused group by the device's limit, and Rule 11.9 names that limit for a `console`
+  call (TS8071). Neither covers one kernel function. Reproduced 2026-11-09: a kernel of twelve
+  `array<f32>` parameters gives `No problems found in 1 file.` from `tshc check` (issue #1137).
+  Ask: the compiler knows each kernel's storage-buffer count at compile time. Refuse the kernel for
+  WebGPU with a sentence that names the count and the limit, in the form of Rule 12.5, or fall to
+  the next tier with that sentence in the report. The compiler side decides which. Inference: Rule
+  11.8 ("the first tier of its owner's policy that can run it") reads as the fall-through, and
+  Rule 12.6 reads as the refusal.
+- Workaround: `gather` one kind at a time. The kernel takes one source array and a kind
+  (`src/kinds/lanes.shade.ts`).
+- Measured by: pull request #57 (`7ecf676`), `bun run test:gpu` on WebGPU, 2026-11-09, the failure.
+  `tshc check` at pin `415b276a`, 2026-11-09, the reproduction in issue #1137. The browser run of
+  the reproduction did not run.
+- Status: issue #1137 filed 2026-11-09, open. Next action: when the compiler side fixes the issue,
+  set the status to `fixed #1137`, then retire the one-kind-at-a-time form if the compiler accepts
+  the kernel.
+
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
 raised (pull request #5, asks M, N, P and Q), the issues experiments 2 and 3 raised (asks S, C and
 E, and the FFT's findings under G), the issues experiments 4 to 7 raised (#983 to #986, #991, #992,
-#997, #998, #1017 and #1018), and the earlier issues the asks cite.
+#997, #998, #1017 and #1018), the issues the kind-banks pull request raised (#1136 and #1137), and the earlier issues the asks cite.
 
 The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the pin `415b276a` is dated 2026-11-09.
 
@@ -857,6 +902,8 @@ The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the 
 | #1018 | The pipeline of a reverse-mode derivative with a frame loop grows past usable with the parameter count (SwiftShader) | L                                                                          | Open                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | #1128 | Hoist the load and store of a bank element whose index is loop-invariant                                             | AC                                                                         | Open; filed 2026-11-09                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | #1130 | A `.shade.ts` module is not rebuilt when a `.shade.ts` module it imports changes (Vitest's fsModuleCache key)        | AB                                                                         | Open; reproduced 2026-11-09 at the pin `415b276a`, see ask AB                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| #1136 | Admit a store at `(base + v) * block + n` when `base` is loop-invariant                                              | AD                                                                         | Open; filed 2026-11-09; reproduced at the pin `415b276a`, see ask AD                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| #1137 | A kernel over WebGPU's storage-buffer limit passes `tshc check` and fails on the device                              | AE                                                                         | Open; filed 2026-11-09; reproduced at the pin `415b276a`, see ask AE                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ## 4. How a row moves
 
