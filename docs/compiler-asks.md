@@ -713,6 +713,16 @@ n]", an element two iterations can share. Write at an index made from "n".` `tap
   `i`) met the same limit. It was not run again at the pin `87af4eb0`. This ask was candidate ask A
   of record 05.
 
+On 2026-11-09, at the pin `415b276a`, the container run of experiment 8 ran 32 of 33 groups on the CPU tier under WebGL2 (`docs/records/08-sound-design-container.md`, section "Which calls the tiers ran"; `docs/records/08-sound-design-container-tiers.json`, `webgl2`). Thirty of the 32 groups hit this ask's limit. Record 08 counts a kernel that mutates the lanes of a bank as writing more than one array. The refusal sentences, word for word, are these:
+
+- `cues`, `place`, `layers`, `strips` and `overlap2` (five groups): `<name> runs on the CPU, it runs on the CPU, loop 1 writes more than one array, and WebGL2 draws one`.
+- `fftStage` (22 groups): `<name> runs on the CPU, it runs on the CPU, loop 1 writes "out", whose element is not one f32, i32 or u32`.
+- `accumulate2` (one group): `accumulate2 runs on the CPU, it runs on the CPU, loop 1 writes "sum", whose element is not one f32, i32 or u32`.
+- `pad` (one group): `pad runs on the CPU, it runs on the CPU, loop 1 writes "padded", whose element is not one f32, i32 or u32`.
+- `store` (one group): `store runs on the CPU, it runs on the CPU, loop 1 writes "line" other than at i`.
+
+Inference: the sentences that name an element that is not one `f32`, `i32` or `u32` describe the `vec2` element this ask names, because the declarations of `fftStage` and `accumulate2` in `src/spatial/fft.shade.typeshade.ts` take `array<vec2>`. The two `history` and `pack` groups are not this ask's: record 08 says folding their branches into one store fixes them, which is an open item of the engine, not a compiler ask.
+
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
