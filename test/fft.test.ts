@@ -25,7 +25,10 @@ describe('the 1,024-point FFT entry on the CPU', () => {
     const src = signal('noise', N);
     const dst = new Float32Array(src.length);
     await expect(
-      fftSmallTable({ transform: transformOf('forward', N), src, dst, twiddles: twiddleTable(N) }, 1),
+      fftSmallTable(
+        { transform: transformOf('forward', N), src, dst, twiddles: twiddleTable(N) },
+        1,
+      ),
     ).rejects.toThrow(
       /fftSmallTable\(\) needs WebGPU: it reaches workgroupBarrier\(\) at fft\.shade\.ts:\d+, and a barrier has no CPU tier/,
     );

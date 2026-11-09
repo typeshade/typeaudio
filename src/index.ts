@@ -36,3 +36,34 @@ export { Cue, cues } from './kinds/cue.shade.ts';
 export { noise } from './kinds/noise.shade.ts';
 export { eventKey, KIND_GAIN, KIND_INDEX, makeCue } from './kinds/make.ts';
 export type { Made, MakeOptions } from './kinds/make.ts';
+export {
+  Spatial,
+  Strip,
+  Shelf,
+  history,
+  layers,
+  pack,
+  place,
+  sendSum,
+  strips,
+} from './spatial/spatial.shade.ts';
+export { accumulate2, fftStage, overlap2 } from './spatial/fft.shade.ts';
+export { Reverb } from './spatial/reverb.ts';
+export {
+  MATERIALS as ROOM_MATERIALS,
+  SLOTS,
+  impulseResponse,
+  spatialOf,
+  stripOf,
+} from './spatial/room.ts';
+export { limiterGain, normalizationGain } from './master.ts';
+export {
+  BLOCK_BUDGET_MS,
+  SAMPLE_RATE,
+  SNAP_WINDOW,
+  onePlan,
+  renderPlan,
+  type Rendered,
+  type RenderPlanOptions,
+  type Stereo,
+} from './render-plan.ts';

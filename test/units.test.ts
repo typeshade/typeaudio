@@ -13,7 +13,8 @@ import { RefEnvelope, RefLowpass, RefOnePole, RefVoice, refSaw, refSine } from '
 const SR = 48000;
 
 /** `n` results of `tick`, in order. */
-const run = (n: number, tick: (i: number) => number): number[] => Array.from({ length: n }, (_, i) => tick(i));
+const run = (n: number, tick: (i: number) => number): number[] =>
+  Array.from({ length: n }, (_, i) => tick(i));
 
 /** A test signal: a step, then two detuned sines. */
 const signal = (i: number): number =>

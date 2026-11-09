@@ -126,6 +126,33 @@ export const loudnessContrast = (curve: readonly number[]): number =>
 /** The taps on each side of an interpolated point. */
 const HALF_TAPS = 16;
 
+/**
+ * The peak of the 4x oversampled signal that lies from each sample to the next, as a magnitude:
+ * element `i` is the largest of `|x[i]|` and the three interpolated points after it. `truePeak`
+ * is the largest of these in dBTP; the limiter of `src/master.ts` reads them sample by sample.
+ */
+export function peakEnvelope(x: Float32Array): Float32Array {
+  const out = new Float32Array(x.length);
+  for (let i = 0; i < x.length; i++) out[i] = Math.abs(x[i]!);
+  for (const phase of [0.25, 0.5, 0.75]) {
+    const taps = new Float64Array(2 * HALF_TAPS);
+    for (let j = 0; j < taps.length; j++) {
+      const t = j - HALF_TAPS + 1 - phase;
+      const s = t === 0 ? 1 : Math.sin(Math.PI * t) / (Math.PI * t);
+      taps[j] = s * (0.5 + 0.5 * Math.cos((Math.PI * t) / (HALF_TAPS + 1)));
+    }
+    for (let i = 0; i < x.length - 1; i++) {
+      let y = 0;
+      for (let j = 0; j < taps.length; j++) {
+        const m = i + j - HALF_TAPS + 1;
+        if (m >= 0 && m < x.length) y += taps[j]! * x[m]!;
+      }
+      out[i] = Math.max(out[i]!, Math.abs(y));
+    }
+  }
+  return out;
+}
+
 /** The true peak of one channel in dBTP, over a 4x oversampled signal (windowed sinc interpolation). */
 export function truePeak(channels: readonly Float32Array[]): number {
   let peak = 0;

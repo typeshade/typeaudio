@@ -45,7 +45,9 @@ describe('render on the CPU tier', () => {
     expect([...first, ...second]).toEqual([...ref]);
     // The bank holds each voice's state after 768 frames: `voices[v].tick()` wrote lane `v`.
     const after = await voices.read();
-    expect(after.map((v) => v.osc)).toEqual(refs.map((r) => ({ phase: r.osc.phase, inc: r.osc.inc })));
+    expect(after.map((v) => v.osc)).toEqual(
+      refs.map((r) => ({ phase: r.osc.phase, inc: r.osc.inc })),
+    );
     expect(after.map((v) => v.filter)).toEqual(refs.map((r) => ({ ...r.filter })));
     // The read holds instances of the class, methods included (compiler change 0109, Amendment 1;
     // docs/compiler-asks.md, N): a call of tick() continues each voice where its lane stopped.
