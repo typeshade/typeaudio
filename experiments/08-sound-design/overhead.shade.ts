@@ -2,7 +2,7 @@
 
 // Scratch forms of the `cues` kernel, to find the per-lane, per-frame overhead (docs/lanes.md,
 // "Step 1b: the overhead"). They are not used by the render. `cues` itself is in
-// `src/kinds/cue.shade.ts`.
+// `experiments/08-sound-design/cue.shade.ts`.
 //
 // - `cuesHoisted`: the same loop, with the lane's `Cue` copied into a local before the frame loop
 //   and written back once after it.
@@ -15,7 +15,7 @@
 // - `NarrowCue` and `cuesNarrow`: a cue that holds the fields of the `whoosh` kind only and calls
 //   its tick with no dispatch on `kind`.
 
-import { Cue } from '../../src/kinds/cue.shade.ts';
+import { Cue } from './cue.shade.ts';
 import { Whoosh } from '../../src/kinds/whoosh.shade.ts';
 
 export function cuesHoisted(out: array<f32>, lanes: array<Cue>, inputs: array<f32>, block: u32) {

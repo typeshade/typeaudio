@@ -102,6 +102,17 @@ check(
   sg!.submissions === 1,
   `a block of the layered render is one submission on WebGPU (${sg!.submissions} submissions, ${sg!.dispatches} dispatches)`,
 );
+// The plan holds an impact, a whoosh and a shimmer: one kernel call for each kind that has an event
+// (`impacts`, `whooshes`, `shimmers`), the gather that puts their rows in `raws`, and no call for the
+// six kinds with no event or for the retired one-bank `cues`.
+const calls = sg!.groups.flatMap((g) => g.split(' ')[0]!.split('+'));
+check(
+  ['whooshes', 'impacts', 'shimmers', 'gather'].every((c) => calls.includes(c)) &&
+    ['cues', 'risers', 'winds', 'drones', 'footsteps', 'cloths', 'voices'].every(
+      (c) => !calls.includes(c),
+    ),
+  `the last block calls one kernel for each kind that has an event, and gather: ${calls.join(', ')}`,
+);
 console.log(`the last block's groups on WebGPU: ${sg!.groups.join(', ')}\n`);
 if (failures.length > 0) {
   console.error(`${failures.length} check(s) failed.`);

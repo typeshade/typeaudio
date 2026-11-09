@@ -8,10 +8,10 @@ import { Drone } from '../src/kinds/drone.shade.ts';
 import { Footstep } from '../src/kinds/footstep.shade.ts';
 import { Cloth } from '../src/kinds/cloth.shade.ts';
 import { Stem } from '../src/kinds/voice.shade.ts';
-import { Cue } from '../src/kinds/cue.shade.ts';
+import { ImpactLane, VoiceLane } from '../src/kinds/lanes.shade.ts';
 import { Svf, svfCoef } from '../src/units/svf.shade.ts';
 import { Cloud, Grain } from '../src/units/grain.shade.ts';
-import { eventKey, makeCue } from '../src/kinds/make.ts';
+import { eventKey, makeLane, type Made } from '../src/kinds/make.ts';
 import { validatePlan, type PlanEvent } from '../src/plan/index.ts';
 import plan from '../experiments/08-sound-design/plan.json';
 import { RefCloud, RefGrain } from './reference.ts';
@@ -155,13 +155,12 @@ describe('a kind built with new ticks as the reference does', () => {
   });
 });
 
-describe('a cue', () => {
+describe('a lane', () => {
   test('is silent before its start and from its end, and plays its kind between', () => {
-    const cue = new Cue();
-    cue.kind = 1;
-    cue.start = 100;
-    cue.end = 700;
-    cue.impact = new Impact().shape(5, 0.0011, 2, 0.0005, 0.00004, 0.0003, 0.3, 60, 0.8, 0.9, 0.5);
+    const lane = new ImpactLane();
+    lane.start = 100;
+    lane.end = 700;
+    lane.impact = new Impact().shape(5, 0.0011, 2, 0.0005, 0.00004, 0.0003, 0.3, 60, 0.8, 0.9, 0.5);
     const ref = new RefImpact().shape(
       5,
       0.0011,
@@ -175,7 +174,7 @@ describe('a cue', () => {
       0.9,
       0.5,
     );
-    const got = run(900, () => cue.tick(0));
+    const got = run(900, () => lane.tick());
     const want = [
       ...Array.from({ length: 100 }, () => 0),
       ...run(600, () => ref.tick()),
@@ -183,26 +182,32 @@ describe('a cue', () => {
     ];
     expect(got).toEqual(want);
   });
-  test('a voice cue with no stem is silent, with a stem plays it', () => {
-    const cue = new Cue();
-    cue.kind = 8;
-    cue.end = 10;
-    cue.stem = new Stem().shape(2);
-    expect(run(10, () => cue.tick(0))).toEqual(Array.from({ length: 10 }, () => 0));
-    const again = new Cue();
-    again.kind = 8;
+  test('a voice lane with no stem is silent, with a stem plays it', () => {
+    const lane = new VoiceLane();
+    lane.end = 10;
+    lane.stem = new Stem().shape(2);
+    expect(run(10, () => lane.tick(0))).toEqual(Array.from({ length: 10 }, () => 0));
+    const again = new VoiceLane();
     again.end = 10;
     again.stem = new Stem().shape(2);
     expect(Array.from({ length: 4 }, (_, i) => again.tick(0.25 * i))).toEqual([0, 0.5, 1, 1.5]);
   });
 });
 
-describe('the cues of a plan', () => {
+/** The tick of a lane of any kind; only a voice lane takes an argument. */
+const tickOf = (m: Made): ((x: number) => number) => {
+  if (m.kind === 'voice') return (x) => m.lane.tick(x);
+  const l = m.lane as unknown as { tick(): number };
+  return () => l.tick();
+};
+
+describe('the lanes of a plan', () => {
   const p = validatePlan(plan);
   const sound = (e: PlanEvent, key = eventKey(p.seed, e.id)): number[] => {
-    const { cue, length } = makeCue(e, { sr: SR, key });
-    cue.end = length;
-    return run(Math.min(length, 6000), () => cue.tick(0));
+    const made = makeLane(e, { sr: SR, key });
+    const { lane, length } = made;
+    lane.end = length;
+    return run(Math.min(length, 6000), () => tickOf(made)(0));
   };
 
   test('every kind of the fixture sounds, with a finite peak under 2', () => {
@@ -234,7 +239,11 @@ describe('the cues of a plan', () => {
     // The thud's draw starts no grain in its window for about 1 key in 9 at pace 1.
     const slow = { ...base, macros: { ...base.macros, pace: 1 } };
     for (let key = 1; key <= 150; key++) {
-      const f = makeCue(slow, { sr: SR, key: Math.imul(key, 2654435761) >>> 0 }).cue.footstep;
+      const f = (
+        makeLane(slow, { sr: SR, key: Math.imul(key, 2654435761) >>> 0 }) as Made & {
+          kind: 'footstep';
+        }
+      ).lane.footstep;
       expect(
         [f.g0, f.g1, f.g2].some((g) => g.peak > 0),
         `thud, key ${key}`,
@@ -245,7 +254,11 @@ describe('the cues of a plan', () => {
       ).toBe(true);
     }
     for (let key = 1; key <= 100; key++) {
-      const c = makeCue(cloth, { sr: SR, key: Math.imul(key, 2654435761) >>> 0 }).cue.cloth;
+      const c = (
+        makeLane(cloth, { sr: SR, key: Math.imul(key, 2654435761) >>> 0 }) as Made & {
+          kind: 'cloth';
+        }
+      ).lane.cloth;
       expect([c.g0, c.g1, c.g2, c.g3, c.g4, c.g5, c.g6, c.g7].some((g) => g.peak > 0)).toBe(true);
     }
   }, 30000);
@@ -272,7 +285,7 @@ describe('the cues of a plan', () => {
     const base = { ...p.events.find((e) => e.kind === kind)!, duration: 0.2 };
     const at = (v: number): { length: number; y: number[] } => {
       const e = { ...base, macros: { ...base.macros, [macro]: v } };
-      return { length: makeCue(e, { sr: SR, key: 1 }).length, y: sound(e, 1) };
+      return { length: makeLane(e, { sr: SR, key: 1 }).length, y: sound(e, 1) };
     };
     const lo = at(0.1);
     const hi = at(0.9);
@@ -287,9 +300,10 @@ describe('the variation of repeated events (the `variation` guard, bound 0.95)',
   const p = validatePlan(plan);
   // The event rendered alone on the CPU tier, for up to one second: the length `eventSimilarity` reads.
   const alone = (e: PlanEvent, key: number): Float32Array => {
-    const { cue, length } = makeCue(e, { sr: SR, key });
-    cue.end = length;
-    return Float32Array.from(run(Math.min(length, SR), () => cue.tick(0)));
+    const made = makeLane(e, { sr: SR, key });
+    const { lane, length } = made;
+    lane.end = length;
+    return Float32Array.from(run(Math.min(length, SR), () => tickOf(made)(0)));
   };
 
   // Each event of the fixture's kind, with its own macros and its own key, rendered alone. The

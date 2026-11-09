@@ -1,4 +1,4 @@
-// The host half of the kinds: it turns one plan event into one `Cue` (`cue.shade.ts`). The macros
+// The host half of the kinds: it turns one plan event into one lane of its kind (`lanes.shade.ts`). The macros
 // of docs/sound-design-loop.md, "The kinds", become the numbers of each unit's `shape`. Every
 // draw is a function of the event's key (a hash of the seed and the event's id), so an edit to one
 // event changes that event only, even when it moves the event in the sorted list, and two
@@ -6,7 +6,17 @@
 
 import type { PlanEvent } from '../plan/types.ts';
 import { Cloud, Grain } from '../units/grain.shade.ts';
-import { Cue } from './cue.shade.ts';
+import {
+  ClothLane,
+  DroneLane,
+  FootstepLane,
+  ImpactLane,
+  RiserLane,
+  ShimmerLane,
+  VoiceLane,
+  WhooshLane,
+  WindLane,
+} from './lanes.shade.ts';
 import { Whoosh } from './whoosh.shade.ts';
 import { Impact } from './impact.shade.ts';
 import { Shimmer } from './shimmer.shade.ts';
@@ -17,7 +27,7 @@ import { Footstep } from './footstep.shade.ts';
 import { Cloth } from './cloth.shade.ts';
 import { Stem } from './voice.shade.ts';
 
-/** The kinds in the order of `Cue.kind`. */
+/** The kinds in the order of the `kinds` array that `gather` reads and of its `w0` to `w8`. */
 export const KIND_INDEX = {
   whoosh: 0,
   impact: 1,
@@ -74,11 +84,18 @@ export const eventKey = (seed: number, id: string): number => mix32(seed >>> 0, 
 /** The gain of an event: intensity times the kind's calibration. */
 const level = (e: PlanEvent): number => e.intensity * (KIND_GAIN[e.kind] ?? 1);
 
-export interface Made {
-  cue: Cue;
-  /** How many frames the sound lasts. */
-  length: number;
-}
+/** One lane of its kind, tagged by the kind, and how many frames the sound lasts. */
+export type Made = { length: number } & (
+  | { kind: 'whoosh'; lane: WhooshLane }
+  | { kind: 'impact'; lane: ImpactLane }
+  | { kind: 'shimmer'; lane: ShimmerLane }
+  | { kind: 'riser'; lane: RiserLane }
+  | { kind: 'wind'; lane: WindLane }
+  | { kind: 'drone'; lane: DroneLane }
+  | { kind: 'footstep'; lane: FootstepLane }
+  | { kind: 'cloth'; lane: ClothLane }
+  | { kind: 'voice'; lane: VoiceLane }
+);
 
 export interface MakeOptions {
   sr: number;
@@ -123,23 +140,22 @@ function drawGrains(
   return end;
 }
 
-/** Builds the cue of `e`. The caller sets `cue.start` and `cue.end` from the sync and the length. */
-export function makeCue(e: PlanEvent, o: MakeOptions): Made {
+/** Builds the lane of `e`. The caller sets `lane.start` and `lane.end` from the sync and the length. */
+export function makeLane(e: PlanEvent, o: MakeOptions): Made {
   const { sr, key } = o;
   const m = e.macros;
   const lvl = level(e);
   const j = (salt: number): number => draw(key, salt);
-  const cue = new Cue();
-  cue.kind = KIND_INDEX[e.kind as keyof typeof KIND_INDEX] ?? 0;
   let length: number;
   switch (e.kind) {
     case 'whoosh': {
+      const lane = new WhooshLane();
       length = frames(e.duration ?? 0.5, sr);
       // Each take moves the start centre by up to 8 %, the end centre (the brightness) and the damping by up
       // to 10 %, and the speed of the sweep by up to 12 %.
       const f0 = 250 * (0.92 + 0.16 * j(1));
       const f1 = (800 + 6000 * m.brightness!) * (0.7 + 0.3 * e.intensity) * (0.9 + 0.2 * j(2));
-      cue.whoosh = new Whoosh().shape(
+      lane.whoosh = new Whoosh().shape(
         sr,
         length,
         f0,
@@ -149,15 +165,16 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
         2.2 * lvl,
         key,
       );
-      break;
+      return { kind: 'whoosh', lane, length };
     }
     case 'impact': {
+      const lane = new ImpactLane();
       // Each take moves the pitch and the depth of the pitch fall by up to 8 %, each decay and the fall's
       // rate by up to 12 %, and the noise's brightness, the click's length and each level by up to 10 %.
       const tau = (0.12 + 0.9 * m.decay!) * (0.88 + 0.24 * j(2));
       length = frames(Math.min(6 * tau, 4), sr);
       const base = (35 + 55 * (1 - m.weight!)) * (0.92 + 0.16 * j(1));
-      cue.impact = new Impact().shape(
+      lane.impact = new Impact().shape(
         key,
         base / sr,
         2 * (0.92 + 0.16 * j(5)),
@@ -170,12 +187,13 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
         0.9 * (0.9 + 0.2 * j(8)) * lvl,
         0.8 * m.crack! * (0.9 + 0.2 * j(9)) * lvl,
       );
-      break;
+      return { kind: 'impact', lane, length };
     }
     case 'shimmer': {
+      const lane = new ShimmerLane();
       length = frames(e.duration ?? 1.5, sr);
       const base = (900 + 2100 * m.height!) * (0.95 + 0.1 * j(1));
-      cue.shimmer = new Shimmer().shape(
+      lane.shimmer = new Shimmer().shape(
         sr,
         base,
         2 + 4 * m.density!,
@@ -183,16 +201,17 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
         1 / (0.004 * sr),
         0.3 * lvl,
       );
-      break;
+      return { kind: 'shimmer', lane, length };
     }
     case 'riser': {
+      const lane = new RiserLane();
       length = frames(e.duration ?? 2.5, sr);
       // The swell rises over the fraction 0.5 + 0.5 * length of the duration and holds for the rest.
       const rise = Math.max(1, Math.round(length * (0.5 + 0.5 * m.length!)));
       const f0 = 200;
       const f1 = 600 + 2800 * m.pitch!;
       const c1 = 1500 + 4500 * m.pitch!;
-      cue.riser = new Riser().shape(
+      lane.riser = new Riser().shape(
         sr,
         rise,
         f0 / sr,
@@ -203,12 +222,13 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
         3 * lvl,
         key,
       );
-      break;
+      return { kind: 'riser', lane, length };
     }
     case 'wind': {
+      const lane = new WindLane();
       length = frames(e.duration ?? 4, sr);
       const fade = Math.min(1.5 * sr, length / 3);
-      cue.wind = new Wind().shape(
+      lane.wind = new Wind().shape(
         sr,
         length,
         fade,
@@ -223,13 +243,14 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
         j(2),
         key,
       );
-      break;
+      return { kind: 'wind', lane, length };
     }
     case 'drone': {
+      const lane = new DroneLane();
       length = frames(e.duration ?? 6, sr);
       const fade = Math.min(1.5 * sr, length / 3);
       const f = (41 + 70 * m.pitch!) * (0.99 + 0.02 * j(1));
-      cue.drone = new Drone().shape(
+      lane.drone = new Drone().shape(
         sr,
         length,
         fade,
@@ -238,9 +259,10 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
         120 + 1500 * (1 - m.darkness!),
         lvl,
       );
-      break;
+      return { kind: 'drone', lane, length };
     }
     case 'footstep': {
+      const lane = new FootstepLane();
       // Each take moves the thud's pitch by up to 8 %, the grain lengths by up to 12 %, the crunch's
       // band by up to 10 %, the pace by up to 12 % and the thud's weight by up to 25 %.
       const pace = (1.3 - 0.6 * m.pace!) * (0.88 + 0.24 * j(26));
@@ -264,11 +286,12 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
       const unit = new Footstep();
       const a = drawGrains(unit, thud, 0.03 * pace, sr, 0, 3);
       const b = drawGrains(unit, crunch, 0.08 * pace, sr, 3, 8);
-      cue.footstep = unit;
+      lane.footstep = unit;
       length = Math.max(a, b, 1) + 1;
-      break;
+      return { kind: 'footstep', lane, length };
     }
     case 'cloth': {
+      const lane = new ClothLane();
       // Each take moves the band by up to 10 %, the grain lengths by up to 12 %, the window by up to
       // 12 % and the lowpass (the brightness) by up to 10 %.
       const window = 0.3 * (1.3 - 0.8 * m.speed!) * (0.88 + 0.24 * j(31));
@@ -283,14 +306,15 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
       const unit = new Cloth();
       unit.lp.k = (0.6 - 0.4 * m.fabric!) * (0.9 + 0.2 * j(34));
       length = drawGrains(unit, cloud, window, sr, 0, 8) + 1;
-      cue.cloth = unit;
-      break;
+      lane.cloth = unit;
+      return { kind: 'cloth', lane, length };
     }
     default: {
       // voice: the stem's own length, at the event's level.
+      const lane = new VoiceLane();
+      lane.stem = new Stem().shape(lvl);
       length = o.stem === undefined ? frames(e.duration ?? 0, sr) : o.stem.length;
-      cue.stem = new Stem().shape(lvl);
+      return { kind: 'voice', lane, length };
     }
   }
-  return { cue, length };
 }
