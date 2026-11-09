@@ -1,75 +1,32 @@
 import type { PlanLayer } from './types.ts';
 
 export interface MacroDefinition {
-  min: number;
-  max: number;
+  min: 0;
+  max: 1;
   /** The value of a macro the plan leaves out. */
   default: number;
-  unit: string;
 }
 
 export interface KindDefinition {
-  /** The layer the kind belongs to by default. A plan may place an event on another layer. */
+  /** How the vocabulary makes the kind. */
+  sort: 'procedural' | 'grain' | 'stem';
+  /** The one layer the kind belongs to. The validator refuses an event of the kind on another layer. */
   layer: PlanLayer;
-  summary: string;
   macros: Record<string, MacroDefinition>;
 }
 
-/**
- * The vocabulary of the plan. It starts small, and each entry grows with the units that render it.
- * A kind names its layer, its macros and their ranges.
- */
+const macros = (...names: string[]): Record<string, MacroDefinition> =>
+  Object.fromEntries(names.map((n) => [n, { min: 0, max: 1, default: 0.5 } as MacroDefinition]));
+
+/** The starting vocabulary of docs/sound-design-loop.md, "The kinds". Each macro runs from 0 to 1. */
 export const KINDS: Record<string, KindDefinition> = {
-  impact: {
-    layer: 'effects',
-    summary: 'A hit with a body, a click and a tail.',
-    macros: {
-      weight: { min: 0, max: 1, default: 0.5, unit: '1' },
-      brightness: { min: 0, max: 1, default: 0.5, unit: '1' },
-      decay: { min: 0.1, max: 6, default: 1.2, unit: 's' },
-    },
-  },
-  whoosh: {
-    layer: 'effects',
-    summary: 'A filtered noise sweep that leads into an impact.',
-    macros: {
-      speed: { min: 0.1, max: 1, default: 0.5, unit: '1' },
-      brightness: { min: 0, max: 1, default: 0.5, unit: '1' },
-      lead: { min: 0, max: 1, default: 0.25, unit: 's' },
-    },
-  },
-  shimmer: {
-    layer: 'effects',
-    summary: 'A cloud of high partials that rises and fades.',
-    macros: {
-      pitch: { min: 200, max: 4000, default: 1200, unit: 'Hz' },
-      spread: { min: 0, max: 1, default: 0.4, unit: '1' },
-      decay: { min: 0.5, max: 8, default: 3, unit: 's' },
-    },
-  },
-  footstep: {
-    layer: 'foley',
-    summary: 'One step on a surface, from a grain.',
-    macros: {
-      surface: { min: 0, max: 1, default: 0.3, unit: '1' },
-      weight: { min: 0, max: 1, default: 0.5, unit: '1' },
-    },
-  },
-  wind: {
-    layer: 'ambience',
-    summary: 'A bed of filtered noise with slow gusts.',
-    macros: {
-      gust: { min: 0, max: 1, default: 0.3, unit: '1' },
-      pitch: { min: 100, max: 1500, default: 400, unit: 'Hz' },
-    },
-  },
-  tone: {
-    layer: 'music',
-    summary: 'A sustained pitch with an attack and a release.',
-    macros: {
-      frequency: { min: 40, max: 4000, default: 220, unit: 'Hz' },
-      detune: { min: 0, max: 50, default: 8, unit: 'cent' },
-      attack: { min: 0.001, max: 2, default: 0.2, unit: 's' },
-    },
-  },
+  whoosh: { sort: 'procedural', layer: 'effects', macros: macros('speed', 'brightness') },
+  impact: { sort: 'procedural', layer: 'effects', macros: macros('weight', 'decay', 'crack') },
+  shimmer: { sort: 'procedural', layer: 'effects', macros: macros('density', 'height') },
+  riser: { sort: 'procedural', layer: 'effects', macros: macros('length', 'pitch') },
+  wind: { sort: 'procedural', layer: 'ambience', macros: macros('gust', 'howl') },
+  drone: { sort: 'procedural', layer: 'music', macros: macros('pitch', 'darkness') },
+  footstep: { sort: 'grain', layer: 'foley', macros: macros('surface', 'weight', 'pace') },
+  cloth: { sort: 'grain', layer: 'foley', macros: macros('fabric', 'speed') },
+  voice: { sort: 'stem', layer: 'dialogue', macros: {} },
 };

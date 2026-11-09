@@ -1,14 +1,16 @@
-export { LAYERS, MATERIALS } from './types.ts';
+export { eventSpan, LAYERS, MATERIALS } from './types.ts';
 export type {
+  PlanClip,
   PlanEvent,
   PlanLayer,
-  PlanListener,
+  PlanMaster,
   PlanMaterial,
   PlanPicture,
   PlanPosition,
-  PlanRoom,
   PlanScene,
+  PlanSync,
   SoundPlan,
+  Vec3,
 } from './types.ts';
 export { KINDS } from './kinds.ts';
 export type { KindDefinition, MacroDefinition } from './kinds.ts';

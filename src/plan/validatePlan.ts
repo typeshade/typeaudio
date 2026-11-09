@@ -1,10 +1,10 @@
 import { KINDS } from './kinds.ts';
-import { LAYERS, MATERIALS } from './types.ts';
-import type { PlanEvent, PlanLayer, PlanMaterial, SoundPlan } from './types.ts';
+import { eventSpan, LAYERS, MATERIALS } from './types.ts';
+import type { PlanEvent, PlanLayer, PlanMaterial, PlanSync, SoundPlan, Vec3 } from './types.ts';
 
 /** The most events a plan holds. */
 export const MAX_EVENTS = 256;
-/** The longest scene, in seconds. */
+/** The longest clip, in seconds. */
 export const MAX_DURATION = 600;
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
@@ -17,9 +17,15 @@ function number(owner: string, field: string, v: unknown, min: number, max: numb
   return v;
 }
 
-function record(owner: string, field: string, v: unknown): Record<string, unknown> {
+function object(owner: string, field: string, v: unknown): Record<string, unknown> {
   if (!isRecord(v)) throw new Error(`${owner}: field "${field}" must be an object.`);
   return v;
+}
+
+function vec3(owner: string, field: string, v: unknown, min: number, max: number): Vec3 {
+  if (!Array.isArray(v) || v.length !== 3)
+    throw new Error(`${owner}: field "${field}" must be a list of three numbers.`);
+  return v.map((n) => number(owner, field, n, min, max)) as Vec3;
 }
 
 function times(owner: string, field: string, v: unknown, duration: number): number[] {
@@ -28,10 +34,11 @@ function times(owner: string, field: string, v: unknown, duration: number): numb
 }
 
 /**
- * Validates a plan and returns it normalized: the events sorted by time, every macro present. It
- * throws an `Error` of one sentence that names the event and the field. It refuses an event outside
- * the scene, an unknown kind, an unknown layer, a value outside its range and more than `MAX_EVENTS`
- * events.
+ * Validates a plan and returns it normalized: the defaults filled, the events sorted by `t` and then
+ * by `id`, every macro present. It throws an `Error` of one sentence that names the event and the
+ * field. It refuses an unknown kind, a layer that does not match the kind, a macro the kind does
+ * not define, a value out of range, an event outside the clip, a repeated `id` and more than
+ * `MAX_EVENTS` events.
  */
 export function validatePlan(raw: unknown): SoundPlan {
   if (!isRecord(raw) || raw.version !== 1) throw new Error('Plan: field "version" must be 1.');
@@ -45,36 +52,35 @@ export function validatePlan(raw: unknown): SoundPlan {
   if (raw.events.length > MAX_EVENTS)
     throw new Error(`Plan: field "events" holds at most ${MAX_EVENTS} events.`);
 
-  const sceneIn = record('Scene', 'scene', raw.scene);
-  const duration = number('Scene', 'duration', sceneIn.duration, 1, MAX_DURATION);
-  const sampleRate = number('Scene', 'sampleRate', sceneIn.sampleRate, 8000, 192000);
-  const roomIn = record('Scene', 'room', sceneIn.room);
-  const sizeIn = record('Scene', 'room.size', roomIn.size);
+  const clipIn = object('Clip', 'clip', raw.clip);
+  const duration = number('Clip', 'duration', clipIn.duration, 1, MAX_DURATION);
+  const clip = { duration, fps: number('Clip', 'fps', clipIn.fps, 1, 240) };
+
+  const sceneIn = object('Scene', 'scene', raw.scene);
+  const roomIn = object('Scene', 'room', sceneIn.room);
   const material = roomIn.material;
   if (typeof material !== 'string' || !(MATERIALS as readonly string[]).includes(material))
     throw new Error(`Scene: field "room.material" must be one of ${MATERIALS.join(', ')}.`);
-  const listenerIn = record('Scene', 'listener', sceneIn.listener);
+  const size = vec3('Scene', 'room.size', roomIn.size, 1, 500);
+  const listenerIn = object('Scene', 'listener', sceneIn.listener);
   const scene = {
-    duration,
-    sampleRate,
-    room: {
-      size: {
-        width: number('Scene', 'room.size.width', sizeIn.width, 1, 500),
-        depth: number('Scene', 'room.size.depth', sizeIn.depth, 1, 500),
-        height: number('Scene', 'room.size.height', sizeIn.height, 1, 200),
-      },
-      material: material as PlanMaterial,
-    },
+    room: { size, material: material as PlanMaterial },
     listener: {
-      height: number('Scene', 'listener.height', listenerIn.height, 0, 100),
-      fov: number('Scene', 'listener.fov', listenerIn.fov, 10, 180),
+      position: vec3('Scene', 'listener.position', listenerIn.position, -1000, 1000),
+      yaw: number('Scene', 'listener.yaw', listenerIn.yaw, -360, 360),
     },
   };
 
-  const pictureIn =
-    raw.picture === undefined
-      ? { cuts: [], motion: [] }
-      : record('Picture', 'picture', raw.picture);
+  const masterIn = object('Master', 'master', raw.master ?? {});
+  const master = {
+    lufs: number('Master', 'lufs', masterIn.lufs ?? -23, -70, 0),
+    truePeak: number('Master', 'truePeak', masterIn.truePeak ?? -1, -20, 0),
+  };
+
+  const seed = number('Plan', 'seed', raw.seed ?? 0, 0, 2 ** 32 - 1);
+  if (!Number.isInteger(seed)) throw new Error('Plan: field "seed" must be a whole number.');
+
+  const pictureIn = object('Picture', 'picture', raw.picture ?? {});
   const picture = {
     cuts: times('Picture', 'cuts', pictureIn.cuts ?? [], duration),
     motion: times('Picture', 'motion', pictureIn.motion ?? [], duration),
@@ -94,41 +100,54 @@ export function validatePlan(raw: unknown): SoundPlan {
     const kind = KINDS[e.kind]!;
     if (typeof e.layer !== 'string' || !(LAYERS as readonly string[]).includes(e.layer))
       throw new Error(`${owner}: field "layer" must be one of ${LAYERS.join(', ')}.`);
-    const time = number(owner, 'time', e.time, 0, duration);
-    const length = number(owner, 'duration', e.duration, 0.001, duration);
-    if (time + length > duration + 1e-9)
-      throw new Error(`${owner}: field "duration" ends after the scene ends at ${duration} s.`);
-    const positionIn = record(owner, 'position', e.position);
-    const macrosIn = record(owner, 'macros', e.macros ?? {});
-    const macros: Record<string, number> = {};
+    if (e.layer !== kind.layer)
+      throw new Error(`${owner}: field "layer" must be "${kind.layer}" for kind "${e.kind}".`);
+    const sync = e.sync ?? 'onset';
+    if (sync !== 'onset' && sync !== 'arrive')
+      throw new Error(`${owner}: field "sync" must be "onset" or "arrive".`);
+    const t = number(owner, 't', e.t, 0, duration);
+    const length =
+      e.duration === undefined ? undefined : number(owner, 'duration', e.duration, 0.001, duration);
+    const positionIn = object(owner, 'position', e.position);
+    const macrosIn = object(owner, 'macros', e.macros ?? {});
     for (const name of Object.keys(macrosIn))
       if (!Object.hasOwn(kind.macros, name))
         throw new Error(
-          `${owner}: field "macros.${name}" is not a macro of kind "${e.kind}" (${Object.keys(kind.macros).join(', ')}).`,
+          `${owner}: field "macros.${name}" is not a macro of kind "${e.kind}" (${Object.keys(kind.macros).join(', ') || 'none'}).`,
         );
+    const macros: Record<string, number> = {};
     for (const [name, def] of Object.entries(kind.macros))
       macros[name] =
         macrosIn[name] === undefined
           ? def.default
           : number(owner, `macros.${name}`, macrosIn[name], def.min, def.max);
-    return {
+    const event: PlanEvent = {
       id,
-      time,
-      duration: length,
+      t,
       kind: e.kind,
       layer: e.layer as PlanLayer,
       intensity: number(owner, 'intensity', e.intensity, 0, 1),
       position: {
-        x: number(owner, 'position.x', positionIn.x, 0, 1),
-        y: number(owner, 'position.y', positionIn.y, 0, 1),
+        x: number(owner, 'position.x', positionIn.x, -1, 1),
+        y: number(owner, 'position.y', positionIn.y, -1, 1),
         distance: number(owner, 'position.distance', positionIn.distance, 0.1, 1000),
       },
       macros,
+      sync: sync as PlanSync,
     };
+    if (length !== undefined) event.duration = length;
+    const span = eventSpan(event);
+    if (span.start < -1e-9)
+      throw new Error(`${owner}: field "duration" starts the sound before the clip starts.`);
+    if (span.end > duration + 1e-9)
+      throw new Error(
+        `${owner}: field "t" or "duration" ends the sound after the clip ends at ${duration} s.`,
+      );
+    return event;
   });
-  events.sort((a, b) => a.time - b.time);
+  events.sort((a, b) => a.t - b.t || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 
-  const plan: SoundPlan = { version: 1, scene, picture, events };
+  const plan: SoundPlan = { version: 1, clip, scene, master, seed, picture, events };
   if (typeof raw.description === 'string') plan.description = raw.description;
   return plan;
 }
