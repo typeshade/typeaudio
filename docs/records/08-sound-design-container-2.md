@@ -367,7 +367,15 @@ What moved, and why:
    (#46), the wider draws of `impact` (#49), the ducking guard (#48, which lowers the other layers before an impact,
    so the impact stands higher in the mix). Next action: score the stems and the dry render of the old and the new
    renders, to see which layer's peak rose.
-   Status, 2026-11-09: the measurement is in progress on branch `claude/crest`; this paragraph holds its result when it ends.
+   Cause, 2026-11-09 (pull request #61; whole-clip CPU renders at `eef3eba5` and `aa30ef6c`, window renders of
+   blocks 0 to 160, Bun 1.4.4). The peak of 0.854 is at 3.2285 s, in the `foley` stem (0.779), and the event is `cloth-1`
+   (kind `cloth`, intensity 0.35, placed 3.000 to 3.249 s). It is not an impact, a riser or a whoosh. The peak of record 08
+   is 0.530 at 23.078 s, with `impact-d`, `riser-1`, `whoosh-d`, `shimmer-c` and `drone-c` sounding. The RMS of the clip is
+   the same (0.0585 and 0.0582), so the crest rise is the `foley` peak alone (0.326 to 0.779). The id-based key of #43 gives
+   `cloth-1` four grains that start within 8 ms of each other (3.217 to 3.226 s, peaks 0.22 to 0.29), and they sum. The
+   index-based key gives no such clump. With the old key the window peak falls from 0.413 to 0.258 before the master,
+   and with #49's draws at their centre it falls to 0.341 only. The next peak of the eef3eba5 render, 0.520 at 23.067 s,
+   would give about 19.0 dB (inference, not rendered). The cause is a draw, not a rule of the render.
 6. Small moves with no single cause named: `dynamics.contrastLu` 7.027 to 7.780, `balance.mudShare` 0.049 to 0.071,
    `balance.layerOverlap` 0.271 to 0.238, `space.correlation` 0.670 to 0.640, `space.reverbRatioDb` -2.354 to -2.754,
    `position.panCorrelation` 0.824 to 0.832 and `balance.tiltDbPerOctave` -4.666 to -4.723. All the kinds and the
