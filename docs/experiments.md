@@ -294,9 +294,10 @@ departs from the method":
 - The loss takes 16 bins of a 1,024-point DFT by one Goertzel recurrence per bin inside the frame
   loop, not the FFT of experiment 3. `grad` refuses an entry and a value kept in an array
   (`SD0118`). The FFT of experiment 3 holds the loss's bins and measures the match over 512 bins.
-- Beside forward mode per parameter, the harness takes the gradient in three more forms: forward
-  mode along a direction given as an argument, reverse mode, and a probe that rewrites reverse
-  mode's loop headers, which the CPU tier's code generator hands to the interpreter at the pin.
+- Beside forward mode per parameter, the harness takes the gradient in two more forms: forward
+  mode along a direction given as an argument, and reverse mode. A third form, a probe that
+  rewrote reverse mode's loop headers, retired at the pin `415b276a`: the CPU tier's code generator
+  compiles reverse mode's loops there (compiler issue #1017, fixed by #1019).
 - At the pin a derivative reaches neither the host face nor the manifest (change 0056, step 4). The
   CPU tier runs the derivatives through `compileModuleJs`, the host face's code generator, and the
   GPU tiers through a packed program whose placeholders take the bodies `grad` builds.

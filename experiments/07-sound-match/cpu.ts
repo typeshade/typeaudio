@@ -6,13 +6,13 @@
 // is not implemented): `compileModuleJs` of `grad`'s module is the nearest form of the CPU tier.
 
 import { compile, compileModule, compileModuleJs, grad, gradCheck, type GradCheckResult, type ModuleDecl } from 'typeshade';
-import { Adam, gradientDistance, timed, withLoopInitsHoisted, type Repeats, type Timing } from './match.ts';
+import { Adam, gradientDistance, timed, type Repeats, type Timing } from './match.ts';
 import { namesOf, startOf, truthOf } from './patch.ts';
 
 type Fn = (...args: unknown[]) => unknown;
 
-/** The four ways a gradient is taken, each a function of the parameters. */
-export const FORMS = ['forward', 'along', 'reverse', 'probe'] as const;
+/** The three ways a gradient is taken, each a function of the parameters. */
+export const FORMS = ['forward', 'along', 'reverse'] as const;
 export type Form = (typeof FORMS)[number];
 
 /** A module compiled once, with its derivatives and the target its loss is held to. */
@@ -41,8 +41,6 @@ export interface Codegen {
   readonly added: Readonly<Record<Form, number>>;
   /** Reverse mode's report of the function memory its tape takes in one call. */
   readonly tapeBytes: number;
-  /** The loop headers the probe rewrote. */
-  readonly rewritten: number;
 }
 
 const now = (): number => performance.now();
@@ -104,16 +102,6 @@ export function prepare(source: string, count: number, given?: readonly number[]
   const reverseFn = reverse.fns[r.name] as Fn;
   const fields = names.map((n) => r.adjoints![n]!);
 
-  // The probe: reverse mode with its loop headers rewritten, so the generated code runs it.
-  t = now();
-  const p = withLoopInitsHoisted(r.module);
-  gradMs.probe = gradMs.reverse + (now() - t);
-  added.probe = added.reverse;
-  t = now();
-  const probe = compileModuleJs(p.module, { precision: 'f32' });
-  compileMs.probe = now() - t;
-  const probeFn = probe.fns[r.name] as Fn;
-
   const unit = (j: number): number[] => names.map((_, i) => (i === j ? 1 : 0));
   const units = names.map((_, j) => unit(j));
   return {
@@ -132,12 +120,8 @@ export function prepare(source: string, count: number, given?: readonly number[]
         const o = reverseFn(...q, ...target, 1) as Record<string, number>;
         return fields.map((f) => o[f]!);
       },
-      probe: (q) => {
-        const o = probeFn(...q, ...target, 1) as Record<string, number>;
-        return fields.map((f) => o[f]!);
-      },
     },
-    codegen: { gradMs, compileMs, added, tapeBytes: r.tapeBytes ?? 0, rewritten: p.rewritten },
+    codegen: { gradMs, compileMs, added, tapeBytes: r.tapeBytes ?? 0 },
   };
 }
 
@@ -155,8 +139,6 @@ export interface CountResult {
   /** Each form's gradient at the start, and how far it is from forward mode's. */
   readonly gradients: Readonly<Partial<Record<Form, number[]>>>;
   readonly agreement: Readonly<Partial<Record<Form, { relative: number; differ: number }>>>;
-  /** The probe's gradient against reverse mode's, which it must equal bit for bit. */
-  readonly probeAgainstReverse?: { relative: number; differ: number };
   /** Forward mode's gradient at the start on the oracle at `f64`, and how far each form's is from it. */
   readonly reference: number[];
   readonly againstReference: Readonly<Partial<Record<Form, { relative: number; differ: number }>>>;
@@ -202,9 +184,6 @@ export function measure(
     agreement,
     reference,
     againstReference,
-    ...(gradients.probe !== undefined && gradients.reverse !== undefined
-      ? { probeAgainstReverse: gradientDistance(gradients.reverse, gradients.probe) }
-      : {}),
   };
 }
 

@@ -1,7 +1,7 @@
 // Experiment 7, a sound match with function-level `grad` (docs/experiments.md, section 7).
 //
 //   bun run exp:07 [--tier all|cpu,oracle,webgpu,webgl2] [--counts 3,10,30,100]
-//                  [--forms forward,along,reverse,probe] [--warmup 30] [--warmup-ms 2000]
+//                  [--forms forward,along,reverse] [--warmup 30] [--warmup-ms 2000]
 //                  [--runs 30] [--gpu-warmup 5] [--gpu-warmup-ms 1000] [--gpu-runs 20]
 //                  [--timeout 300] [--iterations 300] [--out <file.json>] [--raw <file.json>]
 //   bun run exp:07 --write      writes patch-3/10/30/100.shade.ts from patch.ts, and nothing else
@@ -14,9 +14,7 @@
 // - `forward`: forward-mode `grad` per parameter, one derivative function for each (the method);
 // - `along`: forward-mode `grad` of `lossAlong` in `t`, one function called once for each parameter
 //   with that parameter's direction as an argument (the form the GPU tiers run);
-// - `reverse`: reverse-mode `grad` with respect to every parameter, one call (change 0056);
-// - `probe`: the same reverse-mode derivative with its loop headers rewritten, so the CPU tier's
-//   code generator runs it where at the pin it falls back to the interpreter (`match.ts`).
+// - `reverse`: reverse-mode `grad` with respect to every parameter, one call (change 0056).
 //
 // Four arms:
 //
@@ -416,14 +414,13 @@ if (results.cpu !== undefined) {
 }
 const codegenOf = results.oracle?.counts ?? results.cpu?.counts ?? [];
 table(
-  'Building the derivatives (oracle arm, ms): grad calls / compileModuleJs; functions added; tape bytes; probe rewrites',
-  ['Params', ...FORMS, 'Added (fwd, along, rev)', 'Tape bytes', 'Rewritten'],
+  'Building the derivatives (oracle arm, ms): grad calls / compileModuleJs; functions added; tape bytes',
+  ['Params', ...FORMS, 'Added (fwd, along, rev)', 'Tape bytes'],
   codegenOf.map((c) => [
     String(c.count),
     ...FORMS.map((f) => `${fix(c.codegen.gradMs[f])} / ${fix(c.codegen.compileMs[f])}`),
     `${c.codegen.added.forward}, ${c.codegen.added.along}, ${c.codegen.added.reverse}`,
     String(c.codegen.tapeBytes),
-    String(c.codegen.rewritten),
   ]),
 );
 table(
@@ -436,13 +433,12 @@ table(
   ]),
 );
 table(
-  'Each form\'s gradient at the start against forward mode\'s: largest difference over the largest magnitude; values whose f32 bits differ; the probe against reverse mode',
-  ['Arm', 'Params', ...FORMS, 'probe / reverse'],
+  'Each form\'s gradient at the start against forward mode\'s: largest difference over the largest magnitude; values whose f32 bits differ',
+  ['Arm', 'Params', ...FORMS],
   [...(results.cpu?.counts.map((c) => ['cpu', c] as const) ?? []), ...(results.oracle?.counts.map((c) => ['oracle', c] as const) ?? [])].map(([arm, c]) => [
     arm,
     String(c.count),
     ...FORMS.map((f) => (c.agreement[f] === undefined ? 'n/a' : `${c.agreement[f]!.relative.toExponential(1)}; ${c.agreement[f]!.differ} of ${c.count}`)),
-    c.probeAgainstReverse === undefined ? 'n/a' : `${c.probeAgainstReverse.differ} of ${c.count} differ`,
   ]),
 );
 if (programs.length > 0) {

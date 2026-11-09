@@ -1,7 +1,5 @@
 // Experiment 7: what every arm shares and that needs no compiler at run time: the optimizer, the
-// statistics of the times, and the probe that rewrites a reverse-mode derivative's loop headers.
-
-import type { Expr, FuncDecl, ModuleDecl, Stmt } from 'typeshade';
+// statistics of the times.
 
 /** Adam, with the usual defaults: the step the descent takes with each gradient. */
 export class Adam {
@@ -108,51 +106,4 @@ export function gradientDistance(a: readonly number[], b: readonly number[]): { 
     if (!Object.is(Math.fround(a[i]!), Math.fround(b[i]!))) differ++;
   }
   return { relative: scale === 0 ? 0 : largest / scale, differ };
-}
-
-const I32 = { kind: 'scalar', scalar: 'i32' } as const;
-
-/**
- * THE PROBE. At the pin, reverse mode writes each loop it generates as `for (iter = 0; …)`, a loop
- * whose first statement is an assignment, and the CPU tier's code generator takes only a `let` or a
- * `var` there (`emitForInit`, `src/core/cpu-codegen.ts`, line 1655, at the pin). So the whole
- * derivative falls back to the interpreter. This rewrite moves each such assignment before its loop
- * and gives the loop a declaration of an unused counter instead: the same statements in the same
- * order, which the generator takes. It measures what the generated code costs, which the pin does
- * not run; it is a probe, not the pin's behaviour.
- */
-export function withLoopInitsHoisted(m: ModuleDecl): { module: ModuleDecl; rewritten: number } {
-  let rewritten = 0;
-  let fresh = 0;
-  const rewrite = (body: readonly Stmt[]): Stmt[] => {
-    const out: Stmt[] = [];
-    for (const s of body) {
-      if (s.s === 'for') {
-        const inner = { ...s, body: rewrite(s.body) };
-        if (s.init.s === 'assign' || s.init.s === 'assignOp') {
-          rewritten++;
-          const zero: Expr = { op: 'lit', type: I32, value: 0 } as Expr;
-          out.push(s.init);
-          out.push({ ...inner, init: { s: 'var', name: `probe_unused_${fresh++}`, type: I32, init: zero } as Stmt });
-        } else out.push(inner);
-      } else if (s.s === 'if') {
-        out.push({
-          ...s,
-          arms: s.arms.map((a) => ({ ...a, body: rewrite(a.body) })),
-          ...(s.elseBody !== undefined ? { elseBody: rewrite(s.elseBody) } : {}),
-        });
-      } else if (s.s === 'switch') {
-        out.push({
-          ...s,
-          cases: s.cases.map((c) => ({ ...c, body: rewrite(c.body) })),
-          ...(s.defaultBody !== undefined ? { defaultBody: rewrite(s.defaultBody) } : {}),
-        });
-      } else out.push(s);
-    }
-    return out;
-  };
-  // Every function: the rewrite keeps the meaning of any body, and the helpers a derivative calls
-  // (`g_vjp`) are generated the same way.
-  const funcs: FuncDecl[] = m.funcs.map((f) => ({ ...f, body: rewrite(f.body) }));
-  return { module: { ...m, funcs }, rewritten };
 }
