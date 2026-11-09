@@ -2,8 +2,12 @@
 
 This note records the design of a loop in which a model writes a plan for the sound of a picture
 and the engine renders the plan. The owner approved the design in the conversation on 2026-11-09.
-Experiment 8 (`docs/experiments.md`, section 8) tests its first part. Nothing in this note is built
-yet. The statements about what the engine will do are design, not measurement.
+Experiment 8 (`docs/experiments.md`, section 8) tests its first part. Built, at the pin `415b276a`:
+the plan format and its validator and the analyzers (pull request #36), the kinds, the spatial
+chain, the layered render and the master (pull request #38, record
+`docs/records/08-sound-design-container.md`). Not built: the mix-profile matcher (item 4) and the speed
+work (item 5) of the section "What the engine must gain, in order". The device runs are pending. The statements about what the engine will do are design,
+not measurement.
 
 ## Why one generated track fails
 
