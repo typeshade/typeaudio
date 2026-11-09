@@ -99,6 +99,7 @@ no ducking, no shelves, no snap, no loudness target and no limiter.
 render (the stems summed). `DEFAULT_RULES` holds the thresholds, `layerOverlap` 0.7 or less,
 `duckingDb` 3 or more and `reverbRatioDb` -20 to 0 among the new ones. They are starting values.
 Since b206a91 (pull request #50) the harness scores the checklist on every tier that renders the whole clip.
+The stand-in dialogue stems differ by event since bfb003f (pull request #52); the `variation` of the layered render above read the same stem twice.
 
 ## The numbers
 
