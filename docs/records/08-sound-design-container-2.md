@@ -376,6 +376,7 @@ What moved, and why:
    index-based key gives no such clump. With the old key the window peak falls from 0.413 to 0.258 before the master,
    and with #49's draws at their centre it falls to 0.341 only. The next peak of the eef3eba5 render, 0.520 at 23.067 s,
    would give about 19.0 dB (inference, not rendered). The cause is a draw, not a rule of the render.
+   The clump is prevented since 9baa65f (pull request #63); the numbers above are before it.
 6. Small moves with no single cause named: `dynamics.contrastLu` 7.027 to 7.780, `balance.mudShare` 0.049 to 0.071,
    `balance.layerOverlap` 0.271 to 0.238, `space.correlation` 0.670 to 0.640, `space.reverbRatioDb` -2.354 to -2.754,
    `position.panCorrelation` 0.824 to 0.832 and `balance.tiltDbPerOctave` -4.666 to -4.723. All the kinds and the

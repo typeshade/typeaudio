@@ -107,9 +107,14 @@ export interface MakeOptions {
 
 const frames = (seconds: number, sr: number): number => Math.max(1, Math.round(seconds * sr));
 
+/** The most grains of one cloud that sound at the same time (`docs/sound-design-loop.md`, "The kinds"). */
+export const MAX_SOUNDING = 2;
+
 /**
  * Draws grains of `cloud` over `window` seconds into the slots `from` to `to` of `unit`, at least
- * one; returns the last frame.
+ * one; returns the last frame. A drawn start that would be the third grain sounding at once is
+ * skipped, and the scan goes on to the next frame that starts a grain: the draw stays a function of
+ * the cloud's seed alone.
  */
 function drawGrains(
   unit: Footstep | Cloth,
@@ -126,6 +131,12 @@ function drawGrains(
     const word = cloud.draw(t);
     if (cloud.starts(word)) {
       const g: Grain = cloud.grain(t, word);
+      let sounding = 0;
+      for (let i = from; i < slot; i++) {
+        const o = unit[names[i]!];
+        if (o.start + o.length > t) sounding++;
+      }
+      if (sounding >= MAX_SOUNDING) continue;
       unit[names[slot++]!] = g;
       end = Math.max(end, g.start + g.length);
     }

@@ -263,6 +263,39 @@ describe('the lanes of a plan', () => {
     }
   }, 30000);
 
+  test('no event of footstep or cloth has more than two grains of one cloud sounding at once', () => {
+    const step = p.events.find((e) => e.kind === 'footstep')!;
+    const cloth = p.events.find((e) => e.kind === 'cloth')!;
+    const grains = (e: typeof step, key: number): { start: number; length: number }[][] => {
+      const made = makeLane(e, { sr: SR, key });
+      const g = (
+        u: Record<string, { peak: number; start: number; length: number }>,
+        names: string[],
+      ) => names.map((n) => u[n]!).filter((x) => x.peak > 0);
+      if (made.kind === 'footstep') {
+        const f = made.lane.footstep as unknown as Record<string, never>;
+        return [g(f, ['g0', 'g1', 'g2']), g(f, ['g3', 'g4', 'g5', 'g6', 'g7'])];
+      }
+      const c = (made as Made & { kind: 'cloth' }).lane.cloth as unknown as Record<string, never>;
+      return [g(c, ['g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7'])];
+    };
+    for (const e of [step, cloth]) {
+      for (let k = 1; k <= 200; k++) {
+        const key = Math.imul(k, 2654435761) >>> 0;
+        const once = grains(e, key);
+        expect(grains(e, key), `${e.kind}, key ${k}, repeats`).toEqual(once);
+        for (const cloud of once) {
+          for (const x of cloud) {
+            const n = cloud.filter(
+              (o) => o.start <= x.start && o.start + o.length > x.start,
+            ).length;
+            expect(n, `${e.kind}, key ${k}`).toBeLessThanOrEqual(2);
+          }
+        }
+      }
+    }
+  }, 30000);
+
   test('a whoosh with a higher brightness has more energy above 3 kHz', () => {
     const base = p.events.find((e) => e.kind === 'whoosh')!;
     const hi = (m: number): number => {

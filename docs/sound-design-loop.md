@@ -123,6 +123,11 @@ draws its take from the event's key within its macro ranges, so repeated events 
 | `cloth`    | grain      | foley    | `fabric`, `speed`           |
 | `voice`    | stem       | dialogue | none                        |
 
+The grains of one event do not clump. In `footstep` and `cloth`, `drawGrains` lets no more than two
+grains of one cloud sound at the same time (N = 2). It skips a drawn start that would be a third.
+The draw stays deterministic from the event's key. Two grains still make a thud with a crunch, or a
+cloth burst. A third at the same moment only adds a spike of the sum of their peaks.
+
 The list is a starting set. Each experiment and each later change may add kinds.
 
 ### An event
