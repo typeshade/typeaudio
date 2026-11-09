@@ -20,7 +20,7 @@ A device run uses two environment variables:
 2. Install Node.js 22. The container record used Node v22.23.4. The CPU tier runs in Node.
 3. Clone the repository. Run `git clone https://github.com/typeshade/typeaudio.git`.
 4. Enter the repository. Run `cd typeaudio`.
-5. Check out the commit that the record will name. Run `git checkout <commit>`.
+5. Check out the commit that the record will name. Run `git checkout <commit>`. For experiment 8 the commit is `7ecf6764bc2f002b528d09f735aace92fcfe1181`, the reference commit of the device runs since 2026-11-09 (the commit of the third container run, `docs/records/08-sound-design-container-3.md`).
 6. Install the dependencies. Run `bun install`.
 7. Name the Chrome binary. Run `$env:TYPESHADE_CHROMIUM = "C:\Program Files\Google\Chrome\Application\chrome.exe"`.
 8. Select the device GPU. Run `$env:TYPESHADE_GPU = "device"`.
@@ -39,7 +39,7 @@ The CPU tier runs separately because a whole-clip CPU pass took 28.8 minutes on 
 2. Install Node.js 22. The CPU tier runs in Node.
 3. Clone the repository. Run `git clone https://github.com/typeshade/typeaudio.git`.
 4. Enter the repository. Run `cd typeaudio`.
-5. Check out the commit that the record will name. Run `git checkout <commit>`.
+5. Check out the commit that the record will name. Run `git checkout <commit>`. For experiment 8 the commit is `7ecf6764bc2f002b528d09f735aace92fcfe1181`, the reference commit of the device runs since 2026-11-09 (the commit of the third container run, `docs/records/08-sound-design-container-3.md`).
 6. Install the dependencies. Run `bun install`.
 7. Name the Chrome binary. Run `export TYPESHADE_CHROMIUM="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`.
 8. Select the device GPU. Run `export TYPESHADE_GPU=device`.
