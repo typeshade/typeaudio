@@ -394,8 +394,11 @@ record 08-2 and this record:
    and a `riser` have their onset against the anchor. Not tested.
 5. `master.crestDb` of the layered render: 19.186 dB (met) to 23.281 dB (fails; the bound is 20 dB).
    `master.truePeakDbtp`: -5.509 dBTP to -1.161 dBTP. The CPU peak of the whole clip is 0.854 against 0.530 in
-   record 08, at the same loudness target. Open, as in record 08-2: no pull request names this change. Candidates,
-   not tested: #46, #49 and #48.
+   record 08, at the same loudness target. Fact, from record 08-2 item 5 (the measurement of pull request #61, made
+   at `eef3eba5` and not repeated here): the peak is the `foley` stem alone, at 3.2285 s, the event `cloth-1`. The
+   id-based event key of #43 gives it four grains that start within 8 ms of each other, and they sum. This run
+   renders the same bits as `eef3eba5` (see above), so the fact holds for this commit. Open: the clump is a draw of
+   grain starts, and the record names no change of the kinds that spreads them.
 6. Small moves with no single cause named: `dynamics.contrastLu`, `balance.mudShare`, `balance.layerOverlap`,
    `space.correlation`, `space.reverbRatioDb`, `position.panCorrelation` and `balance.tiltDbPerOctave`. No verdict
    of these measures changed. Listed as open, as in record 08-2.
@@ -462,15 +465,15 @@ record 08-2, read against this run.
 
 ## Open items
 
-| Item                                                                                         | Reason                                                                                                                                     | Next action                                                                        |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| No tier keeps the 21.33 ms budget                                                            | WebGPU takes 25.51 ms at the median (1,328 of 1,407 blocks are over); the CPU tier and WebGL2 run the convolution and the lanes on the CPU | A device run; the next steps of `docs/lanes.md`; change 0092 for the CPU tier      |
-| `history` and `pack` store twice                                                             | The WebGL2 sentence above names the fix                                                                                                    | Fold the branches into one store                                                   |
-| `gather` writes `raws` other than at `i`                                                     | The WebGL2 sentence above; nine calls                                                                                                      | Decide whether `gather` has a form that WebGL2 can draw                            |
-| `master.crestDb` fails on the layered render (23.28 dB, bound 20 dB)                         | The peak of the clip rose from 0.530 to 0.854 at the same loudness. No cause is named                                                      | Score the stems and the dry render, and find the layer whose peak rose             |
-| `accumulate2`, `place`, `fftStage` and `layers` take 16 % to 39 % more GPU time than in 08-2 | No pull request changed them. The load of this run was higher                                                                              | Run command 2 again on a quiet container                                           |
-| Thresholds of `DEFAULT_RULES`                                                                | Starting values                                                                                                                            | Fit them on more plans                                                             |
-| The device runs                                                                              | The container's SwiftShader is not a GPU                                                                                                   | The owner runs `docs/device-runs.md` at `7ecf6764bc2f002b528d09f735aace92fcfe1181` |
+| Item                                                                                         | Reason                                                                                                                                                 | Next action                                                                                  |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| No tier keeps the 21.33 ms budget                                                            | WebGPU takes 25.51 ms at the median (1,328 of 1,407 blocks are over); the CPU tier and WebGL2 run the convolution and the lanes on the CPU             | A device run; the next steps of `docs/lanes.md`; change 0092 for the CPU tier                |
+| `history` and `pack` store twice                                                             | The WebGL2 sentence above names the fix                                                                                                                | Fold the branches into one store                                                             |
+| `gather` writes `raws` other than at `i`                                                     | The WebGL2 sentence above; nine calls                                                                                                                  | Decide whether `gather` has a form that WebGL2 can draw                                      |
+| `master.crestDb` fails on the layered render (23.28 dB, bound 20 dB)                         | The peak of the clip rose from 0.530 to 0.854 at the same loudness. The cause is the grain starts of `cloth-1` (record 08-2, item 5, pull request #61) | Spread the grain starts of a footstep and a cloth (a change of the kinds, the owner decides) |
+| `accumulate2`, `place`, `fftStage` and `layers` take 16 % to 39 % more GPU time than in 08-2 | No pull request changed them. The load of this run was higher                                                                                          | Run command 2 again on a quiet container                                                     |
+| Thresholds of `DEFAULT_RULES`                                                                | Starting values                                                                                                                                        | Fit them on more plans                                                                       |
+| The device runs                                                                              | The container's SwiftShader is not a GPU                                                                                                               | The owner runs `docs/device-runs.md` at `7ecf6764bc2f002b528d09f735aace92fcfe1181`           |
 
 ## Checks of this pull request
 
