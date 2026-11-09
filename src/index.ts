@@ -60,6 +60,7 @@ export { limiterGain, normalizationGain } from './master.ts';
 export {
   BLOCK_BUDGET_MS,
   SAMPLE_RATE,
+  MOMENT_GAP,
   SNAP_WINDOW,
   onePlan,
   renderPlan,

@@ -68,12 +68,27 @@ export interface Rendered {
   placed: { id: string; start: number; end: number }[];
 }
 
-/** The plan with every event made one `impact` on `effects` at the same moment: the one-layer version. */
+/** The events of a moment run together when each starts within this many seconds of the one before. */
+export const MOMENT_GAP = 0.1;
+
+/**
+ * The one-layer version of a plan (docs/experiments.md, section 8, method step 2): the same moments,
+ * one sound at each. Events that start within `MOMENT_GAP` of the one before are one moment. The
+ * moment keeps its loudest event's time, intensity and position, and its sound is one `impact` on
+ * `effects`.
+ */
 export function onePlan(plan: SoundPlan): SoundPlan {
+  const moments: PlanEvent[][] = [];
+  for (const e of plan.events) {
+    const last = moments[moments.length - 1];
+    if (last !== undefined && e.t - last[last.length - 1]!.t < MOMENT_GAP) last.push(e);
+    else moments.push([e]);
+  }
   return {
     ...plan,
-    events: plan.events.map(
-      (e): PlanEvent => ({
+    events: moments.map((m): PlanEvent => {
+      const e = m.reduce((a, b) => (b.intensity > a.intensity ? b : a));
+      return {
         id: e.id,
         t: e.t,
         kind: 'impact',
@@ -82,8 +97,8 @@ export function onePlan(plan: SoundPlan): SoundPlan {
         position: e.position,
         macros: { weight: 0.5, decay: 0.5, crack: 0.5 },
         sync: 'onset',
-      }),
-    ),
+      };
+    }),
   };
 }
 

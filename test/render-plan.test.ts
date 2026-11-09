@@ -263,12 +263,22 @@ describe('renderPlan on the CPU tier', { timeout: 120000 }, () => {
     expect(r.master.lufsBefore).toBeCloseTo(integratedLoudness(raw.mix, SR) - 0, -1);
   });
 
-  test('the one-layer plan is the same moments, every one an impact on effects', () => {
+  test('the one-layer plan is the same moments, one impact on effects at each', () => {
     const plan = validatePlan(fixture);
     const one = onePlan(plan);
-    expect(one.events.map((e) => e.t)).toEqual(plan.events.map((e) => e.t));
+    expect(one.events.length).toBeLessThan(plan.events.length);
     expect(new Set(one.events.map((e) => e.layer))).toEqual(new Set(['effects']));
     expect(new Set(one.events.map((e) => e.kind))).toEqual(new Set(['impact']));
+    // Two events a moment apart are one moment, and a third far away is another.
+    const three = {
+      ...plan,
+      events: [
+        plan.events[0]!,
+        { ...plan.events[1]!, id: 'x', t: plan.events[0]!.t + 0.05 },
+        { ...plan.events[2]!, id: 'y', t: 20 },
+      ],
+    };
+    expect(onePlan(three).events).toHaveLength(2);
     expect(() => validatePlan(one)).not.toThrow();
   });
 });
