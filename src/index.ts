@@ -55,7 +55,7 @@ export {
   gather,
 } from './kinds/lanes.shade.ts';
 export { noise } from './kinds/noise.shade.ts';
-export { eventKey, KIND_GAIN, KIND_INDEX, makeLane } from './kinds/make.ts';
+export { eventKey, KIND_GAIN, KIND_INDEX, KIND_PEAK, makeLane } from './kinds/make.ts';
 export type { Made, MakeOptions } from './kinds/make.ts';
 export {
   Spatial,

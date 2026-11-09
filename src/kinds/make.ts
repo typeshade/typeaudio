@@ -41,9 +41,16 @@ export const KIND_INDEX = {
 } as const;
 
 /**
- * The gain that brings each kind's peak, at intensity 1, to about 0.5 before the spatial chain
- * (measured on the fixture plan, 2026-11-09). The loudness of the mix is set by the master, so
- * these only set how the kinds sit against one another.
+ * The peak of an event of intensity 1 before the spatial chain. The loudness of the mix is set by
+ * the master, so this only sets how the kinds sit against one another.
+ */
+export const KIND_PEAK = 0.5;
+
+/**
+ * The gain that brings the peak of each procedural kind, at intensity 1, to about `KIND_PEAK`
+ * (measured on the fixture plan, 2026-11-09). `footstep` and `cloth` have no entry: they are drawn
+ * from a cloud, so `makeLane` reaches `KIND_PEAK` for them by scaling the drawn grains
+ * (`fitPeak`).
  */
 export const KIND_GAIN: Record<string, number> = {
   whoosh: 0.38,
@@ -52,8 +59,6 @@ export const KIND_GAIN: Record<string, number> = {
   riser: 0.17,
   wind: 0.35,
   drone: 0.4,
-  footstep: 0.45,
-  cloth: 5.5,
   voice: 1,
 };
 
@@ -83,6 +88,27 @@ export const eventKey = (seed: number, id: string): number => mix32(seed >>> 0, 
 
 /** The gain of an event: intensity times the kind's calibration. */
 const level = (e: PlanEvent): number => e.intensity * (KIND_GAIN[e.kind] ?? 1);
+
+/**
+ * Scales the grains of `unit` so that its peak over its first `length` frames is `target`. The unit
+ * ticks here, so the unit that goes into the lane is a fresh one that takes its grains: its `age`
+ * is 0 and the lowpass of a `Cloth` is as a new one has it. `tick()` is linear in the grains'
+ * `peak` fields, so one measurement is enough. A measured peak that is 0 or not finite leaves the
+ * grains as drawn (`drawGrains` always gives one grain, so a peak of 0 needs a level of 0).
+ */
+function fitPeak<U extends Footstep | Cloth>(unit: U, fresh: U, length: number, target: number): U {
+  const names = ['g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7'] as const;
+  let measured = 0;
+  for (let t = 0; t < length; t++) measured = Math.max(measured, Math.abs(unit.tick()));
+  const scale = target / measured;
+  const ok = measured > 0 && Number.isFinite(scale);
+  for (const n of names) {
+    const g = unit[n];
+    if (ok) g.peak *= scale;
+    fresh[n] = g;
+  }
+  return fresh;
+}
 
 /** One lane of its kind, tagged by the kind, and how many frames the sound lasts. */
 export type Made = { length: number } & (
@@ -285,20 +311,20 @@ export function makeLane(e: PlanEvent, o: MakeOptions): Made {
         .density(100)
         .lengths(0.04 * thudLen, 0.09 * thudLen)
         .pitches(50 * pitch, (90 + 120 * (1 - m.weight!)) * pitch)
-        .level((0.5 + 0.5 * m.weight!) * (0.75 + 0.5 * j(23)) * lvl)
+        .level((0.5 + 0.5 * m.weight!) * (0.75 + 0.5 * j(23)))
         .seed(mix32(key, 11));
       const crunch = new Cloud(sr)
         .density(60 / pace)
         .lengths(0.004 * crunchLen, 0.02 * crunchLen)
         .pitches((900 + 1500 * m.surface!) * band, (2500 + 3500 * m.surface!) * band)
-        .level(0.3 * lvl)
+        .level(0.3)
         .seed(mix32(key, 12));
       // The thud takes the first three slots, the crunch the rest.
       const unit = new Footstep();
       const a = drawGrains(unit, thud, 0.03 * pace, sr, 0, 3);
       const b = drawGrains(unit, crunch, 0.08 * pace, sr, 3, 8);
-      lane.footstep = unit;
       length = Math.max(a, b, 1) + 1;
+      lane.footstep = fitPeak(unit, new Footstep(), length, e.intensity * KIND_PEAK);
       return { kind: 'footstep', lane, length };
     }
     case 'cloth': {
@@ -312,12 +338,14 @@ export function makeLane(e: PlanEvent, o: MakeOptions): Made {
         .density(8 / window)
         .lengths(0.01 * len, 0.04 * len)
         .pitches((1500 + 2500 * m.fabric!) * band, (4000 + 4000 * m.fabric!) * band)
-        .level(0.15 * lvl)
+        .level(0.15)
         .seed(mix32(key, 13));
       const unit = new Cloth();
       unit.lp.k = (0.6 - 0.4 * m.fabric!) * (0.9 + 0.2 * j(34));
       length = drawGrains(unit, cloud, window, sr, 0, 8) + 1;
-      lane.cloth = unit;
+      const fresh = new Cloth();
+      fresh.lp.k = unit.lp.k;
+      lane.cloth = fitPeak(unit, fresh, length, e.intensity * KIND_PEAK);
       return { kind: 'cloth', lane, length };
     }
     default: {
