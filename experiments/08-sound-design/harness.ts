@@ -39,6 +39,12 @@ export function corrected(p: SoundPlan): SoundPlan {
 export interface GroupSummary {
   readonly calls: string;
   readonly fused: boolean;
+  /** The tier the group ran on, and why it ran on a later tier than the plan's, where the report says. */
+  readonly tier: string;
+  readonly dispatches: number;
+  readonly why?: string;
+  /** The mean GPU time of the group over the blocks, in milliseconds, where the device measured it. */
+  readonly gpuMs?: number;
 }
 
 export interface FullRun {
@@ -139,7 +145,19 @@ export async function runTier(
         reportTier: r.tier,
         dispatches: { first: r.reports[0]!.dispatches, last: last.dispatches },
         submissions: last.submissions,
-        groups: last.groups.map((g) => ({ calls: g.calls.join('+'), fused: g.fused })),
+        groups: last.groups.map((g, i) => {
+          const times = r.reports.flatMap((rep) => rep.groups[i]?.gpuTime ?? []);
+          return {
+            calls: g.calls.join('+'),
+            fused: g.fused,
+            tier: g.tier,
+            dispatches: g.dispatches,
+            ...(g.why === undefined ? {} : { why: g.why }),
+            ...(times.length === 0
+              ? {}
+              : { gpuMs: times.reduce((a, b) => a + b, 0) / times.length / 1e6 }),
+          };
+        }),
         master: r.master,
         hostMs,
         reverbPrepareMs: r.reverbPrepareMs,
