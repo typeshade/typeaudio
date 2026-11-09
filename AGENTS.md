@@ -77,9 +77,11 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
 ## Baselines
 
 - Compiler: the pin, `typeshade` in `package.json`, a source tarball of `typeshade/typeshade`
-  `main` at `87af4eb0d9d15f02b66b8341b72cab0944290472` (2026-11-02), set by pull request #15
+  `main` at `415b276a7408936cb483d05ca8bb39e797b05966` (2026-11-08), set by pull request #34
   (`CLAUDE.md`, "The compiler pin"). The first pin was `145666068ca5d6ecfba32aa0ea4289cf0fc3b762`,
-  set by pull request #5. At the pin, proposals 0108, 0109, 0110, 0116 and 0118 are `implemented`.
+  set by pull request #5. The second was `87af4eb0d9d15f02b66b8341b72cab0944290472`, set by pull
+  request #15. At the pin, proposals 0108, 0109, 0110, 0116, 0118, 0119, 0121, 0122, 0123, 0128
+  and 0129 are `implemented`, and 0120 is `accepted` and not implemented.
   `docs/compiler-asks.md` records each proposal's status, and `compiler-changes.md` the proposals
   that the moves of the pin passed.
 - This repository: the head of `main` is the baseline. A pull request names the commit it starts

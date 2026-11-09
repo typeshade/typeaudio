@@ -31,6 +31,7 @@ export function explain(reports: readonly FuseReport[]): string {
   lines.push(
     `all blocks: ${count(all.dispatches, unit)}, ${count(all.submissions, 'submission')}${gpu}`,
   );
+  if (all.tier === 'webgpu') lines.push(scratch(all.webgpuScratch));
   if (all.tier === 'cpu') {
     lines.push(
       'The CPU tier runs the calls one after another and fuses none; it is the reference a fused group is held to.',
@@ -40,14 +41,32 @@ export function explain(reports: readonly FuseReport[]): string {
 }
 
 /**
- * Where a group ran, from the `tier` the report gives it (compiler change 0118). A group on WebGPU
- * has one workgroup shape for each dispatch it made (compiler surface §71); a group on another tier
- * is named by its tier.
+ * Where a group ran, from the `tier` the report gives it (compiler change 0118) and the
+ * `dispatches` it gives each group (compiler change 0121). The count includes push stages,
+ * reduction folds and store-only entries, so a fused group with a fold shows the fold. A group on
+ * another tier is named by its tier.
  */
 function where(group: FuseReport['groups'][number]): string {
   if (group.tier !== 'webgpu') return `on ${TIER[group.tier]}`;
-  if (group.fused) return 'fused into one dispatch';
-  return count(group.workgroupShapes?.length ?? 0, 'dispatch');
+  if (group.fused) {
+    return group.dispatches === 1
+      ? 'fused into one dispatch'
+      : `fused into one loop, ${count(group.dispatches, 'dispatch')} in all`;
+  }
+  return count(group.dispatches, 'dispatch');
+}
+
+/**
+ * The scratch storage of the WebGPU plans (compiler change 0128). A report without the member
+ * means unknown, which `mergeReports` keeps apart from zero, so it prints as not reported. The
+ * bytes are descriptor sizes, not physical GPU memory.
+ */
+function scratch(s: FuseReport['webgpuScratch']): string {
+  if (s === undefined) return 'WebGPU scratch storage: not reported';
+  return (
+    `WebGPU scratch storage: ${count(s.allocations, 'allocation')} (${count(s.allocatedBytes, 'byte')}), ` +
+    `${count(s.reuses, 'reuse')} (${count(s.reusedBytes, 'byte')}), sizes are descriptor bytes`
+  );
 }
 
 function count(n: number, noun: string): string {
