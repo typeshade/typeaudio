@@ -1,0 +1,450 @@
+{
+  "version": 1,
+  "description": "A fantasy scene of 30 s: a traveller crosses a stone hall, a spell wakes, three gates break and a final blow ends the scene. Hand written. The picture times are hand written too: a cut at 6.0, 14.5 and 23.0 s and the peaks of motion in `picture`.",
+  "clip": {
+    "duration": 30,
+    "fps": 24
+  },
+  "scene": {
+    "room": {
+      "size": [18, 24, 9],
+      "material": "stone"
+    },
+    "listener": {
+      "position": [0, 1.6, 0],
+      "yaw": 0
+    }
+  },
+  "master": {
+    "lufs": -23,
+    "truePeak": -1
+  },
+  "seed": 8,
+  "picture": {
+    "cuts": [6, 14.5, 23],
+    "motion": [3.2, 9.8, 19.4, 21.7, 27]
+  },
+  "events": [
+    {
+      "id": "wind-bed",
+      "t": 0,
+      "kind": "wind",
+      "layer": "ambience",
+      "intensity": 0.35,
+      "position": {
+        "x": 0,
+        "y": 0.2,
+        "distance": 20
+      },
+      "macros": {
+        "gust": 0.3,
+        "howl": 0.2
+      },
+      "duration": 30
+    },
+    {
+      "id": "wind-gust",
+      "t": 12,
+      "kind": "wind",
+      "layer": "ambience",
+      "intensity": 0.45,
+      "position": {
+        "x": 0.7,
+        "y": 0.3,
+        "distance": 14
+      },
+      "macros": {
+        "gust": 0.8,
+        "howl": 0.5
+      },
+      "duration": 10
+    },
+    {
+      "id": "drone-a",
+      "t": 0,
+      "kind": "drone",
+      "layer": "music",
+      "intensity": 0.4,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "distance": 10
+      },
+      "macros": {
+        "pitch": 0.2,
+        "darkness": 0.7
+      },
+      "duration": 8
+    },
+    {
+      "id": "drone-b",
+      "t": 6,
+      "kind": "drone",
+      "layer": "music",
+      "intensity": 0.45,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "distance": 10
+      },
+      "macros": {
+        "pitch": 0.35,
+        "darkness": 0.5
+      },
+      "duration": 12
+    },
+    {
+      "id": "drone-c",
+      "t": 23,
+      "kind": "drone",
+      "layer": "music",
+      "intensity": 0.55,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "distance": 10
+      },
+      "macros": {
+        "pitch": 0.15,
+        "darkness": 0.8
+      },
+      "duration": 7
+    },
+    {
+      "id": "step-1",
+      "t": 1,
+      "kind": "footstep",
+      "layer": "foley",
+      "intensity": 0.5,
+      "position": {
+        "x": -0.6,
+        "y": -0.7,
+        "distance": 5
+      },
+      "macros": {
+        "surface": 0.3,
+        "weight": 0.5,
+        "pace": 0.5
+      }
+    },
+    {
+      "id": "step-2",
+      "t": 1.5,
+      "kind": "footstep",
+      "layer": "foley",
+      "intensity": 0.5,
+      "position": {
+        "x": -0.2,
+        "y": -0.7,
+        "distance": 4
+      },
+      "macros": {
+        "surface": 0.3,
+        "weight": 0.55,
+        "pace": 0.5
+      }
+    },
+    {
+      "id": "step-3",
+      "t": 2,
+      "kind": "footstep",
+      "layer": "foley",
+      "intensity": 0.5,
+      "position": {
+        "x": 0.2,
+        "y": -0.7,
+        "distance": 3
+      },
+      "macros": {
+        "surface": 0.35,
+        "weight": 0.5,
+        "pace": 0.5
+      }
+    },
+    {
+      "id": "step-4",
+      "t": 27,
+      "kind": "footstep",
+      "layer": "foley",
+      "intensity": 0.45,
+      "position": {
+        "x": 0.5,
+        "y": -0.6,
+        "distance": 3.5
+      },
+      "macros": {
+        "surface": 0.3,
+        "weight": 0.4,
+        "pace": 0.4
+      }
+    },
+    {
+      "id": "cloth-1",
+      "t": 3,
+      "kind": "cloth",
+      "layer": "foley",
+      "intensity": 0.35,
+      "position": {
+        "x": 0,
+        "y": -0.2,
+        "distance": 2
+      },
+      "macros": {
+        "fabric": 0.6,
+        "speed": 0.4
+      },
+      "duration": 0.6
+    },
+    {
+      "id": "shimmer-a",
+      "t": 3.2,
+      "kind": "shimmer",
+      "layer": "effects",
+      "intensity": 0.6,
+      "position": {
+        "x": 0.1,
+        "y": 0.5,
+        "distance": 8
+      },
+      "macros": {
+        "density": 0.5,
+        "height": 0.6
+      },
+      "duration": 3
+    },
+    {
+      "id": "voice-1",
+      "t": 5,
+      "kind": "voice",
+      "layer": "dialogue",
+      "intensity": 0.7,
+      "position": {
+        "x": -0.3,
+        "y": 0.1,
+        "distance": 3
+      },
+      "macros": {},
+      "duration": 1.2
+    },
+    {
+      "id": "voice-2",
+      "t": 11,
+      "kind": "voice",
+      "layer": "dialogue",
+      "intensity": 0.7,
+      "position": {
+        "x": 0.3,
+        "y": 0.1,
+        "distance": 3
+      },
+      "macros": {},
+      "duration": 1.5
+    },
+    {
+      "id": "voice-3",
+      "t": 18,
+      "kind": "voice",
+      "layer": "dialogue",
+      "intensity": 0.7,
+      "position": {
+        "x": -0.2,
+        "y": 0.1,
+        "distance": 3
+      },
+      "macros": {},
+      "duration": 2
+    },
+    {
+      "id": "whoosh-a",
+      "t": 9.8,
+      "kind": "whoosh",
+      "layer": "effects",
+      "intensity": 0.6,
+      "position": {
+        "x": -0.5,
+        "y": 0.1,
+        "distance": 6
+      },
+      "macros": {
+        "speed": 0.7,
+        "brightness": 0.5
+      },
+      "duration": 0.5,
+      "sync": "arrive"
+    },
+    {
+      "id": "impact-a",
+      "t": 9.8,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 0.85,
+      "position": {
+        "x": 0.2,
+        "y": 0,
+        "distance": 6
+      },
+      "macros": {
+        "weight": 0.6,
+        "decay": 0.5,
+        "crack": 0.5
+      }
+    },
+    {
+      "id": "whoosh-b",
+      "t": 14.5,
+      "kind": "whoosh",
+      "layer": "effects",
+      "intensity": 0.7,
+      "position": {
+        "x": 0.6,
+        "y": 0.1,
+        "distance": 5
+      },
+      "macros": {
+        "speed": 0.8,
+        "brightness": 0.6
+      },
+      "duration": 0.4,
+      "sync": "arrive"
+    },
+    {
+      "id": "impact-b",
+      "t": 14.5,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 0.9,
+      "position": {
+        "x": -0.3,
+        "y": 0,
+        "distance": 5
+      },
+      "macros": {
+        "weight": 0.7,
+        "decay": 0.6,
+        "crack": 0.6
+      }
+    },
+    {
+      "id": "shimmer-b",
+      "t": 19.4,
+      "kind": "shimmer",
+      "layer": "effects",
+      "intensity": 0.55,
+      "position": {
+        "x": -0.4,
+        "y": 0.6,
+        "distance": 9
+      },
+      "macros": {
+        "density": 0.7,
+        "height": 0.8
+      },
+      "duration": 2.5
+    },
+    {
+      "id": "riser-1",
+      "t": 23,
+      "kind": "riser",
+      "layer": "effects",
+      "intensity": 0.6,
+      "position": {
+        "x": 0,
+        "y": 0.2,
+        "distance": 10
+      },
+      "macros": {
+        "length": 0.8,
+        "pitch": 0.6
+      },
+      "duration": 3,
+      "sync": "arrive"
+    },
+    {
+      "id": "whoosh-c",
+      "t": 21.7,
+      "kind": "whoosh",
+      "layer": "effects",
+      "intensity": 0.65,
+      "position": {
+        "x": 0.5,
+        "y": 0.2,
+        "distance": 5
+      },
+      "macros": {
+        "speed": 0.75,
+        "brightness": 0.6
+      },
+      "duration": 0.4,
+      "sync": "arrive"
+    },
+    {
+      "id": "impact-c",
+      "t": 21.7,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 0.8,
+      "position": {
+        "x": 0.4,
+        "y": 0,
+        "distance": 5
+      },
+      "macros": {
+        "weight": 0.5,
+        "decay": 0.4,
+        "crack": 0.7
+      }
+    },
+    {
+      "id": "whoosh-d",
+      "t": 23,
+      "kind": "whoosh",
+      "layer": "effects",
+      "intensity": 0.8,
+      "position": {
+        "x": -0.6,
+        "y": 0.2,
+        "distance": 6
+      },
+      "macros": {
+        "speed": 0.9,
+        "brightness": 0.7
+      },
+      "duration": 0.45,
+      "sync": "arrive"
+    },
+    {
+      "id": "impact-d",
+      "t": 23,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 1,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "distance": 6
+      },
+      "macros": {
+        "weight": 0.9,
+        "decay": 0.8,
+        "crack": 0.6
+      }
+    },
+    {
+      "id": "shimmer-c",
+      "t": 23,
+      "kind": "shimmer",
+      "layer": "effects",
+      "intensity": 0.7,
+      "position": {
+        "x": 0,
+        "y": 0.5,
+        "distance": 10
+      },
+      "macros": {
+        "density": 0.8,
+        "height": 0.7
+      },
+      "duration": 6
+    }
+  ]
+}
