@@ -766,6 +766,29 @@ Step 6 shows the cache is keyed by the content of `cue.shade.ts`: the old entry 
 old content returns. Step 9 shows the same fault in the other direction. At the end, `src/` was
 restored with `git checkout src`.
 
+### AC. The load and store of a loop-invariant bank element are hoisted out of the loop
+
+- Pressure: the per-lane cost of the shape V kernels of the engine. `cues` (`src/kinds/cue.shade.ts`)
+  costs 1.26 ms per added lane on WebGPU, and the same kernel with the element hoisted costs 0.66 ms
+  (`docs/lanes.md`, step 1b). `synth` (`src/kernels/synth.shade.ts`) has the same loop form: it calls
+  `voices[v].tick()` in an inner loop over `n`, with `v` loop-invariant. Inference: `synth` pays the
+  same cost. We did not measure `synth`.
+- Compiler: the frame loop passes a pointer to the bank element and copies nothing. Each field access
+  is a load or a store on the storage buffer (`docs/lanes.md`, step 1b (a)). The copy the hand-written
+  hoist makes compiles at the pin `415b276a`. Ask: when a loop's body reads and writes `bank[v]` only
+  through one loop-invariant index, and no other path to the element is read or written in the loop,
+  load the element before the loop and store it once after it. The compiler can prove this exact. The
+  issue states the rules it rests on (surface section 65, Rules 8.22, 8.23, 8.25 and 8.29).
+- Workaround: the hand-written hoist in the engine's kernels, `let c = lanes[v]` before the frame loop
+  and `lanes[v] = c` after it. The kind-banks pull request, in progress, applies it.
+- Measured by: `docs/lanes.md`, step 1b, 2026-11-09, at `9a423a0` with the scratch copies of
+  `experiments/08-sound-design/overhead.shade.ts`, `overhead.ts` and `run-overhead.ts` (on `main` at
+  `c3f778f`), Bun 1.4.4, pin `415b276a`, WebGPU on SwiftShader. One lane: `cues` 5.20 ms, hoisted
+  2.69 ms. Nine lanes: 15.31 ms and 7.96 ms. The reproduction is
+  `TYPESHADE_CHROMIUM=<chromium> bun experiments/08-sound-design/run-overhead.ts`.
+- Status: issue #1128 filed 2026-11-09, open. Next action: when the compiler side fixes the issue, set
+  the status to `fixed #1128`, then retire the hand-written hoist (`docs/lanes.md`, section 4).
+
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
@@ -809,6 +832,7 @@ The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the 
 | #1009 | A static field read beside a parameter of its emitted name                                                           | Not read by an ask                                                         | Case 1 (a static field the file writes) fixed by #1042 (`f7aaf725`); case 2 (a static field, an enum member or a namespace constant read beside a parameter of its emitted name) fixed by #1022 (`b76407d5`); both in the pin `415b276a`                                                                                                                                                                                                                                                               |
 | #1017 | `compileModuleJs` runs a reverse-mode derivative with a loop in the interpreter                                      | L                                                                          | Fixed by #1019 (`e30bbe57`), in the pin `415b276a`; retired at the pin `415b276a`: `generateModuleJs(...).fallbacks` is empty for the reverse-mode derivative at 3 to 100 parameters, and the `probe` arm is removed (2026-11-09)                                                                                                                                                                                                                                                                      |
 | #1018 | The pipeline of a reverse-mode derivative with a frame loop grows past usable with the parameter count (SwiftShader) | L                                                                          | Open                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| #1128 | Hoist the load and store of a bank element whose index is loop-invariant                                             | AC                                                                         | Open; filed 2026-11-09                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | none  | A `.shade.ts` module is not rebuilt when a `.shade.ts` module it imports changes (candidate, not yet filed)          | AB                                                                         | Candidate, not yet filed; reproduced 2026-11-09, see ask AB                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ## 4. How a row moves
