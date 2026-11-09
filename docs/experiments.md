@@ -130,7 +130,10 @@ measures ask J where the entry reads a length inside an index.
 container of a Claude Code session is recorded in `docs/records/03-fft-container.md`, as reference
 numbers: WebGPU and WebGL2 on SwiftShader, and the CPU arms in Node and Bun. The device runs are
 pending: one record per device, `docs/records/03-fft-<device>.md`. `test/fft.test.ts` holds the
-1,024-point entry to the reference on the CPU in `bun run test`.
+1,024-point entry to the reference on the CPU in `bun run test`. The record's runs did not get a
+result from variant C on WebGL2. At the pin `415b276a` it returns there (compiler #966 and #970,
+fixed by #1003 and #1014): see the status note at the top of the record. No number of the record
+changed.
 
 The harness departs from the method in four places, each recorded in the record's section "What
 departs from the method":
@@ -294,9 +297,10 @@ departs from the method":
 - The loss takes 16 bins of a 1,024-point DFT by one Goertzel recurrence per bin inside the frame
   loop, not the FFT of experiment 3. `grad` refuses an entry and a value kept in an array
   (`SD0118`). The FFT of experiment 3 holds the loss's bins and measures the match over 512 bins.
-- Beside forward mode per parameter, the harness takes the gradient in three more forms: forward
-  mode along a direction given as an argument, reverse mode, and a probe that rewrites reverse
-  mode's loop headers, which the CPU tier's code generator hands to the interpreter at the pin.
+- Beside forward mode per parameter, the harness takes the gradient in two more forms: forward
+  mode along a direction given as an argument, and reverse mode. A third form, a probe that
+  rewrote reverse mode's loop headers, retired at the pin `415b276a`: the CPU tier's code generator
+  compiles reverse mode's loops there (compiler issue #1017, fixed by #1019).
 - At the pin a derivative reaches neither the host face nor the manifest (change 0056, step 4). The
   CPU tier runs the derivatives through `compileModuleJs`, the host face's code generator, and the
   GPU tiers through a packed program whose placeholders take the bodies `grad` builds.

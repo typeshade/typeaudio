@@ -8,6 +8,15 @@
 > parameter count on this machine. They do not stand for a GPU. The device runs of experiment 7 are
 > pending (`docs/experiments.md`, section 7).
 
+> **Status of the `probe` arm: retired at the pin `415b276a` (2026-11-09).** This record's runs
+> include the `probe` form, which the harness no longer has. The compiler fixed issue #1017 in #1019,
+> and the pin holds it. At the pin, `generateModuleJs(...).fallbacks` is empty for the reverse-mode
+> derivative of the harness's loss at 3, 10, 30 and 100 parameters, at `f32` and at `f64`, so the
+> CPU tier's code generator runs `loss_vjp` with no rewrite. A smoke run of the harness with both
+> forms at 3 and 10 parameters gave the `probe` gradient equal to the `reverse` gradient bit for bit
+> on the CPU arm and on the oracle. The numbers below are unchanged, and the `probe` rows and
+> sentences stay as the record of the run.
+
 ## The run
 
 | Item         | Value                                                                                                                                                                                                                                   |

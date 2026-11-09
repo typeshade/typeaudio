@@ -60,8 +60,10 @@ Each partition, zero-padded to 2,048 points, is transformed once (method step 1)
 | `overlapAdd`     | kernel function, a loop over 1,024 lanes | the output: the first half of the inverse transform plus the second half that the block before left        |
 
 The kernel functions are `experiments/05-convolution/convolution.shade.ts`. Two of them are written
-around the compiler at the pin (section "Refusals, and calls that did not return"): `store` writes
-at `j * 1 + slot * POINTS`, and `pad` loops over the 1,024 frames and not over the 2,048 points.
+around the compiler at the pin (section "Refusals, and calls that did not return"): `store` wrote
+at `j * 1 + slot * POINTS` in the record's runs (it now writes `slot * POINTS + j`, which the pin
+`415b276a` admits), and `pad` looped over the 1,024 frames and not over the 2,048 points (it now loops over the 2,048 points
+under `if (j < FRAMES)`, which the call's read check admits at the pin `415b276a`).
 
 **The transform.** `fftMediumTable` is added to `experiments/03-fft/fft.shade.ts` in the workgroup
 form of the 1,024-point entries. Its 2,048 `vec2`s in workgroup memory are 16 KiB: exactly WebGPU's
