@@ -48,15 +48,13 @@ export function pad(padded: array<vec2>, input: array<f32>) {
 /**
  * Writes the spectrum of the newest block into slot `slot` of the delay line `line`.
  *
- * The index is written `j * 1 + slot * POINTS`. At the compiler pin the proof of rule R3 refuses
- * `slot * POINTS + j` with TS8070 ("an element two iterations can share") and runs the loop on the
- * CPU; it accepts one index whose coefficient of the counter is written out (compiler issue #983).
- * Compiler change 0095 (accepted, not implemented at the pin) accepts both, and checks this form at
- * the call.
+ * The index is written `slot * POINTS + j`. The loop proof of rule R3 admits it at the compiler pin
+ * `415b276a` (compiler issue #983, fixed by #994). Earlier pins refused it with TS8070 and this
+ * kernel wrote `j * 1 + slot * POINTS`.
  */
 export function store(line: array<vec2>, spectrum: array<vec2>, slot: u32) {
   for (let j: u32 = 0; j < POINTS; j++) {
-    line[j * 1 + slot * POINTS] = spectrum[j];
+    line[slot * POINTS + j] = spectrum[j];
   }
 }
 
