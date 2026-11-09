@@ -28,7 +28,7 @@ A device run uses two environment variables:
 10. Do not touch the Chrome window that the run opens. Wait for the run to finish.
 11. Run the CPU tier on its own. Run `bun run exp:08 --tier cpu --out docs/records/08-sound-design-<device>-cpu.json`.
 12. Keep the console output of both runs. Save it to a text file.
-13. Send the two JSON files and the console output to the owner. Commit them on a branch `device/<device>` and push it, or attach them in the conversation.
+13. Bring the two JSON files and the console output back to the conversation, or commit them on a branch `device/<device>` and push it.
 
 The CPU tier runs separately because a whole-clip CPU pass took 28.8 minutes on the container
 (`docs/records/08-sound-design-container.md`, observation on the CPU tier).
@@ -47,7 +47,7 @@ The CPU tier runs separately because a whole-clip CPU pass took 28.8 minutes on 
 10. Do not touch the Chrome window that the run opens. Wait for the run to finish.
 11. Run the CPU tier on its own. Run `bun run exp:08 --tier cpu --out docs/records/08-sound-design-<device>-cpu.json`.
 12. Keep the console output of both runs. Save it to a text file.
-13. Send the two JSON files and the console output to the owner. Commit them on a branch `device/<device>` and push it, or attach them in the conversation.
+13. Bring the two JSON files and the console output back to the conversation, or commit them on a branch `device/<device>` and push it.
 
 ## Experiments 1 to 7
 

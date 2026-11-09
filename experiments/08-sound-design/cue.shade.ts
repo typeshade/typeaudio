@@ -1,19 +1,24 @@
 'use typeshade';
 
+// The retired one-bank form of the kinds (docs/lanes.md, "Step 2"): one `Cue` holds the unit of every
+// kind and one kernel dispatches on `kind` in the frame loop. The render no longer uses it
+// (`src/kinds/lanes.shade.ts` has one bank and one kernel for each kind). It stays here so that the
+// measurements of docs/lanes.md steps 1 and 1b (`run-split.ts`, `run-overhead.ts`) can run again.
+//
 // One event as one lane. A `Cue` holds the unit of every kind by its fields (static composition,
 // as `Voice` holds its oscillator and filter) and the kind it plays, so that one bank of cues
 // renders every event of a plan with one kernel, whatever the kinds. Only the unit of the cue's
 // kind ticks. A cue is silent before `start` and from `end` on, in frames from the start of the clip.
 
-import { Whoosh } from './whoosh.shade.ts';
-import { Impact } from './impact.shade.ts';
-import { Shimmer } from './shimmer.shade.ts';
-import { Riser } from './riser.shade.ts';
-import { Wind } from './wind.shade.ts';
-import { Drone } from './drone.shade.ts';
-import { Footstep } from './footstep.shade.ts';
-import { Cloth } from './cloth.shade.ts';
-import { Stem } from './voice.shade.ts';
+import { Whoosh } from '../../src/kinds/whoosh.shade.ts';
+import { Impact } from '../../src/kinds/impact.shade.ts';
+import { Shimmer } from '../../src/kinds/shimmer.shade.ts';
+import { Riser } from '../../src/kinds/riser.shade.ts';
+import { Wind } from '../../src/kinds/wind.shade.ts';
+import { Drone } from '../../src/kinds/drone.shade.ts';
+import { Footstep } from '../../src/kinds/footstep.shade.ts';
+import { Cloth } from '../../src/kinds/cloth.shade.ts';
+import { Stem } from '../../src/kinds/voice.shade.ts';
 
 export class Cue {
   /** The frame the next tick plays. */
