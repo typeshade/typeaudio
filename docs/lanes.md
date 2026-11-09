@@ -293,6 +293,113 @@ Bun version and the load average, as record 08 does.
 
 1. **The split by kind (before any code).** Render the fixture with the events of one kind at a time
    on WebGPU, and record the mean GPU time of `cues` for each. This tests the inference of section 2.
+   **Result of step 1 (2026-11-09).** Command:
+   `TYPESHADE_CHROMIUM=<chromium> bun experiments/08-sound-design/run-split.ts` (40 blocks, WebGPU on
+   SwiftShader, commit `9a423a0`, Bun 1.4.4, load average 6.61 4.79 3.89 before and 5.71 4.72 3.89
+   after). Each event starts at frame 0, so every lane sounds in every timed block. The table is the
+   mean GPU time of the group that holds `cues`, for 1 lane and for 9 lanes of one kind (the fixture's
+   first event of the kind, under nine ids).
+
+| Kind       | 1 lane (ms) | 9 lanes (ms) | Per added lane (ms) |
+| ---------- | ----------: | -----------: | ------------------: |
+| `whoosh`   |        5.06 |        13.94 |                1.11 |
+| `impact`   |        4.64 |        14.36 |                1.22 |
+| `shimmer`  |        4.91 |        14.15 |                1.16 |
+| `riser`    |        4.63 |        13.64 |                1.13 |
+| `wind`     |        5.23 |        15.15 |                1.24 |
+| `drone`    |        5.17 |        14.71 |                1.19 |
+| `footstep` |        5.22 |        13.92 |                1.09 |
+| `cloth`    |        5.19 |        14.56 |                1.17 |
+| `voice`    |        5.33 |        15.30 |                1.25 |
+
+The whole fixture at frame 0 (25 lanes) gives 33.82 ms for `cues` and a block median of 53.79 ms.
+
+**Fact.** The cost of a lane does not depend on its kind. `voice` computes `x * level` and costs as
+much as `wind`, which calls four `hash32` and four `sin` a frame. A first lane costs about 5 ms, and
+each added lane about 1.2 ms. The 25 lanes of the fixture cost about 5 + 24 x 1.2 = 34 ms, which is
+the measured 33.82 ms.
+
+**Inference, and it contradicts the inference of section 2.** The cost of `cues` on SwiftShader is
+a per-lane, per-frame cost that the kind's arithmetic hardly changes. The stateless arithmetic is
+not most of the serial cost here. Candidates, not measured: the load and the store of the whole
+`Cue` (about 180 fields) around each `tick`, and the dispatch on `kind`. Step 1b tests both. Option B moves the
+arithmetic into pass 1 and leaves a per-lane, per-frame cost of the same size in `recur`, so it
+cannot be expected to cut `cues` on this machine until that cost is understood.
+
+**Step 1b: the overhead (2026-11-09).** Step 1 found a per-lane cost that does not depend on the
+kind. Three measurements look for its cause. Configuration: commit `9a423a0` plus the scratch files
+`experiments/08-sound-design/overhead.shade.ts`, `overhead.ts` and `run-overhead.ts`, Bun 1.4.4,
+the pin `415b276a`, WebGPU on SwiftShader and the CPU tier in Node.
+
+**(a) The emitted WGSL of `cues`.** Fact. The module's manifest entry `cues` holds the kernel's
+WGSL (`hostFace` over `src/kinds/cue.shade.ts`). The frame loop passes a pointer to the bank element
+and copies nothing:
+
+```wgsl
+for (var n: u32 = 0u; (n < cues_args.block); n = (n + 1u)) {
+  out[((v * cues_args.block) + n)] = Cue_tick(&lanes[v], inputs[((v * cues_args.block) + n)]);
+}
+fn Cue_tick(self_: ptr<storage, Cue, read_write>, x: f32) -> f32 {
+  let t = (*self_).t;
+  (*self_).t = (t + 1u);
+```
+
+Each field access is a load or store on the storage buffer. Per frame in `Cue_tick` there are 4 loads
+(`t`, `start`, `end`, `kind`) and 1 store (`t`), then the loads and stores of the kind's own fields:
+for `whoosh`, 11 loads and 3 stores; for `voice`, 1 load. The loop does not load or store the whole
+`Cue`. The struct is 716 bytes (179 words, from the manifest's layout). On the CPU tier the generated
+JavaScript reads the element and writes it back around each call (`$t2[$t3] = $.inout.values[0]`), a
+reference to one object.
+
+**(b) and (c), and two forms that separate the causes.** Command:
+`TYPESHADE_CHROMIUM=<chromium> bun experiments/08-sound-design/run-overhead.ts` (40 blocks after 3 of
+warm-up; 1 lane and 9 lanes of the fixture's first `whoosh`; three runs, load average 4.03 to 5.70).
+The table is the mean of the three runs. WebGPU columns are the mean GPU time of the call; CPU
+columns are the median host time of the block's `fuse` scope and read.
+
+| Form                                                                                       | WebGPU 1 lane (ms) | WebGPU 9 lanes (ms) | WebGPU per added lane (ms) | CPU 1 lane (ms) | CPU 9 lanes (ms) | CPU per added lane (ms) |
+| ------------------------------------------------------------------------------------------ | -----------------: | ------------------: | -------------------------: | --------------: | ---------------: | ----------------------: |
+| `cues` (as on `main`)                                                                      |               5.20 |               15.31 |                       1.26 |            0.35 |             1.94 |                    0.20 |
+| hoisted: `let c = lanes[v]` before the frame loop, `lanes[v] = c` after it (c)             |               2.69 |                7.96 |                       0.66 |            0.43 |             2.12 |                    0.21 |
+| wide: full `Cue` in the bank, kernel ticks `whoosh` directly, no window check, no dispatch |               0.36 |                0.92 |                       0.07 |            0.29 |             1.99 |                    0.21 |
+| one branch: full `Cue`, window check and dispatch in the kernel, `whoosh` branch only      |               0.46 |                0.97 |                       0.06 |            0.27 |             2.01 |                    0.22 |
+| inlined: full `Cue`, window check and all nine branches written out in the kernel          |               5.45 |               16.35 |                       1.36 |            0.27 |             2.13 |                    0.23 |
+| narrow: `NarrowCue` with the `whoosh` fields only (b)                                      |               0.41 |                0.88 |                       0.06 |            0.24 |             1.60 |                    0.17 |
+
+Fact: the language at the pin accepts the struct value copy of the hoisted form. `tshc check` reports
+no refusal, and the emitted WGSL is `var c: Cue = lanes[v];`, then `Cue_tick(&c, ...)` in the loop,
+then `lanes[v] = c;`.
+
+Facts from the table:
+
+- Narrowing the bank to the `whoosh` fields (b) cuts the per-lane cost from 1.26 ms to 0.06 ms.
+- The wide form keeps the 716-byte struct and costs 0.07 ms a lane. The width of the struct is not
+  the cost.
+- The one-branch form costs 0.06 ms a lane. The inlined form, with all nine branches, costs 1.36 ms,
+  as `cues` does. The call of `Cue_tick` is not the cost. The nine branches present in the loop body
+  are, although one lane takes one of them.
+- Hoisting the element into a local (c) halves `cues`: 5.20 ms to 2.69 ms, and 1.26 to 0.66 ms a lane.
+- On the CPU tier every form costs 0.17 to 0.23 ms a lane. None of the forms changes the CPU tier.
+
+**Inference.** The numbers point to the size of the dispatch body, and not to the struct width. A
+loop body that holds the nine kinds costs about 20 times a body that holds one, and the kernel
+takes one branch for each lane. The per-frame load and store of the bank element is a second, smaller
+part: it is the half that hoisting removes. I did not measure why SwiftShader pays for the branches
+not taken (code size, register pressure and the predication of the branches are candidates), so this
+is a property of this device and compiler, not of the language. A real GPU may behave differently.
+
+**What the engine could do.** One bank and one kernel for each kind: each kernel holds one branch,
+as the one-branch and narrow forms do, and the plan gains up to nine calls for the kinds present. A
+kind with no event needs a bank of at least one lane (`bank()` refuses an empty array), so its call is
+left out of the plan. This keeps option B open: pass 1 would then read the narrow element of its kind.
+A hoisted frame loop (c) is a smaller change: it halves `cues` with no change to a kind.
+
+**What the compiler could do.** Hoist the load and the store of a bank element whose index is
+invariant in the loop (`lanes[v]` in the frame loop), when the loop reads no other path to the same
+element. The compiler can prove this exact, so no result changes. The form (c) is what that
+optimization would emit, and it halves `cues` on this device. The compiler could not be asked to
+remove the cost of the branches not taken, since the measurement does not say where that cost lies.
+
 2. **The smoke run on the container, before and after.**
    `TYPESHADE_CHROMIUM=<chromium> bun run exp:08 --tier webgpu --blocks 40 --repeat-blocks 2 --variant-seconds 0`.
    Record `cues` (33.09 ms, 71.8 %, record 08 command 2), and after the change the sum of the
