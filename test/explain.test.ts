@@ -6,15 +6,14 @@ import { explain } from '../src/explain.ts';
 // fused group with the `why` of its standing apart, the GPU time where it was measured, and on
 // WebGL2 the `tier` and the `why` of a group that fell to the CPU tier (compiler change 0118).
 
-// New compiler candidates report dispatches per group; retain those facts while
-// checking the fixture against both the pinned and candidate public report type.
-type ReportFixture = Omit<FuseReport, 'groups'> & {
-  groups: readonly (FuseReport['groups'][number] & { dispatches: number })[];
-};
+// Each group carries `dispatches` (compiler change 0121), and a WebGPU plan may carry
+// `webgpuScratch` (compiler change 0128).
+type ReportFixture = FuseReport;
 const webgpu = (gpu: boolean): ReportFixture => ({
   tier: 'webgpu',
   dispatches: 2,
   submissions: 1,
+  webgpuScratch: { allocations: 1, allocatedBytes: 1024, reuses: 0, reusedBytes: 0 },
   groups: [
     {
       calls: ['synth'],
@@ -45,12 +44,43 @@ test('explain names each group, whether it fused, its why and its GPU time', () 
       '  2. mixdown + drive + gain + peak: fused into one dispatch, 0.120 ms GPU',
       '     synth and mixdown run as two dispatches because the trip counts differ (5 and 512)',
       'all blocks: 4 dispatches, 2 submissions, 0.661 ms GPU',
+      'WebGPU scratch storage: 2 allocations (2048 bytes), 0 reuses (0 bytes), sizes are descriptor bytes',
     ].join('\n'),
   );
 });
 
 test('explain leaves the GPU time out where the device measured none', () => {
   expect(explain([webgpu(false)]).split('\n')[2]).toBe('  1. synth: 1 dispatch');
+});
+
+test('explain counts the fold of a reduction in the dispatches of its group', () => {
+  const folded: ReportFixture = {
+    tier: 'webgpu',
+    dispatches: 3,
+    submissions: 1,
+    groups: [
+      {
+        calls: ['synth'],
+        fused: false,
+        tier: 'webgpu',
+        dispatches: 1,
+        workgroupShapes: [[64, 1, 1]],
+      },
+      // One loop dispatch and one fold of the partials: two dispatches, one workgroup shape.
+      {
+        calls: ['mixdown', 'peak'],
+        fused: true,
+        tier: 'webgpu',
+        dispatches: 2,
+        workgroupShapes: [[256, 1, 1]],
+      },
+    ],
+  };
+  const lines = explain([folded]).split('\n');
+  expect(lines[1]).toBe('the last block: 3 dispatches, 1 submission');
+  expect(lines[3]).toBe('  2. mixdown + peak: fused into one loop, 2 dispatches in all');
+  // A report without `webgpuScratch` is unknown, not zero.
+  expect(lines[lines.length - 1]).toBe('WebGPU scratch storage: not reported');
 });
 
 test('explain on WebGL2 counts draws and names the tier of each group', () => {
@@ -70,9 +100,27 @@ test('explain on WebGL2 counts draws and names the tier of each group', () => {
         dispatches: 0,
         why: 'synth runs on the CPU, it runs on the CPU, loop 1 writes more than one array, and WebGL2 draws one',
       },
-      { calls: ['mixdown'], fused: false, tier: 'webgl2', dispatches: 1, why: 'WebGL2 runs the calls apart' },
-      { calls: ['drive'], fused: false, tier: 'webgl2', dispatches: 1, why: 'WebGL2 runs the calls apart' },
-      { calls: ['gain'], fused: false, tier: 'webgl2', dispatches: 1, why: 'WebGL2 runs the calls apart' },
+      {
+        calls: ['mixdown'],
+        fused: false,
+        tier: 'webgl2',
+        dispatches: 1,
+        why: 'WebGL2 runs the calls apart',
+      },
+      {
+        calls: ['drive'],
+        fused: false,
+        tier: 'webgl2',
+        dispatches: 1,
+        why: 'WebGL2 runs the calls apart',
+      },
+      {
+        calls: ['gain'],
+        fused: false,
+        tier: 'webgl2',
+        dispatches: 1,
+        why: 'WebGL2 runs the calls apart',
+      },
       {
         calls: ['peak'],
         fused: false,
