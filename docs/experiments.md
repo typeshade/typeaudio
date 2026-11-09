@@ -18,7 +18,7 @@ devices yet.
 | 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                       | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending                                                  |
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                     |
 | 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                  |
-| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`); device runs pending |
+| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-3.md`); device runs pending |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -345,10 +345,11 @@ variants of the A/B loop render in under a second.
 written by hand. It uses no model. It has no listeners yet. A study of the A/B loop with three lay
 users is step two, on the owner's devices.
 
-**Status.** Harness ready; container runs recorded; device runs pending. The two container runs are
-`docs/records/08-sound-design-container.md` (commit `0f7572a2`, before the review fixes) and
-`docs/records/08-sound-design-container-2.md` (commit `eef3eba5f5e234dde1e73977889ed90e61f394ec`):
+**Status.** Harness ready; container runs recorded; device runs pending. The three container runs are
+`docs/records/08-sound-design-container.md` (commit `0f7572a2`, before the review fixes),
+`docs/records/08-sound-design-container-2.md` (commit `eef3eba5f5e234dde1e73977889ed90e61f394ec`) and
+`docs/records/08-sound-design-container-3.md` (commit `7ecf6764bc2f002b528d09f735aace92fcfe1181`):
 reference numbers on the CPU, and WebGPU and WebGL2 on SwiftShader. The reference commit of the
-device runs is `eef3eba5f5e234dde1e73977889ed90e61f394ec`, the commit of the second container run.
-The device runs will follow: one record per device, `docs/records/08-sound-design-<device>.md`.
+device runs is `7ecf6764bc2f002b528d09f735aace92fcfe1181`, the commit of the third container run
+(2026-11-09). The device runs will follow: one record per device, `docs/records/08-sound-design-<device>.md`.
 The procedure of a device run is `docs/device-runs.md`.
