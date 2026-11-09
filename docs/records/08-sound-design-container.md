@@ -27,6 +27,13 @@ blocks, and the master measured the loudness of those 40 blocks, while the CPU r
 is the whole clip. The two have different gains (+25.1 dB and +6.3 dB). Command 2 renders the same
 40 blocks on every tier and replaces the entry.
 
+Status after the run: the harness and the render changed in pull request #43 (review of this
+record's pull request #38), and the numbers of this record are the numbers of the old code. The
+runner compares a page tier's mix with the CPU tier's only when both rendered the same blocks. An
+event's key is a hash of the seed and its id, not of its place in the sorted list. A reflection later
+than the history is left out. A footstep or a cloth always has a grain. A new run on the fixture
+differs from this record in its noise, its grains and its checklist values.
+
 ## The devices
 
 | Item     | CPU tier (Node)                                         | WebGPU                                                                                                                                               | WebGL2                                                                                       |
