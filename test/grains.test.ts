@@ -48,15 +48,15 @@ describe('a cloud built with new and its setters', () => {
     const cloud = cloudOf(7);
     const ref = refCloudOf(7);
     expect(cloud).toBeInstanceOf(Cloud);
-    expect([
-      cloud.chance,
-      cloud.shortest,
-      cloud.spread,
-      cloud.low,
-      cloud.span,
-      cloud.loudest,
-      cloud.key,
-    ]).toEqual([ref.chance, ref.shortest, ref.spread, ref.low, ref.span, ref.loudest, ref.key]);
+    expect([cloud.chance, cloud.shortest, cloud.spread, cloud.low, cloud.span, cloud.loudest, cloud.key]).toEqual([
+      ref.chance,
+      ref.shortest,
+      ref.spread,
+      ref.low,
+      ref.span,
+      ref.loudest,
+      ref.key,
+    ]);
     expect([cloud.shortest, cloud.spread]).toEqual([960, 3840]);
   });
 
@@ -70,12 +70,7 @@ describe('a cloud built with new and its setters', () => {
     }
     const grain = cloud.grain(123, cloud.draw(123));
     const want = ref.grain(123, ref.draw(123));
-    expect([grain.start, grain.length, grain.inc, grain.peak]).toEqual([
-      want.start,
-      want.length,
-      want.inc,
-      want.peak,
-    ]);
+    expect([grain.start, grain.length, grain.inc, grain.peak]).toEqual([want.start, want.length, want.inc, want.peak]);
     expect(refHash32(0)).toBe(0);
     expect(refUniform(0xffffffff)).toBeLessThan(1);
   });
@@ -140,9 +135,7 @@ describe('the scheduler on the CPU tier', () => {
     // The list holds the grains in the order they started, with no sort.
     const live = last.slice(0, ref.count);
     expect(live.map((g) => g.start)).toEqual(ref.list.map((g) => g.start));
-    expect(live.map((g) => [g.length, g.inc, g.peak])).toEqual(
-      ref.list.map((g) => [g.length, g.inc, g.peak]),
-    );
+    expect(live.map((g) => [g.length, g.inc, g.peak])).toEqual(ref.list.map((g) => [g.length, g.inc, g.peak]));
     expect(live.every((g, i) => i === 0 || live[i - 1]!.start <= g.start)).toBe(true);
     // About 10,000 grains a second, each 20 to 100 ms: a few hundred alive.
     expect(ref.count).toBeGreaterThan(300);
@@ -166,12 +159,8 @@ describe('the scheduler on the CPU tier', () => {
 
   test('plans one group for each call on the CPU tier, none fused', async () => {
     const { reports } = await schedule(cloudOf(2), 512, 2, 128);
-    const groups = reports.map((r) =>
-      r.groups.map((g) => `${g.calls.join('+')}${g.fused ? ' (fused)' : ''}`),
-    );
+    const groups = reports.map((r) => r.groups.map((g) => `${g.calls.join('+')}${g.fused ? ' (fused)' : ''}`));
     expect(groups).toEqual([['cull'], ['spawn', 'play'], ['cull'], ['spawn', 'play']]);
-    expect(
-      reports.every((r) => r.tier === 'cpu' && r.dispatches === 0 && r.submissions === 0),
-    ).toBe(true);
+    expect(reports.every((r) => r.tier === 'cpu' && r.dispatches === 0 && r.submissions === 0)).toBe(true);
   });
 });

@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import impact from '../fixtures/feedback/impact.json';
-import tone from '../fixtures/feedback/tone.json';
-import { compileGraph } from '../src/graph/compiler/index.ts';
-import { graphKey, graphValues, validateGraph } from '../src/graph/index.ts';
-import { GraphDsp, graphKernel } from '../src/graph/runtime.ts';
-import { validateReproduction, replayGraph, summarizeReplay } from '../src/feedback/index.ts';
+import { describe, expect, it } from "vitest";
+import impact from "../fixtures/feedback/impact.json";
+import tone from "../fixtures/feedback/tone.json";
+import { compileGraph } from "../src/graph/compiler/index.ts";
+import { graphKey, graphValues, validateGraph } from "../src/graph/index.ts";
+import { GraphDsp, graphKernel } from "../src/graph/runtime.ts";
+import {
+  validateReproduction,
+  replayGraph,
+  summarizeReplay,
+} from "../src/feedback/index.ts";
 
 function install(raw: unknown) {
   const input = validateReproduction(raw);
@@ -14,21 +18,26 @@ function install(raw: unknown) {
   return { input, program };
 }
 
-describe('Web → TypeAudio → TypeShade feedback', () => {
-  it.each([impact, tone])('replays the shared $capture fixture deterministically', (raw) => {
-    const { input } = install(raw);
-    const a = replayGraph(input),
-      b = replayGraph(input);
-    expect(a.pcm).toEqual(b.pcm);
-    expect(a.invalidSamples).toBe(0);
-    expect(a.updates).toBe(input.events.filter((e) => e.type !== 'retrigger').length);
-    const summary = summarizeReplay(a);
-    expect(summary.peak).toBeGreaterThan(0.01);
-    expect(summary.rms).toBeGreaterThan(0.001);
-    expect(summary.compute).toBeNull();
-  });
+describe("Web → TypeAudio → TypeShade feedback", () => {
+  it.each([impact, tone])(
+    "replays the shared $capture fixture deterministically",
+    (raw) => {
+      const { input } = install(raw);
+      const a = replayGraph(input),
+        b = replayGraph(input);
+      expect(a.pcm).toEqual(b.pcm);
+      expect(a.invalidSamples).toBe(0);
+      expect(a.updates).toBe(
+        input.events.filter((e) => e.type !== "retrigger").length,
+      );
+      const summary = summarizeReplay(a);
+      expect(summary.peak).toBeGreaterThan(0.01);
+      expect(summary.rms).toBeGreaterThan(0.001);
+      expect(summary.compute).toBeNull();
+    },
+  );
 
-  it('fills output synchronously and preserves seeded state across arbitrary kernel blocks', () => {
+  it("fills output synchronously and preserves seeded state across arbitrary kernel blocks", () => {
     const { input, program } = install(impact);
     const kernel = graphKernel(program.key);
     const run = (block: number) => {
@@ -51,10 +60,10 @@ describe('Web → TypeAudio → TypeShade feedback', () => {
     expect(run(73)).toEqual(run(4800));
   });
 
-  it('matches an independent xorshift reference, including f32 rounding', () => {
+  it("matches an independent xorshift reference, including f32 rounding", () => {
     const input = validateReproduction(impact);
-    const noise = input.graph.nodes.find((node) => node.kind === 'noise')!;
-    const output = input.graph.nodes.find((node) => node.kind === 'output')!;
+    const noise = input.graph.nodes.find((node) => node.kind === "noise")!;
+    const output = input.graph.nodes.find((node) => node.kind === "output")!;
     noise.values[0] = 11;
     output.inputs.input = noise.id;
     input.graph.nodes = [noise, output];
@@ -74,12 +83,14 @@ describe('Web → TypeAudio → TypeShade feedback', () => {
     expect(out).not.toEqual(new Float32Array(128));
   });
 
-  it('applies frame-stamped parameter changes without resetting earlier samples', () => {
+  it("applies frame-stamped parameter changes without resetting earlier samples", () => {
     const { input } = install(tone);
     const actual = replayGraph(input);
-    const control = replayGraph({ ...input, capture: 'snapshot', events: [] });
+    const control = replayGraph({ ...input, capture: "snapshot", events: [] });
     expect(actual.pcm.slice(0, 1024)).toEqual(control.pcm.slice(0, 1024));
-    expect(actual.pcm.slice(1024, 2048)).not.toEqual(control.pcm.slice(1024, 2048));
+    expect(actual.pcm.slice(1024, 2048)).not.toEqual(
+      control.pcm.slice(1024, 2048),
+    );
     const noRetrigger = replayGraph({
       ...input,
       events: input.events.slice(0, 2),
@@ -88,7 +99,7 @@ describe('Web → TypeAudio → TypeShade feedback', () => {
     expect(actual.pcm.slice(3072)).not.toEqual(noRetrigger.pcm.slice(3072));
   });
 
-  it('preserves state when only editor metadata changes', () => {
+  it("preserves state when only editor metadata changes", () => {
     const { input } = install(tone);
     const a = new GraphDsp(input),
       b = new GraphDsp(input);
@@ -99,7 +110,7 @@ describe('Web → TypeAudio → TypeShade feedback', () => {
     const moved = structuredClone(input.graph);
     moved.nodes.reverse();
     moved.nodes[0]!.x += 100;
-    moved.nodes[0]!.name = 'Moved';
+    moved.nodes[0]!.name = "Moved";
     expect(graphKey(moved)).toBe(graphKey(input.graph));
     a.update({ graph: moved, volume: input.volume });
     a.process(out);
@@ -111,28 +122,28 @@ describe('Web → TypeAudio → TypeShade feedback', () => {
     expect(() => a.update({ graph: moved, volume: NaN })).toThrow(/volume/);
   });
 
-  it('refuses unsafe Code and reports the source node before installation', () => {
+  it("refuses unsafe Code and reports the source node before installation", () => {
     for (const code of [
-      'while (true) {}',
-      'out = window.location;',
-      'const a = [1,2]; out = a[0];',
-      'out = missing;',
-      'out = pow(2, 3);',
+      "while (true) {}",
+      "out = window.location;",
+      "const a = [1,2]; out = a[0];",
+      "out = missing;",
+      "out = pow(2, 3);",
     ]) {
       const input = validateReproduction(impact);
-      input.graph.nodes.find((node) => node.kind === 'code')!.code = code;
+      input.graph.nodes.find((node) => node.kind === "code")!.code = code;
       expect(() => compileGraph(input.graph), code).toThrow(/Code|line/);
     }
     const graph = validateGraph(impact.graph);
-    graph.nodes.find((node) => node.kind === 'code')!.inputs.input = 'filter';
+    graph.nodes.find((node) => node.kind === "code")!.inputs.input = "filter";
     expect(() => compileGraph(graph)).toThrow(/cycle/);
   });
 
-  it('keeps the supported exponent operator after removing the obsolete pow call', () => {
+  it("keeps the supported exponent operator after removing the obsolete pow call", () => {
     const input = validateReproduction(impact);
-    const code = input.graph.nodes.find((node) => node.kind === 'code')!;
-    const output = input.graph.nodes.find((node) => node.kind === 'output')!;
-    code.code = 'out = p0 ** 2;';
+    const code = input.graph.nodes.find((node) => node.kind === "code")!;
+    const output = input.graph.nodes.find((node) => node.kind === "output")!;
+    code.code = "out = p0 ** 2;";
     code.inputs = {};
     output.inputs.input = code.id;
     input.graph.nodes = [code, output];
@@ -150,38 +161,41 @@ describe('Web → TypeAudio → TypeShade feedback', () => {
     expect(Array.from(out)).toEqual(Array(16).fill(0.25));
   });
 
-  it('rejects invalid versions, timing and parameters and strips unrelated payloads', () => {
+  it("rejects invalid versions, timing and parameters and strips unrelated payloads", () => {
     for (const bad of [
-      { ...impact, backend: 'webgpu' },
+      { ...impact, backend: "webgpu" },
       { ...impact, frames: Infinity },
-      { ...impact, versions: { ...impact.versions, typeshade: 'main' } },
-      { ...tone, events: [{ frame: 4800, type: 'retrigger' }] },
+      { ...impact, versions: { ...impact.versions, typeshade: "main" } },
+      { ...tone, events: [{ frame: 4800, type: "retrigger" }] },
       { ...tone, events: [...tone.events].reverse() },
       {
         ...tone,
-        events: [{ frame: 0, type: 'parameters', values: [NaN, 0, 0, 0] }],
+        events: [{ frame: 0, type: "parameters", values: [NaN, 0, 0, 0] }],
       },
     ])
       expect(() => validateReproduction(bad)).toThrow();
     const clean = validateReproduction({
       ...impact,
-      javascript: 'throw 1',
-      media: 'private',
+      javascript: "throw 1",
+      media: "private",
     });
-    expect(clean).not.toHaveProperty('javascript');
-    expect(clean).not.toHaveProperty('media');
+    expect(clean).not.toHaveProperty("javascript");
+    expect(clean).not.toHaveProperty("media");
   });
 
-  it('reports slow DSP calls without presenting them as measured output underruns', () => {
+  it("reports slow DSP calls without presenting them as measured output underruns", () => {
     const { input } = install(impact);
     let calls = 0;
-    const result = replayGraph({ ...input, frames: 256 }, () => [0, 0.1, 1, 11][calls++]!);
+    const result = replayGraph(
+      { ...input, frames: 256 },
+      () => [0, 0.1, 1, 11][calls++]!,
+    );
     expect(summarizeReplay(result).compute).toMatchObject({
       blocks: 2,
       p99Ms: 10,
       maxMs: 10,
       overBudgetBlocks: 1,
     });
-    expect(summarizeReplay(result).compute!.scope).toContain('excludes');
+    expect(summarizeReplay(result).compute!.scope).toContain("excludes");
   });
 });
