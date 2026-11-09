@@ -367,6 +367,7 @@ What moved, and why:
    (#46), the wider draws of `impact` (#49), the ducking guard (#48, which lowers the other layers before an impact,
    so the impact stands higher in the mix). Next action: score the stems and the dry render of the old and the new
    renders, to see which layer's peak rose.
+   The clump is prevented since 9baa65f (pull request #63); the numbers above are before it.
 6. Small moves with no single cause named: `dynamics.contrastLu` 7.027 to 7.780, `balance.mudShare` 0.049 to 0.071,
    `balance.layerOverlap` 0.271 to 0.238, `space.correlation` 0.670 to 0.640, `space.reverbRatioDb` -2.354 to -2.754,
    `position.panCorrelation` 0.824 to 0.832 and `balance.tiltDbPerOctave` -4.666 to -4.723. All the kinds and the
