@@ -249,3 +249,102 @@ describe('the checklist report', { timeout: 60000 }, () => {
     expect(centred.position.rules[0]!.met).toBe(false);
   });
 });
+
+describe('the checklist with stems and a dry render', { timeout: 60000 }, () => {
+  const p = validatePlan(plan);
+  const n = 30 * FS;
+  const dialogue = p.events.filter((e) => e.layer === 'dialogue');
+
+  test('measures ducking in dB from the stems', () => {
+    const first = dialogue[0]!;
+    const at = Math.round(first.t * FS);
+    const len = Math.round((first.duration ?? 1) * FS);
+    const voice = new Float32Array(n);
+    voice.set(sine(300, first.duration ?? 1, 0.1), at);
+    const bed = sine(100, 30, 0.1);
+    const ducked = bed.slice();
+    for (let i = at; i < Math.min(n, at + len); i++) ducked[i]! *= 0.25; // -12 dB
+    const stems = { dialogue: [voice, voice], ambience: [ducked, ducked] };
+    const r = checklist({ channels: [ducked, ducked], sampleRate: FS, plan: p, stems });
+    expect(r.dynamics.measures.duckingDb).toBeCloseTo(12, 0);
+    const flat = checklist({
+      channels: [bed, bed],
+      sampleRate: FS,
+      plan: p,
+      stems: { dialogue: [voice, voice], ambience: [bed, bed] },
+    });
+    expect(flat.dynamics.measures.duckingDb).toBeCloseTo(0, 0);
+    expect(r.dynamics.rules.find((x) => x.measure === 'duckingDb')!.met).toBe(true);
+    expect(flat.dynamics.rules.find((x) => x.measure === 'duckingDb')!.met).toBe(false);
+  });
+
+  test('measures the overlap of the layers bands', () => {
+    const low = white(n, 1);
+    const same = checklist({
+      channels: [low, low],
+      sampleRate: FS,
+      plan: p,
+      stems: { effects: [low, low], ambience: [low, low] },
+    });
+    expect(same.balance.measures.layerOverlap).toBeCloseTo(1, 6);
+    const apart = checklist({
+      channels: [low, low],
+      sampleRate: FS,
+      plan: p,
+      stems: { effects: [sine(100, 30, 0.5)], ambience: [sine(8000, 30, 0.5)] },
+    });
+    expect(apart.balance.measures.layerOverlap!).toBeLessThan(0.1);
+  });
+
+  test('measures the reverb-to-direct ratio against the dry render', () => {
+    const dry = sine(500, 30, 0.1);
+    const wet = dry.map((v, i) => v + 0.1 * (dry[i - 480] ?? 0)); // -20 dB
+    const r = checklist({ channels: [wet], sampleRate: FS, plan: p, dry: [dry] });
+    expect(r.space.measures.reverbRatioDb).toBeCloseTo(-20, 0);
+    const none = checklist({ channels: [dry], sampleRate: FS, plan: p, dry: [dry] });
+    expect(none.space.rules.find((x) => x.measure === 'reverbRatioDb')!.met).toBe(false);
+    expect(
+      checklist({ channels: [dry], sampleRate: FS, plan: p }).space.measures.reverbRatioDb,
+    ).toBeNull();
+  });
+
+  test('reads position on the layer stem, so an overlapping layer does not blur it', () => {
+    const src = structuredClone(plan) as any;
+    src.events = Array.from({ length: 6 }, (_, i) => ({
+      id: `hit-${i}`,
+      t: 1 + 3 * i,
+      kind: 'impact',
+      layer: 'effects',
+      intensity: 0.5,
+      position: { x: -0.9 + 0.36 * i, y: 0, distance: 5 },
+      macros: {},
+    }));
+    const q = validatePlan(src);
+    const L = new Float32Array(n);
+    const R = new Float32Array(n);
+    for (const e of q.events) {
+      const at = Math.round(e.t * FS);
+      const pan = (e.position.x + 1) / 2;
+      for (let i = 0; i < 0.3 * FS; i++) {
+        const v = 0.1 * Math.sin(2 * Math.PI * 500 * (i / FS));
+        L[at + i] = v * (1 - pan);
+        R[at + i] = v * pan;
+      }
+    }
+    // A loud centred layer under every event: the mix reads as centred, the stem does not.
+    const bed = sine(80, 30, 0.8);
+    const mixL = L.map((v, i) => v + bed[i]!);
+    const mixR = R.map((v, i) => v + bed[i]!);
+    const blurred = checklist({ channels: [mixL, mixR], sampleRate: FS, plan: q });
+    const stemmed = checklist({
+      channels: [mixL, mixR],
+      sampleRate: FS,
+      plan: q,
+      stems: { effects: [L, R], ambience: [bed, bed] },
+    });
+    expect(stemmed.position.measures.panCorrelation!).toBeGreaterThan(0.95);
+    expect(blurred.position.measures.panCorrelation!).toBeLessThan(
+      stemmed.position.measures.panCorrelation!,
+    );
+  });
+});
