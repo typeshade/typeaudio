@@ -134,7 +134,7 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
   let length: number;
   switch (e.kind) {
     case 'whoosh': {
-      length = frames((e.duration ?? 0.5) * (1.25 - 0.5 * m.speed!), sr);
+      length = frames(e.duration ?? 0.5, sr);
       const f0 = 250 * (0.9 + 0.2 * j(1));
       const f1 = (800 + 6000 * m.brightness!) * (0.7 + 0.3 * e.intensity);
       cue.whoosh = new Whoosh().shape(
@@ -182,13 +182,15 @@ export function makeCue(e: PlanEvent, o: MakeOptions): Made {
       break;
     }
     case 'riser': {
-      length = frames((e.duration ?? 2.5) * (0.5 + 0.5 * m.length!), sr);
+      length = frames(e.duration ?? 2.5, sr);
+      // The swell rises over the fraction 0.5 + 0.5 * length of the duration and holds for the rest.
+      const rise = Math.max(1, Math.round(length * (0.5 + 0.5 * m.length!)));
       const f0 = 200;
       const f1 = 600 + 2800 * m.pitch!;
       const c1 = 1500 + 4500 * m.pitch!;
       cue.riser = new Riser().shape(
         sr,
-        length,
+        rise,
         f0 / sr,
         Math.log(f1 / f0),
         400,
