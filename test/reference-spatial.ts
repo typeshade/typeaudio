@@ -151,6 +151,7 @@ export function refStrips(
   inL: Float32Array,
   inR: Float32Array,
   inS: Float32Array,
+  gain: Float32Array = new Float32Array(bank.length * BLOCK).fill(1),
 ): { l: Float32Array; r: Float32Array; s: Float32Array } {
   const l = new Float32Array(bank.length * BLOCK);
   const r = new Float32Array(bank.length * BLOCK);
@@ -159,9 +160,10 @@ export function refStrips(
     for (let n = 0; n < BLOCK; n++) {
       const g = strip.duck(f(Math.abs(inL[n]!) + Math.abs(inR[n]!)));
       const i = k * BLOCK + n;
-      l[i] = f(strip.left.tick(inL[i]!) * g);
-      r[i] = f(strip.right.tick(inR[i]!) * g);
-      s[i] = f(strip.sendBus.tick(inS[i]!) * g);
+      const h = f(g * gain[i]!);
+      l[i] = f(strip.left.tick(inL[i]!) * h);
+      r[i] = f(strip.right.tick(inR[i]!) * h);
+      s[i] = f(strip.sendBus.tick(inS[i]!) * h);
     }
   });
   return { l, r, s };
