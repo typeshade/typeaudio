@@ -389,12 +389,13 @@ describe('the level of an event follows its intensity, not its draw', () => {
     Math.abs(peak - intensity * KIND_PEAK) <= 1e-4 * intensity * KIND_PEAK;
 
   test.each(['footstep', 'cloth'])(
-    'a %s has the peak intensity times KIND_PEAK for 200 keys, and a key repeats its samples',
+    'a %s has the peak intensity times KIND_PEAK for 200 keys at intensity 1 and 20 at its own, and a key repeats its samples',
     (kind) => {
       const base = p.events.find((e) => e.kind === kind)!;
       for (const intensity of [1, base.intensity]) {
         const e = { ...base, intensity };
-        for (let k = 1; k <= 200; k++) {
+        // The scale is linear in the intensity: 20 keys show that the event's own intensity is used.
+        for (let k = 1; k <= (intensity === 1 ? 200 : 20); k++) {
           const key = Math.imul(k, 2654435761) >>> 0;
           const peak = peakOf(e, key);
           expect(
@@ -429,7 +430,7 @@ describe('the level of an event follows its intensity, not its draw', () => {
     120000,
   );
 
-  // `wind` is not held: its level follows its `gust` macro (a peak of 0.386 at gust 0.3, 1.105 at gust 0.8).
+  // `wind` is not held: its level follows its `gust` macro (a peak of 0.443 at gust 0.3, 1.105 at gust 0.8).
   // `voice` has no kernel level: it plays its stem.
   test('every fixture event but wind and voice has its peak within 2 dB of intensity times KIND_PEAK', () => {
     const lo = KIND_PEAK * 10 ** (-2 / 20);

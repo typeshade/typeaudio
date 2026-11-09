@@ -93,7 +93,8 @@ const level = (e: PlanEvent): number => e.intensity * (KIND_GAIN[e.kind] ?? 1);
  * Scales the grains of `unit` so that its peak over its first `length` frames is `target`. The unit
  * ticks here, so the unit that goes into the lane is a fresh one that takes its grains: its `age`
  * is 0 and the lowpass of a `Cloth` is as a new one has it. `tick()` is linear in the grains'
- * `peak` fields, so one measurement is enough. A measured peak that is 0 or not finite leaves the
+ * `peak` fields, so one measurement is enough. The stored peak is rounded to `f32`, as the device
+ * receives it. A measured peak that is 0 or not finite leaves the
  * grains as drawn (`drawGrains` always gives one grain, so a peak of 0 needs a level of 0).
  */
 function fitPeak<U extends Footstep | Cloth>(unit: U, fresh: U, length: number, target: number): U {
@@ -104,7 +105,7 @@ function fitPeak<U extends Footstep | Cloth>(unit: U, fresh: U, length: number, 
   const ok = measured > 0 && Number.isFinite(scale);
   for (const n of names) {
     const g = unit[n];
-    if (ok) g.peak *= scale;
+    if (ok) g.peak = Math.fround(g.peak * scale);
     fresh[n] = g;
   }
   return fresh;
