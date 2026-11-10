@@ -695,5 +695,13 @@ store now keeps the gain of the engine's master for each render, so a stored gro
 beside the bed (`level: "plan"`). A composition keeps the plan's whole silences over the stored sounds
 too: both silences measure no sample above zero.
 
+**Review 6, 2026-11-10.** The owner heard no clear difference between `plan` and `held`, and said the
+part may be too short to hear one. The two differ for about 0.25 s, by up to 6.8 dB, just before the
+frame of silence and the hit. The agent keeps `plan`: with no difference heard, one definition fewer
+is better, and the hit is larger when the moment before it is smaller (`docs/sound-design-theory.md`,
+section 4). A gap of 7 dB to the reference, held for a quarter of a second, did not change the scene
+for the ear: finding 3 of experiment 9 again.
+
 **Status.** The first module is accepted; its sounds are in the store: `wall-hit`, `stone-landing`.
-The second module, the blast, waits for the owner's review of its two variants.
+The blast keeps the sixteenth plan's form (`plan`); `blast-held` stays in the store as the variant
+that was not heard apart.
