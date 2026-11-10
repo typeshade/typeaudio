@@ -1,7 +1,12 @@
 // Experiment 10: a stored sound through its effect nodes.
 
 import { describe, expect, it } from 'vitest';
-import { resolved, shaped, type StoredSound } from '../experiments/10-seven-questions/compose.ts';
+import {
+  resolved,
+  scattered,
+  shaped,
+  type StoredSound,
+} from '../experiments/10-seven-questions/compose.ts';
 
 const SR = 48000;
 // A test source: silence, then at 4 ms a click and a ring of 400 Hz that dies.
@@ -107,5 +112,36 @@ describe('the store', () => {
       'room',
       'pitch',
     ]);
+  });
+
+  it('a scattered sound is many copies of one material: smaller is higher, shorter and quieter', () => {
+    const copies = scattered(
+      resolved({
+        id: 'rubble',
+        from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
+        effects: [],
+        when: { at: 10 },
+        why: { part: 'explains', under: 0 },
+        scatter: { count: 30, size: [0.12, 0.6], spread: 0.4, until: 11, width: 0.8, seed: 4 },
+      }),
+    );
+    expect(copies).toHaveLength(30);
+    for (const c of copies) {
+      const pitch = (c.effects[0] as { pitch: number }).pitch;
+      // The stored landing is two octaves down; a smaller copy is higher, by 1 / size.
+      expect(pitch).toBeGreaterThan(0.25 / 0.6 - 1e-9);
+      expect(pitch).toBeLessThan(0.25 / 0.12 + 1e-9);
+      expect(c.when.at).toBeGreaterThanOrEqual(10);
+      expect(c.when.at).toBeLessThanOrEqual(11);
+      expect(Math.abs(c.pan!)).toBeLessThanOrEqual(0.8);
+      // The level follows the size: 30·log10(1 / size) dB under, and up to 4 dB more.
+      const size = 0.25 / pitch;
+      expect(c.why.under).toBeGreaterThanOrEqual(30 * Math.log10(1 / size) - 1e-9);
+      expect(c.why.under).toBeLessThanOrEqual(30 * Math.log10(1 / size) + 4);
+    }
+    // Small pieces are many: more than half are under a third of the largest size.
+    expect(
+      copies.filter((c) => 0.25 / (c.effects[0] as { pitch: number }).pitch < 0.2).length,
+    ).toBeGreaterThan(15);
   });
 });

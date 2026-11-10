@@ -724,5 +724,13 @@ might not be bad: in the next shot, the fog, they matter less. The two landings 
 sound twice. Two more variants of `module-4.json`, on `slow`: `slow-one-landing` leaves out the second
 landing, and `slow-no-landing` leaves out both. A variant can now leave sounds out by id (`drop`).
 
+**Review 9, 2026-11-10.** With no landing the fog is empty; dozens of landings are better than two,
+because not only two large blocks fall. That is finding 1 of experiment 9 as a tool: a `scatter` node
+makes many copies of one accepted sound, each a smaller body: `1 / size` higher, `size` times as long
+(its `damp`), 30·log10(1 / size) dB quieter and up to 4 dB more by distance, at its own second and
+place. Sizes follow a power law, so small pieces are many. The variant `slow-scatter` keeps the first
+landing and scatters 30 copies of `stone-landing`, sizes 0.12 to 0.6, from 147.86 s to 149.3 s, in
+place of the second landing. A composition of five variants takes 10.7 s.
+
 **Status.** Two modules are accepted, and their sounds are in the store: `wall-hit`, `stone-landing`,
 `blast`. The third, the hang, waits for the owner's review of its two variants.

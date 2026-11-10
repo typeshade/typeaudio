@@ -5,7 +5,7 @@
 // wall, two octaves lower, as the landing. This file makes that prototype a tool: a sound takes an
 // accepted definition from the store by its name, and effects lie on it as nodes.
 
-import { ROOMS, SAMPLE_RATE, pitched, roomOf } from './definitions.ts';
+import { ROOMS, SAMPLE_RATE, pitched, random, roomOf } from './definitions.ts';
 import { readEntry, renderEntry, renderParts, type Stereo } from './store.ts';
 import { limiterGain } from '../../src/master.ts';
 
@@ -56,6 +56,68 @@ export interface StoredSound {
    * `reference`.
    */
   readonly level?: 'plan';
+  /** Where, from left (-1) to right (1); the middle when it is not given. */
+  readonly pan?: number;
+  /**
+   * Many of this sound, of one material: each copy is a smaller body, so it is higher, shorter and
+   * quieter, at its own second and place (experiment 9, findings 1 and 2: one material keeps one
+   * timbre; size is pitch and length together). `when.at` is where the first may land.
+   */
+  readonly scatter?: {
+    readonly count: number;
+    /** The sizes of the copies against the stored sound's body, from the smallest to the largest. */
+    readonly size: readonly [number, number];
+    /** How the copies fall in time after `when.at`: the mean wait, seconds. */
+    readonly spread: number;
+    /** No copy lands after this picture second. */
+    readonly until: number;
+    /** How wide the copies lie, 0 to 1. */
+    readonly width: number;
+    readonly seed: number;
+  };
+}
+
+/**
+ * The copies of a scattered sound. A body of `s` times the size answers `1 / s` times higher and
+ * `s` times as long; its level falls by 30·log10(1 / s) dB (its energy goes as its mass, its
+ * radiating area as its face), and up to 4 dB more by distance. Small pieces are many: the size
+ * follows a power law from the smallest to the largest.
+ */
+export function scattered(sound: StoredSound): StoredSound[] {
+  const sc = sound.scatter;
+  if (!sc) return [sound];
+  const base = resolved({ ...sound, scatter: undefined });
+  const rnd = random(sc.seed);
+  const [small, large] = sc.size;
+  const out: StoredSound[] = [];
+  for (let i = 0; i < sc.count; i++) {
+    // A power law: P(size > x) falls as x^-1.5 between the two sizes.
+    const u = rnd();
+    const a = small ** -1.5;
+    const b = large ** -1.5;
+    const size = (a - u * (a - b)) ** (-1 / 1.5);
+    let t = sound.when.at - sc.spread * Math.log(1 - rnd());
+    if (t > sc.until) t = sound.when.at + rnd() * (sc.until - sound.when.at);
+    let pitchDone = false;
+    const effects = base.effects.map((e): Effect => {
+      if ('pitch' in e && !pitchDone) {
+        pitchDone = true;
+        return { pitch: e.pitch / size };
+      }
+      if ('damp' in e) return { damp: { seconds: Math.max(0.08, e.damp.seconds * size) } };
+      return e;
+    });
+    out.push({
+      ...base,
+      id: `${sound.id}-${i}`,
+      effects,
+      when: { at: t },
+      why: { ...base.why, under: base.why.under + 30 * Math.log10(1 / size) + 4 * rnd() },
+      pan: sc.width * (2 * rnd() - 1),
+      scatter: undefined,
+    });
+  }
+  return out;
 }
 
 export interface Composition {
@@ -184,8 +246,7 @@ export async function compose(c: Composition): Promise<Stereo> {
     Math.round((c.reference.at - c.bed.from) * SAMPLE_RATE),
     Math.round((c.reference.at + c.reference.length - c.bed.from) * SAMPLE_RATE),
   );
-  for (const given of c.sounds) {
-    const sound = resolved(given);
+  for (const sound of c.sounds.flatMap((given) => scattered(resolved(given)))) {
     const parts = await renderParts(sound.from.store);
     const source: Stereo =
       sound.from.part === 'dry'
@@ -201,9 +262,11 @@ export async function compose(c: Composition): Promise<Stereo> {
       (sound.level === 'plan' ? 10 ** ((bedDb - parts.normalizeDb) / 20) : ref / (own || 1)) *
       10 ** (-sound.why.under / 20);
     const at = Math.round((sound.when.at - front - c.bed.from) * SAMPLE_RATE);
+    const pan = sound.pan ?? 0;
+    const sides = [Math.min(1, 1 - pan), Math.min(1, 1 + pan)];
     for (let k = 0; k < 2; k++)
       for (let i = 0; i < made[k]!.length && at + i < out[k]!.length; i++)
-        if (at + i >= 0) out[k]![at + i]! += gain * made[k]![i]!;
+        if (at + i >= 0) out[k]![at + i]! += gain * sides[k]! * made[k]![i]!;
   }
   // The silences: whole, with a ramp of 2 ms at each edge.
   const ramp = Math.round(0.002 * SAMPLE_RATE);

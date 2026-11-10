@@ -1,6 +1,6 @@
 {
   "module": "hang",
-  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed). Review 8: the two landings are the same stored sound twice, and the fog of the next shot matters less; the variants slow-one-landing and slow-no-landing leave out the second landing, and both.",
+  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed). Review 8: the two landings are the same stored sound twice, and the fog of the next shot matters less; the variants slow-one-landing and slow-no-landing leave out the second landing, and both. Review 9: with none it is empty, and dozens are better than two, for not only two large blocks fall. The variant slow-scatter keeps the first landing and scatters thirty smaller copies of the accepted landing in the fog: smaller is higher, shorter and quieter.",
   "bed": {
     "store": "passage-without-break",
     "from": 136.5
@@ -22,14 +22,20 @@
   "variants": {
     "plan": {
       "effects": [],
-      "part": "mix"
+      "part": "mix",
+      "drop": ["rubble"]
     },
-    "slow": {},
+    "slow": {
+      "drop": ["rubble"]
+    },
     "slow-one-landing": {
-      "drop": ["land-2"]
+      "drop": ["land-2", "rubble"]
     },
     "slow-no-landing": {
-      "drop": ["land-1", "land-2"]
+      "drop": ["land-1", "land-2", "rubble"]
+    },
+    "slow-scatter": {
+      "drop": ["land-2"]
     }
   },
   "sounds": [
@@ -100,6 +106,31 @@
       "why": {
         "part": "explains",
         "under": -2.1
+      }
+    },
+    {
+      "id": "rubble",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 147.86
+      },
+      "why": {
+        "part": "explains",
+        "under": -9
+      },
+      "scatter": {
+        "count": 30,
+        "size": [0.12, 0.6],
+        "spread": 0.4,
+        "until": 149.3,
+        "width": 0.8,
+        "seed": 4
       }
     }
   ]
