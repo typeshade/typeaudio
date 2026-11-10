@@ -316,17 +316,28 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(one('blast').macros.weight).toBe(1);
   });
 
-  test('makes a landing low, long and wide: a burst with a dark top, a deep body that sounds on, a dark roar', () => {
+  test('makes a landing from the four layers of the owner: the ground, the hit that tears, the crush, the ring of the hall', () => {
     for (const id of ['land-1', 'land-2']) {
       const hit = one(id);
       expect(hit.kind, id).toBe('impact');
-      expect(hit.macros.crack, id).toBeLessThanOrEqual(0.4);
-      const body = one(`${id}-body`);
-      expect(body.t, id).toBe(hit.t);
-      // The body rests under 70 Hz and falls for 0.7 s or more.
-      expect(140 * 0.4 ** body.macros.size!, id).toBeLessThan(70);
-      expect(0.12 * 10 ** body.macros.decay!, id).toBeGreaterThanOrEqual(0.69);
-      expect(one(`${id}-burst`).macros.brightness, id).toBeLessThanOrEqual(0.3);
+      // 1. The ground comes first: a body with no tone at 56 Hz, 30 ms before the hit.
+      const ground = one(`${id}-ground`);
+      expect(hit.t - ground.t, id).toBeCloseTo(0.03, 5);
+      expect(ground.macros.tone, id).toBe(0);
+      expect(140 * 0.4 ** ground.macros.size!, id).toBeLessThan(60);
+      // 2. The hit tears: the widest burst of an `impact`, and a bright roar of under 0.3 s.
+      expect(hit.macros.crack, id).toBe(1);
+      expect(one(`${id}-tear`).macros.brightness, id).toBe(1);
+      expect(one(`${id}-tear`).duration, id).toBeLessThan(0.3);
+      // 3. The crush follows it, far lower, and wanders.
+      const crush = one(`${id}-crush`);
+      expect(crush.t, id).toBeGreaterThan(hit.t);
+      expect(crush.intensity, id).toBeLessThan(0.5 * hit.intensity);
+      expect(crush.macros.motion, id).toBe(1);
+      // 4. The hall rings for seconds: a dark roar, and the far wall that answers.
+      expect(one(`${id}-ring`).duration, id).toBeGreaterThanOrEqual(2);
+      expect(one(`${id}-ring`).macros.brightness, id).toBeLessThanOrEqual(0.2);
+      expect(one(`${id}-answer`).position.distance, id).toBeGreaterThanOrEqual(10);
     }
     expect(one('land-2').intensity).toBeLessThan(one('land-1').intensity);
   });

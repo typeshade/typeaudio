@@ -303,6 +303,10 @@ What follows for the one who writes a plan:
    wide `roar` that goes on from the first of them and falls step by step. Sounds with silence
    between them are heard as thin.
 
+7. Make a mass of tons that lands from the owner's four layers: the ground, a sub that is felt,
+   first or with the hit; the hit, a burst that tears as thunder does; the crush, stone that is
+   ground to pieces under the weight; and the ring of the place, a heavy tail of seconds.
+
 The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
 they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks
 for a silence before an impact and for build-ups: they are the hints of the future. No analyzer

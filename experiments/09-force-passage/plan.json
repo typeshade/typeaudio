@@ -911,11 +911,28 @@
       "duration": 3.0
     },
     {
+      "id": "land-1-ground",
+      "t": 11.37,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.891,
+      "position": {
+        "x": -0.3,
+        "y": -0.9,
+        "distance": 6
+      },
+      "macros": {
+        "size": 1.0,
+        "decay": 1.0,
+        "tone": 0.0
+      }
+    },
+    {
       "id": "land-1",
       "t": 11.4,
       "kind": "impact",
       "layer": "effects",
-      "intensity": 0.891,
+      "intensity": 1.0,
       "position": {
         "x": -0.3,
         "y": -0.8,
@@ -923,9 +940,45 @@
       },
       "macros": {
         "weight": 1.0,
-        "decay": 0.6,
-        "crack": 0.35
+        "decay": 0.8,
+        "crack": 1.0
       }
+    },
+    {
+      "id": "land-1-tear",
+      "t": 11.4,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 1.0,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 6
+      },
+      "macros": {
+        "brightness": 1.0,
+        "motion": 0.6,
+        "swell": 0.0
+      },
+      "duration": 0.28
+    },
+    {
+      "id": "land-1-crush",
+      "t": 11.45,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.355,
+      "position": {
+        "x": -0.15,
+        "y": -0.8,
+        "distance": 6
+      },
+      "macros": {
+        "brightness": 1.0,
+        "motion": 1.0,
+        "swell": 0.0
+      },
+      "duration": 1.1
     },
     {
       "id": "land-1-body",
@@ -939,50 +992,67 @@
         "distance": 6
       },
       "macros": {
-        "size": 0.962,
-        "decay": 0.875,
+        "size": 0.726,
+        "decay": 1.0,
         "tone": 0.0
       }
     },
     {
-      "id": "land-1-burst",
+      "id": "land-1-ring",
       "t": 11.4,
       "kind": "roar",
       "layer": "effects",
-      "intensity": 0.631,
+      "intensity": 0.501,
       "position": {
-        "x": -0.3,
-        "y": -0.8,
-        "distance": 6
+        "x": 0.3,
+        "y": -0.5,
+        "distance": 8
       },
       "macros": {
-        "brightness": 0.2,
+        "brightness": 0.1,
         "motion": 0.3,
         "swell": 0.0
       },
-      "duration": 0.6
+      "duration": 3.2
     },
     {
-      "id": "land-2",
-      "t": 11.8,
-      "kind": "impact",
+      "id": "land-1-answer",
+      "t": 11.445,
+      "kind": "boom",
       "layer": "effects",
-      "intensity": 0.447,
+      "intensity": 0.708,
       "position": {
-        "x": 0.4,
-        "y": -0.8,
-        "distance": 7
+        "x": 0.3,
+        "y": 0.2,
+        "distance": 14
       },
       "macros": {
-        "weight": 1.0,
-        "decay": 0.6,
-        "crack": 0.35
+        "size": 0.854,
+        "decay": 1.0,
+        "tone": 0.0
       }
     },
     {
-      "id": "land-2-body",
-      "t": 11.8,
+      "id": "land-2-ground",
+      "t": 11.81,
       "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.355,
+      "position": {
+        "x": 0.4,
+        "y": -0.9,
+        "distance": 7
+      },
+      "macros": {
+        "size": 1.0,
+        "decay": 0.845,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "land-2",
+      "t": 11.84,
+      "kind": "impact",
       "layer": "effects",
       "intensity": 0.398,
       "position": {
@@ -991,15 +1061,51 @@
         "distance": 7
       },
       "macros": {
-        "size": 0.854,
-        "decay": 0.766,
-        "tone": 0.0
+        "weight": 1.0,
+        "decay": 0.5599999999999999,
+        "crack": 1.0
       }
     },
     {
-      "id": "land-2-burst",
-      "t": 11.8,
+      "id": "land-2-tear",
+      "t": 11.84,
       "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.398,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 7
+      },
+      "macros": {
+        "brightness": 1.0,
+        "motion": 0.6,
+        "swell": 0.0
+      },
+      "duration": 0.28
+    },
+    {
+      "id": "land-2-crush",
+      "t": 11.89,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.141,
+      "position": {
+        "x": 0.2,
+        "y": -0.8,
+        "distance": 7
+      },
+      "macros": {
+        "brightness": 1.0,
+        "motion": 1.0,
+        "swell": 0.0
+      },
+      "duration": 0.77
+    },
+    {
+      "id": "land-2-body",
+      "t": 11.84,
+      "kind": "boom",
       "layer": "effects",
       "intensity": 0.316,
       "position": {
@@ -1008,11 +1114,45 @@
         "distance": 7
       },
       "macros": {
-        "brightness": 0.2,
+        "size": 0.726,
+        "decay": 0.845,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "land-2-ring",
+      "t": 11.84,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.2,
+      "position": {
+        "x": -0.4,
+        "y": -0.5,
+        "distance": 9
+      },
+      "macros": {
+        "brightness": 0.1,
         "motion": 0.3,
         "swell": 0.0
       },
-      "duration": 0.6
+      "duration": 2.2399999999999998
+    },
+    {
+      "id": "land-2-answer",
+      "t": 11.885,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.282,
+      "position": {
+        "x": -0.4,
+        "y": 0.2,
+        "distance": 14
+      },
+      "macros": {
+        "size": 0.854,
+        "decay": 0.845,
+        "tone": 0.0
+      }
     }
   ]
 }
