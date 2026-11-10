@@ -1,0 +1,74 @@
+{
+  "source": "The study docs/studies/frieren-perceptual on pull request #67 at commit 07670c9, round 11: receipt.txt, the lines 'bands' and 'flight' of the force passage, and its README (the reference). Levels are dBFS of the mono sum. The study filters in the frequency domain; measure.ts filters with biquads, so a band level differs by up to 1 dB for the same sound.",
+  "pictureStart": 136.5,
+  "bandsHz": [
+    [30, 120],
+    [120, 500],
+    [500, 2000],
+    [2000, 6000],
+    [6000, 14000]
+  ],
+  "phases": [
+    {
+      "name": "stare",
+      "from": 143.0,
+      "to": 144.9,
+      "level": -28.6,
+      "bands": [-29.8, -37.3, -48.2, -55.8, -59.4]
+    },
+    {
+      "name": "flight",
+      "from": 145.27,
+      "to": 145.85,
+      "level": -8.3,
+      "bands": [-11.7, -15.2, -18.0, -24.7, -38.5]
+    },
+    {
+      "name": "wall hit",
+      "from": 145.937,
+      "to": 146.1,
+      "level": -7.8,
+      "bands": [-11.6, -12.5, -20.8, -32.8, -43.4]
+    },
+    {
+      "name": "cracks spread",
+      "from": 146.1,
+      "to": 146.46,
+      "level": -8.3,
+      "bands": [-13.4, -13.1, -19.5, -27.2, -37.2]
+    },
+    {
+      "name": "breakout",
+      "from": 146.48,
+      "to": 146.7,
+      "level": -7.9,
+      "bands": [-11.8, -12.9, -21.2, -29.9, -39.2]
+    },
+    {
+      "name": "fall",
+      "from": 146.7,
+      "to": 147.75,
+      "level": -9.6,
+      "bands": [-14.4, -14.4, -22.6, -32.3, -43.1]
+    },
+    {
+      "name": "fog",
+      "from": 147.77,
+      "to": 148.45,
+      "level": -9.9,
+      "bands": [-14.4, -14.2, -24.7, -34.5, -44.7]
+    }
+  ],
+  "silence": { "from": 145.04, "to": 145.18, "level": -119.2 },
+  "flightEachTwoFrames": {
+    "from": 145.270125,
+    "levels": [-7.2, -7.9, -8.2, -8.2, -8.8, -9.1, -9.0, -9.1]
+  },
+  "anchors": [
+    { "id": "strike", "picture": 145.186708 },
+    { "id": "blast", "picture": 145.270125 },
+    { "id": "wall-crack", "picture": 145.937458 },
+    { "id": "breakout-first", "picture": 146.479667 }
+  ],
+  "integratedLufs": -8.8
+}

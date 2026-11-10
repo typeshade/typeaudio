@@ -22,6 +22,7 @@
     "exp:06": "bun experiments/06-granular/run.ts",
     "exp:07": "bun experiments/07-sound-match/run.ts",
     "exp:08": "bun experiments/08-sound-design/run.ts",
+    "exp:09": "bun experiments/09-force-passage/run.ts",
     "dev:website": "vite --config website/vite.config.ts",
     "build:website": "vite build --config website/vite.config.ts && bun scripts/site-docs.ts",
     "check:website": "tsc -p website/tsconfig.json",

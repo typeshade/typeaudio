@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import plan from '../experiments/08-sound-design/plan.json';
+import force from '../experiments/09-force-passage/plan.json';
 import { KINDS, LAYERS, validatePlan, MAX_EVENTS } from '../src/plan/index.ts';
 
 // The plan format (docs/sound-design-loop.md). Each refusal is one sentence that names the event and
@@ -172,5 +173,33 @@ describe('the validator', () => {
     expect(v.master).toEqual({ lufs: -23, truePeak: -1 });
     expect(v.seed).toBe(0);
     expect(v.events.find((e) => e.id === 'wind-bed')!.macros).toEqual({ gust: 0.5, howl: 0.5 });
+  });
+});
+
+describe('the plan of experiment 9, the force passage', () => {
+  const p = validatePlan(force);
+  const one = (id: string) => p.events.find((e) => e.id === id)!;
+
+  test('is valid, and holds the four kinds that experiment 9 added', () => {
+    expect(p.clip.duration).toBe(15.7);
+    const kinds = new Set(p.events.map((e) => e.kind));
+    for (const kind of ['crack', 'boom', 'rubble', 'roar'])
+      expect(kinds.has(kind), kind).toBe(true);
+  });
+
+  test('has one silence, which ends where the strike starts; what sounds before it starts before it', () => {
+    expect(p.silences).toHaveLength(1);
+    const s = p.silences[0]!;
+    expect(Math.abs(s.t + s.duration - one('strike').t)).toBeLessThan(1e-6);
+    expect(one('stare').t).toBeLessThan(s.t);
+    expect(one('stare').t + one('stare').duration!).toBeGreaterThan(s.t);
+  });
+
+  test('puts the strike, the blast, the hit on the wall and the breakout in their order', () => {
+    const order = ['strike', 'blast', 'wall-crack', 'crack-run', 'breakout-first', 'land-1'];
+    const times = order.map((id) => one(id).t);
+    expect(times).toEqual([...times].sort((a, b) => a - b));
+    // The blast is two frames after the strike: her hair snaps, then she is thrown.
+    expect(one('blast').t - one('strike').t).toBeCloseTo(2002 / 24000, 5);
   });
 });
