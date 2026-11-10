@@ -6,8 +6,9 @@ sixteen plans of one passage (`docs/experiments.md`, section 9).
 
 Its sources are published books, articles and talks: Michel Chion, "Audio-Vision"; Walter Murch,
 "Dense Clarity, Clear Density" and "In the Blink of an Eye"; Randy Thom, "Designing a Movie for
-Sound"; and the literature on how a listener hears the size and the material of a thing that is
-struck. It was written by an agent that cannot hear. Nothing in it was checked by ear by its
+Sound"; the literature on how a listener hears the size and the material of a thing that is struck;
+David Huron, "Sweet Anticipation"; Albert Bregman, "Auditory Scene Analysis"; and studies of
+startle, of looming sounds, of roughness and of nonlinear sounds in film. It was written by an agent that cannot hear. Nothing in it was checked by ear by its
 writer. Each claim about this engine names the review or the measure it rests on. A claim without
 one is an inference, and the text says so.
 
@@ -86,7 +87,77 @@ the sound follows it. In Japanese television animation one sound director leads 
 and music together, and a silence before a hit is a common form. This paragraph rests on
 interviews only.
 
-## 7. What experiment 9 found against this
+## 7. The mind of the listener
+
+Sections 1 to 6 say what a sound tells. This section says what a sound does to the one who hears
+it. Horror films use these effects most plainly, and an action scene uses the same ones. Each
+item says how firm its ground is: firm (many studies agree), some (a few studies, or a debate),
+or practice (the craft holds it; the writer knows no study that proves it).
+
+**The body answers before the mind.**
+
+- **Startle.** A sound that rises to a high level in a few milliseconds makes the body flinch,
+  before the listener knows what it is. The rise matters more than the level. A jump scare is a
+  startle with a picture. Firm.
+- **Habituation.** A startle that comes again and again grows weak. A film that scares on every
+  cut stops scaring. So a large hit is rare, and the hits before it are smaller. Firm.
+- **Arousal.** A loud, low, dense sound raises the listener's arousal: the heart, the skin, the
+  attention. Arousal has no direction of its own. The picture and the story say whether it is
+  fear, awe or joy. Firm for arousal; some for how it takes its direction.
+
+**The ear expects.**
+
+- **Prediction.** A listener predicts the next sound all the time. Tension is a prediction that
+  is held open; a release is the prediction met; a shock is the prediction broken. David Huron's
+  "Sweet Anticipation" gives the stages. This is the ground of section 4. Some: the theory is
+  wide, and its parts are tested one by one.
+- **Silence.** A silence in a scene of sound is a prediction with nothing to hold on to. The
+  listener leans in, and the next sound finds an ear that is open. So a silence before a hit makes
+  the hit larger, and a long silence makes fear. Practice, in line with the studies of startle
+  after quiet.
+- **Looming.** A sound that grows louder is heard as a thing that comes nearer, and the listener
+  judges it nearer and sooner than it is. A sound that fades is not judged that way. So a rise
+  is a threat and a fall is a relief. Firm.
+- **The endless rise.** A Shepard tone seems to rise for ever. It holds a prediction open with no
+  end. Firm as an illusion; practice as a tool of tension.
+
+**Some sounds are alarms.**
+
+- **Roughness.** A sound whose level beats 30 to 150 times a second is heard as rough. Screams and
+  alarms lie there, and listeners rate such sounds as more frightening and react to them faster.
+  Some: a small number of studies, well known.
+- **Nonlinear sounds.** An animal in distress makes sounds that break: sudden noise, jumps of
+  pitch, harshness. Film scores for fear use the same features more than scores for other moods.
+  Some.
+- **The low end.** Sound under 20 Hz, or just above it, is said to cause unease. The studies do
+  not agree, and the effect, where one is found, is small. A low sound at a high level is felt in
+  the body, and that is firm; a secret effect of infrasound is not. Debate.
+
+**The mind fills what it is not given.**
+
+- **The unseen source.** A sound whose source is not in the picture keeps the listener looking for
+  it. Chion's word is the acousmatic sound. A threat that is heard and not seen stays open; a
+  threat that is shown is closed. Practice, and a rule of the horror film.
+- **The wrong sound.** A sound that is nearly right is worse than a sound that is plainly wrong:
+  the listener hears that something is off and cannot say what. A stone that sounds like a bin is
+  this case. Inference from experiment 9.
+- **One sense moves another.** What is heard changes what is seen: a sound sets when two things
+  touch, how hard a hit is, and how heavy a thing is. Firm, and the ground of section 1.
+- **Streams.** The ear groups sounds that are alike in pitch, in timbre and in place into one
+  stream, and follows a few streams at once. Albert Bregman's "Auditory Scene Analysis" is the
+  source. It is the ground of section 2, and of finding 1 below: sounds of one timbre are heard
+  as one thing that goes on. Firm.
+
+**What this asks of a plan.**
+
+1. Keep the largest rise for one moment of a scene. Each rise before it spends some of it.
+2. Tell the listener that a thing comes, then hold it back: a rise, a rush or a silence.
+3. Let a threat grow louder and a relief fade.
+4. Use a rough or a broken sound for alarm, and not as a bed: it tires the ear.
+5. Leave the source of a threat out of the picture for as long as the story can.
+6. Trust no low layer to make fear or weight by itself.
+
+## 8. What experiment 9 found against this
 
 Each row is a review by the owner on 2026-11-10 and the part of the theory that it meets. The
 plans, the measures and the records are in `docs/experiments.md`, section 9, and in pull request
@@ -116,7 +187,7 @@ Three findings follow. Each is an inference from these reviews, by one listener,
    measures held equal. A plan was changed sixteen times on such numbers. A sound that the owner
    accepts is a better start than a measure.
 
-## 8. What the engine lacks for this
+## 9. What the engine lacks for this
 
 - **A pitch for an event.** The engine cannot lower a whole sound. Finding 2 needs it: every
   frequency and every length of an event by one ratio.
