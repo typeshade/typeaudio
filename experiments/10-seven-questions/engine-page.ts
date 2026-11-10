@@ -8,13 +8,15 @@ import { toBase64 } from '../03-fft/signals.ts';
 
 declare global {
   // eslint-disable-next-line no-var
-  var renderPlans: (plans: unknown[]) => Promise<{ dry: string; wet: string; ms: number }[]>;
+  var renderPlans: (
+    plans: unknown[],
+  ) => Promise<{ dry: string; wet: string; ms: number; normalizeDb: number }[]>;
 }
 
 globalThis.renderPlans = async (plans) => {
   const dev = await createDevice({ prefer: ['webgpu'] });
   try {
-    const out: { dry: string; wet: string; ms: number }[] = [];
+    const out: { dry: string; wet: string; ms: number; normalizeDb: number }[] = [];
     for (const plan of plans) {
       const start = performance.now();
       const r = await renderPlan(dev, plan);
@@ -22,6 +24,7 @@ globalThis.renderPlans = async (plans) => {
         dry: toBase64(Float32Array.from([...r.dry[0]!, ...r.dry[1]!])),
         wet: toBase64(Float32Array.from([...r.wet[0]!, ...r.wet[1]!])),
         ms: performance.now() - start,
+        normalizeDb: r.master.normalizeDb,
       });
     }
     return out;

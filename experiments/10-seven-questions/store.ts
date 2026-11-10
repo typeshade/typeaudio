@@ -36,6 +36,11 @@ export type Stereo = readonly [Float32Array, Float32Array];
 export interface Parts {
   readonly dry: Stereo;
   readonly wet: Stereo;
+  /**
+   * The gain the engine's master gave the render to reach its loudness target, dB. Two renders
+   * are in one scale when each is divided by its own gain.
+   */
+  readonly normalizeDb: number;
 }
 
 export const readEntry = (name: string): StoreEntry =>
@@ -76,7 +81,7 @@ export async function prepare(names: readonly string[], seconds = 3, lead = 0.05
   mkdirSync(OUT, { recursive: true });
   const todo = [...new Set(names)]
     .map((name) => ({ name, ...planned(name, seconds, lead) }))
-    .filter((t) => !existsSync(`${t.file}.wet.f32`));
+    .filter((t) => !existsSync(`${t.file}.master.json`));
   if (todo.length === 0) return;
   page ??= await bundle({
     entry: 'experiments/10-seven-questions/engine-page.ts',
@@ -84,7 +89,9 @@ export async function prepare(names: readonly string[], seconds = 3, lead = 0.05
     target: 'web',
   });
   type Page = {
-    renderPlans(plans: unknown[]): Promise<{ dry: string; wet: string; ms: number }[]>;
+    renderPlans(
+      plans: unknown[],
+    ): Promise<{ dry: string; wet: string; ms: number; normalizeDb: number }[]>;
   };
   const plans = todo.map((t) => JSON.parse(t.text) as unknown);
   const done = await inPage(dirname(page), (p) =>
@@ -98,6 +105,7 @@ export async function prepare(names: readonly string[], seconds = 3, lead = 0.05
         new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength),
       );
     }
+    writeFileSync(`${todo[i]!.file}.master.json`, JSON.stringify({ normalizeDb: r.normalizeDb }));
     console.error(`store: ${todo[i]!.name} rendered on WebGPU in ${(r.ms / 1000).toFixed(1)} s`);
   });
 }
@@ -113,7 +121,10 @@ const read = (file: string): Stereo => {
 export async function renderParts(name: string, seconds = 3, lead = 0.05): Promise<Parts> {
   await prepare([name], seconds, lead);
   const file = planned(name, seconds, lead).file;
-  return { dry: read(`${file}.dry.f32`), wet: read(`${file}.wet.f32`) };
+  const { normalizeDb } = JSON.parse(readFileSync(`${file}.master.json`, 'utf8')) as {
+    normalizeDb: number;
+  };
+  return { dry: read(`${file}.dry.f32`), wet: read(`${file}.wet.f32`), normalizeDb };
 }
 
 /** The render of an entry through the engine: the two parts summed, as the engine's mix. */

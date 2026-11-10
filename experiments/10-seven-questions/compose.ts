@@ -50,6 +50,12 @@ export interface StoredSound {
   readonly when: { readonly at: number };
   /** Why: its part, and its level in dB under the sound that leads (`reference`). */
   readonly why: { readonly part: string; readonly under: number };
+  /**
+   * `plan`: the sound keeps the level its plan gave it beside the bed (both renders in the scale
+   * of the engine's master), and `why.under` is dB under that. Otherwise the level is set against
+   * `reference`.
+   */
+  readonly level?: 'plan';
 }
 
 export interface Composition {
@@ -60,6 +66,11 @@ export interface Composition {
   /** The sound that leads, in the bed: its level is the 0 dB of `why.under`. */
   readonly reference: { readonly at: number; readonly length: number };
   readonly sounds: readonly StoredSound[];
+  /**
+   * Silences that are whole, as the plan's: nothing sounds in them, the stored sounds included.
+   * Picture seconds; each edge has a ramp of 2 ms.
+   */
+  readonly silences?: readonly { readonly at: number; readonly duration: number }[];
 }
 
 const rms = (x: Stereo, a: number, b: number): number => {
@@ -166,6 +177,7 @@ export function resolved(sound: StoredSound): StoredSound {
 /** The composition: the bed, every stored sound at its second and level, and the ceiling. */
 export async function compose(c: Composition): Promise<Stereo> {
   const bed = await renderEntry(c.bed.store);
+  const bedDb = (await renderParts(c.bed.store)).normalizeDb;
   const out = bed.map((x) => x.slice()) as unknown as Stereo;
   const ref = rms(
     bed,
@@ -185,11 +197,24 @@ export async function compose(c: Composition): Promise<Stereo> {
     const plain = shaped(source, { ...sound, effects: [] }).sound;
     const own = rms(plain, 0, Math.round(c.reference.length * SAMPLE_RATE));
     const { sound: made, front } = shaped(source, sound);
-    const gain = (ref / (own || 1)) * 10 ** (-sound.why.under / 20);
+    const gain =
+      (sound.level === 'plan' ? 10 ** ((bedDb - parts.normalizeDb) / 20) : ref / (own || 1)) *
+      10 ** (-sound.why.under / 20);
     const at = Math.round((sound.when.at - front - c.bed.from) * SAMPLE_RATE);
     for (let k = 0; k < 2; k++)
       for (let i = 0; i < made[k]!.length && at + i < out[k]!.length; i++)
         if (at + i >= 0) out[k]![at + i]! += gain * made[k]![i]!;
+  }
+  // The silences: whole, with a ramp of 2 ms at each edge.
+  const ramp = Math.round(0.002 * SAMPLE_RATE);
+  for (const silence of c.silences ?? []) {
+    const a = Math.round((silence.at - c.bed.from) * SAMPLE_RATE);
+    const b = Math.round((silence.at + silence.duration - c.bed.from) * SAMPLE_RATE);
+    for (const x of out)
+      for (let i = Math.max(0, a - ramp); i < Math.min(x.length, b + ramp); i++) {
+        const edge = Math.min(i - (a - ramp), b + ramp - i) / ramp;
+        x[i]! *= i >= a && i < b ? 0 : Math.max(0, 1 - Math.min(1, edge));
+      }
   }
   // The ceiling: the engine's limiter (src/master.ts), at -1 dBFS. It lowers only the moments
   // that pass the ceiling, so a loud landing does not lower the whole passage.

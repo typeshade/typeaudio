@@ -668,4 +668,32 @@ and every review after that was answered by one node with a measured cause (a lo
 low ring, a ceiling that scaled the whole passage). The definitions of physics did not reach the
 timbre; they stay in `definitions.ts` as the first form of tool B.
 
-**Status.** The first module is accepted. Its sounds are in the store: `wall-hit`, `stone-landing`.
+**The second module: the blast.** The owner approved it on 2026-11-10. It holds the strike as her hair
+snaps up (145.19 s), the blast (145.27 s), the flight, and the rush as the camera whips to the wall,
+up to the frame of silence before the hit. Experiment 9 never had a review of this part on its own;
+the one remark near it (something rings under the wind) was two `cloth` events, taken out in the
+ninth plan.
+
+Measured against the reference, in dB against each one's hit on the wall, every two frames:
+
+| Picture second | Reference | Sixteenth plan |
+| -------------- | --------- | -------------- |
+| 145.317        | +0.9      | -2.3           |
+| 145.651        | +0.5      | -4.8           |
+| 145.817        | -1.1      | -10.3          |
+
+The reference holds the level of the hit from the blast to the hit. The sixteenth plan lets the blast
+fall by 10 dB as she flies away, by design since its second plan. `module-3.json` has two variants:
+
+- `plan`: the blast of the sixteenth plan, from the store entry `blast`, at the level the plan gave
+  it. Every two frames it lies within 0.5 dB of the sixteenth plan.
+- `held`: the store entry `blast-held`, whose two roars last 1.0 s, so the air holds to the rush. It
+  falls by about 3 dB, not 10.
+
+Both use the accepted `stone-landing` for the landings, by its name: the first use of the store. The
+store now keeps the gain of the engine's master for each render, so a stored group keeps its level
+beside the bed (`level: "plan"`). A composition keeps the plan's whole silences over the stored sounds
+too: both silences measure no sample above zero.
+
+**Status.** The first module is accepted; its sounds are in the store: `wall-hit`, `stone-landing`.
+The second module, the blast, waits for the owner's review of its two variants.
