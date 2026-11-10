@@ -165,12 +165,20 @@ Commands 3: the first 470 blocks (10.03 s, to the break) on both tiers.
 
 | Tier     | Blocks | Median (ms) | p95 (ms) | Real time | Host time (s) | Loudness before (LUFS) | Deepest gain of the limiter (dB) |
 | -------- | -----: | ----------: | -------: | --------: | ------------: | ---------------------: | -------------------------------: |
-| CPU tier |    470 | in progress |          |           |               |                        |                                  |
+| CPU tier |    470 |    1,435.93 | 1,687.98 |   0.0147x |         697.7 |               -23.4986 |                           -3.929 |
 | WebGPU   |    470 |       34.60 |    46.61 |    0.550x |          19.4 |               -23.4988 |                           -3.929 |
 
-The WebGPU part ran at 09:06 UTC. The CPU tier started at 09:05 UTC and had not ended when this record
-was written: its row, its JSON (`docs/records/09-force-passage-container-2-cpu.json`) and the result of
-`across.ts` are **not run to the end** at this commit. A later commit of this pull request adds them.
+`across.ts`: of the 962,560 values of the two mixes (481,280 frames, two channels), 942,522 differ. The
+largest difference is 1.95e-4 of a peak of 0.879, and the relative RMS of the difference is 4.45e-4. The two
+tiers render the same sound to within the device's own `sin` and `exp`, as record 09 found for the first
+plan. The comparison covers the unit `Stones` after the change of commit `d57d576`.
+
+The WebGPU part ran at 09:06 UTC. The CPU tier ran from 09:05 to 09:17 UTC. Its JSON names commit `60408fa`
+and `dirty` true: the head and the tree when the run ended. Its bundle was built at 09:05 from the clean
+tree of `586941b`; `60408fa` adds documents only, and the tree was dirty at the end because the next plan
+was being written. The loudness before the master, -23.4986 against -23.4988 LUFS, shows that both tiers
+rendered the third plan. From 09:12 to 09:17 UTC four WebGPU renders of the next plan ran on the same
+machine, so the CPU tier's time per block is higher than it is alone.
 
 ## Deviations and what this run does not do
 
