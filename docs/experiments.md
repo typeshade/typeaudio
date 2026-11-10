@@ -465,11 +465,45 @@ as material are not a tool of this experiment; the statement names them as the a
 steps 2 to 4 measure the tools on a passage that the listener knows; step 6 is the test on a new one.
 It does not decide whether recordings enter the engine.
 
+**The owner's answers** (2026-11-10), to three questions of the first statement.
+
+1. _A transform of one event, or of a group?_ The landing that was lowered by two octaves was
+   plausible. It was not a sound of full marks. So a transform is a tool, and it is not the answer:
+   the experiment aims past it, at the material of a sound.
+2. _May tool C use a model from outside this repository?_ It is not forbidden. The aim is to build
+   the tool here and to hold all of it.
+3. _The same passage first, or a new one?_ The work goes module by module: a part of a passage is
+   made, heard and accepted by itself.
+
+**What the answers change.**
+
+- **Modules.** The unit of the experiment is a module, not a passage. A module is one sound of the
+  picture with what leads to it and what follows it: a few seconds, rendered and heard alone, with its
+  own count of reviews. The force passage has these modules: the stare and the silence; the strike and
+  the blast; the hit on the wall; the crack that runs and the break; the blocks that hang; the block
+  that lands; the end. A passage is its accepted modules, joined and heard once more as a whole.
+- **Tool E, material.** Since a lowered sound is not full marks, the experiment needs the material
+  itself: stone as many partials at irregular places that die fast, and thousands of fine breaks a
+  second (`docs/sound-design-theory.md`, sections 3 and 9). How sure the gain is: unknown. Prototype 1
+  of record 09-5 was such a material, and it has no review.
+- **Tool C is built here.** The first form of it is a model of hearing in this repository: bands as
+  the ear has them, masking, and the shape of a sound in time. A learned model from outside is the
+  fallback, and the survey of step 5 says what each can tell apart.
+- **The order.** The first module is the block that lands: it is where experiment 9 stopped, and it
+  needs tools A, B, D and E at once.
+
+**The method, by module.** It replaces steps 2 to 4 and step 6 above.
+
+1. Choose a module. State what the picture shows in it and which sound leads.
+2. Render the module alone, with what leads to it, on the tools that exist.
+3. Put it on its piece of the picture for the owner. Count the reviews until the owner accepts it.
+4. Record the module: its plan, the tools it used, the reviews, and what it still lacks.
+5. When every module of a passage is accepted, join them and hear the passage as a whole.
+
 **Open questions for the owner.**
 
-1. A transform of one event, or of a group of events? The accepted landing was a group, the whole hit
-   on the wall, lowered together. A group changes the plan format.
-2. May tool C use a model from outside this repository?
-3. The same passage first, as the method says, or a new passage from the start?
+1. Is the block that lands the right first module?
+2. For a module, is a clip of a few seconds enough to judge, or does the owner want the moment
+   before it at full length?
 
-**Status.** Statement only. Nothing is built. The statement waits for the owner's review.
+**Status.** Statement only, with the owner's first answers. Nothing is built.
