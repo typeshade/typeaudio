@@ -61,6 +61,19 @@ try {
   assert.match(await unsupported.locator('#status').textContent() ?? '', /unavailable/);
   assert.equal(await unsupported.locator('#play').isDisabled(), true);
   console.log('PASS unsupported WebGPU error, without silent fallback');
+  // The scene study: the accepted passage of experiment 10, rendered by the engine in the page.
+  const study = await browser.newPage();
+  const studyErrors: string[] = [];
+  study.on('pageerror', error => studyErrors.push(error.message));
+  assert.equal((await study.goto('http://127.0.0.1:4178/study.html'))?.status(), 200);
+  await study.locator('#render').click();
+  await study.waitForFunction(() => document.querySelector('#report')!.textContent!.includes('Whole render') || document.querySelector('#status')!.classList.contains('error'), undefined, { timeout: 300000 });
+  const report = await study.locator('#report').textContent() ?? '';
+  assert.match(report, /Device: webgpu/, await study.locator('#status').textContent() ?? '');
+  assert.match(report, /passage-without-break: 15\.7 s of sound/);
+  assert.match(report, /15\.7 s of passage/);
+  assert.equal(studyErrors.length, 0, studyErrors.join('\n'));
+  console.log('PASS scene study: the accepted passage renders on WebGPU in the page\n' + report);
 } finally {
   await browser.close();
   await new Promise<void>((resolve, reject) => server.httpServer.close(error => error ? reject(error) : resolve()));

@@ -15,6 +15,10 @@ The implementation starts from `main` at
 - Voice, pitch, filter, drive, and duration controls.
 - Playback, stop, waveform, execution report, and WAV download.
 - Cloudflare Workers Static Assets at `audio.typeshade.dev`.
+- A scene study (`study.html`): the viewer chooses a local copy of a video; the page renders
+  the accepted force passage of experiment 10 (`experiments/10-seven-questions/module-4.json`,
+  variant `slow-many-ordered`) on WebGPU and plays it in place of the video's own sound from
+  136.5 s to 152.2 s. The site never hosts the video, and the page is not indexed.
 
 ## Development
 

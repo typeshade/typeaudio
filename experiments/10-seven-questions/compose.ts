@@ -324,3 +324,32 @@ export async function compose(c: Composition, source: Source): Promise<Stereo> {
   for (const x of out) for (let i = 0; i < x.length; i++) x[i]! *= gain[i]!;
   return out;
 }
+
+/** A variant of a composition: what it keeps, takes and leaves out of the sounds. */
+export interface Variant {
+  /** The effect nodes it keeps; all when it names none. */
+  readonly effects?: readonly string[];
+  readonly part?: 'dry' | 'mix';
+  /** Store entries it takes in place of others, by name. */
+  readonly use?: Readonly<Record<string, string>>;
+  /** The sounds it leaves out, by id. */
+  readonly drop?: readonly string[];
+}
+
+/** The composition of a variant: its sounds, with the effect nodes and the entries it names. */
+export function withVariant(c: Composition, variant: Variant): Composition {
+  const sounds = c.sounds
+    .filter((s) => !variant.drop?.includes(s.id))
+    .map((s) => ({
+      ...s,
+      from: {
+        ...s.from,
+        store: variant.use?.[s.from.store] ?? s.from.store,
+        part: variant.part ?? s.from.part,
+      },
+      effects: variant.effects
+        ? s.effects.filter((e) => variant.effects!.includes(Object.keys(e)[0]!))
+        : s.effects,
+    }));
+  return { ...c, sounds };
+}
