@@ -1,0 +1,170 @@
+{
+  "module": "hang",
+  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed). Review 8: the two landings are the same stored sound twice, and the fog of the next shot matters less; the variants slow-one-landing and slow-no-landing leave out the second landing, and both. Review 9: with none it is empty, and dozens are better than two, for not only two large blocks fall. The variant slow-scatter keeps the first landing and scatters thirty smaller copies of the accepted landing in the fog: smaller is higher, shorter and quieter. Review 10: not two large ones but dozens of large ones, with small ones too. The variant slow-many keeps the first landing and adds 24 large copies (sizes 0.55 to 1.0, even) and 30 small ones (0.12 to 0.5). Review 11: large and heavy pieces land first, so the sound goes from large to small. The variant slow-many-ordered lands each scatter from its largest to its smallest, the large ones from 147.86 s and the small ones from 148.25 s.",
+  "bed": {
+    "store": "passage-without-break",
+    "from": 136.5
+  },
+  "reference": {
+    "at": 145.9375,
+    "length": 0.1625
+  },
+  "silences": [
+    {
+      "at": 145.02,
+      "duration": 0.166708
+    },
+    {
+      "at": 145.89575,
+      "duration": 0.041708
+    }
+  ],
+  "variants": {
+    "plan": {
+      "effects": [],
+      "part": "mix",
+      "drop": ["blocks", "rubble"]
+    },
+    "slow": {
+      "drop": ["blocks", "rubble"]
+    },
+    "slow-one-landing": {
+      "drop": ["blocks", "land-2", "rubble"]
+    },
+    "slow-no-landing": {
+      "drop": ["blocks", "land-1", "land-2", "rubble"]
+    },
+    "slow-scatter": {
+      "drop": ["blocks", "land-2"]
+    },
+    "slow-many-ordered": {
+      "drop": ["land-2"]
+    }
+  },
+  "sounds": [
+    {
+      "id": "break",
+      "from": {
+        "store": "break",
+        "start": 0.046,
+        "length": 2.6,
+        "fade": 0.6,
+        "part": "dry"
+      },
+      "effects": [
+        {
+          "pitch": 0.5
+        },
+        {
+          "front": {
+            "seconds": 0.015,
+            "ratio": 1
+          }
+        },
+        {
+          "room": {
+            "name": "hall",
+            "level": -8
+          }
+        }
+      ],
+      "when": {
+        "at": 146.479667
+      },
+      "why": {
+        "part": "leads",
+        "under": 0
+      },
+      "level": "plan"
+    },
+    {
+      "id": "land-1",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 147.9
+      },
+      "why": {
+        "part": "leads",
+        "under": -9
+      }
+    },
+    {
+      "id": "land-2",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 148.34
+      },
+      "why": {
+        "part": "explains",
+        "under": -2.1
+      }
+    },
+    {
+      "id": "rubble",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 148.25
+      },
+      "why": {
+        "part": "explains",
+        "under": -9
+      },
+      "scatter": {
+        "count": 30,
+        "size": [0.12, 0.5],
+        "spread": 0.4,
+        "until": 149.4,
+        "width": 0.8,
+        "seed": 4,
+        "order": "large-first",
+        "jitter": 0.04
+      }
+    },
+    {
+      "id": "blocks",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 147.86
+      },
+      "why": {
+        "part": "explains",
+        "under": -3
+      },
+      "scatter": {
+        "count": 24,
+        "size": [0.55, 1.0],
+        "power": 0,
+        "spread": 0.3,
+        "until": 148.9,
+        "width": 0.9,
+        "seed": 7,
+        "order": "large-first",
+        "jitter": 0.04
+      }
+    }
+  ]
+}

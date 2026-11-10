@@ -1,0 +1,146 @@
+{
+  "name": "break",
+  "note": "The wall that breaks, as the picture turns slow (146.48 s): eight events of the sixteenth plan of experiment 9 (experiments/09-force-passage/plan.json at commit b74bd5a), times from the break at 146.479667 s. The owner heard the hit on the wall and the break as alike but fitting (record 09-5): one material, two gestures.",
+  "accepted": "2026-11-10",
+  "events": [
+    {
+      "id": "break-mass-l",
+      "t": 0.0,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.562,
+      "position": {
+        "x": -0.55,
+        "y": 0.2,
+        "distance": 3
+      },
+      "macros": {
+        "brightness": 0.7,
+        "motion": 0.5,
+        "swell": 0.0
+      },
+      "duration": 0.7
+    },
+    {
+      "id": "break-mass-r",
+      "t": 0.0,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.562,
+      "position": {
+        "x": 0.55,
+        "y": 0.2,
+        "distance": 3
+      },
+      "macros": {
+        "brightness": 0.7,
+        "motion": 0.5,
+        "swell": 0.0
+      },
+      "duration": 0.7
+    },
+    {
+      "id": "break-rumble",
+      "t": 0.0,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.631,
+      "position": {
+        "x": 0.1,
+        "y": -0.2,
+        "distance": 3
+      },
+      "macros": {
+        "size": 0.756,
+        "decay": 0.921,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "break",
+      "t": 0.0,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 0.708,
+      "position": {
+        "x": 0.1,
+        "y": 0.3,
+        "distance": 3
+      },
+      "macros": {
+        "weight": 1.0,
+        "decay": 0.35,
+        "crack": 0.5
+      }
+    },
+    {
+      "id": "break-2",
+      "t": 0.07,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 0.501,
+      "position": {
+        "x": 0.6,
+        "y": 0.3,
+        "distance": 3
+      },
+      "macros": {
+        "weight": 1.0,
+        "decay": 0.35,
+        "crack": 0.5
+      }
+    },
+    {
+      "id": "break-3",
+      "t": 0.15,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 0.355,
+      "position": {
+        "x": -0.25,
+        "y": 0.3,
+        "distance": 3
+      },
+      "macros": {
+        "weight": 1.0,
+        "decay": 0.35,
+        "crack": 0.5
+      }
+    },
+    {
+      "id": "break-burst",
+      "t": 0.0,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.631,
+      "position": {
+        "x": 0.2,
+        "y": 0.3,
+        "distance": 3
+      },
+      "macros": {
+        "brightness": 0.4,
+        "motion": 0.4,
+        "swell": 0.0
+      },
+      "duration": 0.4
+    },
+    {
+      "id": "hang",
+      "t": 0.0,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.398,
+      "position": {
+        "x": 0.25,
+        "y": 0.3,
+        "distance": 3.0
+      },
+      "macros": {
+        "size": 0.611,
+        "decay": 0.875,
+        "tone": 0.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "module": "blast",
+  "note": "The second module of experiment 10: the strike and the blast, the flight and the rush, before the hit on the wall (picture 145.19 to 145.94 s). The bed is the passage without its landings and its blast; the landings are the accepted stone-landing of the store. The variant plan is the blast of the sixteenth plan of experiment 9, at the level that plan gave it. The variant held holds its air to the rush, as the reference does.",
+  "bed": {
+    "store": "passage-without-blast",
+    "from": 136.5
+  },
+  "reference": {
+    "at": 145.9375,
+    "length": 0.1625
+  },
+  "silences": [
+    {
+      "at": 145.02,
+      "duration": 0.166708
+    },
+    {
+      "at": 145.89575,
+      "duration": 0.041708
+    }
+  ],
+  "variants": {
+    "plan": {},
+    "held": {
+      "use": {
+        "blast": "blast-held"
+      }
+    }
+  },
+  "sounds": [
+    {
+      "id": "blast",
+      "from": {
+        "store": "blast",
+        "start": 0.046,
+        "length": 1.5,
+        "fade": 0.3
+      },
+      "effects": [],
+      "when": {
+        "at": 145.186708
+      },
+      "why": {
+        "part": "leads",
+        "under": 0
+      },
+      "level": "plan"
+    },
+    {
+      "id": "land-1",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 147.9
+      },
+      "why": {
+        "part": "leads",
+        "under": -9
+      }
+    },
+    {
+      "id": "land-2",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 148.34
+      },
+      "why": {
+        "part": "explains",
+        "under": -2.1
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "stone-landing",
+  "note": "A block of stone of tens of tons that lands on a floor of stone after a fall from a high wall. The accepted hit on the wall (wall-hit), without the engine's room, two octaves lower, its first 15 ms one octave lower, its body ending in 0.5 s, a soft limit of drive 2.5, and the hall after it. The owner accepted it on 2026-11-10 as the variant loud of module-2.json (\"it looks right\"), with the first landing 9 dB over the hit on the wall.",
+  "accepted": "2026-11-10",
+  "who": {
+    "material": "stone",
+    "form": "block",
+    "size": [2, 1.6, 1.4]
+  },
+  "what": {
+    "material": "stone",
+    "form": "slab",
+    "size": [30, 20, 0.8],
+    "support": "ground"
+  },
+  "how": "land",
+  "sound": {
+    "from": {
+      "store": "wall-hit",
+      "start": 0.046,
+      "length": 2.2,
+      "fade": 0.5,
+      "part": "dry"
+    },
+    "effects": [
+      {
+        "pitch": 0.25
+      },
+      {
+        "front": {
+          "seconds": 0.015,
+          "ratio": 0.5
+        }
+      },
+      {
+        "damp": {
+          "seconds": 0.5
+        }
+      },
+      {
+        "saturate": {
+          "drive": 2.5
+        }
+      },
+      {
+        "room": {
+          "name": "hall",
+          "level": -8
+        }
+      }
+    ]
+  }
+}

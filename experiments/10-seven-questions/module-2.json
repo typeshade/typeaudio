@@ -1,0 +1,116 @@
+{
+  "module": "stone-hit-from-store",
+  "note": "The stone module made from the store. The bed is the passage without its landings. Each landing is the accepted hit on the wall, through effect nodes: two octaves lower (prototype 3b of experiment 9), and the front of the hit kept one octave higher than the body, because the front says the material and the body says the size (docs/sound-design-theory.md, section 3). The variant solid lowers the hit without the engine's room, lets the lowered body die in 0.35 s after its front, and puts the room after: a lowered room is a large hollow box, and a long low ring is heard as hollow (review 3). The variant loud is solid with the body ending in 0.5 s, a soft limit of drive 2.5 on each landing, and the first landing 9 dB over the hit on the wall: a block of tens of tons that falls from a high wall is the largest sound of the passage (review 4). The ceiling is the engine's limiter, which lowers only the moments that pass it.",
+  "bed": {
+    "store": "passage-without-landings",
+    "from": 136.5
+  },
+  "reference": {
+    "at": 145.9375,
+    "length": 0.1625
+  },
+  "variants": {
+    "3b": {
+      "effects": ["pitch"]
+    },
+    "front": {
+      "effects": ["pitch", "front"]
+    },
+    "solid": {
+      "effects": ["pitch", "front", "damp", "room"],
+      "part": "dry"
+    },
+    "loud": {
+      "effects": ["pitch", "front", "damp", "saturate", "room"],
+      "part": "dry"
+    }
+  },
+  "sounds": [
+    {
+      "id": "land-1",
+      "from": {
+        "store": "wall-hit",
+        "start": 0.046,
+        "length": 2.2,
+        "fade": 0.5
+      },
+      "effects": [
+        {
+          "pitch": 0.25
+        },
+        {
+          "front": {
+            "seconds": 0.015,
+            "ratio": 0.5
+          }
+        },
+        {
+          "damp": {
+            "seconds": 0.5
+          }
+        },
+        {
+          "saturate": {
+            "drive": 2.5
+          }
+        },
+        {
+          "room": {
+            "name": "hall",
+            "level": -8
+          }
+        }
+      ],
+      "when": {
+        "at": 147.9
+      },
+      "why": {
+        "part": "leads",
+        "under": -9
+      }
+    },
+    {
+      "id": "land-2",
+      "from": {
+        "store": "wall-hit",
+        "start": 0.046,
+        "length": 2.2,
+        "fade": 0.5
+      },
+      "effects": [
+        {
+          "pitch": 0.25
+        },
+        {
+          "front": {
+            "seconds": 0.015,
+            "ratio": 0.5
+          }
+        },
+        {
+          "damp": {
+            "seconds": 0.5
+          }
+        },
+        {
+          "saturate": {
+            "drive": 2.5
+          }
+        },
+        {
+          "room": {
+            "name": "hall",
+            "level": -8
+          }
+        }
+      ],
+      "when": {
+        "at": 148.34
+      },
+      "why": {
+        "part": "explains",
+        "under": -2.1
+      }
+    }
+  ]
+}
