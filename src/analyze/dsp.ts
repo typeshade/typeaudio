@@ -1,7 +1,7 @@
 // Shared helpers of the analyzers: a Welch power spectrum over `fft64`, third-octave bands and
 // percentiles. Host-side, pure, in doubles.
 
-import { fft64 } from '../../experiments/03-fft/signals.ts';
+import { fft64 } from './fft.ts';
 
 /** The FFT size of every spectrum here. */
 export const FFT_SIZE = 2048;
