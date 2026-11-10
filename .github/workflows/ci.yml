@@ -1,6 +1,6 @@
 name: CI
 
-# One job: install with Bun, which runs the compiler's TypeScript sources from the pinned tarball
+# Install with Bun, which runs the compiler's TypeScript sources from the pinned tarball
 # (CLAUDE.md, "The compiler pin"), then the checks of AGENTS.md, "Checks", on the CPU tier of the
 # compiler, with no device. The browser check (`bun run test:gpu`) and the experiments need a
 # browser with WebGPU, and are not in CI.
@@ -14,6 +14,43 @@ permissions:
   contents: read
 
 jobs:
+  functions:
+    name: typed function worklet + timing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: bun x playwright-core install --with-deps chromium
+      - run: bun run test:function-worklet
+      - run: bun run demo:functions
+      - run: bun run bench:functions
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: function-runtime
+          path: artifacts/functions/
+
+  recovery:
+    name: recovery archive + procedural smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: python3 scripts/recovery/restore-study.py --output "$RUNNER_TEMP/typeaudio-recovery" --smoke-render
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovery-receipt
+          path: ${{ runner.temp }}/typeaudio-recovery/restoration-report.json
+
   unit:
     name: typecheck + unit
     runs-on: ubuntu-latest
@@ -26,6 +63,10 @@ jobs:
       # `prepare` writes the host views (`tshc sync`) that `tsc` reads.
       - run: bun install --frozen-lockfile
       - run: bun run check
+      - name: Install offline audio measurement dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - run: bun run test
       - run: bun run feedback --out .feedback/report.json
       - uses: actions/upload-artifact@v4
@@ -34,3 +75,43 @@ jobs:
           name: graph-feedback-baseline
           include-hidden-files: true
           path: .feedback/
+
+  spatial:
+    name: spatial worklet + timing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: bun x playwright-core install --with-deps chromium
+      - run: bun run test:spatial-worklet
+      - run: bun run demo:spatial
+      - run: bun run bench:spatial --out artifacts/spatial/benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: spatial-runtime
+          path: artifacts/spatial/
+
+  room:
+    name: room worklet + timing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - run: bun x playwright-core install --with-deps chromium
+      - run: bun run test:room-worklet
+      - run: bun run demo:room
+      - run: bun run bench:room --out artifacts/room/benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: room-runtime
+          path: artifacts/room/

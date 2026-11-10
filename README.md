@@ -29,6 +29,8 @@ To work on it:
   decisions the owner takes.
 - [`docs/compiler-asks.md`](docs/compiler-asks.md): the compiler proposals TypeAudio rests on and
   its asks of the compiler, each with its status.
+- [`docs/function-graphs.md`](docs/function-graphs.md): full TypeShade functions, typed pins,
+  isolated instance state and prepared synchronous CPU execution; Web adoption remains separate.
 - [`docs/experiments.md`](docs/experiments.md): the experiments, in order, with their status;
   [`docs/records/`](docs/records/) holds the record of each run.
 - [`compiler-changes.md`](compiler-changes.md): the proposals of the compiler this repository

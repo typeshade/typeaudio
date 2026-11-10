@@ -1,0 +1,5 @@
+state0 += 0.035 * (input - state0);
+state1 += 0.48 * (input - state1);
+const bite: f32 = (state1 - state0) * 1.4 * exp(-time / 0.035);
+const mode: f32 = sin(time * p0 * 6.2831853) * 0.17 + sin(time * p0 * 10.17876) * 0.09;
+out = (bite + mode * exp(-time / p1)) * min(1, time / 0.001);

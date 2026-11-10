@@ -1,0 +1,176 @@
+{
+  "schema": "typeaudio.function-graph",
+  "version": 1,
+  "modules": {
+    "/excitation.shade.ts": "\"use typeshade\";\nexport class NoiseState { seed: u32 = 2026; }\nexport function createNoise(): NoiseState { return new NoiseState(); }\nexport function excitation(state: inout<NoiseState>, time: f32): f32 {\n  let r: u32 = state.seed;\n  r = r ^ (r << 13); r = r ^ (r >> 17); r = r ^ (r << 5);\n  state.seed = r;\n  return (f32(r) / 2147483648 - 1) * exp(-time * 80);\n}\n",
+    "/resonator.shade.ts": "\"use typeshade\";\nexport class ResonatorState { previous: f32 = 0; older: f32 = 0; }\nexport function createResonator(): ResonatorState { return new ResonatorState(); }\nfunction advance(state: inout<ResonatorState>, input: f32, coefficient: f32, decay: f32): f32 {\n  const value: f32 = input + coefficient * state.previous - decay * state.older;\n  state.older = state.previous;\n  state.previous = value;\n  return value;\n}\nexport function resonator(state: inout<ResonatorState>, input: f32, pitch: f32, damping: f32, sampleRate: f32): f32 {\n  const coefficient: f32 = 2 * damping * cos(6.28318530718 * pitch / sampleRate);\n  return advance(state, input * 0.015, coefficient, damping * damping);\n}\n",
+    "/math.shade.ts": "\"use typeshade\";\nexport function attack(time: f32): f32 { return min(1, time * 2400); }\n",
+    "/gain.shade.ts": "\"use typeshade\";\nimport { attack } from \"./math.shade.ts\";\nexport function gain(input: f32, strength: f32, time: f32): f32 {\n  return input * strength * attack(time);\n}\n"
+  },
+  "definitions": [
+    {
+      "id": "excitation",
+      "version": 1,
+      "module": "/excitation.shade.ts",
+      "export": "excitation",
+      "inputs": {},
+      "output": {
+        "id": "out",
+        "role": "audio",
+        "rate": "sample",
+        "unit": "amplitude"
+      },
+      "context": {
+        "time": "time"
+      },
+      "state": {
+        "parameter": "state",
+        "initializer": "createNoise",
+        "version": 1
+      }
+    },
+    {
+      "id": "resonator",
+      "version": 1,
+      "module": "/resonator.shade.ts",
+      "export": "resonator",
+      "inputs": {
+        "input": {
+          "id": "in",
+          "role": "audio",
+          "rate": "sample",
+          "unit": "amplitude"
+        },
+        "pitch": {
+          "id": "pitch",
+          "role": "control",
+          "rate": "block",
+          "unit": "Hz"
+        },
+        "damping": {
+          "id": "damping",
+          "role": "control",
+          "rate": "block",
+          "unit": "ratio"
+        }
+      },
+      "output": {
+        "id": "out",
+        "role": "audio",
+        "rate": "sample",
+        "unit": "amplitude"
+      },
+      "context": {
+        "sampleRate": "sampleRate"
+      },
+      "state": {
+        "parameter": "state",
+        "initializer": "createResonator",
+        "version": 1
+      }
+    },
+    {
+      "id": "gain",
+      "version": 1,
+      "module": "/gain.shade.ts",
+      "export": "gain",
+      "inputs": {
+        "input": {
+          "id": "in",
+          "role": "audio",
+          "rate": "sample",
+          "unit": "amplitude"
+        },
+        "strength": {
+          "id": "strength",
+          "role": "control",
+          "rate": "block",
+          "unit": "linear-gain"
+        }
+      },
+      "output": {
+        "id": "out",
+        "role": "audio",
+        "rate": "sample",
+        "unit": "amplitude"
+      },
+      "context": {
+        "time": "time"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "noise",
+      "definition": "excitation",
+      "inputs": {}
+    },
+    {
+      "id": "body",
+      "definition": "resonator",
+      "inputs": {
+        "in": {
+          "kind": "connection",
+          "node": "noise",
+          "port": "out"
+        },
+        "pitch": {
+          "kind": "parameter",
+          "parameter": "pitch"
+        },
+        "damping": {
+          "kind": "parameter",
+          "parameter": "damping"
+        }
+      }
+    },
+    {
+      "id": "level",
+      "definition": "gain",
+      "inputs": {
+        "in": {
+          "kind": "connection",
+          "node": "body",
+          "port": "out"
+        },
+        "strength": {
+          "kind": "parameter",
+          "parameter": "strength"
+        }
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "pitch",
+      "name": "Body pitch",
+      "type": "f32",
+      "unit": "Hz",
+      "min": 20,
+      "max": 12000,
+      "value": 180
+    },
+    {
+      "id": "damping",
+      "name": "Resonance damping",
+      "type": "f32",
+      "unit": "ratio",
+      "min": 0,
+      "max": 0.9999,
+      "value": 0.995
+    },
+    {
+      "id": "strength",
+      "name": "Strength",
+      "type": "f32",
+      "unit": "linear-gain",
+      "min": 0,
+      "max": 1,
+      "value": 0.25
+    }
+  ],
+  "output": {
+    "node": "level",
+    "port": "out"
+  }
+}

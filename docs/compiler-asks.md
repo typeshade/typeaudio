@@ -530,7 +530,11 @@ has no GLSL ES 3.00 spelling (no storage buffers, no runtime-sized arrays)).` Th
   plain loop they spent 5 ms (inference: the garbage collector).
 - Compiler: the CPU tier's code generator (Rule 11.7, surface §64): `inout` values without an
   allocation per call.
-- Workaround: none. The engine adds no second implementation (`docs/architecture.md`, section 1).
+- Workaround: the E2a function profile adapts verified generated `inout` writebacks into reusable
+  instance scratch storage. It keeps TypeShade's processing code and rejects unrecognized ABI shapes.
+  Nested scalar/struct writebacks are compared against the unchanged compiler output.
+  This applies only to `src/function-graph/compiler/`, not the original bank renderer or every compiler backend.
+  See [the function API](function-graphs.md) and [verification receipt](continuity/function-graph-verification.json).
 - Measured by: experiment 2.
 - Status: issue #961, fixed by #1035 (`4f70703b`), in the pin `415b276a`. Measured on the container
   only (`docs/records/02-worklet-container.md`). Re-measured at the pin `415b276a`, 2026-11-09,

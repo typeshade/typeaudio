@@ -5,6 +5,15 @@
 Every agent must read [CLAUDE.md](./CLAUDE.md) for this repository's operating rules. This file
 is the map of the repository and of the design.
 
+## Active TypeAudio program and recovery
+
+Read [docs/continuity/README.md](docs/continuity/README.md) to resume immersive audio work without the prior chat or workspace.
+It records owner decisions, exact repository snapshots, the implementation roadmap, validation gates and source recovery procedures.
+Update that record when a task, compiler pin or cross-repository contract changes.
+The owner's 2026-11-06 benchmark rule: SwiftShader supports functional checks and approximate controlled before/after comparisons.
+It is not a hardware GPU performance indicator or evidence of game real-time guarantees.
+Keep host CPU timing, software WebGPU correctness, hardware GPU timing and physical audio measurements separate.
+
 ## Purpose
 
 TypeAudio is a GPU audio engine written in TypeScript on the TypeShade compiler
@@ -131,9 +140,10 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
   and the stems as WAV and the result as JSON into `experiments/09-force-passage/out/`; its record
   is in `docs/records/`. CI does not run it.
 
-CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
-and `bun run test`. Every claim of a result names the command, the date, the commit and the
-device.
+CI (`.github/workflows/ci.yml`) runs type checks, unit and graph-feedback tests.
+Separate jobs verify offline spatial/room worklet output, record host CPU timings, and restore one archived procedural event.
+These checks do not establish hardware GPU performance or physical audio deadlines.
+Every claim of a result names the command, the date, the commit and the device.
 
 ## Portable graphs and cross-repository feedback
 
@@ -154,6 +164,25 @@ The TypeShade private-generator adapter remains a workaround tracked by ask F;
 proposal 0122 is a draft, not an implemented compiler API. CPU timings do not
 establish hardware real-time guarantees or measured output underruns.
 
+## Typed function graphs
+
+`src/function-graph/` implements E2a through `typeaudio/function-graph`,
+`typeaudio/function-graph/compiler` and `typeaudio/function-graph/runtime`.
+The compiler entry reflects ordinary TypeShade functions and prepares a bounded synchronous CPU profile.
+The runtime owns instance state, named controls and mono processing without importing the compiler.
+`fixtures/function-graph/impact.json` is the source-only excitation/resonator/gain example.
+`test/function-graph/` covers typed connections, compiler parity, state and actual AudioWorklet execution.
+
+- `bun run test:function-worklet`: Chromium offline worklet output and control/reset parity.
+- `bun run bench:functions`: 1/8/32-voice host CPU computation timing.
+- `bun run demo:functions`: deterministic impact WAV and source document under `artifacts/functions/`.
+
+Read `docs/function-graphs.md` and `docs/continuity/function-graph-verification.json` before extending this profile.
+The private generator awaits proposal 0122; the inout adapter remains until promotion of the upstream #961 fix.
+Web PR #47 adopts this profile with visual function nodes, full source modules and project version 3.
+Read `docs/continuity/web-function-authoring-verification.json` for that integration and the source-edit API continuation.
+Composition-source editing, event scheduling and native host integration remain open.
+
 ## Website
 
 The site at `audio.typeshade.dev` is built and deployed from `typeshade/web` (`apps/typeaudio`),
@@ -161,3 +190,40 @@ which reads this repository at a pinned commit (`sources/typeaudio`): its `packa
 and `docs/`. Since 2026-11-05 this repository has no site and no deploy workflow; two repositories
 must not deploy the same Worker (`docs/repository-migration.md` in `typeshade/web`). The Web
 `pin TypeAudio` workflow moves the site to a merged engine revision.
+
+## Spatial stereo bus
+
+`src/spatial/` owns listener-relative stereo processing. Its public entry is
+`typeaudio/spatial`. Prepare geometry on the control thread and send numeric targets
+to the fixed-capacity `SpatialMixer`. The runtime is synchronous and compiler-free.
+Existing compiled `GraphDsp` output supplies mono inputs at 48 kHz.
+
+- `bun run test` includes `test/spatial/` regressions.
+- `bun run test:spatial-worklet` checks an actual Chromium AudioWorklet against host PCM.
+- `bun run bench:spatial` records 1/8/32/64-source CPU bus timing with device and commit metadata.
+- `bun run demo:spatial` writes a short stereo WAV and cue description under `artifacts/spatial/`.
+- CI uploads the worklet/timing job's listening artifact and benchmark as `spatial-runtime`.
+
+See `docs/spatial-audio.md` for coordinates, models, buffer ownership and boundaries.
+This stage provides stereo pan, distance damping and authored occlusion. It does not implement
+HRTF, room reflections, Doppler or head tracking. CPU timing and offline worklet parity do not
+establish physical-device deadlines or perceived spatial quality. Spatial shader/tier parity
+remains open; the compiler pin and the procedural source path are unchanged.
+
+## Room acoustics
+
+`src/spatial/room/` extends the direct bus through the public `typeaudio/spatial/room` entry.
+`prepareRoom` snapshots a rectangular room. `prepareRoomSource` prepares six image-source paths.
+`RoomMixer` combines the direct bus, one `RoomVoice` per source and a shared `DiffuseTail`.
+`ReflectionTap` owns fractional reads, moving-delay crossfades and material filtering.
+Source control and room configuration remain separate from the synchronous processing path.
+
+- `bun run test` includes `test/room/` geometry, delay, state and decay regressions.
+- `bun run test:room-worklet` compares a real Chromium AudioWorklet with host PCM.
+- `bun run bench:room` records static/moving 1/8/32-source timing and bounded delay storage.
+- `bun run demo:room` writes matching dry, small-room and hall WAVs with room/cue data.
+- CI uploads these files and verification receipts as `room-runtime`.
+
+See `docs/room-acoustics.md` for the model, sample-rate contract and limitations.
+The room stage has no HRTF, Doppler, measured impulse response, directional late field or Web editor integration.
+CPU timings include observed block-budget overruns; they are not physical-device deadline guarantees.

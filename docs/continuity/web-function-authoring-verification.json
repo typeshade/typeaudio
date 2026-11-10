@@ -1,0 +1,185 @@
+{
+  "schema": "typeaudio.web-function-authoring-verification",
+  "version": 1,
+  "recordedAt": "2026-11-07T03:21:13.750612+00:00",
+  "pullRequest": "https://github.com/typeshade/web/pull/47",
+  "applicationCommit": "6c9f0838f297cbcea684fbe1b8577624f879dee2",
+  "websiteTree": "cf4c0ed96d4f9e1a1a66b1acc5336ccb1d00e3e5",
+  "engineCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
+  "enginePullRequest": "https://github.com/typeshade/typeaudio/pull/30",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "environment": {
+    "host": "managed Linux cloud environment",
+    "browser": "156.0.8078.4",
+    "bun": "1.4.4",
+    "pnpm": "10.28.2",
+    "hardwareAudioValidated": false
+  },
+  "checks": [
+    {
+      "command": "pnpm --filter typeaudio-site run check",
+      "result": "passed",
+      "architectureModules": 223,
+      "compilerPairGuard": "passed"
+    },
+    {
+      "command": "pnpm --filter typeaudio-site run test",
+      "result": "passed",
+      "tests": 102,
+      "files": 20
+    },
+    {
+      "command": "pnpm --filter typeaudio-site run build",
+      "result": "passed"
+    },
+    {
+      "command": "pnpm --filter typeaudio-site run test:browser",
+      "result": "passed",
+      "suites": 16,
+      "scripts": [
+        "bun website/check-workspace-browser.ts",
+        "bun website/check-state-browser.ts",
+        "bun website/check-render-device-loss.ts",
+        "bun website/check-interactions-browser.ts",
+        "bun website/check-sound-design-browser.ts",
+        "bun website/check-timeline-browser.ts",
+        "bun website/check-audio-import-browser.ts",
+        "bun website/check-graph-browser.ts",
+        "bun website/check-node-workspace-browser.ts",
+        "bun website/check-code-workspace-browser.ts",
+        "bun website/check-code-language-browser.ts",
+        "bun website/check-feedback-browser.ts",
+        "bun website/check-agent-projects-browser.ts",
+        "bun website/check-editor-ux-browser.ts",
+        "bun website/check-node-code-browser.ts",
+        "bun website/check-function-authoring-browser.ts"
+      ]
+    }
+  ],
+  "functionBrowser": {
+    "date": "2026-11-07T03:20:03.753Z",
+    "browser": "156.0.8078.4",
+    "wav": {
+      "originalHash": "f59d7dc29e5fd9b6585be9b070c9aa17e0962745083791ad758ec1eec4475e8f",
+      "changedHash": "3a68397d64a205c85931c3655b4743e3b95db1eab37a8f4f40d1f76068fc9316"
+    },
+    "fromScratch": {
+      "fullModule": true,
+      "oscillatorWavHash": "2c7e3c5ffce439083e11d6ca384331a119c1b077eb151aebc174c1358de4efc9"
+    },
+    "flow": {
+      "liveControl": true,
+      "sourceEditing": true,
+      "reflectedPins": true,
+      "staleApplyGuard": true,
+      "timelineSource": true,
+      "projectVersion": 3
+    },
+    "mobile": {
+      "widths": [
+        390,
+        320
+      ],
+      "code": true,
+      "control": true,
+      "transportVisible": true,
+      "physicalDevice": false
+    },
+    "errors": []
+  },
+  "regressions": [
+    "All six Frieren source projects retain source/space edits, playback and exact edited-WAV regeneration.",
+    "Legacy graph, code/language, feedback, Tone/state, timeline, imports, interaction and protected-project suites passed.",
+    "CPU/WebGPU tests use SwiftShader for functional parity only; no hardware speed comparison."
+  ],
+  "engineContinuation": {
+    "codeCommit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
+    "checks": "bun run check, bun run test (110 tests in 18 files), bun run test:function-worklet passed",
+    "worklet": {
+      "date": "2026-11-07T03:09:12.406Z",
+      "commit": "346efb4cbe7d0c288b919c6155e96ffd9bda292d",
+      "compiler": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+      "check": "typed function AudioWorklet",
+      "browser": "156.0.8078.4",
+      "frames": 16384,
+      "sampleRate": 48000,
+      "maxError": 0,
+      "energy": 81.33363348968471,
+      "peak": 0.5392501354217529,
+      "functions": [
+        {
+          "definition": "excitation",
+          "backend": "compiled-cpu-f32",
+          "functions": [
+            "excitation"
+          ],
+          "reusedInoutArrays": 2,
+          "stepLimit": 2048
+        },
+        {
+          "definition": "resonator",
+          "backend": "compiled-cpu-f32",
+          "functions": [
+            "advance",
+            "resonator"
+          ],
+          "reusedInoutArrays": 4,
+          "stepLimit": 2048
+        },
+        {
+          "definition": "gain",
+          "backend": "compiled-cpu-f32",
+          "functions": [
+            "attack",
+            "gain"
+          ],
+          "reusedInoutArrays": 0,
+          "stepLimit": 2048
+        }
+      ],
+      "scope": "Actual OfflineAudioContext/AudioWorklet module loading, synchronous PCM, parameter updates and state reset. No compiler/eval in worklet bundle. Excludes physical device deadlines and listening approval."
+    },
+    "ci": "Eight checks passed at code commit 346efb4; baseline run 42332644764 and feedback run 42332644687."
+  },
+  "preservation": {
+    "legacyProjectVersion": 2,
+    "functionProjectVersion": 3,
+    "functionSoundFileVersion": 2,
+    "functionBrowserEnvelopeVersion": 2,
+    "compilerPinChanged": false,
+    "historicalReceiptsChanged": false,
+    "merged": false,
+    "deployed": false
+  },
+  "review": {
+    "desktopScreenshotsInspected": true,
+    "mobileScreenshotsInspected": true,
+    "scope": "English function/network/source controls, error guidance and project workflow; no site-wide or translation review."
+  },
+  "limitations": [
+    "Mono scalar CPU function profile; no GPU function execution, aggregate pins or stereo function outputs.",
+    "No graph-wide composition code, connected-port rename migration, reusable subgraph or event scheduler.",
+    "State/context and entry names remain explicit. Controls are not automatically smoothed.",
+    "No native/Unreal host adapter, physical-phone test, listening acceptance or game deadline guarantee.",
+    "Site merge and deployment remain unperformed. Check current PR-head CI separately."
+  ],
+  "warnings": [
+    "Existing TypeShade CPU fallback diagnostic",
+    "Bun moduleSuffixes warning",
+    "Existing large browser bundle warning"
+  ],
+  "screenshots": [
+    {
+      "path": "artifacts/function-authoring/desktop.png",
+      "sha256": "60fcfbf410ffffaf94b5d798ebb8adc27a25da32bcc74218da746c47c074a0ff"
+    },
+    {
+      "path": "artifacts/function-authoring/mobile-properties.png",
+      "sha256": "761d9e8639e68687e35cd2808a8292bfe42a06f17e3c78b4777f2b067a1e7f9f"
+    },
+    {
+      "path": "artifacts/function-authoring/mobile-code.png",
+      "sha256": "a9ba858c59339eb9b5292c345de04ca0e91406dc09c639cdcb5a66af54106c8f"
+    }
+  ]
+}

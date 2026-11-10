@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-06T13:28:48.438130+00:00",
+  "checks": [
+    {
+      "name": "red-A.m4a",
+      "httpStatus": 206,
+      "contentRange": "bytes 0-1023/264576",
+      "contentType": "audio/mp4",
+      "bytesRead": 1024
+    },
+    {
+      "name": "red-B.m4a",
+      "httpStatus": 206,
+      "contentRange": "bytes 0-1023/263654",
+      "contentType": "audio/mp4",
+      "bytesRead": 1024
+    },
+    {
+      "name": "force-A.m4a",
+      "httpStatus": 206,
+      "contentRange": "bytes 0-1023/339176",
+      "contentType": "audio/mp4",
+      "bytesRead": 1024
+    },
+    {
+      "name": "force-B.m4a",
+      "httpStatus": 206,
+      "contentRange": "bytes 0-1023/340119",
+      "contentType": "audio/mp4",
+      "bytesRead": 1024
+    },
+    {
+      "name": "finale-A.m4a",
+      "httpStatus": 206,
+      "contentRange": "bytes 0-1023/415220",
+      "contentType": "audio/mp4",
+      "bytesRead": 1024
+    },
+    {
+      "name": "finale-B.m4a",
+      "httpStatus": 206,
+      "contentRange": "bytes 0-1023/415153",
+      "contentType": "audio/mp4",
+      "bytesRead": 1024
+    },
+    {
+      "name": "mobile-review.zip",
+      "httpStatus": 206,
+      "contentRange": "bytes 0-1023/2027594",
+      "contentType": "application/zip",
+      "bytesRead": 1024
+    }
+  ],
+  "passed": true,
+  "physicalMobilePlaybackTested": false
+}

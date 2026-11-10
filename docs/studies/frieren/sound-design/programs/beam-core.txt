@@ -1,0 +1,5 @@
+state0 += 0.075 * (input - state0);
+state1 += 0.008 * (input - state1);
+state2 = fract(state2 + p0 * (1 + 0.008 * sin(time * 3.9)) / sampleRate);
+const coherent: f32 = sin(state2 * 6.2831853 + 0.45 * sin(time * p0 * 3.14)) * 0.22;
+out = ((state0 - state1) * 1.55 + coherent) * (0.92 + 0.08 * sin(time * 31));

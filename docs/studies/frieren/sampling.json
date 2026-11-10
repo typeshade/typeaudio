@@ -1,0 +1,19 @@
+{
+  "schema": "typeaudio.picture-sampling",
+  "version": 1,
+  "referenceSha256": "6f1856eb09d5522f05dfbb5e813df208e99b94fe391c346139e62bb5b0fba87c",
+  "ranges": [
+    {"id": "overview", "start": 0, "end": 212, "step": 2},
+    {"id": "red-entry", "start": 2.5, "end": 5, "step": 0.125},
+    {"id": "red-release", "start": 22, "end": 29, "step": 0.25},
+    {"id": "violet-entry", "start": 43, "end": 46.5, "step": 0.25},
+    {"id": "violet-release", "start": 55, "end": 58.5, "step": 0.125},
+    {"id": "blue-reply", "start": 60.5, "end": 64, "step": 0.25},
+    {"id": "spell-montage", "start": 81.5, "end": 88, "step": 0.25},
+    {"id": "dark-wedges", "start": 99.5, "end": 109, "step": 0.5},
+    {"id": "fern-burst", "start": 123, "end": 132, "step": 0.25},
+    {"id": "unseen-force", "start": 140.5, "end": 150, "step": 0.25},
+    {"id": "final-discharge", "start": 173, "end": 184.5, "step": 0.25},
+    {"id": "end-boundary", "start": 185, "end": 191, "step": 0.25}
+  ]
+}
