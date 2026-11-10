@@ -13,19 +13,19 @@ render that this run is held to.
 
 ## The run
 
-| Item         | Value                                                                                                                                                                                                                                                          |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Experiment   | 9, the force passage of a study, as a plan on the engine                                                                                                                                                                                                       |
-| Command 1    | `TYPESHADE_CHROMIUM=/opt/pw-browsers/chromium bun experiments/09-force-passage/run.ts --tier webgpu`                                                                                                                                                           |
-| Command 2    | `bun experiments/09-force-passage/measure.ts --tier webgpu`                                                                                                                                                                                                    |
-| Commands 3   | `bun experiments/09-force-passage/run.ts --tier cpu --blocks 470 --out <a>`, `TYPESHADE_CHROMIUM=/opt/pw-browsers/chromium bun experiments/09-force-passage/run.ts --tier webgpu --blocks 470 --out <b>`, `bun experiments/09-force-passage/across.ts <b> <a>` |
-| Date         | Command 1: 2026-11-10 07:33 UTC. Commands 3: 2026-11-10, from 07:35 UTC                                                                                                                                                                                        |
-| Commit       | `77125bd1947cbbf1796150ff52574302f1e0f2ba` of `typeshade/typeaudio` (branch `claude/force-passage-engine`, pull request #68), clean tree (the JSON says `dirty` false)                                                                                         |
-| Compiler pin | `typeshade` in `package.json`: the source tarball of `typeshade/typeshade` at `415b276a7408936cb483d05ca8bb39e797b05966` (`buildInfo.version` 0.1.0, `buildInfo.revision` null)                                                                                |
-| Tools        | Bun 1.4.4, Node v22.23.4, Google Chrome for Testing 153.0.8010.12                                                                                                                                                                                              |
-| Machine      | Intel Xeon at 2.10 GHz, 4 cores, Linux 6.18.44                                                                                                                                                                                                                 |
-| Raw data     | `docs/records/09-force-passage-container.json` (command 1: the options, the block timing, the fuse groups, the device, the master, where each event was placed) and `docs/records/09-force-passage-container-measure.json` (command 2)                         |
-| Outputs      | The mix, the reverb's return and each layer's stem as 32-bit float WAV in `experiments/09-force-passage/out/`, which Git ignores                                                                                                                               |
+| Item         | Value                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Experiment   | 9, the force passage of a study, as a plan on the engine                                                                                                                                                                                                                                                                                                              |
+| Command 1    | `TYPESHADE_CHROMIUM=/opt/pw-browsers/chromium bun experiments/09-force-passage/run.ts --tier webgpu`                                                                                                                                                                                                                                                                  |
+| Command 2    | `bun experiments/09-force-passage/measure.ts --tier webgpu`                                                                                                                                                                                                                                                                                                           |
+| Commands 3   | `bun experiments/09-force-passage/run.ts --tier cpu --blocks 470 --out <a>`, `TYPESHADE_CHROMIUM=/opt/pw-browsers/chromium bun experiments/09-force-passage/run.ts --tier webgpu --blocks 470 --out <b>`, `bun experiments/09-force-passage/across.ts <b> <a>`                                                                                                        |
+| Date         | Command 1: 2026-11-10 07:33 UTC. Commands 3: WebGPU at 07:34 UTC, the CPU tier from 07:33 to 07:45 UTC on 2026-11-10                                                                                                                                                                                                                                                  |
+| Commit       | `77125bd1947cbbf1796150ff52574302f1e0f2ba` of `typeshade/typeaudio` (branch `claude/force-passage-engine`, pull request #68), clean tree (the JSON says `dirty` false)                                                                                                                                                                                                |
+| Compiler pin | `typeshade` in `package.json`: the source tarball of `typeshade/typeshade` at `415b276a7408936cb483d05ca8bb39e797b05966` (`buildInfo.version` 0.1.0, `buildInfo.revision` null)                                                                                                                                                                                       |
+| Tools        | Bun 1.4.4, Node v22.23.4, Google Chrome for Testing 153.0.8010.12                                                                                                                                                                                                                                                                                                     |
+| Machine      | Intel Xeon at 2.10 GHz, 4 cores, Linux 6.18.44                                                                                                                                                                                                                                                                                                                        |
+| Raw data     | `docs/records/09-force-passage-container.json` (command 1: the options, the block timing, the fuse groups, the device, the master, where each event was placed) and `docs/records/09-force-passage-container-measure.json` (command 2); `docs/records/09-force-passage-container-cpu.json` and `docs/records/09-force-passage-container-webgpu-470.json` (commands 3) |
+| Outputs      | The mix, the reverb's return and each layer's stem as 32-bit float WAV in `experiments/09-force-passage/out/`, which Git ignores                                                                                                                                                                                                                                      |
 
 ## The device
 
@@ -129,10 +129,18 @@ level differs by up to 1 dB between the two.
 
 Commands 3: the first 470 blocks (10.03 s, to the breakout) on both tiers.
 
-Not done at the commit that adds this record. The 470 blocks on WebGPU are rendered: median 40.33 ms a
-block, the limiter's deepest gain -4.0 dB. The render of the same blocks on the CPU tier started at 07:33 UTC
-and still runs; it takes more than a second a block. The comparison (`across.ts`) follows in an amendment of
-this record.
+| Tier     | Blocks | Median (ms) | p95 (ms) | Real time | Host time (s) | Loudness before (LUFS) | Deepest gain of the limiter (dB) |
+| -------- | -----: | ----------: | -------: | --------: | ------------: | ---------------------: | -------------------------------: |
+| CPU tier |    470 |    1,409.98 | 1,691.12 |   0.0149x |         687.2 |               -15.1638 |                           -3.984 |
+| WebGPU   |    470 |       40.33 |    50.99 |    0.489x |          21.5 |               -15.1639 |                           -3.983 |
+
+`across.ts`: of the 962,560 values of the two mixes (481,280 frames, two channels), 946,524 differ. The
+largest difference is 2.11e-4 of a peak of 0.785, and the relative RMS of the difference is 4.26e-4. The two
+tiers render the same sound to within the device's own `sin` and `exp`, as experiment 8's records found for
+the nine kinds.
+
+The CPU render ran from 07:33 to 07:45 UTC. Its JSON names commit `8912a81`, the head when the run ended;
+its bundle was built at `77125bd`. The two commits between them change no file of `src/` and not `plan.json`.
 
 ## What the port does not do
 
@@ -163,7 +171,5 @@ Each is a difference between the study's render and this one. All are open.
 - The owner's listening review of the engine's render, with the picture. Next action: the owner.
 - The device runs: one record a device, `docs/records/09-force-passage-<device>.md`. Next action: the owner,
   after the review.
-- WebGPU against the CPU tier on 470 blocks: in progress. Next action: amend this record when the CPU render
-  ends.
 - WebGL2 was not run.
 - The red and the finale passage of the study are not moved.
