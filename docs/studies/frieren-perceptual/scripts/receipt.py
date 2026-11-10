@@ -14,17 +14,17 @@ from dsp import SR, nsamp
 out = sys.argv[1]
 names = sys.argv[2:] or ['red', 'force', 'finale']
 CUES = {
-    'red': dict(t0=20.0, cues=[('bed before the orb is near', 20.0, 20.3, 'm'), ('orb passes closest', 20.6, 21.4, 'm'), ('masonry', 21.55, 21.85, 'i'),
-                               ('orbit far', 22.4, 23.2, 'm'), ('containment start', 23.8, 24.4, 'm'), ('containment end', 25.0, 25.68, 'm'),
-                               ('shell fracture', 25.69, 25.77, 'i'), ('release', 25.775, 26.1, 'i'), ('defence ring', 26.34, 26.7, 'i'),
-                               ('fragments', 27.1, 28.6, 'i'), ('late dust and tail', 29.0, 30.0, 'm'), ('tail end', 31.5, 32.5, 'm')]),
-    'force': dict(t0=136.5, cues=[('bed', 136.6, 137.5, 'm'), ('a stone settles far away', 137.6, 137.9, 'i'), ('handling', 138.4, 138.9, 'i'),
-                                  ('last two seconds before the force', 143.1, 145.1, 'm'), ('force', 145.18, 145.45, 'i'), ('travel', 145.45, 145.9, 'i'),
-                                  ('column', 145.93, 146.08, 'i'), ('chunks', 146.09, 147.2, 'i'), ('late chunks', 147.5, 148.6, 'i'), ('settled', 149.0, 149.7, 'm'), ('tail end', 151.2, 152.2, 'm')]),
-    'finale': dict(t0=173.0, cues=[('bed', 173.0, 173.15, 'm'), ('arrival', 173.2, 173.9, 'i'), ('bed before preparation', 175.0, 176.7, 'm'), ('preparation', 176.9, 177.49, 'm'),
+    'red': dict(t0=20.0, cues=[('flight with the orb', 20.2, 21.0, 'm'), ('spark hit 1', 21.12, 21.3, 'i'), ('spark hit 2', 21.80, 21.97, 'i'), ('rock bursts near', 21.98, 22.25, 'i'),
+                               ('flame, close', 22.33, 22.76, 'm'), ('wide, orb far', 23.1, 23.7, 'm'), ('cracks spread, close', 23.85, 24.6, 'm'), ('shell, wide', 24.8, 25.68, 'm'),
+                               ('shell fracture', 25.69, 25.77, 'i'), ('release', 25.775, 26.1, 'i'), ('defence burst', 26.30, 26.6, 'i'), ('sparkles and shards', 26.9, 27.8, 'm'),
+                               ('dust cloud', 28.6, 29.9, 'm'), ('wind in hair', 30.4, 32.0, 'm')]),
+    'force': dict(t0=136.5, cues=[('shield residue', 136.5, 136.9, 'i'), ('bed under the lines', 137.2, 138.3, 'm'), ('handling', 138.4, 138.9, 'i'),
+                                  ('last two seconds before the force', 143.1, 145.1, 'm'), ('force', 145.18, 145.3, 'i'), ('ring and dust', 145.3, 145.75, 'i'),
+                                  ('column', 145.93, 146.08, 'i'), ('collapse', 146.4, 147.6, 'm'), ('fog', 147.8, 148.4, 'm'), ('pinned in the wall', 148.5, 149.6, 'm'), ('tail end', 151.2, 152.2, 'm')]),
+    'finale': dict(t0=173.0, cues=[('bed', 173.1, 173.6, 'm'), ('staff swing', 173.72, 174.4, 'i'), ('circle under the line', 175.0, 176.7, 'm'), ('preparation', 176.9, 177.49, 'm'),
                                    ('gap before the flash', 177.50, 177.55, 'i'), ('flash', 177.55, 177.8, 'i'), ('beam first second', 177.9, 178.9, 'm'), ('beam third second', 179.9, 180.9, 'm'),
-                                   ('beam last second', 180.8, 181.76, 'm'), ('whiteout middle', 182.5, 183.0, 'm'), ('dissolution start', 183.8, 184.4, 'm'), ('dissolution end', 185.2, 185.75, 'm'),
-                                   ('reassurance', 186.0, 188.3, 'm'), ('fade', 188.8, 189.3, 'm')]),
+                                   ('beam last second', 180.8, 181.76, 'm'), ('whiteout middle', 182.5, 183.0, 'm'), ('dissolution start', 183.8, 184.4, 'm'), ('dissolution end', 185.0, 185.45, 'm'),
+                                   ('last shot under the line', 186.5, 188.2, 'm'), ('fade', 188.8, 189.3, 'm')]),
 }
 for name in names:
     x = np.load('%s/%s.npy' % (out, name)).astype(float)
@@ -51,6 +51,7 @@ for name in names:
         print('  force: L100 %.1f against the last 2 s before it %.1f -> step %.1f dB' % (A.lw(x, f0, f0 + 0.25, 0.1), A.lavg(x, f0 - 2.0, f0 - 0.01), A.lw(x, f0, f0 + 0.25, 0.1) - A.lavg(x, f0 - 2.0, f0 - 0.01)))
         print('  force: loudest 100 ms in the half second before it: %.1f LUFS (bed average %.1f)' % (A.lw(x, f0 - 0.5, f0 - 0.001, 0.1), A.lavg(x, f0 - 2.0, f0 - 0.5)))
         print('  gap: quietest 100 ms between the force and the column: %.1f LUFS' % min(A.lw(x, a, a + 0.1, 0.1) for a in np.arange(f0 + 0.3, 145.937458 - t0 - 0.1, 0.02)))
+        print('  collapse: loudness each half second from 146.3:', [round(A.lavg(x, a - t0, a + 0.5 - t0), 1) for a in (146.3, 146.8, 147.3, 147.8, 148.3, 148.8)])
         print('  phone band (350 Hz to 9 kHz): force L100 %.1f, column L100 %.1f, bed %.1f' % (A.lw(ph, f0, f0 + 0.25, 0.1), A.lw(ph, 145.937458 - t0, 146.3 - t0, 0.1), A.lavg(ph, f0 - 2.0, f0 - 0.01)))
         print('  band shares of the force (0.3 s):', [round(v, 1) for v in A.bands_share(x, f0, f0 + 0.3)], ' of the column:', [round(v, 1) for v in A.bands_share(x, 145.937458 - t0, 146.3 - t0)])
     if name == 'red':
@@ -58,8 +59,7 @@ for name in names:
         ph = A.phone(x)
         o = A.onset(x, r0)
         print('  release onset: %.1f dB below the peak after 1 ms, half the peak after %.2f ms; band shares (0.3 s) %s; phone band L100 %.1f' % (o[0], o[1], [round(v, 1) for v in A.bands_share(x, r0, r0 + 0.3)], A.lw(ph, r0, r0 + 0.3, 0.1)))
-        print('  roughness proxy: orbit far %.4f, containment end %.4f' % (A.roughness(x, 22.4 - t0, 23.4 - t0), A.roughness(x, 24.7 - t0, 25.68 - t0)))
-        print('  pass-by swing: far (20.05-20.35) %.1f, closest %.1f, far again (22.4-23.2) %.1f LUFS' % (A.lw(x, 0.05, 0.35, 0.4), A.lw(x, 0.6, 1.4, 0.4), A.lw(x, 2.4, 3.2, 0.4)))
+        print('  the three views of the orb: flight %.1f, close %.1f, far %.1f LUFS' % (A.lw(x, 0.2, 1.0, 0.4), A.lw(x, 2.33, 2.76, 0.4), A.lw(x, 3.1, 3.7, 0.4)))
     if name == 'finale':
         fl = 177.552375 - t0
         ph = A.phone(x)
@@ -72,10 +72,13 @@ for name in names:
     L = np.load('%s/%s-layers.npz' % (out, name))
     g = dsp.lin(meta['master_gain_db'])
     mixsum = sum(L[k].astype(float) for k in L.files)
-    checks = {'red': [('lattice-strain', 25.0, 25.69), ('shell-fracture', 25.692, 25.76), ('masonry', 21.57, 21.75), ('defence', 26.34, 26.6), ('particles1', 26.6, 29.0), ('fragment2', 27.13, 27.2), ('dust0', 27.5, 29.0)],
-              'force': [('handling', 138.4, 138.85), ('settle', 137.6, 137.7), ('travel-air', 145.3, 145.9), ('travel-cloth', 145.3, 145.9), ('column-crack', 145.967, 146.02), ('chunk3', 147.02, 147.07), ('dust', 146.6, 148.5)],
-              'finale': [('arrival-cloth', 173.2, 173.9), ('preparation', 176.9, 177.49), ('flash-ring', 177.56, 177.8), ('stone0', 178.89, 178.95), ('stone2', 179.77, 179.83), ('strain', 180.14, 180.3),
-                         ('sky-air', 181.0, 183.0), ('dissolve-breath', 183.8, 185.0), ('dissolve-threads', 183.9, 185.0), ('dissolve-ticks', 183.8, 185.0), ('closing-cloth', 187.35, 187.85)]}[name]
+    checks = {'red': [('rock-pass6', 21.55, 21.75), ('spark-hit1', 21.12, 21.2), ('spark-hit2', 21.80, 21.9), ('crack-spread', 23.85, 24.6), ('shell-strain', 25.2, 25.69),
+                      ('shell-fracture', 25.692, 25.76), ('defence-crack', 26.30, 26.4), ('defence-ring', 26.5, 27.0), ('sparkles1', 26.8, 28.0), ('hair-cloth', 30.4, 32.0)],
+              'force': [('shield-residue', 136.5, 136.9), ('handling', 138.4, 138.85), ('shock-ring', 145.3, 145.7), ('travel-air', 145.3, 145.75), ('column-crack', 145.967, 146.02),
+                        ('collapse1', 146.4, 147.6), ('collapse-gravel', 146.5, 147.6), ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('staff-shards', 148.85, 149.7)],
+              'finale': [('staff-swing', 173.8, 174.3), ('circle', 175.0, 176.7), ('preparation', 176.9, 177.49), ('flash-ring', 177.56, 177.8), ('blocks0', 178.2, 181.0),
+                         ('ring2', 179.25, 179.6), ('strain', 180.14, 180.3), ('sky-air', 181.0, 183.0), ('dissolve-breath', 183.8, 185.0), ('dissolve-threads', 183.9, 185.0),
+                         ('remnants', 185.9, 187.5)]}[name]
     for k, a, b in checks:
         lay = L[k].astype(float)
         nb, best, fbest = A.audible(lay, mixsum - lay, a - t0, b - t0)
@@ -84,8 +87,8 @@ for name in names:
         c0 = 145.967458 - t0
         print('  column crack, first 20 ms band shares:', [round(v, 1) for v in A.bands_share(x, c0, c0 + 0.02)])
     # --- sync: the first sample of each anchored layer against its anchor
-    anchors = {'red': [('shell-fracture', 25.692333), ('release', 25.77575)], 'force': [('force', 145.186708), ('column-thud', 145.937458), ('column-crack', 145.967458)],
-               'finale': [('flash', 177.552375), ('beam-core', 177.802625), ('dissolve-breath', 183.766917)]}[name]
+    anchors = {'red': [('spark-hit1', 21.12), ('spark-hit2', 21.80), ('shell-fracture', 25.692333), ('release', 25.77575), ('defence-crack', 26.30)], 'force': [('force', 145.186708), ('column-thud', 145.937458), ('column-crack', 145.967458)],
+               'finale': [('flash', 177.552375), ('beam-core', 177.802625), ('dissolve-breath', 183.766917), ('staff-swing', 173.72)]}[name]
     for k, ta in anchors:
         e = np.abs(L[k].astype(float)).max(axis=1)
         first = int(np.argmax(e > e.max() * 1e-3))
@@ -94,10 +97,10 @@ for name in names:
     print('  left against right, whole: %+.2f dB' % lr)
     # --- what the ear takes the sound for (the first listening review: a rotor, a drum and a ball, water)
     if name == 'red':
-        print('  periodic modulation: orbit %.1f dB at %.1f Hz; containment %.1f dB at %.1f Hz (white noise reads about 6 dB)' % (A.mod_peak(x, 0.3, 3.5) + A.mod_peak(x, 4.6, 5.6)))
-        print('  band shares of the orbit (20.3 to 23.5 s):', [round(v, 1) for v in A.bands_share(x, 0.3, 3.5)])
+        print('  periodic modulation: flight %.1f dB at %.1f Hz; shell %.1f dB at %.1f Hz (white noise reads about 6 dB)' % (A.mod_peak(x, 0.1, 2.25) + A.mod_peak(x, 4.8, 5.68)))
+        print('  band shares of the flight (20.1 to 22.25 s):', [round(v, 1) for v in A.bands_share(x, 0.1, 2.25)])
     if name == 'force':
-        for lab, a, b in (('force', 145.186708, 145.31), ('column', 145.937458, 146.06), ('chunk at 146.31', 146.31, 146.40), ('chunk at 147.02', 147.02, 147.10)):
+        for lab, a, b in (('force', 145.186708, 145.31), ('column', 145.937458, 146.06)):
             print('  share of the 40 to 900 Hz energy in 3 lines, %-16s %.2f (a noise burst reads about 0.3)' % (lab, A.tonal_share(x, a - t0, b - t0)))
     if name == 'finale':
         print('  dissolution 183.8 to 185.7 s: strongest-line share of 400 to 4000 Hz %.2f (white noise 0.12), share of the energy in that band %.2f, the strongest line jumps in %.2f of the frames' % A.blip_share(x, 183.8 - t0, 185.7 - t0))

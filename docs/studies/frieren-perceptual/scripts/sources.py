@@ -350,3 +350,87 @@ def dissolve_dry(dur, seed):
         s = nsamp(t0); e = min(n, s + len(k))
         ticks[s:e] += k[: e - s]
     return breath, norm(threads), norm(ticks)
+
+
+# ================================================================ round 3: sources for what the picture shows
+
+def band_sweep(dur, seed, f0, f1, width_oct=0.9, attack=0.3, wide=False):
+    """A swish: noise whose band moves from f0 to f1 Hz, with a bell-shaped level (peak at `attack` of dur)."""
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+
+    def g(tf, fr):
+        u = np.clip(tf / dur, 0, 1)
+        fc = (f0 * (f1 / f0) ** u)[:, None]
+        return np.exp(-0.5 * (np.log2(np.maximum(fr[None, :], 1) / fc) / width_oct) ** 2)
+
+    u = t / dur
+    env = np.where(u < attack, np.sin(0.5 * np.pi * u / attack) ** 2, np.cos(0.5 * np.pi * (u - attack) / (1 - attack)) ** 2)
+    if wide:
+        y = np.stack([dsp.stft_shape(dsp.white(n, seed + c), g) for c in range(2)], axis=1)
+        return y / np.sqrt((y ** 2).mean()) * env[:, None]
+    y = dsp.stft_shape(dsp.white(n, seed), g)
+    return y / np.sqrt((y ** 2).mean()) * env
+
+
+def sizzle(dur, seed, tau, rate=900.0, f_lo=3000.0, f_hi=11000.0):
+    """Sparks: a dense crackle above 3 kHz that dies away."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+    hits = r.random(n) < rate * np.exp(-t / tau) / SR
+    x = np.where(hits, r.uniform(0.3, 1.0, n) * r.choice([-1.0, 1.0], n), 0.0)
+    x = dsp.spectral(x, lambda f: dsp.band_gain(f, f_lo, f_hi, 2))
+    return norm(x)
+
+
+def tumble(dur, seed, rate, sizes=(0.1, 0.3), speed=(3.0, 8.0), scatter=False):
+    """Stone blocks that fall over and onto one another: impacts at random times. rate(t) is impacts a second."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    y = np.zeros(n + nsamp(0.6))
+    t = 0.0
+    rmax = max(rate(u) for u in np.linspace(0, dur, 50))
+    while True:
+        t += r.exponential(1.0 / rmax)
+        if t >= dur:
+            break
+        if r.random() > rate(t) / rmax:
+            continue
+        a = np.exp(r.uniform(np.log(sizes[0]), np.log(sizes[1])))
+        k = stone_impact(a, r.uniform(*speed), r)
+        s = nsamp(t)
+        y[s: s + len(k)] += k[: len(y) - s]
+    return y[:n + nsamp(0.4)]
+
+
+def gravel(dur, seed, lo=300.0, hi=3500.0):
+    """Crumbling stone: mid-band noise with an irregular, fast flutter."""
+    n = nsamp(dur)
+    x = dsp.spectral(dsp.white(n, seed), lambda f: dsp.band_gain(f, lo, hi, 2))
+    m = 0.55 + 0.45 * irregular(n, seed + 1, 8, 60)
+    return x / np.sqrt((x ** 2).mean()) * np.maximum(m, 0.05)
+
+
+def pad(dur, seed, f0=196.0, ratios=(1.0, 1.5, 2.0, 3.0)):
+    """A magic circle that is simply there: a few steady partials whose levels drift slowly."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+    y = np.zeros(n)
+    for i, q in enumerate(ratios):
+        drift = 0.6 + 0.4 * dsp.smooth(dsp.white(n, seed + 10 + i), 0.8) / 0.02
+        y += np.clip(drift, 0.1, 1.2) * (np.sin(2 * np.pi * f0 * q * t + r.uniform(0, 6.28)) + np.sin(2 * np.pi * f0 * q * 1.003 * t + r.uniform(0, 6.28))) / (i + 1)
+    return norm(y)
+
+
+def wind(dur, seed, lo=250.0, hi=3000.0):
+    """Wind in hair and cloth after a blast: wide noise in slow, irregular gusts."""
+    n = nsamp(dur)
+    ch = []
+    for c in range(2):
+        x = dsp.spectral(dsp.pink(n, seed + c), lambda f: dsp.band_gain(f, lo, hi, 2))
+        ch.append(x / np.sqrt((x ** 2).mean()))
+    g = dsp.smooth(dsp.white(n, seed + 5), 0.5)
+    g = g / (np.abs(g).max() + 1e-12)
+    return np.stack(ch, 1) * lin(4.0 * g)[:, None]
