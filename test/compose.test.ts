@@ -7,7 +7,10 @@ import {
   shaped,
   type StoredSound,
 } from '../experiments/10-seven-questions/compose.ts';
+import { readEntry } from '../experiments/10-seven-questions/store.ts';
 
+const res = (s: StoredSound): StoredSound => resolved(s, readEntry);
+const sca = (s: StoredSound): StoredSound[] => scattered(s, readEntry);
 const SR = 48000;
 // A test source: silence, then at 4 ms a click and a ring of 400 Hz that dies.
 const source = (): [Float32Array, Float32Array] => {
@@ -95,7 +98,7 @@ describe('a stored sound through its effects', () => {
 
 describe('the store', () => {
   it('an accepted sound is used by its name: it takes its source and its effects', () => {
-    const r = resolved({
+    const r = res({
       id: 'land',
       from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
       effects: [{ pitch: 0.9 }],
@@ -115,8 +118,8 @@ describe('the store', () => {
   });
 
   it('a scattered sound is many copies of one material: smaller is higher, shorter and quieter', () => {
-    const copies = scattered(
-      resolved({
+    const copies = sca(
+      res({
         id: 'rubble',
         from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
         effects: [],
@@ -146,8 +149,8 @@ describe('the store', () => {
   });
 
   it('a scatter with power 0 spreads the sizes evenly', () => {
-    const copies = scattered(
-      resolved({
+    const copies = sca(
+      res({
         id: 'blocks',
         from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
         effects: [],
@@ -171,8 +174,8 @@ describe('the store', () => {
   });
 
   it('large-first lands the copies from the largest to the smallest', () => {
-    const copies = scattered(
-      resolved({
+    const copies = sca(
+      res({
         id: 'blocks',
         from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
         effects: [],

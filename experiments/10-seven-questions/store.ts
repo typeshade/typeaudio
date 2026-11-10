@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { bundle } from '../../scripts/bundle.ts';
 import { inPage } from '../../scripts/browser.ts';
 import { fromBase64 } from '../03-fft/signals.ts';
+import { planOf } from './plans.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, 'out', 'store');
@@ -46,27 +47,12 @@ export interface Parts {
 export const readEntry = (name: string): StoreEntry =>
   JSON.parse(readFileSync(join(HERE, 'store', `${name}.json`), 'utf8')) as StoreEntry;
 
-/** A plan for a group: the room and the master of the passage, the group at `lead` seconds. */
-function planOfGroup(entry: StoreEntry, seconds: number, lead: number): unknown {
-  const passage = readEntry('passage-without-landings').plan as Record<string, unknown>;
-  return {
-    ...passage,
-    description: `The store entry "${entry.name}" alone.`,
-    clip: { duration: seconds, fps: 23.976 },
-    // The level of a group is set where it is used. A low target keeps the master's limiter out.
-    master: { lufs: -40, truePeak: -1 },
-    picture: { cuts: [], motion: [] },
-    silences: [],
-    events: entry.events!.map((e) => ({ ...e, t: e.t + lead })),
-  };
-}
-
 let page: string | undefined;
 
 /** The file of an entry's render, and the plan it is rendered from. */
 function planned(name: string, seconds: number, lead: number): { file: string; text: string } {
   const entry = readEntry(name);
-  const plan = entry.plan ?? planOfGroup(entry, seconds, lead);
+  const plan = planOf(entry, readEntry, seconds, lead);
   const text = JSON.stringify(plan);
   const key = createHash('sha256').update(text).digest('hex').slice(0, 16);
   return { file: join(OUT, `${name}-${key}`), text };
@@ -126,6 +112,9 @@ export async function renderParts(name: string, seconds = 3, lead = 0.05): Promi
   };
   return { dry: read(`${file}.dry.f32`), wet: read(`${file}.wet.f32`), normalizeDb };
 }
+
+/** The store in Node, as `compose` takes it. */
+export const nodeSource = { read: readEntry, parts: (name: string) => renderParts(name) };
 
 /** The render of an entry through the engine: the two parts summed, as the engine's mix. */
 export async function renderEntry(name: string, seconds = 3, lead = 0.05): Promise<Stereo> {

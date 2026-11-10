@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { wavBytes } from '../08-sound-design/wav.ts';
 import { compose, type Composition } from './compose.ts';
+import { nodeSource } from './store.ts';
 import { SAMPLE_RATE } from './definitions.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -45,7 +46,7 @@ for (const [name, variant] of Object.entries(c.variants)) {
         ? s.effects.filter((e) => variant.effects!.includes(Object.keys(e)[0]!))
         : s.effects,
     }));
-  const [l, r] = await compose({ ...c, sounds });
+  const [l, r] = await compose({ ...c, sounds }, nodeSource);
   await writeFile(join(out, `${c.module}-${name}.wav`), wavBytes([l, r], SAMPLE_RATE));
   console.log(`${c.module}-${name}: ${(l.length / SAMPLE_RATE).toFixed(2)} s`);
 }
