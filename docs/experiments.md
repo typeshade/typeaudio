@@ -9,17 +9,17 @@ devices yet.
 
 ## Status
 
-| #   | Experiment                                                 | Decides                                                                       | Status                                                                                                                                                                                                                                                                                                            |
-| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I                      | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending                                                                                                                                                                                                            |
-| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K                        | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending                                                                                                                                                                                                               |
-| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J                                  | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending                                                                                                                                                                                                                   |
-| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I                     | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending                                                                                                                                                                                                              |
-| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                       | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending                                                                                                                                                                                                           |
-| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                                                                              |
-| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                                                                           |
-| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending                                                            |
-| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | harness ready; container runs recorded (`docs/records/09-force-passage-container.md`, `docs/records/09-force-passage-container-2.md`, `docs/records/09-force-passage-container-3.md`, `docs/records/09-force-passage-container-4.md`); the owner's listening review of the fifth plan and the device runs pending |
+| #   | Experiment                                                 | Decides                                                                       | Status                                                                                                                                                                                                                                                 |
+| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I                      | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending                                                                                                                                                 |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K                        | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending                                                                                                                                                    |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J                                  | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending                                                                                                                                                        |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I                     | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending                                                                                                                                                   |
+| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                       | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending                                                                                                                                                |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
+| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
+| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -388,31 +388,27 @@ kind with a size carries the weight that the study's models carry.
 copy the study's renderer: the engine places each event with its own spatial chain and masters the mix
 with its own guards.
 
-**Status.** Harness ready; four container runs are recorded: reference numbers on WebGPU on SwiftShader.
-The engine gained four kinds (`crack`, `boom`, `rubble`, `roar`) and the plan gained the silence
-(`docs/sound-design-loop.md`).
+**Status.** Ended on 2026-11-10, with five container runs recorded: reference numbers on WebGPU on
+SwiftShader. The engine gained four kinds (`crack`, `boom`, `rubble`, `roar`) and the plan gained the
+silence (`docs/sound-design-loop.md`). The plan was written sixteen times against the owner's reviews.
 
-- The first run is `docs/records/09-force-passage-container.md`, at commit
-  `77125bd1947cbbf1796150ff52574302f1e0f2ba`. The owner listened to it on 2026-11-10: the hit that breaks
-  a wall sounded as objects of a house thrown about.
-- A second plan made every stone low and long. It was not recorded. The owner listened to it on the same
-  day: a roll of dull thumps, apart from the picture. The owner then gave the rule of the design: the
-  picture says which sound leads in each moment; the rest explains it or is out; and a silence says that
-  a larger hit comes.
-- The second recorded run is `docs/records/09-force-passage-container-2.md`, of the third plan, at commit
-  `586941b9118cad5dc5ec288a4622d663209c770f`. It follows that rule in 37 events, where the first plan
-  held 59. The record gives the measured causes and what changed in the engine: a `rubble` ends with its
-  `duration`. The owner listened to it: it holds together far better, but the hit on the wall and the
-  break of the wall must be told apart. The owner gave the rule in three times: the sound of the past
-  goes on and ends by itself, one sound leads now, and the sound gives a hint of what comes.
-- The third recorded run is `docs/records/09-force-passage-container-3.md`, of the fourth plan, at commit
-  `fd8937faf341c8cd67708385a0300d2b7253b0bd`. The hit is a body on stone and the break is stone that
-  tears. The owner listened to it: the stones are still in the air and time is slow, but the sound says
-  that they have fallen.
-- The fourth recorded run is `docs/records/09-force-passage-container-4.md`, of the fifth plan, at commit
-  `bd8e250aabe7c995ed6f3b2d8d3a803376e4918b`. Nothing strikes while the blocks hang in the air; they land
-  after the cut to the fog.
+| Record                                         | Plan      | Commit    |
+| ---------------------------------------------- | --------- | --------- |
+| `docs/records/09-force-passage-container.md`   | First     | `77125bd` |
+| `docs/records/09-force-passage-container-2.md` | Third     | `586941b` |
+| `docs/records/09-force-passage-container-3.md` | Fourth    | `fd8937f` |
+| `docs/records/09-force-passage-container-4.md` | Fifth     | `bd8e250` |
+| `docs/records/09-force-passage-container-5.md` | Sixteenth | `daa743a` |
 
-The owner said on 2026-11-10 to write the rule into the design: it is the section "One sound leads" of
-`docs/sound-design-loop.md`. The owner's listening review of the fifth plan is pending, and so are the
-device runs.
+Record 09-5 gives the reviews of the plans from the sixth to the sixteenth and the answer of the
+experiment:
+
+- The structure of the passage was right by the fifth plan. The owner's rule for it is the section "One
+  sound leads" of `docs/sound-design-loop.md`.
+- One sound was accepted: the hit on the wall, at the seventh plan.
+- A block of stone that lands was not reached. The kinds, bands of noise and one sine, did not make a mass
+  of stone, and the measures of the session did not tell stone from a bin.
+- What the owner called plausible was the accepted hit, lowered by two octaves, outside the engine.
+
+The theory behind these and what the engine lacks are `docs/sound-design-theory.md`. The device runs were
+not made.

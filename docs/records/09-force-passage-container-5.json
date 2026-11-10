@@ -1,0 +1,744 @@
+{
+  "experiment": "09-force-passage",
+  "date": "2026-11-10T12:37:09.632Z",
+  "commit": "daa743a48093a2455e136197ab671d20fc969052",
+  "dirty": false,
+  "buildInfo": {
+    "version": "0.1.0",
+    "revision": null
+  },
+  "machine": {
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 4,
+    "os": "linux 6.18.44-fc-v338",
+    "bun": "1.4.4"
+  },
+  "options": {
+    "tier": "webgpu",
+    "blocks": 0,
+    "stems": true
+  },
+  "files": [
+    "mix-webgpu.wav",
+    "wet-webgpu.wav",
+    "stem-dialogue-webgpu.wav",
+    "stem-foley-webgpu.wav",
+    "stem-effects-webgpu.wav",
+    "stem-ambience-webgpu.wav",
+    "stem-music-webgpu.wav"
+  ],
+  "environment": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "crossOriginIsolated": true
+  },
+  "tier": "webgpu",
+  "requested": "webgpu",
+  "info": {
+    "build": {
+      "version": "0.1.0",
+      "revision": null
+    },
+    "tier": "webgpu",
+    "webgpu": {
+      "provenance": "device",
+      "vendor": "google",
+      "architecture": "swiftshader",
+      "device": null,
+      "description": null,
+      "fallback": true,
+      "features": ["core-features-and-limits", "subgroups", "timestamp-query"],
+      "limits": {
+        "maxTextureDimension1D": 8192,
+        "maxTextureDimension2D": 8192,
+        "maxTextureDimension3D": 2048,
+        "maxTextureArrayLayers": 256,
+        "maxBindGroups": 4,
+        "maxBindGroupsPlusVertexBuffers": 24,
+        "maxBindingsPerBindGroup": 1000,
+        "maxDynamicUniformBuffersPerPipelineLayout": 8,
+        "maxDynamicStorageBuffersPerPipelineLayout": 4,
+        "maxSampledTexturesPerShaderStage": 16,
+        "maxSamplersPerShaderStage": 16,
+        "maxStorageBuffersPerShaderStage": 8,
+        "maxStorageTexturesPerShaderStage": 4,
+        "maxUniformBuffersPerShaderStage": 12,
+        "maxUniformBufferBindingSize": 65536,
+        "maxStorageBufferBindingSize": 134217728,
+        "minUniformBufferOffsetAlignment": 256,
+        "minStorageBufferOffsetAlignment": 256,
+        "maxVertexBuffers": 8,
+        "maxBufferSize": 268435456,
+        "maxVertexAttributes": 16,
+        "maxVertexBufferArrayStride": 2048,
+        "maxInterStageShaderVariables": 16,
+        "maxColorAttachments": 8,
+        "maxColorAttachmentBytesPerSample": 32,
+        "maxComputeWorkgroupStorageSize": 16384,
+        "maxComputeInvocationsPerWorkgroup": 256,
+        "maxComputeWorkgroupSizeX": 256,
+        "maxComputeWorkgroupSizeY": 256,
+        "maxComputeWorkgroupSizeZ": 64,
+        "maxComputeWorkgroupsPerDimension": 65535,
+        "maxImmediateSize": 64,
+        "maxStorageBuffersInFragmentStage": 8,
+        "maxStorageTexturesInFragmentStage": 4,
+        "maxStorageBuffersInVertexStage": 8,
+        "maxStorageTexturesInVertexStage": 4
+      }
+    },
+    "webgl": null,
+    "subgroups": {
+      "minSize": 4,
+      "maxSize": 4,
+      "size": 4,
+      "numSubgroups": 64,
+      "consecutive": true
+    }
+  },
+  "frames": 753600,
+  "sampleRate": 48000,
+  "timing": {
+    "blocks": 736,
+    "budgetMs": 21.333333333333332,
+    "ms": {
+      "median": 46.33499999996275,
+      "p95": 55.43999999947846,
+      "min": 38.68999999947846,
+      "max": 72.84499999973923,
+      "mean": 46.95046938774968
+    },
+    "firstMs": 1356.699999999255,
+    "over": 735,
+    "realTime": 0.437786259205045
+  },
+  "hostMs": 37288.64999999944,
+  "reverbPrepareMs": 196.69000000040978,
+  "master": {
+    "lufsBefore": -17.715038615327792,
+    "normalizeDb": 7.715038615327792,
+    "limiterMinDb": -8.71268926167552
+  },
+  "placed": [
+    {
+      "id": "hall-air-1",
+      "start": 0,
+      "end": 408960
+    },
+    {
+      "id": "shield-residue",
+      "start": 0,
+      "end": 76800
+    },
+    {
+      "id": "settle-1",
+      "start": 26400,
+      "end": 93600
+    },
+    {
+      "id": "far-thump-1",
+      "start": 117600,
+      "end": 171864
+    },
+    {
+      "id": "settle-2",
+      "start": 139200,
+      "end": 206400
+    },
+    {
+      "id": "settle-3",
+      "start": 230400,
+      "end": 297600
+    },
+    {
+      "id": "far-thump-2",
+      "start": 242400,
+      "end": 296914
+    },
+    {
+      "id": "stare",
+      "start": 288000,
+      "end": 408960
+    },
+    {
+      "id": "strike",
+      "start": 416962,
+      "end": 450996
+    },
+    {
+      "id": "hall-air-2",
+      "start": 416962,
+      "end": 450802
+    },
+    {
+      "id": "blast",
+      "start": 420966,
+      "end": 450996
+    },
+    {
+      "id": "blast-body",
+      "start": 420966,
+      "end": 450996
+    },
+    {
+      "id": "blast-roar-l",
+      "start": 420966,
+      "end": 450726
+    },
+    {
+      "id": "blast-roar-r",
+      "start": 420966,
+      "end": 450726
+    },
+    {
+      "id": "ring",
+      "start": 424806,
+      "end": 444006
+    },
+    {
+      "id": "rush",
+      "start": 444660,
+      "end": 450900
+    },
+    {
+      "id": "hit-mass-l",
+      "start": 452998,
+      "end": 500998
+    },
+    {
+      "id": "hit-mass-r",
+      "start": 452998,
+      "end": 500998
+    },
+    {
+      "id": "hit-rumble",
+      "start": 452998,
+      "end": 644998
+    },
+    {
+      "id": "wall-body",
+      "start": 452998,
+      "end": 644998
+    },
+    {
+      "id": "wall-burst",
+      "start": 452998,
+      "end": 463558
+    },
+    {
+      "id": "wall-edge",
+      "start": 452998,
+      "end": 505798
+    },
+    {
+      "id": "wall-hit",
+      "start": 452998,
+      "end": 523438
+    },
+    {
+      "id": "wall-mid",
+      "start": 452998,
+      "end": 508198
+    },
+    {
+      "id": "wall-punch",
+      "start": 452998,
+      "end": 539835
+    },
+    {
+      "id": "wall-stone",
+      "start": 452998,
+      "end": 510598
+    },
+    {
+      "id": "wall-thump",
+      "start": 452998,
+      "end": 518792
+    },
+    {
+      "id": "hall-air-3",
+      "start": 452998,
+      "end": 750598
+    },
+    {
+      "id": "wall-chips",
+      "start": 452998,
+      "end": 510598
+    },
+    {
+      "id": "dust-burst",
+      "start": 452998,
+      "end": 472198
+    },
+    {
+      "id": "hall-answer",
+      "start": 452998,
+      "end": 644998
+    },
+    {
+      "id": "split-1",
+      "start": 465120,
+      "end": 524379
+    },
+    {
+      "id": "split-2",
+      "start": 472320,
+      "end": 539566
+    },
+    {
+      "id": "split-3",
+      "start": 479024,
+      "end": 532502
+    },
+    {
+      "id": "break",
+      "start": 479024,
+      "end": 609197
+    },
+    {
+      "id": "break-burst",
+      "start": 479024,
+      "end": 498224
+    },
+    {
+      "id": "break-mass-l",
+      "start": 479024,
+      "end": 512624
+    },
+    {
+      "id": "break-mass-r",
+      "start": 479024,
+      "end": 512624
+    },
+    {
+      "id": "break-rumble",
+      "start": 479024,
+      "end": 671024
+    },
+    {
+      "id": "hang",
+      "start": 479024,
+      "end": 671024
+    },
+    {
+      "id": "break-2",
+      "start": 482384,
+      "end": 615155
+    },
+    {
+      "id": "break-3",
+      "start": 486224,
+      "end": 608238
+    },
+    {
+      "id": "dust",
+      "start": 486224,
+      "end": 630224
+    },
+    {
+      "id": "drift-1",
+      "start": 490560,
+      "end": 524160
+    },
+    {
+      "id": "hang-mass-l",
+      "start": 500624,
+      "end": 572624
+    },
+    {
+      "id": "hang-mass-r",
+      "start": 500624,
+      "end": 572624
+    },
+    {
+      "id": "drift-2",
+      "start": 508800,
+      "end": 537600
+    },
+    {
+      "id": "fog-mass-l",
+      "start": 541086,
+      "end": 617886
+    },
+    {
+      "id": "fog-mass-r",
+      "start": 541086,
+      "end": 617886
+    },
+    {
+      "id": "land-1-ground",
+      "start": 545760,
+      "end": 737760
+    },
+    {
+      "id": "land-1",
+      "start": 547200,
+      "end": 614487
+    },
+    {
+      "id": "land-1-body",
+      "start": 547200,
+      "end": 739200
+    },
+    {
+      "id": "land-1-burst",
+      "start": 547200,
+      "end": 557760
+    },
+    {
+      "id": "land-1-edge",
+      "start": 547200,
+      "end": 600000
+    },
+    {
+      "id": "land-1-fill",
+      "start": 547200,
+      "end": 573600
+    },
+    {
+      "id": "land-1-low",
+      "start": 547200,
+      "end": 739200
+    },
+    {
+      "id": "land-1-mid",
+      "start": 547200,
+      "end": 602400
+    },
+    {
+      "id": "land-1-punch",
+      "start": 547200,
+      "end": 638516
+    },
+    {
+      "id": "land-1-ring",
+      "start": 547200,
+      "end": 700800
+    },
+    {
+      "id": "land-1-stone",
+      "start": 547200,
+      "end": 604800
+    },
+    {
+      "id": "land-1-thump",
+      "start": 547200,
+      "end": 604421
+    },
+    {
+      "id": "land-1-stone-2",
+      "start": 547776,
+      "end": 605376
+    },
+    {
+      "id": "land-1-answer",
+      "start": 549360,
+      "end": 741360
+    },
+    {
+      "id": "land-2-ground",
+      "start": 566880,
+      "end": 758880
+    },
+    {
+      "id": "land-2",
+      "start": 568320,
+      "end": 634416
+    },
+    {
+      "id": "land-2-body",
+      "start": 568320,
+      "end": 760320
+    },
+    {
+      "id": "land-2-burst",
+      "start": 568320,
+      "end": 578880
+    },
+    {
+      "id": "land-2-edge",
+      "start": 568320,
+      "end": 621120
+    },
+    {
+      "id": "land-2-fill",
+      "start": 568320,
+      "end": 586800
+    },
+    {
+      "id": "land-2-low",
+      "start": 568320,
+      "end": 738280
+    },
+    {
+      "id": "land-2-mid",
+      "start": 568320,
+      "end": 623520
+    },
+    {
+      "id": "land-2-punch",
+      "start": 568320,
+      "end": 649297
+    },
+    {
+      "id": "land-2-ring",
+      "start": 568320,
+      "end": 675840
+    },
+    {
+      "id": "land-2-stone",
+      "start": 568320,
+      "end": 625920
+    },
+    {
+      "id": "land-2-thump",
+      "start": 568320,
+      "end": 624333
+    },
+    {
+      "id": "land-2-stone-2",
+      "start": 568896,
+      "end": 626496
+    },
+    {
+      "id": "land-2-answer",
+      "start": 570480,
+      "end": 762480
+    }
+  ],
+  "groups": [
+    {
+      "calls": "whooshes",
+      "tier": "webgpu"
+    },
+    {
+      "calls": "impacts",
+      "tier": "webgpu",
+      "why": "whooshes and impacts run as two dispatches because the trip counts differ (4 and 10)"
+    },
+    {
+      "calls": "winds",
+      "tier": "webgpu",
+      "why": "impacts and winds run as two dispatches because the trip counts differ (10 and 4)"
+    },
+    {
+      "calls": "drones",
+      "tier": "webgpu",
+      "why": "winds and drones run as two dispatches because the trip counts differ (4 and 1)"
+    },
+    {
+      "calls": "cracks",
+      "tier": "webgpu",
+      "why": "drones and cracks run as two dispatches because the trip counts differ (1 and 15)"
+    },
+    {
+      "calls": "booms",
+      "tier": "webgpu",
+      "why": "cracks and booms run as two dispatches because the trip counts differ (15 and 22)"
+    },
+    {
+      "calls": "rubbles",
+      "tier": "webgpu",
+      "why": "booms and rubbles run as two dispatches because the trip counts differ (22 and 2)"
+    },
+    {
+      "calls": "roars",
+      "tier": "webgpu",
+      "why": "rubbles and roars run as two dispatches because the trip counts differ (2 and 19)"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "roars and gather run as two dispatches because the trip counts differ (19 and 77)"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "gather and gather run as two dispatches because gather writes an array gather also writes"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "gather and gather run as two dispatches because gather writes an array gather also writes"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "gather and gather run as two dispatches because gather writes an array gather also writes"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "gather and gather run as two dispatches because gather writes an array gather also writes"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "gather and gather run as two dispatches because gather writes an array gather also writes"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "gather and gather run as two dispatches because gather writes an array gather also writes"
+    },
+    {
+      "calls": "gather",
+      "tier": "webgpu",
+      "why": "gather and gather run as two dispatches because gather writes an array gather also writes"
+    },
+    {
+      "calls": "history",
+      "tier": "webgpu",
+      "why": "gather and history run as two dispatches because the trip counts differ (77 and 394240)"
+    },
+    {
+      "calls": "place",
+      "tier": "webgpu",
+      "why": "history and place run as two dispatches because the trip counts differ (394240 and 77)"
+    },
+    {
+      "calls": "layers",
+      "tier": "webgpu",
+      "why": "place and layers run as two dispatches because the trip counts differ (77 and 5120)"
+    },
+    {
+      "calls": "strips",
+      "tier": "webgpu",
+      "why": "layers and strips run as two dispatches because the trip counts differ (5120 and 5)"
+    },
+    {
+      "calls": "sendSum",
+      "tier": "webgpu",
+      "why": "strips and sendSum run as two dispatches because the trip counts differ (5 and 1024)"
+    },
+    {
+      "calls": "pad",
+      "tier": "webgpu",
+      "why": "sendSum and pad run as two dispatches because the trip counts differ (1024 and 2048)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "pad and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage+store",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "accumulate2",
+      "tier": "webgpu",
+      "why": "store and accumulate2 run as two dispatches because the trip counts differ (2048 and 4096)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "accumulate2 and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "webgpu",
+      "why": "fftStage and fftStage run as two dispatches because fftStage reads `inp[base + q + stride * p]` (line 46)"
+    },
+    {
+      "calls": "overlap2",
+      "tier": "webgpu",
+      "why": "fftStage and overlap2 run as two dispatches because the trip counts differ (4096 and 2048)"
+    },
+    {
+      "calls": "pack",
+      "tier": "webgpu",
+      "why": "overlap2 and pack run as two dispatches because the trip counts differ (2048 and 12288)"
+    }
+  ]
+}
