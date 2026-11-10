@@ -19,6 +19,7 @@ devices yet.
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
 | 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
 | 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
+| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | in progress (the pull request that adds this section)                                                                                                                                                                                                  |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -355,3 +356,36 @@ device runs is `3b0a4557f9b639cd2136737f0871c598526318a1`, the commit of the fou
 (2026-11-09). The render of `7ecf6764` has a known defect (the grains of `cloth-1`) that pull requests
 #63 and #65 removed. A device run made at `7ecf6764` compares with record 08-3. The device runs will follow: one record per device, `docs/records/08-sound-design-<device>.md`.
 The procedure of a device run is `docs/device-runs.md`.
+
+## 9. The force passage of a study, as a plan on the engine
+
+A study designed the sound of one fight scene outside the engine, in Python, over eleven rounds of the
+owner's listening (`docs/studies/frieren-perceptual/` on pull request #67, at commit `07670c9`). Its
+README lists what the engine lacks for that design ("What the engine needs"). The owner said on
+2026-11-10 to move the force passage to the engine first.
+
+**Question.** Can the engine make the force passage of the study from a plan: the same moments in the
+same order, with the weight and the tension of the study's round 11? Which kinds and which plan fields
+must the engine gain for it?
+
+**Decides.** The kinds that a scene of stone and force needs. Whether a plan states a silence. Whether a
+kind with a size carries the weight that the study's models carry.
+
+**Method.**
+
+1. Write the plan of the passage from the list of the study's ninth listening review: at least one event
+   for each row of the list, at the frame times of the study.
+2. Add the kinds that the list needs and the vocabulary lacks. Each is a unit class with a reference in
+   plain JavaScript, as the nine kinds are.
+3. Add what the plan lacks to state the passage.
+4. Render the plan on WebGPU. Render a part on the CPU tier and compare the two.
+5. Measure the render against the study's render: the level each two frames, five bands in each phase,
+   and the time of each anchored onset.
+6. Put the mix on the picture for the owner. The clip is private: the footage is copyrighted.
+7. Write the record.
+
+**What it does not do.** It moves one passage of three. It has no listener but the owner. It does not
+copy the study's renderer: the engine places each event with its own spatial chain and masters the mix
+with its own guards.
+
+**Status.** In progress.
