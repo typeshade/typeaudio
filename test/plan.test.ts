@@ -313,33 +313,48 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(one('land-1').t - fog).toBeLessThan(0.3);
   });
 
-  test('makes a landing of stone, not of a hollow thing: a hard edge, a deep body with no tone, and grit', () => {
+  test('holds a mass from the blast to the fog: a wide roar under every sound that leads, and no tone', () => {
     const fog = p.picture.cuts[3]!;
-    // No `impact` after the cut: its sub is one tone, and the owner heard a plastic container.
-    expect(p.events.filter((e) => e.t >= fog && e.kind === 'impact')).toEqual([]);
+    const hush = p.silences[1]!;
+    const roars = p.events.filter((e) => e.kind === 'roar').map(eventSpan);
+    // From the blast to half a second past the cut to the fog, a roar sounds at every twentieth of
+    // a second, but in the frame of silence.
+    for (let t = one('blast').t + 0.03; t < fog + 0.5; t += 0.05) {
+      if (t >= hush.t - 0.03 && t <= hush.t + hush.duration + 0.03) continue;
+      expect(
+        roars.some((r) => r.start <= t && t < r.end),
+        `no roar at ${t.toFixed(2)} s`,
+      ).toBe(true);
+    }
+    // No tone that the ear follows: no cloth (its grains ring), no howl in the air, and the sub of
+    // the blast rests at 35 Hz.
+    expect(p.events.filter((e) => e.kind === 'cloth')).toEqual([]);
+    for (const e of p.events.filter((v) => v.kind === 'wind')) expect(e.macros.howl, e.id).toBe(0);
+    expect(one('blast').macros.weight).toBe(1);
+  });
+
+  test('makes a landing as the hit on the wall, smaller: a burst, the edge of a large block and grit, and no short boom', () => {
+    const fog = p.picture.cuts[3]!;
     for (const id of ['land-1', 'land-2']) {
       const block = one(id);
       expect(block.kind, id).toBe('crack');
-      // A block of 1 m or more, with its edge and no smaller cracks after it.
       expect(block.macros.size, id).toBeGreaterThan(0.8);
-      expect(block.macros.brightness, id).toBeGreaterThanOrEqual(0.8);
+      expect(block.macros.brightness, id).toBe(1);
       expect(block.macros.crumble, id).toBe(0);
-      for (const part of ['body', 'punch']) {
-        const boom = one(`${id}-${part}`);
-        expect(boom.kind, boom.id).toBe('boom');
-        expect(boom.macros.tone, boom.id).toBe(0);
-        expect(boom.t, boom.id).toBe(block.t);
-      }
-      const edge = one(`${id}-edge`);
-      expect(edge.t, edge.id).toBe(block.t);
-      expect(edge.macros.size, edge.id).toBeLessThan(0.1);
-      expect(edge.macros.brightness, edge.id).toBe(1);
+      // The sub of its `impact` rests at 35 Hz, and its burst is a `roar` of 0.3 s.
+      expect(one(`${id}-hit`).kind, id).toBe('impact');
+      expect(one(`${id}-hit`).macros.weight, id).toBe(1);
+      expect(one(`${id}-hit`).t, id).toBe(block.t);
+      expect(one(`${id}-burst`).kind, id).toBe('roar');
+      expect(one(`${id}-edge`).macros.size, id).toBeLessThan(0.1);
       expect(one(`${id}-grit`).t - block.t, id).toBeLessThan(0.02);
     }
-    // After the cut, a `rubble` is small stone only: its middle size is under 0.1 m.
+    // The owner heard a band of noise at 115 to 140 Hz with a fall of 0.2 s as a plastic bin that
+    // is kicked. After the hit on the wall no `boom` is pitched over 100 Hz.
+    for (const e of p.events.filter((v) => v.kind === 'boom' && v.t > one('wall-hit').t + 0.01))
+      expect(140 * 0.4 ** e.macros.size!, e.id).toBeLessThan(100);
     for (const e of p.events.filter((v) => v.t >= fog && v.kind === 'rubble'))
       expect(e.macros.size, e.id).toBeLessThan(0.2);
-    // The second landing is the smaller one.
     expect(one('land-2').intensity).toBeLessThan(one('land-1').intensity);
   });
 

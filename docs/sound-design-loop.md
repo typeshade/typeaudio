@@ -272,6 +272,17 @@ Observed in experiment 9:
   the owner was satisfied with it. Its break held cracks that crumble and shards: blocks of 0.05 to
   0.65 m that knock, 80 a second. The owner heard plastic, or a steel bin that is kicked.
 
+- The eighth plan held no block of a middle size. The owner heard plastic still: the sound must be
+  denser, and the reference shows how. The reference holds one dense roar from the blast to the fog,
+  in every band from 40 Hz to 10 kHz. The eighth plan's mix was empty between its events, and
+  nearly empty over 500 Hz.
+- The owner asked what rings under the wind at the start. It was two `cloth` events: the grains of
+  a `cloth` are heard as small bells.
+
+- The ninth plan made a landing from a `boom` at 60 Hz, one at 115 Hz with a fall of 0.2 s, and
+  the edge of a block, and the break held three such booms at 125 Hz. The owner heard a plastic bin
+  that is kicked. A band of noise from 100 to 140 Hz with a short fall is a hollow thing.
+
 What follows for the one who writes a plan:
 
 1. Ask for each moment which sound leads, before any event is written.
@@ -282,6 +293,10 @@ What follows for the one who writes a plan:
 5. Make stone from a hard edge, a deep body with no tone and fine grit; a large hit has a short,
    wide burst too. Leave out a tone that the ear follows, a dull top, and blocks of 0.1 to 0.7 m
    that knock: a `crack` that crumbles, and a `rubble` of that size.
+
+6. When the picture holds one event from start to end, hold a mass under the sounds that lead: a
+   wide `roar` that goes on from the first of them and falls step by step. Sounds with silence
+   between them are heard as thin.
 
 The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
 they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks
