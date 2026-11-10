@@ -434,3 +434,69 @@ def wind(dur, seed, lo=250.0, hi=3000.0):
     g = dsp.smooth(dsp.white(n, seed + 5), 0.5)
     g = g / (np.abs(g).max() + 1e-12)
     return np.stack(ch, 1) * lin(4.0 * g)[:, None]
+
+
+# ================================================================ round 4: more kinds of sound at once
+# The owner heard round 3 as flat, one sound at a time. Measured: 80 to 93 % of the energy of nearly every
+# section was noise. The sources below add the two other kinds: tones that last and sharp moments.
+# What the earlier rounds taught still holds: no periodic amplitude modulation (a rotor), no low
+# decaying tone in an impact (a drum), no short pitched grains (water).
+
+def voice(dur, seed, freqs, wander=0.012, rate=4.0, tilt=0.7, breath=0.35):
+    """A tone that lasts: a cluster of partials, each with its own slow, irregular drift of pitch and level.
+    No partial has a period in its level."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    y = np.zeros(n)
+    for i, f in enumerate(freqs):
+        w = dsp.spectral(dsp.white(n, seed + 31 * (i + 1)), lambda q: dsp.band_gain(q, 0.2, rate, 1))
+        w = w / (w.std() + 1e-12)
+        ph = 2 * np.pi * np.cumsum(f * (1 + wander * w)) / SR
+        a = dsp.spectral(dsp.white(n, seed + 57 * (i + 1)), lambda q: dsp.band_gain(q, 0.1, 2.0, 1))
+        a = 1 + breath * a / (np.abs(a).max() + 1e-12)
+        y += a * np.sin(ph + r.uniform(0, 6.28)) / (i + 1) ** tilt
+    return norm(y)
+
+
+def glide(dur, seed, f0, f1, ratios=(1.0, 1.5, 2.0), wander=0.006, shape=1.0, tilt=0.8):
+    """A cluster whose pitch moves from f0 to f1 Hz over the whole duration (not a blip: use it for 0.4 s or more)."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    u = (np.arange(n) / n) ** shape
+    base = f0 * (f1 / f0) ** u
+    y = np.zeros(n)
+    for i, q in enumerate(ratios):
+        w = dsp.spectral(dsp.white(n, seed + 13 * (i + 1)), lambda z: dsp.band_gain(z, 0.3, 5.0, 1))
+        w = w / (w.std() + 1e-12)
+        y += np.sin(2 * np.pi * np.cumsum(base * q * (1 + wander * w)) / SR + r.uniform(0, 6.28)) / (i + 1) ** tilt
+    return norm(y)
+
+
+def pops(dur, seed, rate, f_lo=2000.0, f_hi=8000.0, tau=0.0012):
+    """Separate sharp pops at random times (sparks that fly off): each a few milliseconds, no pitch."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    y = np.zeros(n)
+    t = r.exponential(1.0 / rate)
+    L = nsamp(tau * 8)
+    tt = np.arange(L) / SR
+    while t < dur:
+        k = r.standard_normal(L) * np.exp(-tt / tau) * r.uniform(0.35, 1.0)      # bounded: one rare large pop must not set the peak of the mix
+        s = nsamp(t)
+        e = min(n, s + L)
+        y[s:e] += k[: e - s]
+        t += r.exponential(1.0 / rate)
+    return norm(dsp.spectral(y, lambda f: dsp.band_gain(f, f_lo, f_hi, 2)))
+
+
+def slap(sig, cutoff=1800.0):
+    """What comes back from a far wall: the same sound, duller."""
+    return dsp.lp(np.concatenate([sig, np.zeros(nsamp(0.05))]), cutoff)
+
+
+def bell(seed, f1, loss=0.0012, dur=1.2, ratios=(1.0, 2.76, 5.4, 8.93), hard=0.0002):
+    """A small struck metal or crystal part: a few high modes with a long ring (above 500 Hz only)."""
+    r = dsp.rng(seed)
+    fm = f1 * np.array(ratios) * r.uniform(0.99, 1.01, len(ratios))
+    y = dsp.modal(fm, r.uniform(0.6, 1.0, len(fm)) / np.arange(1, len(fm) + 1) ** 0.8, dsp.tau_of(fm, loss), dur)
+    return norm(dsp.contact(y, hard))

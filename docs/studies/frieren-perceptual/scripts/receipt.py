@@ -72,13 +72,18 @@ for name in names:
     L = np.load('%s/%s-layers.npz' % (out, name))
     g = dsp.lin(meta['master_gain_db'])
     mixsum = sum(L[k].astype(float) for k in L.files)
-    checks = {'red': [('rock-pass6', 21.55, 21.75), ('spark-hit1', 21.12, 21.2), ('spark-hit2', 21.80, 21.9), ('crack-spread', 23.85, 24.6), ('shell-strain', 25.2, 25.69),
-                      ('shell-fracture', 25.692, 25.76), ('defence-crack', 26.30, 26.4), ('defence-ring', 26.5, 27.0), ('sparkles1', 26.8, 28.0), ('hair-cloth', 30.4, 32.0)],
-              'force': [('shield-residue', 136.5, 136.9), ('handling', 138.4, 138.85), ('shock-ring', 145.3, 145.7), ('travel-air', 145.3, 145.75), ('column-crack', 145.967, 146.02),
-                        ('collapse1', 146.4, 147.6), ('collapse-gravel', 146.5, 147.6), ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('staff-shards', 148.85, 149.7)],
-              'finale': [('staff-swing', 173.8, 174.3), ('circle', 175.0, 176.7), ('preparation', 176.9, 177.49), ('flash-ring', 177.56, 177.8), ('blocks0', 178.2, 181.0),
-                         ('ring2', 179.25, 179.6), ('strain', 180.14, 180.3), ('sky-air', 181.0, 183.0), ('dissolve-breath', 183.8, 185.0), ('dissolve-threads', 183.9, 185.0),
-                         ('remnants', 185.9, 187.5)]}[name]
+    checks = {'red': [('orb-flight', 20.2, 22.2), ('orb-voice', 20.2, 22.2), ('orb-sparks0', 20.2, 22.2), ('rock-pass6', 21.55, 21.75), ('spark-hit1', 21.12, 21.2), ('spark-hit2', 21.80, 21.9),
+                      ('flame-close', 22.33, 22.76), ('orb-voice-close', 22.33, 22.76), ('flame-cracks', 22.33, 22.76), ('crack-spread', 23.85, 24.6), ('crack-tone', 23.85, 24.6),
+                      ('shell', 24.8, 25.68), ('shell-tone', 24.8, 25.68), ('shell-strain', 25.2, 25.69), ('shell-fracture', 25.692, 25.76), ('release-fall', 25.8, 26.2), ('release-slap', 26.02, 26.2),
+                      ('defence-crack', 26.30, 26.4), ('defence-ring', 26.5, 27.0), ('defence-shimmer0', 26.5, 27.5), ('sparkles1', 26.8, 28.0), ('hair-cloth', 30.4, 32.0), ('wind-tone', 30.6, 32.0)],
+              'force': [('shield-residue', 136.5, 136.9), ('settle0', 137.05, 137.4), ('handling', 138.4, 138.85), ('far-thump0', 138.95, 139.3), ('stare', 143.3, 145.1),
+                        ('force-ring', 145.2, 145.6), ('shock-ring', 145.3, 145.7), ('grit0', 145.27, 145.6), ('force-slap0', 145.34, 145.6), ('travel-air', 145.3, 145.75),
+                        ('column-crack', 145.967, 146.02), ('staff-snap', 145.95, 146.1), ('column-cracks', 146.03, 146.7), ('staff-piece1', 146.61, 146.9), ('collapse1', 146.4, 147.6),
+                        ('collapse-gravel', 146.5, 147.6), ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('staff-shards', 148.85, 149.7), ('shard-bell1', 148.95, 149.3)],
+              'finale': [('staff-swing', 173.8, 174.3), ('staff-bell', 174.36, 174.9), ('circle', 175.0, 176.7), ('circle-glints', 174.8, 177.3), ('preparation', 176.9, 177.49),
+                         ('gather', 177.1, 177.49), ('flash-ring', 177.56, 177.8), ('beam-core', 178.2, 181.0), ('beam-body', 178.2, 181.0), ('beam-voice', 178.2, 181.0),
+                         ('beam-sparks0', 178.2, 181.0), ('blocks0', 178.2, 181.0), ('ring2', 179.25, 179.6), ('strain', 180.14, 180.3), ('sky-air', 181.0, 183.0),
+                         ('dissolve-breath', 183.8, 185.0), ('dissolve-threads', 183.9, 185.0), ('dissolve-tone', 183.9, 185.0), ('remnants', 185.9, 187.5), ('rest', 186.6, 188.3)]}[name]
     for k, a, b in checks:
         lay = L[k].astype(float)
         nb, best, fbest = A.audible(lay, mixsum - lay, a - t0, b - t0)
@@ -98,9 +103,23 @@ for name in names:
     # --- what the ear takes the sound for (the first listening review: a rotor, a drum and a ball, water)
     if name == 'red':
         print('  periodic modulation: flight %.1f dB at %.1f Hz; shell %.1f dB at %.1f Hz (white noise reads about 6 dB)' % (A.mod_peak(x, 0.1, 2.25) + A.mod_peak(x, 4.8, 5.68)))
+        print('  depth of the strongest modulation line: flight %.1f %% at %.1f Hz; shell %.1f %% at %.1f Hz (white noise about 1 %%; the first version read 27 and 25 %%)' % (
+            100 * A.mod_depth(x, 0.1, 2.25)[0], A.mod_depth(x, 0.1, 2.25)[1], 100 * A.mod_depth(x, 4.8, 5.68)[0], A.mod_depth(x, 4.8, 5.68)[1]))
         print('  band shares of the flight (20.1 to 22.25 s):', [round(v, 1) for v in A.bands_share(x, 0.1, 2.25)])
     if name == 'force':
         for lab, a, b in (('force', 145.186708, 145.31), ('column', 145.937458, 146.06)):
             print('  share of the 40 to 900 Hz energy in 3 lines, %-16s %.2f (a noise burst reads about 0.3)' % (lab, A.tonal_share(x, a - t0, b - t0)))
     if name == 'finale':
         print('  dissolution 183.8 to 185.7 s: strongest-line share of 400 to 4000 Hz %.2f (white noise 0.12), share of the energy in that band %.2f, the strongest line jumps in %.2f of the frames' % A.blip_share(x, 183.8 - t0, 185.7 - t0))
+    # --- one sound or several (the second listening review: flat, one sound at a time)
+    SPANS = {'red': [('flight', 20.0, 22.3), ('close, whip, far', 22.3, 23.8), ('cracks and shell', 23.8, 25.69), ('release and defence', 25.69, 27.0), ('aftermath', 27.0, 30.0), ('wind', 30.25, 32.3)],
+             'force': [('before the force', 136.6, 145.1), ('force and flight', 145.19, 145.93), ('column and collapse', 145.94, 147.75), ('fog and wall', 147.75, 149.65)],
+             'finale': [('before the circle', 173.0, 174.46), ('circle and preparation', 174.46, 177.49), ('flash and beam', 177.55, 181.76), ('whiteout', 181.76, 183.76), ('dissolution', 183.77, 185.45), ('last shot', 185.5, 188.3)]}[name]
+    LL = {k: L[k] for k in L.files}
+    ts, cnt, full, heard = A.streams(LL, g)
+    for lab, a, b in SPANS:
+        lead, near, order = A.balance(LL, a - t0, b - t0)
+        v = A.variety(x, a - t0, b - t0)
+        sel = (ts >= a - t0) & (ts < b - t0)
+        print('  layers  %-24s loudest layer %5.1f dB under the sum, %2d within 6 dB of it; heard at once: median %d, three or more %3.0f %% of the time; tones %2.0f %%, transients %2.0f %%, noise %2.0f %%' % (
+            lab, lead, near, np.median(cnt[sel]), 100 * (cnt[sel] >= 3).mean(), 100 * v[0], 100 * v[1], 100 * v[2]))

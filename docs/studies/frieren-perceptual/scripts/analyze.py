@@ -178,3 +178,97 @@ def blip_share(x, a, b, lo=400.0, hi=4000.0):
     w = np.minimum(e[1:], e[:-1])
     jump = float((w * (np.abs(np.log2(fpk[1:] / fpk[:-1])) > 0.045)).sum() / max(w.sum(), 1e-30))
     return line, float(e.sum() / max(P[:, f >= 60].sum(), 1e-30)), jump
+
+
+# ---------------------------------------------------------------- how many sounds at once
+def streams(layers, gain, hop=0.05, margin=-6.0, floor=-66.0, need=3):
+    """For every 50 ms: how many layers can be heard beside the others. A layer counts when, in at least
+    `need` ERB bands, it is within `margin` dB of the sum of all the other layers and above `floor` dBFS.
+    Also the fullness: the share of the 34 bands that lie within 25 dB of the loudest band of the mix.
+    layers: dict name -> (n, 2) array. Returns times, counts, fullness, and the names heard at each time."""
+    names = list(layers)
+    edges = dsp.erb_bands()
+    nfft, h = 4096, nsamp(hop)
+    win = dsp.hann(nfft)
+    fr = np.fft.rfftfreq(nfft, 1 / SR)
+    sel = [(fr >= edges[b]) & (fr < edges[b + 1]) for b in range(len(edges) - 1)]
+    n = len(next(iter(layers.values())))
+    nf = max(1, (n - nfft) // h)
+    idx = np.arange(nfft)[None, :] + h * np.arange(nf)[:, None]
+    P = np.zeros((len(names), nf, len(sel)))
+    for k, nm in enumerate(names):
+        x = layers[nm].astype(float).mean(axis=1) * gain
+        S = np.abs(np.fft.rfft(x[idx] * win, axis=1)) ** 2 / (win.sum() ** 2) * 4
+        for b, m in enumerate(sel):
+            P[k, :, b] = S[:, m].sum(axis=1)
+    tot = P.sum(axis=0)
+    rest = tot[None, :, :] - P
+    snr = 10 * np.log10(np.maximum(P, 1e-30) / np.maximum(rest, 1e-30))
+    lev = 10 * np.log10(np.maximum(P, 1e-30))
+    heard = ((snr >= margin) & (lev >= floor)).sum(axis=2) >= need          # (layers, frames)
+    totdb = 10 * np.log10(np.maximum(tot, 1e-30))
+    full = (totdb >= totdb.max(axis=1, keepdims=True) - 25).mean(axis=1)
+    t = (h * np.arange(nf) + nfft / 2) / SR
+    return t, heard.sum(axis=0), full, [[names[k] for k in np.nonzero(heard[:, i])[0]] for i in range(nf)]
+
+
+def variety(x, a, b, nfft=2048, hop=512):
+    """What the sound is made of, between a and b seconds: the shares of its energy that are steady lines
+    (tones), broadband moments (transients) and neither (noise). The spectrogram is median-filtered along
+    time (about 0.2 s) and along frequency (about 500 Hz); a cell belongs to tones when the time median is
+    twice the frequency median, to transients in the opposite case, and to noise otherwise."""
+    seg = x[max(0, nsamp(a)): nsamp(b)].mean(axis=1)
+    win = dsp.hann(nfft)
+    nf = max(3, 1 + (len(seg) - nfft) // hop)
+    idx = np.arange(nfft)[None, :] + hop * np.arange(nf)[:, None]
+    idx = np.minimum(idx, len(seg) - 1)
+    S = np.abs(np.fft.rfft(seg[idx] * win, axis=1))
+    fr = np.fft.rfftfreq(nfft, 1 / SR)
+    keep = (fr >= 60) & (fr <= 12000)
+    S = S[:, keep]
+    kt = max(3, int(round(0.2 * SR / hop)) | 1)
+    kf = max(3, int(round(500 / (SR / nfft))) | 1)
+
+    def med(a_, k, axis):
+        pad = [(0, 0), (0, 0)]
+        pad[axis] = (k // 2, k // 2)
+        p = np.pad(a_, pad, mode='edge')
+        sl = np.lib.stride_tricks.sliding_window_view(p, k, axis=axis)
+        return np.median(sl, axis=-1)
+
+    H = med(S, kt, 0)
+    P = med(S, kf, 1)
+    E = S ** 2
+    tone = E[H > 2 * P].sum()
+    hit = E[P > 2 * H].sum()
+    tot = E.sum() + 1e-30
+    return float(tone / tot), float(hit / tot), float(1 - (tone + hit) / tot)
+
+
+def balance(layers, a, b, within=6.0):
+    """One sound or several, between a and b seconds: the share of the power that the loudest layer
+    holds (dB below the sum of the layers) and how many layers lie within `within` dB of the loudest.
+    A lead near 0 dB with one layer in reach means that one sound is heard at a time."""
+    i0, i1 = max(0, nsamp(a)), nsamp(b)
+    p = {k: float((v[i0:i1].astype(float) ** 2).mean()) for k, v in layers.items()}
+    tot = sum(p.values()) + 1e-30
+    top = max(p.values())
+    lead = 10 * np.log10(top / tot)
+    near = sum(1 for v in p.values() if v > 0 and 10 * np.log10(v / top) >= -within)
+    order = sorted(p, key=p.get, reverse=True)
+    return float(lead), int(near), order
+
+
+def mod_depth(x, a, b, lo=12.0, hi=95.0):
+    """How deep the periodic modulation is: the envelope (the squared signal low-passed at 120 Hz, so that
+    no ripple of a partial folds into the range) and the amplitude of its strongest line between lo and hi Hz
+    as a share of the mean envelope. A rotor reads tens of per cent; a steady tone or a noise reads a few."""
+    seg = x[nsamp(a): nsamp(b)].mean(axis=1)
+    e2 = dsp.lp(dsp.lp(seg ** 2, 120.0), 120.0)
+    env = np.sqrt(np.maximum(e2, 0))[:: SR // 500]
+    w = np.hanning(len(env))
+    E = 2 * np.abs(np.fft.rfft((env - env.mean()) * w)) / (w.sum() * max(env.mean(), 1e-30))
+    f = np.fft.rfftfreq(len(env), 1 / 500.0)
+    m = (f >= lo) & (f <= hi)
+    i = int(np.argmax(E[m]))
+    return float(E[m][i]), float(f[m][i])
