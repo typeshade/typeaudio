@@ -10,8 +10,9 @@ TypeAudio is in its first code. This repository holds the design, the record of 
 asks of the compiler, the experiments that decide the implementation, and the first units, kernels
 and render, tested on the CPU tier of the compiler. Nothing is published to npm yet.
 
-The website and interactive playground target [audio.typeshade.dev](https://audio.typeshade.dev/).
-See [website/README.md](website/README.md) for build and deployment details.
+The site at [audio.typeshade.dev](https://audio.typeshade.dev/) is built and deployed from
+[typeshade/web](https://github.com/typeshade/web) (`apps/typeaudio`), at a pinned commit of this
+repository.
 
 To work on it:
 

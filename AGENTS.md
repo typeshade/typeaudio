@@ -156,13 +156,8 @@ establish hardware real-time guarantees or measured output underruns.
 
 ## Website
 
-`website/` holds the public overview and audio playground. `scripts/site-docs.ts`
-renders the design documents into static pages. The playground runs the existing
-engine in a worker, then plays rendered PCM with Web Audio.
-
-- `bun run check:website`: type-check the browser and worker code.
-- `bun run build:website`: build the site and documentation into `website/dist`.
-- `bun run test:website`: check CPU and WebGPU synthesis, playback, WAV export,
-  cancellation, unavailable WebGPU, documentation, and mobile layout in Chromium.
-- `.github/workflows/deploy.yml`: deploy `main` to `audio.typeshade.dev` with
-  Cloudflare Workers Static Assets and the existing `CLOUDFLARE_API_TOKEN` secret.
+The site at `audio.typeshade.dev` is built and deployed from `typeshade/web` (`apps/typeaudio`),
+which reads this repository at a pinned commit (`sources/typeaudio`): its `package.json`, `src/`
+and `docs/`. Since 2026-11-05 this repository has no site and no deploy workflow; two repositories
+must not deploy the same Worker (`docs/repository-migration.md` in `typeshade/web`). The Web
+`pin TypeAudio` workflow moves the site to a merged engine revision.

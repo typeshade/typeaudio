@@ -13,9 +13,7 @@
     "test/browser/run.ts",
     "test/browser-options.test.ts",
     "test/fft.test.ts",
-    "vitest.config.ts",
-    "website/vite.config.ts",
-    "website/check-browser.ts"
+    "vitest.config.ts"
   ],
   "exclude": ["**/*.shade.ts"]
 }
