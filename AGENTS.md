@@ -43,17 +43,18 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
 
 ## Documents
 
-| Document                    | What it is                                                                                                                   |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `docs/vision.md`            | The developer-experience contract, the catalog of what the engine does, the architecture, the boundaries, the experiments    |
-| `docs/architecture.md`      | The detail of the architecture: the loop shapes, the block plan, banks, buses, events, transports                            |
-| `docs/compiler-asks.md`     | The compiler proposals this engine rests on and its asks of the compiler (issues first), each with its status                |
-| `docs/experiments.md`       | The experiments in order, with their status and what each decides                                                            |
-| `docs/sound-design-loop.md` | The design of the sound-design loop: a model writes a plan, the engine renders it; the plan format and the checklist         |
-| `docs/lanes.md`             | A design note: spreading an event over several lanes, three options with costs and a recommendation, for the owner to decide |
-| `docs/records/`             | The record of each run of an experiment: the command, the commit, the pin, the device, the numbers                           |
-| `docs/device-runs.md`       | The procedure of a device run on the owner's machine, and the record it leaves                                               |
-| `compiler-changes.md`       | The compiler proposals this repository has handled, recorded when the pin moves                                              |
+| Document                      | What it is                                                                                                                   |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `docs/vision.md`              | The developer-experience contract, the catalog of what the engine does, the architecture, the boundaries, the experiments    |
+| `docs/architecture.md`        | The detail of the architecture: the loop shapes, the block plan, banks, buses, events, transports                            |
+| `docs/compiler-asks.md`       | The compiler proposals this engine rests on and its asks of the compiler (issues first), each with its status                |
+| `docs/experiments.md`         | The experiments in order, with their status and what each decides                                                            |
+| `docs/sound-design-loop.md`   | The design of the sound-design loop: a model writes a plan, the engine renders it; the plan format and the checklist         |
+| `docs/sound-design-theory.md` | The theory of sound for picture that the loop works from, and what experiment 9 found against it                             |
+| `docs/lanes.md`               | A design note: spreading an event over several lanes, three options with costs and a recommendation, for the owner to decide |
+| `docs/records/`               | The record of each run of an experiment: the command, the commit, the pin, the device, the numbers                           |
+| `docs/device-runs.md`         | The procedure of a device run on the owner's machine, and the record it leaves                                               |
+| `compiler-changes.md`         | The compiler proposals this repository has handled, recorded when the pin moves                                              |
 
 ## The code
 

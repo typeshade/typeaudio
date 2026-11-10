@@ -226,6 +226,9 @@ reviews of experiment 9 (`docs/records/09-force-passage-container-2.md`,
 `docs/records/09-force-passage-container-3.md`). It comes from one passage and one listener. It is
 design, not measurement.
 
+The reasons behind the rule, from the practice of sound for film, are in
+`docs/sound-design-theory.md`.
+
 A plan follows the picture. The first question for each moment is which sound the viewer attends
 to. That sound leads. The rule has one part for each time.
 
