@@ -915,11 +915,11 @@
       "t": 11.37,
       "kind": "boom",
       "layer": "effects",
-      "intensity": 0.891,
+      "intensity": 1.0,
       "position": {
         "x": -0.3,
         "y": -0.9,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "size": 1.0,
@@ -936,7 +936,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "weight": 0.9,
@@ -953,7 +953,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "size": 0.986,
@@ -971,7 +971,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "size": 0.624,
@@ -989,7 +989,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "size": 0.049,
@@ -1007,7 +1007,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "size": 0.187,
@@ -1024,11 +1024,64 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "size": 0.0,
         "decay": 0.176,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "land-1-stone-2",
+      "t": 11.412,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.708,
+      "position": {
+        "x": 0.3,
+        "y": -0.8,
+        "distance": 3.0
+      },
+      "macros": {
+        "size": 0.903,
+        "brightness": 0.8,
+        "crumble": 0.0
+      },
+      "duration": 0.2
+    },
+    {
+      "id": "land-1-fill",
+      "t": 11.4,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 1.0,
+      "position": {
+        "x": -0.15,
+        "y": -0.8,
+        "distance": 3.0
+      },
+      "macros": {
+        "brightness": 0.2,
+        "motion": 0.3,
+        "swell": 0.0
+      },
+      "duration": 0.55
+    },
+    {
+      "id": "land-1-low",
+      "t": 11.4,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 1.0,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 3.0
+      },
+      "macros": {
+        "size": 0.423,
+        "decay": 0.766,
         "tone": 0.0
       }
     },
@@ -1041,7 +1094,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "brightness": 0.6,
@@ -1055,11 +1108,11 @@
       "t": 11.4,
       "kind": "boom",
       "layer": "effects",
-      "intensity": 0.794,
+      "intensity": 1.0,
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 3.5
+        "distance": 3.0
       },
       "macros": {
         "size": 0.726,
@@ -1076,7 +1129,7 @@
       "position": {
         "x": 0.3,
         "y": -0.5,
-        "distance": 5.5
+        "distance": 5.0
       },
       "macros": {
         "brightness": 0.1,
@@ -1107,7 +1160,7 @@
       "t": 11.81,
       "kind": "boom",
       "layer": "effects",
-      "intensity": 0.355,
+      "intensity": 0.398,
       "position": {
         "x": 0.4,
         "y": -0.9,
@@ -1225,6 +1278,59 @@
       }
     },
     {
+      "id": "land-2-stone-2",
+      "t": 11.852,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.282,
+      "position": {
+        "x": -0.4,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "size": 0.903,
+        "brightness": 0.8,
+        "crumble": 0.0
+      },
+      "duration": 0.2
+    },
+    {
+      "id": "land-2-fill",
+      "t": 11.84,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.398,
+      "position": {
+        "x": 0.2,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "brightness": 0.2,
+        "motion": 0.3,
+        "swell": 0.0
+      },
+      "duration": 0.385
+    },
+    {
+      "id": "land-2-low",
+      "t": 11.84,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.398,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "size": 0.423,
+        "decay": 0.611,
+        "tone": 0.0
+      }
+    },
+    {
       "id": "land-2-burst",
       "t": 11.84,
       "kind": "roar",
@@ -1247,7 +1353,7 @@
       "t": 11.84,
       "kind": "boom",
       "layer": "effects",
-      "intensity": 0.316,
+      "intensity": 0.398,
       "position": {
         "x": 0.4,
         "y": -0.8,
