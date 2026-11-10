@@ -19,7 +19,7 @@ devices yet.
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
 | 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
 | 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
-| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | in progress (the pull request that adds this section)                                                                                                                                                                                                  |
+| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | harness ready; container run recorded (`docs/records/09-force-passage-container.md`); the owner's listening review and the device runs pending                                                                                                         |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -388,4 +388,8 @@ kind with a size carries the weight that the study's models carry.
 copy the study's renderer: the engine places each event with its own spatial chain and masters the mix
 with its own guards.
 
-**Status.** In progress.
+**Status.** Harness ready; the first container run is recorded (`docs/records/09-force-passage-container.md`,
+commit `77125bd1947cbbf1796150ff52574302f1e0f2ba`): reference numbers on WebGPU on SwiftShader. The engine
+gained four kinds (`crack`, `boom`, `rubble`, `roar`) and the plan gained the silence
+(`docs/sound-design-loop.md`). The owner's listening review of the engine's render is pending, and so are the
+device runs.
