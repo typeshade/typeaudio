@@ -634,4 +634,20 @@ The variant `solid` has both. Against `front`, its landing keeps the first 60 ms
 seconds 1 to 3 after it are 18 dB lower. The store now keeps each render in its two parts, without the
 room and the room.
 
-**Status.** The first module, from the store. The owner's review of the variant `solid` is the next step.
+**Review 4, 2026-11-10.** The owner said `solid` is not bad, but too quiet: a block of tens of tons
+that falls from a high wall must thud louder, and it has too little impact. The agent measured why the
+landing could not be louder: the last step scaled the whole passage to the landing's peak. Raised by
+4, 8 and 12 dB, the landing stayed at -10.6 dB over its first 0.3 s, and only the hit on the wall and
+the bed fell, by the same 4, 8 and 12 dB.
+
+| Change                                                                                     | Why                                                      |
+| ------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| The ceiling is the engine's limiter (`limiterGain` of `src/master.ts`) at -1 dBFS          | It lowers only the moments that pass it                  |
+| A `saturate` node: a soft limit on the sound's own peak                                    | The same peak, a higher level: a dense sound is heavy    |
+| The variant `loud`: the first landing 9 dB over the hit, drive 2.5, the body ends in 0.5 s | The largest sound of the passage is the block that lands |
+
+Measured on the variant `loud`, over the first 0.3 s: the hit on the wall -11.7 dB as before, the bed
+before the landing -19.0 dB as before, the first landing -6.8 dB, 4.9 dB over the hit. With the new
+ceiling, `solid` puts its landing 2.3 dB over the hit.
+
+**Status.** The first module, from the store. The owner's review of the variant `loud` is the next step.

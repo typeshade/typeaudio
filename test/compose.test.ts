@@ -76,4 +76,14 @@ describe('a stored sound through its effects', () => {
     expect(roomed[0].length).toBe(low[0].length + Math.round(2.4 * SR));
     expect(energy(roomed[0], low[0].length)).toBeGreaterThan(0);
   });
+
+  it('saturate keeps the peak and raises the level; drive 0 leaves the sound', () => {
+    const low = shaped(source(), sound([{ pitch: 0.25 }])).sound;
+    const hot = shaped(source(), sound([{ pitch: 0.25 }, { saturate: { drive: 3 } }])).sound;
+    const none = shaped(source(), sound([{ pitch: 0.25 }, { saturate: { drive: 0 } }])).sound;
+    const peak = (x: Float32Array): number => x.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
+    expect(peak(hot[0])).toBeCloseTo(peak(low[0]), 6);
+    expect(energy(hot[0])).toBeGreaterThan(1.5 * energy(low[0]));
+    expect(none[0]).toEqual(low[0]);
+  });
 });

@@ -7,6 +7,7 @@
 
 import { ROOMS, SAMPLE_RATE, pitched, roomOf } from './definitions.ts';
 import { renderEntry, renderParts, type Stereo } from './store.ts';
+import { limiterGain } from '../../src/master.ts';
 
 /** An effect node on a stored sound. */
 export type Effect =
@@ -23,6 +24,11 @@ export type Effect =
    * hollow box.
    */
   | { readonly damp: { readonly seconds: number } }
+  /**
+   * A soft limit on the sound's own peak: `drive` 0 leaves it, more adds partials and average
+   * level at the same peak. A dense sound is heard as heavy (docs/sound-design-theory.md, 5).
+   */
+  | { readonly saturate: { readonly drive: number } }
   /** The room, after the steps before it: a room is not lowered with the sound in it. */
   | { readonly room: { readonly name: string; readonly level: number } };
 
@@ -95,6 +101,15 @@ export function shaped(source: Stereo, sound: StoredSound): { sound: Stereo; fro
       out = out.map((c) =>
         c.map((v, i) => (i < start ? v : v * Math.exp(-(i - start) * k))),
       ) as unknown as Stereo;
+    } else if ('saturate' in effect) {
+      const drive = effect.saturate.drive;
+      if (drive <= 0) continue;
+      let peak = 1e-20;
+      for (const c of out) for (const v of c) peak = Math.max(peak, Math.abs(v));
+      out = out.map((c) =>
+        c.map((v) => (Math.tanh((drive * v) / peak) / Math.tanh(drive)) * peak),
+      ) as unknown as Stereo;
+      // The node keeps the peak, not the level: the level rises, as a soft limit's does.
     } else if ('room' in effect) {
       const room = ROOMS[effect.room.name];
       if (!room) throw new Error(`no room "${effect.room.name}"`);
@@ -160,13 +175,9 @@ export async function compose(c: Composition): Promise<Stereo> {
       for (let i = 0; i < made[k]!.length && at + i < out[k]!.length; i++)
         if (at + i >= 0) out[k]![at + i]! += gain * made[k]![i]!;
   }
-  // The ceiling: a soft limit, as prototype 3b had, only when the peak passes -1 dBFS.
-  let peak = 0;
-  for (const x of out) for (const v of x) peak = Math.max(peak, Math.abs(v));
-  const ceiling = 10 ** (-1 / 20);
-  if (peak > ceiling)
-    for (const x of out)
-      for (let i = 0; i < x.length; i++)
-        x[i] = (Math.tanh((x[i]! / peak) * 1.5) / Math.tanh(1.5)) * ceiling;
+  // The ceiling: the engine's limiter (src/master.ts), at -1 dBFS. It lowers only the moments
+  // that pass the ceiling, so a loud landing does not lower the whole passage.
+  const gain = limiterGain(out, SAMPLE_RATE, -1);
+  for (const x of out) for (let i = 0; i < x.length; i++) x[i]! *= gain[i]!;
   return out;
 }
