@@ -597,4 +597,28 @@ faults are gone. The owner's ear decides.
 is not stone. Nothing of it was heard by its writer. The run takes about a second on the CPU of the
 container.
 
-**Status.** Second render of the first module. The owner's review of it is the next step.
+**Review 2, 2026-11-10.** The owner heard the second render as nearer to stone, but less natural than
+prototype 3b of experiment 9: the engine's own hit on the wall, rendered by the engine and lowered two
+octaves outside it. This is finding 2 of experiment 9 again: an accepted sound, moved, is ahead of a
+sound built from physics.
+
+So the module is now made from the store (tools C and D):
+
+| File                                  | What it holds                                                                                           |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `store/wall-hit.json`                 | The accepted hit: twelve events of the sixteenth plan of experiment 9, times from the hit               |
+| `store/passage-without-landings.json` | The bed: the sixteenth plan without the 28 events of the two landings                                   |
+| `store.ts`, `engine-page.ts`          | Renders the entries through the engine on WebGPU in one page, and keeps each render by a hash of it     |
+| `compose.ts`, `compose-run.ts`        | Lays stored sounds on the bed through effect nodes: `pitch`, and `front`, which keeps the front higher  |
+| `module-2.json`                       | The landings as the hit, two octaves lower; the variant `front` keeps the first 15 ms one octave higher |
+
+Time, measured in the container on 2026-11-10: the first render of both entries on WebGPU (SwiftShader)
+took 48 s; a composition from the kept renders takes 1.2 s. The first form rendered the store on the
+CPU tier, the compiler's f64 oracle, at 0.015 times real time: 3 s of sound took 200 s. The owner
+called that unrealistic, and the store moved to WebGPU.
+
+The variant `3b` of `module-2.json` is prototype 3b made with these tools. Against the prototype, its
+level in each part of the landing is within 0.5 dB, and the difference of the two signals is 13.8 dB
+under the signal.
+
+**Status.** The first module, from the store. The owner's review of the variant `front` is the next step.

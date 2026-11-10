@@ -1,15 +1,16 @@
 // The store of experiment 10: definitions that the owner accepted, by name.
 //
 // An entry is a definition, not a recording: a group of the engine's events (times from the
-// sound's own start) or a whole plan. The engine renders it on the CPU tier, and the render is
+// sound's own start) or a whole plan. The engine renders it on WebGPU, and the render is
 // kept under `out/store/`, named by a hash of the entry, so a changed entry is rendered again.
 
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bundle, ROOT } from '../../scripts/bundle.ts';
+import { bundle } from '../../scripts/bundle.ts';
+import { inPage } from '../../scripts/browser.ts';
+import { fromBase64 } from '../03-fft/signals.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, 'out', 'store');
@@ -44,33 +45,49 @@ function planOfGroup(entry: StoreEntry, seconds: number, lead: number): unknown 
   };
 }
 
-let engine: string | undefined;
+let page: string | undefined;
 
-/**
- * The render of an entry through the engine. A group starts at `lead` seconds and lasts
- * `seconds` in all; a plan lasts its own clip.
- */
-export async function renderEntry(name: string, seconds = 3, lead = 0.05): Promise<Stereo> {
+/** The file of an entry's render, and the plan it is rendered from. */
+function planned(name: string, seconds: number, lead: number): { file: string; text: string } {
   const entry = readEntry(name);
   const plan = entry.plan ?? planOfGroup(entry, seconds, lead);
   const text = JSON.stringify(plan);
   const key = createHash('sha256').update(text).digest('hex').slice(0, 16);
+  return { file: join(OUT, `${name}-${key}.f32`), text };
+}
+
+/**
+ * Renders the entries that have no render yet, all in one page, through the engine on WebGPU
+ * (headless Chromium on SwiftShader, as experiment 9 renders). A group starts at `lead` seconds
+ * and lasts `seconds` in all; a plan lasts its own clip.
+ */
+export async function prepare(names: readonly string[], seconds = 3, lead = 0.05): Promise<void> {
   mkdirSync(OUT, { recursive: true });
-  const file = join(OUT, `${name}-${key}.f32`);
-  if (!existsSync(file)) {
-    engine ??= await bundle({
-      entry: 'experiments/10-seven-questions/engine-node.ts',
-      outDir: 'experiments/10-seven-questions/out/node',
-      target: 'node',
-    });
-    const planFile = join(OUT, `${name}-${key}.json`);
-    writeFileSync(planFile, text);
-    execFileSync(process.env['NODE_BINARY'] ?? 'node', [engine, planFile, file], {
-      cwd: ROOT,
-      stdio: ['ignore', 'inherit', 'inherit'],
-    });
-  }
-  const bytes = readFileSync(file);
+  const todo = [...new Set(names)]
+    .map((name) => ({ name, ...planned(name, seconds, lead) }))
+    .filter((t) => !existsSync(t.file));
+  if (todo.length === 0) return;
+  page ??= await bundle({
+    entry: 'experiments/10-seven-questions/engine-page.ts',
+    outDir: 'experiments/10-seven-questions/out/web',
+    target: 'web',
+  });
+  type Page = { renderPlans(plans: unknown[]): Promise<{ mix: string; ms: number }[]> };
+  const plans = todo.map((t) => JSON.parse(t.text) as unknown);
+  const done = await inPage(dirname(page), (p) =>
+    p.evaluate((all) => (globalThis as unknown as Page).renderPlans(all), plans),
+  );
+  done.forEach((r, i) => {
+    const bytes = fromBase64(r.mix);
+    writeFileSync(todo[i]!.file, new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength));
+    console.error(`store: ${todo[i]!.name} rendered on WebGPU in ${(r.ms / 1000).toFixed(1)} s`);
+  });
+}
+
+/** The render of an entry through the engine. `prepare` renders it if it has none yet. */
+export async function renderEntry(name: string, seconds = 3, lead = 0.05): Promise<Stereo> {
+  await prepare([name], seconds, lead);
+  const bytes = readFileSync(planned(name, seconds, lead).file);
   const both = new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
   const n = both.length / 2;
   return [both.slice(0, n), both.slice(n)];
