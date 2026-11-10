@@ -78,6 +78,12 @@ export interface StoredSound {
      * small pieces many; 0 spreads the sizes evenly.
      */
     readonly power?: number;
+    /**
+     * `large-first`: a large, heavy piece meets less drag for its weight and lands first, so the
+     * copies land from the largest to the smallest, each within `jitter` seconds of its turn.
+     */
+    readonly order?: 'large-first';
+    readonly jitter?: number;
     readonly seed: number;
   };
 }
@@ -95,6 +101,7 @@ export function scattered(sound: StoredSound): StoredSound[] {
   const rnd = random(sc.seed);
   const [small, large] = sc.size;
   const out: StoredSound[] = [];
+  const drawn: { size: number; t: number }[] = [];
   for (let i = 0; i < sc.count; i++) {
     // A power law: P(size > x) falls as x^-power between the two sizes; even when power is 0.
     const u = rnd();
@@ -104,6 +111,18 @@ export function scattered(sound: StoredSound): StoredSound[] {
     const size = power === 0 ? small + u * (large - small) : (a - u * (a - b)) ** (-1 / power);
     let t = sound.when.at - sc.spread * Math.log(1 - rnd());
     if (t > sc.until) t = sound.when.at + rnd() * (sc.until - sound.when.at);
+    drawn.push({ size, t });
+  }
+  if (sc.order === 'large-first') {
+    // The times keep their spread; the largest piece takes the earliest, then a little jitter.
+    const times = drawn.map((d) => d.t).sort((p, q) => p - q);
+    drawn.sort((p, q) => q.size - p.size);
+    const jitter = sc.jitter ?? 0;
+    drawn.forEach((d, k) => {
+      d.t = Math.min(sc.until, Math.max(sound.when.at, times[k]! + jitter * (2 * rnd() - 1)));
+    });
+  }
+  drawn.forEach(({ size, t }, i) => {
     let pitchDone = false;
     const effects = base.effects.map((e): Effect => {
       if ('pitch' in e && !pitchDone) {
@@ -122,7 +141,7 @@ export function scattered(sound: StoredSound): StoredSound[] {
       pan: sc.width * (2 * rnd() - 1),
       scatter: undefined,
     });
-  }
+  });
   return out;
 }
 

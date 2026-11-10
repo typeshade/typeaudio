@@ -169,4 +169,31 @@ describe('the store', () => {
     expect(upper).toBeGreaterThan(70);
     expect(upper).toBeLessThan(130);
   });
+
+  it('large-first lands the copies from the largest to the smallest', () => {
+    const copies = scattered(
+      resolved({
+        id: 'blocks',
+        from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
+        effects: [],
+        when: { at: 10 },
+        why: { part: 'explains', under: 0 },
+        scatter: {
+          count: 40,
+          size: [0.2, 1],
+          spread: 0.4,
+          until: 11,
+          width: 1,
+          seed: 7,
+          order: 'large-first',
+        },
+      }),
+    );
+    const bySize = [...copies].sort(
+      (p, q) =>
+        (p.effects[0] as { pitch: number }).pitch - (q.effects[0] as { pitch: number }).pitch,
+    );
+    const times = bySize.map((c) => c.when.at);
+    expect(times).toEqual([...times].sort((p, q) => p - q));
+  });
 });

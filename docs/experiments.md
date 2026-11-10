@@ -738,5 +738,12 @@ landing and adds 24 large copies (sizes 0.55 to 1.0, even, 6 dB under the first 
 30 small ones (0.12 to 0.5). Against one landing, the fog holds -8.8 dB to 148.8 s and -10.3 dB to
 149.4 s, where one landing had -10.6 and -16.9 dB.
 
+**Review 11, 2026-11-10.** Large, heavy pieces land first, so the sound should go from large to small.
+The `scatter` node takes `order: "large-first"`: the copies keep their spread of times, and the
+largest takes the earliest, within `jitter` seconds. The variant `slow-many-ordered` lands the large
+copies from 147.86 s and the small ones from 148.25 s, each from the largest to the smallest. Its level
+falls in each quarter second from -8.1 dB to -22.9 dB between 147.9 s and 149.65 s; the unordered form
+of review 10 (commit `45023d8`) stays between -7.2 and -12.1 dB.
+
 **Status.** Two modules are accepted, and their sounds are in the store: `wall-hit`, `stone-landing`,
 `blast`. The third, the hang, waits for the owner's review of its two variants.

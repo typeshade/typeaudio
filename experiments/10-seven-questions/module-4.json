@@ -1,6 +1,6 @@
 {
   "module": "hang",
-  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed). Review 8: the two landings are the same stored sound twice, and the fog of the next shot matters less; the variants slow-one-landing and slow-no-landing leave out the second landing, and both. Review 9: with none it is empty, and dozens are better than two, for not only two large blocks fall. The variant slow-scatter keeps the first landing and scatters thirty smaller copies of the accepted landing in the fog: smaller is higher, shorter and quieter. Review 10: not two large ones but dozens of large ones, with small ones too. The variant slow-many keeps the first landing and adds 24 large copies (sizes 0.55 to 1.0, even) and 30 small ones (0.12 to 0.5).",
+  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed). Review 8: the two landings are the same stored sound twice, and the fog of the next shot matters less; the variants slow-one-landing and slow-no-landing leave out the second landing, and both. Review 9: with none it is empty, and dozens are better than two, for not only two large blocks fall. The variant slow-scatter keeps the first landing and scatters thirty smaller copies of the accepted landing in the fog: smaller is higher, shorter and quieter. Review 10: not two large ones but dozens of large ones, with small ones too. The variant slow-many keeps the first landing and adds 24 large copies (sizes 0.55 to 1.0, even) and 30 small ones (0.12 to 0.5). Review 11: large and heavy pieces land first, so the sound goes from large to small. The variant slow-many-ordered lands each scatter from its largest to its smallest, the large ones from 147.86 s and the small ones from 148.25 s.",
   "bed": {
     "store": "passage-without-break",
     "from": 136.5
@@ -37,7 +37,7 @@
     "slow-scatter": {
       "drop": ["blocks", "land-2"]
     },
-    "slow-many": {
+    "slow-many-ordered": {
       "drop": ["land-2"]
     }
   },
@@ -121,7 +121,7 @@
       },
       "effects": [],
       "when": {
-        "at": 147.86
+        "at": 148.25
       },
       "why": {
         "part": "explains",
@@ -131,9 +131,11 @@
         "count": 30,
         "size": [0.12, 0.5],
         "spread": 0.4,
-        "until": 149.3,
+        "until": 149.4,
         "width": 0.8,
-        "seed": 4
+        "seed": 4,
+        "order": "large-first",
+        "jitter": 0.04
       }
     },
     {
@@ -156,10 +158,12 @@
         "count": 24,
         "size": [0.55, 1.0],
         "power": 0,
-        "spread": 0.35,
-        "until": 149.0,
+        "spread": 0.3,
+        "until": 148.9,
         "width": 0.9,
-        "seed": 7
+        "seed": 7,
+        "order": "large-first",
+        "jitter": 0.04
       }
     }
   ]
