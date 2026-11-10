@@ -543,4 +543,41 @@ accepted the first and did not reach the second.
 2. Is the first module right: stone and a hit, in the two contacts?
 3. For a module, is a clip of a few seconds enough to judge?
 
-**Status.** Statement only. Nothing is built.
+**The answers.** On 2026-11-10 the owner left the four questions to the agent. The agent decided:
+
+1. The seven questions are the ones in the table.
+2. The first module is stone and a hit, in the two contacts, as above.
+3. A module is judged on a clip of six seconds of picture: 144.9 s to 150.9 s holds the hit on the
+   wall, the break and the two landings.
+4. A plan of experiment 10 keeps the units of the drawing. The macro rule of `docs/vision.md` stays
+   for the kinds of `src/kinds/`. The two do not meet until a definition moves into the engine, and
+   that move is a change to the design for the owner.
+
+**The first module, first form.** `experiments/10-seven-questions/` holds it, on the CPU, outside the
+engine.
+
+| File             | What it holds                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| `definitions.ts` | Material in physical units; body and its modes; contact; the effects pitch, saturation and a room |
+| `module.ts`      | A sound as seven answers, and the render of a module to a stereo clip                             |
+| `module-1.json`  | The module: the hit on the wall with its four later failures, and the two landings                |
+| `run.ts`         | `bun experiments/10-seven-questions/run.ts [--size 2] [--out dir]`                                |
+
+What the first form does, as the code states it:
+
+- A body's modes come from its size and its material: a thin plate for a wall or a floor, a box of
+  two wave speeds for a block. Stone moves each mode by up to 6 % and loses its high modes first. A
+  larger body is lower and longer by one ratio, so the size of a sound is a size of a body.
+- A contact computes its impulse, its energy and its length. A stone that is crushed makes a long
+  contact. A drawing that shows a break gets the force that breaks, and the run prints the ratio to
+  physics: 100 for the hit on the wall, 1 for the landings.
+- A crushing force is rough: it falls each time a piece of the face fails. A piece that breaks off is
+  a pair of forces inside the body, so it is weak at the bottom and loud at the top.
+- Physics gives the timbre. The answer "why" gives the level, in decibels under the sound that leads.
+- `style.size` makes every body of the drawing larger by one ratio. Two clips were made: 1 and 2.
+
+**What it lacks.** Dust, the air that is pushed out, the fall before the landing, and every sound that
+is not stone. Nothing of it was heard by its writer. The run takes under a second on the CPU of the
+container.
+
+**Status.** First form of the first module, built. The owner's review of the two clips is the next step.
