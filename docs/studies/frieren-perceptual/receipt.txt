@@ -1,0 +1,312 @@
+==================== red master gain -8.01 dB | integrated -12.6 LUFS | true peak -2.00 dBTP
+  master: drive 8.8 dB into a look-ahead limiter and a soft clip; the limiter goes 5.1 dB deep and works 10.0 % of the time
+  flight with the orb                    20.20-  21.00  L400  -14.9 LUFS   peak   -5.9 dBFS
+  spark hit 1                            21.12-  21.30  L100  -13.0 LUFS   peak   -4.6 dBFS
+  spark hit 2                            21.80-  21.97  L100  -11.8 LUFS   peak   -4.7 dBFS
+  rock bursts near                       21.98-  22.25  L100  -10.9 LUFS   peak   -3.2 dBFS
+  flame, close                           22.33-  22.76  L400  -11.6 LUFS   peak   -2.4 dBFS
+  stones are pulled in, wide             23.10-  23.75  L400  -13.2 LUFS   peak   -4.4 dBFS
+  plates lock, close                     23.83-  24.40  L400  -11.5 LUFS   peak   -3.1 dBFS
+  plates hold, close                     24.42-  24.75  L400  -16.9 LUFS   peak   -4.8 dBFS
+  sphere, wide                           24.80-  25.68  L400  -17.5 LUFS   peak   -6.7 dBFS
+  shell fracture                         25.69-  25.77  L100  -15.8 LUFS   peak   -7.4 dBFS
+  release                                25.77-  26.10  L100   -5.5 LUFS   peak   -2.2 dBFS
+  rays and walls                         25.82-  26.30  L400   -6.2 LUFS   peak   -2.2 dBFS
+  ice comes up                           26.32-  26.50  L100   -6.7 LUFS   peak   -2.2 dBFS
+  rays break on the ice                  26.53-  26.68  L100   -6.4 LUFS   peak   -2.2 dBFS
+  ice stands                             26.90-  27.80  L400   -8.9 LUFS   peak   -2.2 dBFS
+  smoke and debris                       28.60-  30.10  L400  -15.7 LUFS   peak   -5.1 dBFS
+  wind in hair                           30.40-  32.00  L400  -25.0 LUFS   peak  -14.2 dBFS
+  top peaks: 25.991 s -2.2 dBFS, 26.380 s -2.2 dBFS, 26.599 s -2.2 dBFS, 26.976 s -2.2 dBFS, 26.180 s -2.2 dBFS
+  band shares dB (<60, 60-250, 250-2k, 2k-6k, >6k), whole: [-11.3, -2.7, -5.0, -12.7, -18.1]
+  mono fold-down loss, whole: -1.35 dB
+  release onset: -4.4 dB below the peak after 1 ms, half the peak after 0.31 ms; band shares (0.3 s) [-10.4, -6.0, -3.0, -9.3, -14.2]; phone band L100 -7.7
+  the rays and the ice, 60 to 250 Hz, each frame from 26.193 (dBFS): [-15.1, -18.1, -14.8, -11.6, -11.0, -13.1, -16.5, -14.0, -13.9, -13.1, -13.8, -13.2, -11.8, -12.6]
+  the rays and the ice, 1 to 4 kHz, each frame from 26.193 (dBFS): [-19.6, -19.9, -19.7, -19.2, -20.4, -20.9, -20.5, -22.8, -17.9, -19.3, -21.2, -22.0, -23.4, -23.4]
+  the rays and the ice, 4 to 12 kHz, each frame from 26.193 (dBFS): [-22.4, -23.7, -23.3, -24.7, -28.2, -27.1, -25.1, -29.5, -22.4, -23.0, -25.0, -27.7, -28.9, -30.5]
+  the ice stands: level each 0.25 s from 26.7 (dBFS): [-9.4, -9.7, -12.5, -14.1, -17.2, -19.5, -22.2]
+  the three views of the orb: flight -14.9, close -11.6, far -13.6 LUFS
+  audible  orb-flight         20.20-  22.20: 33 of 34 bands, best +38.5 dB near    30 Hz
+  audible  orb-voice          20.20-  22.20:  9 of 34 bands, best +23.4 dB near   144 Hz
+  audible  orb-sparks0        20.20-  22.20: 19 of 34 bands, best +10.7 dB near  2086 Hz
+  audible  rock-pass6         21.55-  21.75:  9 of 34 bands, best  +7.7 dB near  2724 Hz
+  audible  spark-hit1         21.12-  21.20: 12 of 34 bands, best  +9.3 dB near   457 Hz
+  audible  spark-hit2         21.80-  21.90: 28 of 34 bands, best +13.9 dB near   247 Hz
+  audible  flame-close        22.33-  22.76: 31 of 34 bands, best +30.4 dB near    30 Hz
+  audible  orb-voice-close    22.33-  22.76:  8 of 34 bands, best +23.0 dB near   144 Hz
+  audible  flame-cracks       22.33-  22.76: 17 of 34 bands, best +19.5 dB near   101 Hz
+  audible  clump-c            23.10-  23.77: 18 of 34 bands, best +18.6 dB near    30 Hz
+  audible  clump-l            23.10-  23.77: 19 of 34 bands, best +16.5 dB near   308 Hz
+  audible  pull1              23.17-  23.43: 16 of 34 bands, best  +4.4 dB near  2086 Hz
+  audible  clump-grind        23.30-  23.77: 29 of 34 bands, best  +9.1 dB near   645 Hz
+  audible  lock2              24.09-  24.30: 12 of 34 bands, best +11.0 dB near   308 Hz
+  audible  lock-grind         23.85-  24.40: 22 of 34 bands, best +13.5 dB near  1821 Hz
+  audible  crack-spread       23.85-  24.60: 16 of 34 bands, best +10.9 dB near   886 Hz
+  audible  crack-tone         23.85-  24.60:  9 of 34 bands, best +10.2 dB near   247 Hz
+  audible  shell              24.80-  25.68: 32 of 34 bands, best +36.7 dB near    30 Hz
+  audible  shell-tone         24.80-  25.68: 10 of 34 bands, best +21.3 dB near   308 Hz
+  audible  shell-strain       25.20-  25.69: 12 of 34 bands, best +17.5 dB near   247 Hz
+  audible  shell-fracture     25.69-  25.76: 27 of 34 bands, best +14.8 dB near    64 Hz
+  audible  release-fall       25.80-  26.20:  9 of 34 bands, best +13.5 dB near   645 Hz
+  audible  release-slap       26.02-  26.20:  1 of 34 bands, best  +6.3 dB near    30 Hz
+  audible  ray-hit0           25.82-  26.00:  7 of 34 bands, best  +8.0 dB near    64 Hz
+  audible  ray-hit4           25.92-  26.10:  4 of 34 bands, best  +4.4 dB near   378 Hz
+  audible  ray-sear1          25.84-  26.25: 10 of 34 bands, best  +5.8 dB near  2086 Hz
+  audible  ray-debris0        25.98-  26.40:  4 of 34 bands, best  +6.2 dB near    30 Hz
+  audible  shell-groan1       25.28-  25.64: 20 of 34 bands, best +20.3 dB near   192 Hz
+  audible  ice-boom           26.32-  26.70:  4 of 34 bands, best +14.9 dB near    64 Hz
+  audible  ice-crack          26.32-  26.50: 22 of 34 bands, best +11.0 dB near   308 Hz
+  audible  ice-rise           26.32-  26.50: 23 of 34 bands, best  +8.5 dB near 14140 Hz
+  audible  ice-slab3          26.44-  26.70:  3 of 34 bands, best  +4.3 dB near   192 Hz
+  audible  ice-crush0         26.53-  26.80: 12 of 34 bands, best  +1.9 dB near  2086 Hz
+  audible  block-press0       26.34-  26.60:  7 of 34 bands, best  +9.4 dB near   645 Hz
+  audible  block-hiss         26.34-  26.60:  2 of 34 bands, best  +2.0 dB near  5198 Hz
+  audible  block-fissure      26.34-  26.60:  1 of 34 bands, best  +1.7 dB near   101 Hz
+  audible  block-break        26.53-  26.70: 32 of 34 bands, best +17.0 dB near    64 Hz
+  audible  ray-scatter0       26.57-  26.70:  2 of 34 bands, best  +1.5 dB near 14140 Hz
+  audible  ice-work           26.65-  27.60:  7 of 34 bands, best  +4.3 dB near   308 Hz
+  audible  ice-frost          26.80-  28.00: 12 of 34 bands, best  +8.8 dB near 14140 Hz
+  audible  ice-groan1         26.95-  27.45: 21 of 34 bands, best  +8.0 dB near   645 Hz
+  audible  ice-tick0          26.93-  27.15:  1 of 34 bands, best  +2.5 dB near   545 Hz
+  audible  ice-mist           27.00-  28.30:  2 of 34 bands, best  +0.4 dB near  1378 Hz
+  audible  wall-debris0       26.95-  28.40:  8 of 34 bands, best  +5.2 dB near    30 Hz
+  audible  smoke              28.60-  30.10: 16 of 34 bands, best +21.2 dB near   192 Hz
+  audible  smoke-hiss         28.60-  30.10: 26 of 34 bands, best +21.4 dB near  4576 Hz
+  audible  smoke-swell        28.90-  29.60:  5 of 34 bands, best +24.5 dB near    30 Hz
+  audible  debris-rain0       28.60-  30.10: 13 of 34 bands, best +17.4 dB near    30 Hz
+  audible  hair-cloth         30.40-  32.00: 21 of 34 bands, best +24.4 dB near  5198 Hz
+  audible  wind-tone          30.60-  32.00:  5 of 34 bands, best +13.5 dB near   545 Hz
+  sync  spark-hit1     first sound at 21.12004 s, anchor 21.12000 s, difference +0.04 ms
+  sync  spark-hit2     first sound at 21.80002 s, anchor 21.80000 s, difference +0.02 ms
+  sync  lock0          first sound at 23.83002 s, anchor 23.83000 s, difference +0.02 ms
+  sync  shell-fracture first sound at 25.69233 s, anchor 25.69233 s, difference +0.00 ms
+  sync  release        first sound at 25.77575 s, anchor 25.77575 s, difference +0.00 ms
+  sync  ray-hit0       first sound at 25.82077 s, anchor 25.82075 s, difference +0.02 ms
+  sync  ice-crack      first sound at 26.31796 s, anchor 26.31796 s, difference +0.00 ms
+  sync  block-break    first sound at 26.52650 s, anchor 26.52650 s, difference +0.00 ms
+  sync  smoke          first sound at 28.53194 s, anchor 28.53000 s, difference +1.94 ms
+  left against right, whole: +0.11 dB
+  periodic modulation: flight 10.6 dB at 12.1 Hz; shell 9.7 dB at 13.6 Hz (white noise reads about 6 dB)
+  depth of the strongest modulation line: flight 6.5 % at 12.1 Hz; shell 8.6 % at 13.6 Hz (white noise about 1 %; the first version read 27 and 25 %)
+  band shares of the flight (20.1 to 22.25 s): [-12.5, -3.9, -3.3, -13.1, -17.5]
+  layers  flight                   loudest layer  -5.2 dB under the sum,  3 within 6 dB of it; heard at once: median 4, three or more 100 % of the time; tones 26 %, transients  7 %, noise 67 %
+  layers  close and whip           loudest layer  -4.8 dB under the sum,  3 within 6 dB of it; heard at once: median 4, three or more  93 % of the time; tones 24 %, transients  4 %, noise 73 %
+  layers  stones pulled in         loudest layer  -5.2 dB under the sum,  2 within 6 dB of it; heard at once: median 5, three or more 100 % of the time; tones  7 %, transients  7 %, noise 86 %
+  layers  plates lock              loudest layer -10.0 dB under the sum, 13 within 6 dB of it; heard at once: median 5, three or more  89 % of the time; tones  8 %, transients  1 %, noise 91 %
+  layers  sphere                   loudest layer  -4.3 dB under the sum,  3 within 6 dB of it; heard at once: median 3, three or more  82 % of the time; tones 29 %, transients  2 %, noise 68 %
+  layers  burst and rays           loudest layer  -9.9 dB under the sum, 14 within 6 dB of it; heard at once: median 5, three or more 100 % of the time; tones  4 %, transients  6 %, noise 90 %
+  layers  ice and rays             loudest layer  -6.8 dB under the sum,  3 within 6 dB of it; heard at once: median 4, three or more 100 % of the time; tones  7 %, transients  9 %, noise 83 %
+  layers  ice stands               loudest layer  -2.2 dB under the sum,  1 within 6 dB of it; heard at once: median 4, three or more 100 % of the time; tones 10 %, transients  7 %, noise 83 %
+  layers  smoke                    loudest layer  -3.3 dB under the sum,  2 within 6 dB of it; heard at once: median 4, three or more  82 % of the time; tones  8 %, transients  6 %, noise 86 %
+  layers  wind                     loudest layer  -6.2 dB under the sum,  6 within 6 dB of it; heard at once: median 4, three or more  93 % of the time; tones 10 %, transients  8 %, noise 82 %
+  size  flight                   sharp and pitched parts centre at   265 Hz (ka = 1 of a body of  20.6 cm);  0.5 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz  +8.6 dB; band shares [-12.6, -3.9, -3.2, -13.0, -17.4]
+  size  stones pulled in         sharp and pitched parts centre at   142 Hz (ka = 1 of a body of  38.5 cm);  0.3 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +10.0 dB; band shares [-16.5, -2.8, -4.0, -12.9, -23.6]
+  size  plates lock              sharp and pitched parts centre at   222 Hz (ka = 1 of a body of  24.6 cm);  0.4 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +10.3 dB; band shares [-15.8, -2.5, -4.5, -13.7, -17.0]
+  size  burst and rays           sharp and pitched parts centre at   282 Hz (ka = 1 of a body of  19.4 cm);  1.1 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz  +4.7 dB; band shares [-11.8, -5.2, -3.0, -10.0, -15.3]
+  size  ice and rays             sharp and pitched parts centre at   146 Hz (ka = 1 of a body of  37.5 cm);  0.8 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz  +8.3 dB; band shares [-9.8, -3.4, -4.6, -11.6, -17.1]
+  size  ice stands               sharp and pitched parts centre at   105 Hz (ka = 1 of a body of  51.8 cm);  0.1 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +20.9 dB; band shares [-12.7, -1.0, -8.2, -22.4, -28.7]
+  size  smoke                    sharp and pitched parts centre at   110 Hz (ka = 1 of a body of  49.8 cm);  0.1 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +14.6 dB; band shares [-10.6, -1.9, -6.1, -16.8, -23.3]
+==================== force master gain -5.76 dB | integrated -8.8 LUFS | true peak -2.00 dBTP
+  master: drive 10.0 dB into a look-ahead limiter and a soft clip; the limiter goes 6.3 dB deep and works 14.7 % of the time
+  shield residue                        136.50- 136.90  L100  -32.9 LUFS   peak  -21.0 dBFS
+  bed under the lines                   137.20- 138.30  L400  -33.5 LUFS   peak  -23.5 dBFS
+  handling                              138.40- 138.90  L100  -31.7 LUFS   peak  -20.4 dBFS
+  stare                                 143.50- 144.90  L400  -26.5 LUFS   peak  -17.9 dBFS
+  strike                                145.19- 145.26  L100  -11.1 LUFS   peak   -2.1 dBFS
+  blast                                 145.27- 145.42  L100   -6.0 LUFS   peak   -2.1 dBFS
+  flight                                145.42- 145.90  L400   -7.1 LUFS   peak   -2.1 dBFS
+  wall hit                              145.93- 146.08  L100   -6.0 LUFS   peak   -2.1 dBFS
+  cracks spread                         146.10- 146.46  L400   -7.0 LUFS   peak   -2.1 dBFS
+  breakout                              146.48- 146.65  L100   -6.3 LUFS   peak   -2.1 dBFS
+  blocks fall                           146.70- 147.70  L400   -7.2 LUFS   peak   -2.1 dBFS
+  landings in the dust                  147.80- 148.45  L100   -6.8 LUFS   peak   -2.1 dBFS
+  crater                                148.90- 149.60  L400  -10.8 LUFS   peak   -2.5 dBFS
+  black frames                          149.72- 150.02  L400  -19.6 LUFS   peak   -9.1 dBFS
+  eye opens                             150.30- 151.20  L400  -26.6 LUFS   peak  -14.6 dBFS
+  tail end                              151.20- 152.20  L400  -32.4 LUFS   peak  -20.5 dBFS
+  top peaks: 146.150 s -2.1 dBFS, 148.350 s -2.1 dBFS, 146.677 s -2.1 dBFS, 145.976 s -2.1 dBFS, 145.530 s -2.1 dBFS
+  band shares dB (<60, 60-250, 250-2k, 2k-6k, >6k), whole: [-9.1, -1.9, -6.8, -17.7, -29.4]
+  mono fold-down loss, whole: -1.27 dB
+  strike onset: 1 ms after the anchor the level is -1.0 dB below the peak; half the peak after 0.79 ms; peak at 145.1922 s
+  tension: the stare each 0.5 s from 142.5 (dBFS): [-36.6, -32.1, -29.5, -27.4, -27.0]
+  tension: the silence from 145.04 to 145.18 s: -119.2 dBFS; the strike (20 ms) -9.1 dBFS; between the strike and the blast (145.24 to 145.26) -24.5 dBFS
+  blast: L100 -6.0 against the stare -28.7 -> step 22.6 dB
+  flight: level each two frames from the blast to the wall (dBFS): [-7.2, -7.9, -8.2, -8.2, -8.8, -9.1, -9.0, -9.1]
+  flight: quietest 100 ms between the blast and the wall: -8.2 LUFS
+  the wall fails: level each two frames from the hit to the cut (dBFS): [-7.5, -7.9, -8.4, -8.4, -8.2, -8.5, -7.7, -7.8, -8.1, -8.2, -8.1, -8.4, -8.8, -9.1, -9.4, -10.5, -10.3, -11.1, -9.2, -11.4, -11.3, -10.6]
+  bands  stare          level  -28.6 dBFS; 30-120, 120-500, 500-2k, 2k-6k, 6k-14k Hz:  -29.8  -37.3  -48.2  -55.8  -59.4
+  bands  flight         level   -8.3 dBFS; 30-120, 120-500, 500-2k, 2k-6k, 6k-14k Hz:  -11.7  -15.2  -18.0  -24.7  -38.5
+  bands  wall hit       level   -7.8 dBFS; 30-120, 120-500, 500-2k, 2k-6k, 6k-14k Hz:  -11.6  -12.5  -20.8  -32.8  -43.4
+  bands  cracks spread  level   -8.3 dBFS; 30-120, 120-500, 500-2k, 2k-6k, 6k-14k Hz:  -13.4  -13.1  -19.5  -27.2  -37.2
+  bands  breakout       level   -7.9 dBFS; 30-120, 120-500, 500-2k, 2k-6k, 6k-14k Hz:  -11.8  -12.9  -21.2  -29.9  -39.2
+  bands  fall           level   -9.6 dBFS; 30-120, 120-500, 500-2k, 2k-6k, 6k-14k Hz:  -14.4  -14.4  -22.6  -32.3  -43.1
+  bands  fog            level   -9.9 dBFS; 30-120, 120-500, 500-2k, 2k-6k, 6k-14k Hz:  -14.4  -14.2  -24.7  -34.5  -44.7
+  collapse: loudness each half second from 146.3: [-6.5, -7.6, -9.2, -8.9, -7.9, -10.4]
+  after the landings: level each 0.25 s from 148.5 (dBFS): [-9.5, -10.1, -13.0, -13.7, -16.8, -19.7, -22.3, -26.7, -28.3, -29.0, -30.3, -34.2, -35.8, -37.4]
+  the hiss of the collapse, 1.5 to 9 kHz, each 0.5 s from 146.0 (dBFS): [-25.5, -29.3, -29.8, -29.6, -33.4, -36.1, -37.1]
+  the body of the wall hit, 60 to 150 Hz, each 0.1 s from 145.95 (dBFS): [-10.2, -11.7, -12.3, -13.9, -15.2, -12.1, -10.6, -14.2, -13.5, -14.5]
+  the top of the wall hit, 2 to 8 kHz, each 0.1 s from 145.95 (dBFS): [-34.0, -31.1, -32.0, -25.9, -25.3, -26.1, -31.0, -30.1, -31.9, -34.1]
+  after the wall hit: level each 0.1 s from 145.9 (dBFS): [-8.5, -8.1, -8.4, -8.2, -8.5, -7.8, -7.8, -8.1, -8.2, -8.4, -8.2, -9.2, -9.5, -10.1, -10.6, -10.2, -11.0, -11.2, -10.7]
+  landings in the dust: rise of the level at each landing (80 ms after against 80 ms before): ['147.84 s -0.6 dB', '148.05 s +4.4 dB', '148.34 s +1.7 dB', '148.62 s +1.1 dB', '148.93 s +1.2 dB', '149.31 s +2.7 dB', '149.78 s +0.0 dB']
+  phone band (350 Hz to 9 kHz): blast L100 -9.9, wall hit L100 -12.9, stare -38.0
+  band shares of the blast (0.3 s): [-9.1, -2.0, -6.9, -14.9, -33.5]  of the column: [-12.3, -1.2, -7.5, -22.4, -33.8]
+  audible  shield-residue    136.50- 136.90: 18 of 34 bands, best +16.0 dB near  3106 Hz
+  audible  settle0           137.05- 137.40: 17 of 34 bands, best +18.0 dB near   144 Hz
+  audible  handling          138.40- 138.85: 22 of 34 bands, best +25.8 dB near  4576 Hz
+  audible  far-thump0        138.95- 139.30:  8 of 34 bands, best +19.1 dB near    64 Hz
+  audible  stare             143.30- 145.00:  9 of 34 bands, best +39.4 dB near    30 Hz
+  audible  strike            145.19- 145.26: 34 of 34 bands, best +67.5 dB near  1586 Hz
+  audible  force             145.27- 145.45: 34 of 34 bands, best +20.6 dB near  9745 Hz
+  audible  force-boom        145.27- 145.70:  5 of 34 bands, best +18.4 dB near    30 Hz
+  audible  blast-roar        145.40- 145.90: 34 of 34 bands, best +26.9 dB near   457 Hz
+  audible  shock-ring        145.30- 145.75: 24 of 34 bands, best  +8.5 dB near  4025 Hz
+  audible  dust-surge0       145.35- 145.85:  4 of 34 bands, best  +3.0 dB near   192 Hz
+  audible  travel-air        145.30- 145.75:  4 of 34 bands, best  +3.7 dB near   247 Hz
+  audible  whip              145.80- 145.93: 16 of 34 bands, best +17.4 dB near 14140 Hz
+  audible  wall-hit          145.94- 146.00: 11 of 34 bands, best  +7.1 dB near   308 Hz
+  audible  wall-boom         145.94- 146.60:  5 of 34 bands, best +19.1 dB near   101 Hz
+  audible  wall-crack        145.94- 146.10: 32 of 34 bands, best +16.7 dB near  7590 Hz
+  audible  dust-jet          146.03- 146.50:  0 of 34 bands, best  -5.8 dB near   886 Hz
+  audible  crack-run         146.05- 146.46: 18 of 34 bands, best +19.3 dB near   144 Hz
+  audible  wall-strain       146.05- 146.46: 27 of 34 bands, best +18.3 dB near  8602 Hz
+  audible  loose-stone       146.19- 146.47:  4 of 34 bands, best  +5.7 dB near   308 Hz
+  audible  breakout          146.48- 146.70: 33 of 34 bands, best +12.9 dB near   192 Hz
+  audible  breakout-boom     146.48- 146.90:  4 of 34 bands, best +23.5 dB near    30 Hz
+  audible  block-fall0       146.60- 147.75: 32 of 34 bands, best +27.7 dB near    30 Hz
+  audible  block-fall1       146.60- 147.75: 29 of 34 bands, best  +9.9 dB near    30 Hz
+  audible  grit-rain         146.60- 147.75: 30 of 34 bands, best +18.4 dB near  1378 Hz
+  audible  hole-crack0       146.81- 147.00: 19 of 34 bands, best +11.2 dB near    30 Hz
+  audible  wall-rumble       146.60- 147.70:  4 of 34 bands, best  +5.4 dB near    30 Hz
+  audible  dust-hiss         146.40- 148.40: 18 of 34 bands, best  +4.9 dB near   645 Hz
+  audible  dust-billow       146.40- 148.40:  5 of 34 bands, best  +4.0 dB near   378 Hz
+  audible  land-cascade      147.80- 148.90: 34 of 34 bands, best +14.1 dB near  5198 Hz
+  audible  land0             147.84- 148.04: 21 of 34 bands, best +16.9 dB near   101 Hz
+  audible  land1             148.05- 148.30: 25 of 34 bands, best +25.6 dB near    30 Hz
+  audible  land2             148.34- 148.60: 34 of 34 bands, best +14.3 dB near   192 Hz
+  audible  land3             148.62- 148.90: 13 of 34 bands, best +10.0 dB near   101 Hz
+  audible  land4             148.93- 149.20: 13 of 34 bands, best +10.0 dB near   247 Hz
+  audible  land5             149.31- 149.60: 30 of 34 bands, best +18.8 dB near    30 Hz
+  audible  land6             149.78- 150.10: 21 of 34 bands, best +19.3 dB near  1378 Hz
+  audible  rubble0           148.60- 150.50: 34 of 34 bands, best +26.1 dB near   308 Hz
+  audible  rubble1           148.80- 150.50: 34 of 34 bands, best +17.4 dB near  9745 Hz
+  audible  heap-roll         148.60- 150.50:  5 of 34 bands, best +31.7 dB near    30 Hz
+  audible  trickle           148.60- 150.50: 33 of 34 bands, best +21.4 dB near    30 Hz
+  audible  wall-ticks        148.70- 150.90: 31 of 34 bands, best +18.8 dB near   759 Hz
+  audible  wall-groan        148.88- 149.30: 26 of 34 bands, best  +8.9 dB near  3538 Hz
+  wall crack, first 20 ms band shares: [-9.5, -1.6, -7.1, -23.8, -30.2]
+  sync  strike         first sound at 145.18677 s, anchor 145.18671 s, difference +0.06 ms
+  sync  force          first sound at 145.27013 s, anchor 145.27013 s, difference +0.00 ms
+  sync  wall-hit       first sound at 145.93762 s, anchor 145.93746 s, difference +0.17 ms
+  sync  wall-crack     first sound at 145.94346 s, anchor 145.94346 s, difference +0.00 ms
+  sync  breakout       first sound at 146.47969 s, anchor 146.47967 s, difference +0.02 ms
+  sync  land1          first sound at 148.05002 s, anchor 148.05000 s, difference +0.02 ms
+  sync  land2          first sound at 148.34002 s, anchor 148.34000 s, difference +0.02 ms
+  left against right, whole: -0.28 dB
+  share of the 40 to 900 Hz energy in 3 lines, blast            0.58 (a noise burst reads about 0.3)
+  share of the 40 to 900 Hz energy in 3 lines, wall hit         0.67 (a noise burst reads about 0.3)
+  layers  before the stare         loudest layer  -4.8 dB under the sum,  4 within 6 dB of it; heard at once: median 2, three or more  37 % of the time; tones  4 %, transients  8 %, noise 88 %
+  layers  stare                    loudest layer  -0.3 dB under the sum,  1 within 6 dB of it; heard at once: median 2, three or more   0 % of the time; tones 12 %, transients  5 %, noise 83 %
+  layers  strike and blast         loudest layer  -4.4 dB under the sum,  3 within 6 dB of it; heard at once: median 2, three or more  50 % of the time; tones  6 %, transients 33 %, noise 61 %
+  layers  flight                   loudest layer  -3.3 dB under the sum,  2 within 6 dB of it; heard at once: median 3, three or more  67 % of the time; tones  2 %, transients 11 %, noise 87 %
+  layers  wall hit and cracks      loudest layer  -3.9 dB under the sum,  3 within 6 dB of it; heard at once: median 4, three or more 100 % of the time; tones 10 %, transients  1 %, noise 89 %
+  layers  breakout and fall        loudest layer  -6.9 dB under the sum,  8 within 6 dB of it; heard at once: median 3, three or more  96 % of the time; tones  8 %, transients  3 %, noise 89 %
+  layers  landings in the dust     loudest layer  -4.3 dB under the sum,  3 within 6 dB of it; heard at once: median 3, three or more  86 % of the time; tones 13 %, transients  6 %, noise 82 %
+  layers  crater                   loudest layer  -5.5 dB under the sum,  5 within 6 dB of it; heard at once: median 4, three or more  78 % of the time; tones 10 %, transients  8 %, noise 82 %
+  layers  black frames and the eye loudest layer  -5.1 dB under the sum,  3 within 6 dB of it; heard at once: median 3, three or more  89 % of the time; tones  6 %, transients  9 %, noise 85 %
+  size  stare                    sharp and pitched parts centre at   229 Hz (ka = 1 of a body of  23.9 cm);  0.0 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +24.6 dB; band shares [-1.6, -6.1, -11.9, -26.2, -28.8]
+  size  blast and flight         sharp and pitched parts centre at   114 Hz (ka = 1 of a body of  47.9 cm);  0.4 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +13.8 dB; band shares [-6.8, -2.8, -6.3, -15.3, -30.4]
+  size  wall hit                 sharp and pitched parts centre at   140 Hz (ka = 1 of a body of  38.9 cm);  0.1 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +21.2 dB; band shares [-12.1, -1.2, -7.5, -22.4, -33.8]
+  size  breakout and fall        sharp and pitched parts centre at   123 Hz (ka = 1 of a body of  44.4 cm);  0.1 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +20.5 dB; band shares [-9.5, -1.8, -6.5, -21.9, -32.7]
+  size  landings in the dust     sharp and pitched parts centre at   142 Hz (ka = 1 of a body of  38.5 cm);  0.1 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +22.9 dB; band shares [-12.9, -0.9, -8.6, -23.9, -34.7]
+  size  crater                   sharp and pitched parts centre at   124 Hz (ka = 1 of a body of  43.9 cm);  0.1 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +26.0 dB; band shares [-12.8, -0.9, -8.6, -27.6, -32.1]
+==================== finale master gain -8.24 dB | integrated -7.6 LUFS | true peak -2.00 dBTP
+  master: drive 14.0 dB into a look-ahead limiter and a soft clip; the limiter goes 10.2 dB deep and works 31.1 % of the time
+  bed                                   173.10- 173.60  L400  -31.1 LUFS   peak  -21.5 dBFS
+  staff comes out of the dust           173.66- 174.40  L100  -20.2 LUFS   peak  -10.6 dBFS
+  gathering, first second               175.00- 175.90  L400  -29.7 LUFS   peak  -19.7 dBFS
+  gathering, second second              175.90- 176.80  L400  -26.2 LUFS   peak  -13.5 dBFS
+  charge                                176.90- 177.46  L400  -22.1 LUFS   peak  -12.4 dBFS
+  shot                                  177.51- 177.55  L100  -13.0 LUFS   peak   -3.6 dBFS
+  hit                                   177.55- 177.72  L100   -8.3 LUFS   peak   -4.6 dBFS
+  pillar, wide                          177.80- 178.10  L400   -7.6 LUFS   peak   -2.1 dBFS
+  torrent, close                        178.15- 179.15  L400   -6.2 LUFS   peak   -2.1 dBFS
+  torrent third second                  179.90- 180.90  L400   -6.8 LUFS   peak   -2.1 dBFS
+  torrent last second                   180.80- 181.76  L400   -8.1 LUFS   peak   -2.1 dBFS
+  whiteout middle                       182.50- 183.00  L400   -6.8 LUFS   peak   -2.1 dBFS
+  dissolution start                     183.80- 184.40  L400  -14.3 LUFS   peak   -3.5 dBFS
+  dissolution end                       185.00- 185.45  L400  -31.4 LUFS   peak  -21.2 dBFS
+  last shot under the line              186.50- 188.20  L400  -28.5 LUFS   peak  -15.6 dBFS
+  fade                                  188.80- 189.30  L400  -38.7 LUFS   peak  -31.5 dBFS
+  top peaks: 178.079 s -2.1 dBFS, 182.583 s -2.1 dBFS, 179.111 s -2.1 dBFS, 182.002 s -2.1 dBFS, 179.381 s -2.1 dBFS
+  band shares dB (<60, 60-250, 250-2k, 2k-6k, >6k), whole: [-10.0, -3.1, -4.5, -13.3, -24.6]
+  mono fold-down loss, whole: -1.37 dB
+  hit onset: 0.0 dB below the peak after 1 ms, half the peak after 0.08 ms; L100 -8.3
+  the gathering: level each 0.25 s from 174.5 (dBFS): [-36.2, -34.9, -33.8, -33.3, -32.3, -32.0, -30.7, -30.8, -29.5, -27.1, -25.8, -26.5]
+  the gathering -28.7 LUFS and the charge -22.5 LUFS; the hit is 14.2 dB over the charge; the frame before the shot -38.7 dBFS
+  the charge follows the light: level each 0.1 s from 176.76 (dBFS): [-28.3, -26.1, -27.1, -25.4, -25.5, -25.8, -26.0, -15.8]
+  shot, hit, pillar: level each frame from 177.469 (dBFS): [-38.6, -13.4, -10.3, -10.3, -10.4, -10.9, -11.3, -10.0, -7.4, -8.7, -7.2, -7.7, -8.1, -7.3, -7.9, -8.3]
+  the view moves in from 177.80 to 178.12: share of the energy above 1 kHz -17.0 dB at 177.80 to 177.95, -12.9 dB at 178.15 to 178.6
+  torrent, loudness of each second from 177.8, then the whiteout: [-6.4, -7.1, -7.1, -8.4] -6.9
+  the end of the torrent, under 120 Hz, each 0.25 s from 183.0 (dBFS): [-13.7, -14.1, -10.8, -15.0, -23.0, -29.0, -36.0, -38.7]
+  the end of the torrent, 200 to 1500 Hz, each 0.25 s from 183.0 (dBFS): [-14.1, -14.3, -16.8, -22.6, -27.8, -32.5, -35.9, -38.8]
+  the end of the torrent, 2 to 8 kHz, each 0.25 s from 183.0 (dBFS): [-23.3, -23.7, -27.7, -35.9, -39.6, -41.5, -40.4, -46.8]
+  torrent, level each 0.25 s from 183.5 (dBFS): [-8.4, -12.1, -19.3, -24.7, -29.0, -31.9, -33.4, -34.2]
+  torrent 178.0 to 181.5 s: crest 7.4 dB; correlation of left and right 0.38; tones 4 %, transients 8 %, noise 88 %; deepest periodic line 5.4 % at 18 Hz
+  torrent, third-octave levels against the strongest band, 25 Hz to 12.7 kHz: [-19.0, -14.8, -7.4, -6.1, -6.0, 0.0, -1.2, -3.2, -1.9, -2.4, -2.4, -2.2, -2.9, -4.3, -5.2, -4.0, -4.8, -4.6, -5.5, -6.4, -7.4, -9.2, -12.4, -15.8, -18.1, -20.4, -23.0, -26.1]
+  torrent, the level of 50 ms blocks varies by 2.2 dB below 120 Hz, 1.3 dB from 200 to 1000 Hz, 2.6 dB from 2 to 8 kHz
+  torrent band shares: [-12.7, -3.1, -4.0, -12.7, -25.1]  phone band torrent -10.3, hit -11.5
+  audible  staff-swing       173.80- 174.30: 26 of 34 bands, best +20.1 dB near    64 Hz
+  audible  staff-air         173.80- 174.30: 16 of 34 bands, best +13.9 dB near   144 Hz
+  audible  circle            175.00- 176.70:  5 of 34 bands, best +20.5 dB near   192 Hz
+  audible  gather-air        175.00- 176.70: 13 of 34 bands, best +21.8 dB near   545 Hz
+  audible  gather-breath     175.00- 176.70: 13 of 34 bands, best +23.0 dB near   308 Hz
+  audible  gather-sparks     176.20- 177.40: 19 of 34 bands, best +24.0 dB near  5198 Hz
+  audible  charge            177.05- 177.46: 13 of 34 bands, best +22.9 dB near   457 Hz
+  audible  charge-air        177.05- 177.46: 15 of 34 bands, best +13.3 dB near  4576 Hz
+  audible  fire              177.51- 177.55: 34 of 34 bands, best +57.2 dB near 12493 Hz
+  audible  blast             177.55- 177.70:  6 of 34 bands, best +25.6 dB near    30 Hz
+  audible  blast-wall        177.55- 177.70: 13 of 34 bands, best  +8.2 dB near   886 Hz
+  audible  floor-break1      177.64- 177.80: 14 of 34 bands, best  +9.4 dB near   247 Hz
+  audible  wall-hit0         177.68- 177.85:  5 of 34 bands, best +10.4 dB near    30 Hz
+  audible  vault-hit         177.83- 178.00: 19 of 34 bands, best  +9.9 dB near   378 Hz
+  audible  floor-ring        177.90- 178.20:  9 of 34 bands, best  +3.5 dB near  4576 Hz
+  audible  flare             178.19- 178.30:  9 of 34 bands, best  +8.5 dB near  9745 Hz
+  audible  rip2              178.31- 178.50: 24 of 34 bands, best +12.5 dB near  9745 Hz
+  audible  vault-debris0     178.55- 178.90:  5 of 34 bands, best +12.1 dB near   101 Hz
+  audible  beam-rumble       178.20- 181.00:  3 of 34 bands, best +34.3 dB near    30 Hz
+  audible  beam-body         178.20- 181.00: 12 of 34 bands, best +21.7 dB near   144 Hz
+  audible  beam-tear         178.20- 181.00: 20 of 34 bands, best +29.5 dB near  1378 Hz
+  audible  beam-sear         178.20- 181.00: 10 of 34 bands, best  +6.8 dB near  4576 Hz
+  audible  beam-howl         178.20- 181.00:  7 of 34 bands, best +10.1 dB near   144 Hz
+  audible  beam-crackle0     178.20- 181.00: 14 of 34 bands, best +13.7 dB near 14140 Hz
+  audible  blocks0           178.20- 181.00: 19 of 34 bands, best +16.6 dB near 14140 Hz
+  audible  ring2             179.25- 179.60: 10 of 34 bands, best  +7.6 dB near  5900 Hz
+  audible  strain            180.14- 180.30: 17 of 34 bands, best +12.2 dB near   457 Hz
+  audible  dissolve-breath   183.80- 185.00: 16 of 34 bands, best +18.8 dB near 12493 Hz
+  audible  dissolve-ticks    183.80- 185.00: 16 of 34 bands, best +19.5 dB near  4025 Hz
+  audible  remnants          185.90- 187.50: 13 of 34 bands, best +14.4 dB near 12493 Hz
+  audible  rest              186.60- 188.30:  5 of 34 bands, best +23.4 dB near   545 Hz
+  sync  ignite         first sound at 176.86048 s, anchor 176.86000 s, difference +0.48 ms
+  sync  fire           first sound at 177.51056 s, anchor 177.51054 s, difference +0.02 ms
+  sync  blast          first sound at 177.55238 s, anchor 177.55238 s, difference +0.00 ms
+  sync  beam-body      first sound at 177.55292 s, anchor 177.55238 s, difference +0.54 ms
+  sync  vault-hit      first sound at 177.83269 s, anchor 177.83263 s, difference +0.06 ms
+  sync  dissolve-breath first sound at 183.76804 s, anchor 183.76692 s, difference +1.12 ms
+  sync  staff-swing    first sound at 173.73031 s, anchor 173.66000 s, difference +70.31 ms
+  sync  circle         first sound at 174.46598 s, anchor 174.46000 s, difference +5.98 ms
+  left against right, whole: +0.06 dB
+  dissolution 183.8 to 185.4 s: the strongest line stands 15.1 dB out of the third octave around it at most, 10.3 dB in the median (round 9: 25.9 and 21.2; white noise: 12.3 and 10.3)
+  dissolution 183.8 to 185.7 s: strongest-line share of 400 to 4000 Hz 0.44 (white noise 0.12), share of the energy in that band 0.16, the strongest line jumps in 0.39 of the frames
+  layers  before the circle        loudest layer  -3.3 dB under the sum,  3 within 6 dB of it; heard at once: median 2, three or more  28 % of the time; tones  2 %, transients  2 %, noise 96 %
+  layers  gathering                loudest layer  -4.7 dB under the sum,  4 within 6 dB of it; heard at once: median 3, three or more  83 % of the time; tones 27 %, transients  4 %, noise 68 %
+  layers  charge                   loudest layer  -5.2 dB under the sum,  4 within 6 dB of it; heard at once: median 6, three or more 100 % of the time; tones 29 %, transients  5 %, noise 67 %
+  layers  shot, hit and pillar     loudest layer  -5.7 dB under the sum,  4 within 6 dB of it; heard at once: median 5, three or more 100 % of the time; tones  4 %, transients  9 %, noise 87 %
+  layers  torrent                  loudest layer  -7.3 dB under the sum,  5 within 6 dB of it; heard at once: median 6, three or more 100 % of the time; tones  5 %, transients  7 %, noise 88 %
+  layers  whiteout                 loudest layer  -3.5 dB under the sum,  3 within 6 dB of it; heard at once: median 5, three or more 100 % of the time; tones  3 %, transients  5 %, noise 92 %
+  layers  dissolution              loudest layer  -1.6 dB under the sum,  1 within 6 dB of it; heard at once: median 4, three or more  71 % of the time; tones  7 %, transients 17 %, noise 77 %
+  layers  last shot                loudest layer  -4.1 dB under the sum,  3 within 6 dB of it; heard at once: median 3, three or more  68 % of the time; tones 25 %, transients  9 %, noise 66 %
+  size  gathering and charge     sharp and pitched parts centre at   508 Hz (ka = 1 of a body of  10.8 cm);  3.5 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz  +7.5 dB; band shares [-14.7, -6.7, -1.5, -14.6, -18.9]
+  size  hit                      sharp and pitched parts centre at   140 Hz (ka = 1 of a body of  38.9 cm);  0.9 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz  +9.6 dB; band shares [-8.3, -3.2, -5.1, -12.3, -20.8]
+  size  torrent                  sharp and pitched parts centre at   252 Hz (ka = 1 of a body of  21.7 cm);  1.0 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz  +9.6 dB; band shares [-12.7, -3.1, -4.1, -12.4, -24.8]
+  size  whiteout                 sharp and pitched parts centre at   259 Hz (ka = 1 of a body of  21.0 cm);  0.7 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +11.4 dB; band shares [-10.4, -2.7, -4.9, -13.6, -25.2]
+  size  dissolution              sharp and pitched parts centre at   118 Hz (ka = 1 of a body of  46.4 cm);  0.5 % of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz +11.7 dB; band shares [-9.4, -2.1, -7.1, -15.3, -13.6]
