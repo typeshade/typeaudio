@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "The force passage of the study docs/studies/frieren-perceptual (pull request #67 at 07670c9, round 11): picture seconds 136.5 to 152.2. Clip time is picture time minus 136.5 s. The third plan (2026-11-10): in each moment one sound leads, the one the picture shows; a silence stands before the strike and one frame of silence before the hit on the wall.",
+  "description": "The force passage of the study docs/studies/frieren-perceptual (pull request #67 at 07670c9, round 11): picture seconds 136.5 to 152.2. Clip time is picture time minus 136.5 s. The fourth plan (2026-11-10): in each moment one sound leads, the one the picture shows; the sound that led goes on under the next and ends by itself; each sound that leads is told before it comes. The hit on the wall is a body on stone, and the break is stone that tears.",
   "clip": {
     "duration": 15.7,
     "fps": 23.976
@@ -293,7 +293,7 @@
         "motion": 0.5,
         "swell": 0.0
       },
-      "duration": 0.5
+      "duration": 0.6
     },
     {
       "id": "blast-roar-r",
@@ -311,7 +311,7 @@
         "motion": 0.5,
         "swell": 0.0
       },
-      "duration": 0.5
+      "duration": 0.6
     },
     {
       "id": "ring",
@@ -360,13 +360,13 @@
         "distance": 3.0
       },
       "macros": {
-        "weight": 0.55,
-        "decay": 0.25,
-        "crack": 0.55
+        "weight": 0.6,
+        "decay": 0.12,
+        "crack": 0.1
       }
     },
     {
-      "id": "wall-stone",
+      "id": "wall-thud",
       "t": 9.437458,
       "kind": "crack",
       "layer": "effects",
@@ -377,11 +377,11 @@
         "distance": 3.0
       },
       "macros": {
-        "size": 0.812,
-        "brightness": 0.7,
-        "crumble": 0.25
+        "size": 0.486,
+        "brightness": 0.2,
+        "crumble": 0.0
       },
-      "duration": 0.2
+      "duration": 0.15
     },
     {
       "id": "dust-burst",
@@ -420,7 +420,7 @@
     },
     {
       "id": "crack-run",
-      "t": 9.6,
+      "t": 9.497458,
       "kind": "rubble",
       "layer": "effects",
       "intensity": 0.501,
@@ -435,21 +435,21 @@
         "brightness": 0.7,
         "swell": 1.0
       },
-      "duration": 0.37
+      "duration": 0.482
     },
     {
       "id": "split-1",
       "t": 9.69,
       "kind": "crack",
       "layer": "effects",
-      "intensity": 0.316,
+      "intensity": 0.282,
       "position": {
         "x": 0.3,
         "y": 0.5,
         "distance": 3
       },
       "macros": {
-        "size": 0.528,
+        "size": 0.486,
         "brightness": 0.7,
         "crumble": 0.2
       },
@@ -457,7 +457,7 @@
     },
     {
       "id": "split-2",
-      "t": 9.86,
+      "t": 9.84,
       "kind": "crack",
       "layer": "effects",
       "intensity": 0.398,
@@ -467,7 +467,25 @@
         "distance": 3
       },
       "macros": {
-        "size": 0.624,
+        "size": 0.596,
+        "brightness": 0.7,
+        "crumble": 0.2
+      },
+      "duration": 0.1
+    },
+    {
+      "id": "split-3",
+      "t": 9.94,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.562,
+      "position": {
+        "x": 0.3,
+        "y": 0.5,
+        "distance": 3
+      },
+      "macros": {
+        "size": 0.695,
         "brightness": 0.7,
         "crumble": 0.2
       },
@@ -476,41 +494,116 @@
     {
       "id": "break",
       "t": 9.979667,
-      "kind": "impact",
+      "kind": "crack",
       "layer": "effects",
-      "intensity": 0.631,
+      "intensity": 0.708,
       "position": {
-        "x": 0.25,
+        "x": 0.1,
         "y": 0.3,
-        "distance": 3.0
+        "distance": 3
       },
       "macros": {
-        "weight": 0.75,
-        "decay": 0.4,
-        "crack": 0.4
-      }
+        "size": 0.883,
+        "brightness": 0.9,
+        "crumble": 0.8
+      },
+      "duration": 0.45
     },
     {
-      "id": "break-stone",
-      "t": 9.979667,
+      "id": "break-2",
+      "t": 10.024667,
       "kind": "crack",
       "layer": "effects",
       "intensity": 0.562,
       "position": {
+        "x": 0.6,
+        "y": 0.2,
+        "distance": 3
+      },
+      "macros": {
+        "size": 0.862,
+        "brightness": 0.9,
+        "crumble": 0.6
+      },
+      "duration": 0.35
+    },
+    {
+      "id": "break-shards",
+      "t": 9.989667,
+      "kind": "rubble",
+      "layer": "effects",
+      "intensity": 1.0,
+      "position": {
+        "x": 0.35,
+        "y": 0.4,
+        "distance": 3
+      },
+      "macros": {
+        "size": 0.257,
+        "density": 1.0,
+        "brightness": 0.8,
+        "swell": 0.1
+      },
+      "duration": 0.3
+    },
+    {
+      "id": "break-grit",
+      "t": 9.979667,
+      "kind": "rubble",
+      "layer": "effects",
+      "intensity": 0.794,
+      "position": {
+        "x": -0.1,
+        "y": 0.5,
+        "distance": 3
+      },
+      "macros": {
+        "size": 0.054,
+        "density": 1.0,
+        "brightness": 1.0,
+        "swell": 0.1
+      },
+      "duration": 0.35
+    },
+    {
+      "id": "break-blocks",
+      "t": 9.999667,
+      "kind": "rubble",
+      "layer": "effects",
+      "intensity": 0.562,
+      "position": {
+        "x": -0.2,
+        "y": 0.1,
+        "distance": 3
+      },
+      "macros": {
+        "size": 0.731,
+        "density": 0.812,
+        "brightness": 0.4,
+        "swell": 0.2
+      },
+      "duration": 0.35
+    },
+    {
+      "id": "break-rumble",
+      "t": 9.979667,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.316,
+      "position": {
         "x": 0.25,
         "y": 0.3,
         "distance": 3.0
       },
       "macros": {
-        "size": 0.94,
-        "brightness": 0.5,
-        "crumble": 0.6
-      },
-      "duration": 0.4
+        "size": 0.756,
+        "decay": 0.574,
+        "tone": 0.0
+      }
     },
     {
       "id": "crumble",
-      "t": 10.059667,
+      "t": 9.979667,
       "kind": "rubble",
       "layer": "effects",
       "intensity": 0.562,
@@ -523,13 +616,13 @@
         "size": 0.173,
         "density": 0.983,
         "brightness": 0.5,
-        "swell": 0.2
+        "swell": 0.0
       },
-      "duration": 1.213
+      "duration": 1.993
     },
     {
       "id": "block-1",
-      "t": 10.12,
+      "t": 10.16,
       "kind": "crack",
       "layer": "effects",
       "intensity": 0.501,
@@ -547,7 +640,7 @@
     },
     {
       "id": "block-2",
-      "t": 10.33,
+      "t": 10.36,
       "kind": "crack",
       "layer": "effects",
       "intensity": 0.398,
@@ -671,7 +764,7 @@
     },
     {
       "id": "trickle",
-      "t": 12.05,
+      "t": 11.8,
       "kind": "rubble",
       "layer": "effects",
       "intensity": 0.224,
@@ -686,7 +779,7 @@
         "brightness": 0.6,
         "swell": 0.1
       },
-      "duration": 1.6
+      "duration": 1.9
     },
     {
       "id": "tick",

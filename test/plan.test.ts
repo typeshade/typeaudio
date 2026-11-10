@@ -208,7 +208,7 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(one('blast').t - one('strike').t).toBeCloseTo(2002 / 24000, 5);
   });
 
-  test('lets the hit on the wall lead: it is the largest event, and the air of the blast has ended before it', () => {
+  test('lets the hit on the wall lead: it is the largest event, and the air of the blast ends before the frame of silence', () => {
     const hit = one('wall-hit');
     expect(hit.kind).toBe('impact');
     expect(hit.intensity).toBe(1);
@@ -217,8 +217,39 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(flight.length).toBeGreaterThanOrEqual(4);
     for (const e of flight) {
       expect(e.intensity, e.id).toBeLessThan(0.6);
-      if (e.kind === 'roar') expect(eventSpan(e).end, e.id).toBeLessThan(hit.t - 0.08);
+      if (e.kind === 'roar') expect(eventSpan(e).end, e.id).toBeLessThanOrEqual(p.silences[1]!.t);
     }
+  });
+
+  test('tells the hit on the wall from the break: a body on stone at one point, then stone that tears', () => {
+    const at = (t: number, window: number) =>
+      p.events.filter((e) => e.layer === 'effects' && e.t >= t && e.t < t + window);
+    // The hit: one `impact`, and no bright stone on its frame. The wall has not broken yet.
+    const hit = at(one('wall-hit').t, 0.001);
+    expect(hit.filter((e) => e.kind === 'impact').map((e) => e.id)).toEqual(['wall-hit']);
+    for (const e of hit)
+      if (e.kind === 'crack' || e.kind === 'rubble')
+        expect(e.macros.brightness, e.id).toBeLessThanOrEqual(0.3);
+    // The break: no `impact`; cracks and rubble over 50 ms, three or more of them bright.
+    const brk = at(one('break').t, 0.05);
+    expect(brk.some((e) => e.kind === 'impact')).toBe(false);
+    const stone = brk.filter((e) => e.kind === 'crack' || e.kind === 'rubble');
+    expect(stone.filter((e) => e.macros.brightness! >= 0.8).length).toBeGreaterThanOrEqual(3);
+    expect(new Set(stone.map((e) => e.position.x)).size).toBeGreaterThanOrEqual(3);
+  });
+
+  test('carries one line of small stone from the hit to the fog: the crack that runs, then the wall that crumbles', () => {
+    const run = one('crack-run');
+    const crumble = one('crumble');
+    // The run starts under the hit and grows; it ends where the crumble starts, on the break.
+    expect(run.t - one('wall-hit').t).toBeLessThan(0.1);
+    expect(run.macros.swell).toBe(1);
+    expect(Math.abs(eventSpan(run).end - crumble.t)).toBeLessThan(1e-3);
+    expect(crumble.t).toBe(one('break').t);
+    // The crumble thins out and ends after the cut to the fog, not on it.
+    expect(crumble.macros.swell).toBe(0);
+    expect(eventSpan(crumble).end).toBeGreaterThan(p.picture.cuts[3]! + 0.5);
+    expect(one('trickle').t).toBeLessThan(eventSpan(crumble).end);
   });
 
   test('keeps what is loud after the fog far from the camera: the blocks land out of the picture', () => {
