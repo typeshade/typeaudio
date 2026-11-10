@@ -1,4 +1,4 @@
-==================== red | 123 layers | 17 events of the picture
+==================== red | 133 layers | 18 events of the picture
   flight       20.000 to   22.300  the camera flies with the orb                                             5 layers
   passes       20.100 to   22.200  rocks pass on both sides                                                  9 layers
   strike1      21.120 to   21.200  the orb strikes rock; sparks                                              2 layers
@@ -11,17 +11,18 @@
   sphere       24.810 to   25.650  wide: the ball of stone hangs in the hall                                 5 layers
   fracture     25.690 to   25.750  the ball swells and cracks                                                1 layers
   burst        25.776 to   25.800  a full frame of violet rays                                               3 layers
-  rays         25.800 to   26.260  a star of 8 to 10 rays reaches the walls and the vault                   24 layers
-  ice          26.276 to   26.550  slabs of ice shoot up around the standing figure                         11 layers
-  icestands    26.600 to   28.450  the ice stands; mist at its feet; glints                                 10 layers
+  rays         25.800 to   26.310  a star of 8 to 10 rays reaches the walls and the vault                   24 layers
+  ice          26.318 to   26.500  slabs of ice shoot up around the standing figure                          9 layers
+  block        26.360 to   26.610  the rays are on the ice: white lines run over it; a white frame at 26.527; the rest flies off 10 layers
+  icestands    26.610 to   28.450  the ice stands; mist at its feet; specks of frost in the air             11 layers
   smoke        28.530 to   30.210  wide: a cloud of smoke rolls slowly; thin trails arc out of it; nothing lands in the frame  5 layers
   face         30.250 to   32.300  close: her face; hair in the wind                                         3 layers
   @hall       3 layers: bed, bed-low, bed-high
-  @echo       6 layers: ice-slap, hit1-slap0, hit1-slap1, hit2-slap0, hit2-slap1, release-slap
+  @echo       7 layers: ice-slap, block-slap, hit1-slap0, hit1-slap1, hit2-slap0, hit2-slap1, release-slap
   @offscreen  4 layers: wall-debris0, wall-debris1, settle0, settle1
   @mood       0 layers: 
-  of 123 layers: 110 belong to an event that is seen, 3 to the hall, 6 are echoes, 4 are off the frame, 0 are tones with no source
-==================== force | 47 layers | 15 events of the picture
+  of 133 layers: 119 belong to an event that is seen, 3 to the hall, 7 are echoes, 4 are off the frame, 0 are tones with no source
+==================== force | 52 layers | 17 events of the picture
   residue     136.500 to  137.100  the last pieces of the shield fade                                        1 layers
   lines       136.750 to  142.250  close: Fern speaks three lines                                            2 layers
   stare       142.500 to  145.150  close: the face of the clone                                              0 layers   (makes no sound of its own)
@@ -35,17 +36,19 @@
   breakout    146.470 to  146.650  large blocks leave the wall                                               1 layers
   airborne    146.500 to  147.720  the blocks turn in the air and sink out of the frame                      5 layers
   dust        146.000 to  149.700  dust rolls, fills the frame from 147.78 to 148.4, and thins               2 layers
-  land        147.760 to  148.900  in the dust the blocks reach the floor                                    6 layers
+  land        147.760 to  149.800  in the dust the blocks reach the floor, and the heap settles             11 layers
   crater      148.490 to  149.660  close: she hangs in a round crater of cracked wall                        3 layers
+  black       149.700 to  150.020  black frames: her eyes are shut                                           0 layers   (makes no sound of its own)
+  eye         150.060 to  152.200  her eye opens on the floor; rubble lies there                             0 layers   (makes no sound of its own)
   @hall       3 layers: bed, bed-low, bed-high
   @echo       2 layers: force-slap0, force-slap1
   @offscreen  6 layers: far-thump0, far-thump1, far-trickle, settle0, settle1, settle2
   @mood       1 layers: stare
-  of 47 layers: 35 belong to an event that is seen, 3 to the hall, 2 are echoes, 6 are off the frame, 1 are tones with no source
-==================== finale | 56 layers | 16 events of the picture
-  swing       173.720 to  174.400  the staff swings into the frame                                           2 layers
-  circle      174.460 to  177.470  a lit circle on the floor, under the spoken line                          2 layers
-  charge      176.860 to  177.470  a ball of light forms at the tip of the staff, grows for 0.2 s and holds  4 layers
+  of 52 layers: 40 belong to an event that is seen, 3 to the hall, 2 are echoes, 6 are off the frame, 1 are tones with no source
+==================== finale | 55 layers | 16 events of the picture
+  swing       173.620 to  174.400  the head of the staff comes out of the dust                               2 layers
+  gather      174.460 to  177.470  a lit circle under the clone, the staff behind her; sparks at its tip from 176.0  4 layers
+  charge      176.860 to  177.470  a ball of light forms at the tip of the staff, grows for 0.2 s and holds  3 layers
   shot        177.511 to  177.550  wide: a spark where the two stand                                         1 layers
   hit         177.552 to  177.600  a white frame; a dark cloud from the hit                                  3 layers
   blastout    177.590 to  177.680  white frames; lines run out from the hit over the floor                   3 layers
@@ -57,11 +60,11 @@
   rings       178.000 to  180.900  rings of light rise around the pillar                                     5 layers
   torrent     177.552 to  183.600  the pillar burns; the whiteout from 181.76                                7 layers
   highcrack   180.140 to  180.400  a crack high in the hall                                                  1 layers
-  dissolve    183.770 to  185.450  the clone thins into strands and specks                                   4 layers
+  dissolve    183.770 to  185.450  the clone thins into strands and specks                                   2 layers
   last        185.500 to  188.300  the remnants thin; she stands; a spoken line                              2 layers
   @hall       3 layers: bed, bed-low, bed-high
   @echo       0 layers: 
   @offscreen  4 layers: vault-debris0, vault-debris1, vault-debris2, last-settle
   @mood       1 layers: rest
-  of 56 layers: 48 belong to an event that is seen, 3 to the hall, 0 are echoes, 4 are off the frame, 1 are tones with no source
+  of 55 layers: 47 belong to an event that is seen, 3 to the hall, 0 are echoes, 4 are off the frame, 1 are tones with no source
 ledger: clean
