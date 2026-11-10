@@ -118,3 +118,63 @@ def roughness(x, a, b):
         w = env.mean() ** 0.6
         tot += w * mod; wsum += w
     return float(tot / max(wsum, 1e-20))
+
+
+# ---------------------------------------------------------------- what the ear takes a sound for
+def mod_peak(x, a, b, lo=12.0, hi=95.0):
+    """Periodic amplitude modulation: the strongest line of the envelope spectrum between lo and hi Hz,
+    in dB over the median of that range, and its frequency. A rotor or an engine has a strong line."""
+    seg = x[nsamp(a): nsamp(b)].mean(axis=1)
+    k = nsamp(0.004)
+    env = np.sqrt(np.convolve(seg ** 2, np.ones(k) / k, mode='same'))
+    env = env[::k // 2]
+    fs = SR / (k // 2)
+    E = np.abs(np.fft.rfft((env - env.mean()) * np.hanning(len(env)))) ** 2
+    f = np.fft.rfftfreq(len(env), 1 / fs)
+    m = (f >= lo) & (f <= hi)
+    # smooth over 1 Hz so that a random spectrum does not show false lines
+    w = max(1, int(round(1.0 / (f[1] - f[0]))))
+    Es = np.convolve(E, np.ones(w) / w, mode='same')[m]
+    return float(10 * np.log10(Es.max() / np.median(Es))), float(f[m][int(np.argmax(Es))])
+
+
+def tonal_share(x, a, b, lo=40.0, hi=900.0, lines=3):
+    """Share of the energy between lo and hi Hz that sits in the strongest few spectral lines.
+    A drum or a knock on a hollow body has a high share; a noisy thud has a low one."""
+    seg = x[nsamp(a): nsamp(b)].mean(axis=1)
+    n = 1 << int(np.ceil(np.log2(len(seg) * 4)))
+    P = np.abs(np.fft.rfft(seg * np.hanning(len(seg)), n)) ** 2
+    f = np.fft.rfftfreq(n, 1 / SR)
+    m = (f >= lo) & (f <= hi)
+    Pm, fm = P[m].copy(), f[m]
+    tot = Pm.sum()
+    res = SR / len(seg)                      # the width of one line of this window
+    got = 0.0
+    for _ in range(lines):
+        i = int(np.argmax(Pm))
+        sel = np.abs(fm - fm[i]) <= 1.5 * res
+        got += Pm[sel].sum()
+        Pm[sel] = 0
+    return float(got / max(tot, 1e-30))
+
+
+def blip_share(x, a, b, lo=400.0, hi=4000.0):
+    """How much of a passage is short pitched blips between lo and hi Hz (what bubbles and drops are made of):
+    the mean, over 23 ms frames, of the strongest line's share of the frame's energy in that band,
+    weighted by the frame's energy, and the share of the whole energy that lies in the band."""
+    seg = x[nsamp(a): nsamp(b)].mean(axis=1)
+    nfft, hop = 1024, 256
+    win = dsp.hann(nfft)
+    nf = max(1, 1 + (len(seg) - nfft) // hop)
+    idx = np.arange(nfft)[None, :] + hop * np.arange(nf)[:, None]
+    P = np.abs(np.fft.rfft(seg[idx] * win, axis=1)) ** 2
+    f = np.fft.rfftfreq(nfft, 1 / SR)
+    m = (f >= lo) & (f <= hi)
+    band = P[:, m]
+    e = band.sum(axis=1)
+    pk = np.array([band[i, max(0, j - 1): j + 2].sum() for i, j in enumerate(band.argmax(axis=1))])
+    line = float((pk / np.maximum(e, 1e-30) * e).sum() / max(e.sum(), 1e-30))
+    fpk = f[m][band.argmax(axis=1)]
+    w = np.minimum(e[1:], e[:-1])
+    jump = float((w * (np.abs(np.log2(fpk[1:] / fpk[:-1])) > 0.045)).sum() / max(w.sum(), 1e-30))
+    return line, float(e.sum() / max(P[:, f >= 60].sum(), 1e-30)), jump

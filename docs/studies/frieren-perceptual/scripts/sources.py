@@ -42,46 +42,6 @@ def cloth(dur, seed, density=320, f_lo=1200, f_hi=6500):
     return norm(y * arc ** 0.5)
 
 
-# ---- a stone fragment landing: radiation peak at ka = 1 (f = c / (2 pi a)), a damped floor thud,
-#      and bounces from the restitution of rock on rock
-def stone_click(a, v, r):
-    fpk = min(54.6 / a, 9000.0)
-    tau = 0.004 + 0.03 * a
-    L = nsamp(tau * 7)
-    t = np.arange(L) / SR
-    click = dsp.iir(r.standard_normal(L) * np.exp(-t / tau), [dsp.rbj('bp', fpk, 1.1)], tail=0.05)
-    fm = np.sort(r.uniform(90, 420, 6)) * (0.1 / a) ** 0.35
-    thud = dsp.contact(dsp.modal(fm, r.uniform(0.4, 1.0, 6) / np.arange(1, 7) ** 0.5, dsp.tau_of(fm, 0.06), 0.3), 0.0015 + 0.01 * a)
-    n = max(L, len(thud))
-    y = np.zeros(n)
-    y[:L] += norm(click)
-    lt = nsamp(0.006)
-    tick = dsp.iir(r.standard_normal(lt) * np.exp(-np.arange(lt) / (0.0009 * SR)), [dsp.rbj('hp', 2200, 0.7), dsp.rbj('lp', 8000, 0.7)], tail=0.02)
-    y[:lt] += norm(tick) * 0.5 * (1 + (a / 0.1) ** 2) * min(1.0, v / 6.0)
-    y[: len(thud)] += norm(thud) * (a / 0.1) ** 2      # small fragments click, large ones thud
-    return y * a ** 1.5 * v
-
-
-def debris(a, h, seed, e=0.35, max_bounces=4):
-    """A fragment of radius a (m) falling from h (m): first impact at t = 0, then bounces."""
-    r = dsp.rng(seed)
-    v = np.sqrt(2 * G * h)
-    events, t = [], 0.0
-    for _ in range(max_bounces + 1):
-        events.append((t, v))
-        v = v * e * r.uniform(0.8, 1.15)
-        dt = 2 * v / G
-        if dt < 0.03:
-            break
-        t += dt
-    y = np.zeros(nsamp(t + 0.5))
-    for t0, vv in events:
-        k = stone_click(a, vv, r)
-        s = nsamp(t0)
-        y[s: s + len(k)] += k[: len(y) - s]
-    return y
-
-
 # ---- brittle fracture: a main crack and an avalanche of smaller ones (rate k/(t+c), power-law sizes)
 def fracture(seed, f_lo, f_hi, loss, dur=0.5, n_modes=90, k_rate=12.0, c=0.012, hard=0.00015, tilt=0.5, burst=0.9):
     r = dsp.rng(seed)
@@ -108,23 +68,6 @@ def fracture(seed, f_lo, f_hi, loss, dur=0.5, n_modes=90, k_rate=12.0, c=0.012, 
     return np.tanh(2.0 * y) / 2.0            # a crack is dense, not one needle: bound its crest
 
 
-# ---- a pressure wave with no visible source: Friedlander front, a falling low body with harmonics
-#      (the pitch survives on small speakers), and the struck body's own damped modes
-def pressure(dur=0.7, tplus=0.0035, f_body=(58.0, 42.0), tau_body=0.09, harmonics=(0.8, 0.75, 0.55, 0.4, 0.28, 0.18)):
-    n = nsamp(dur)
-    t = np.arange(n) / SR
-    front = dsp.friedlander(dur, tplus)
-    ph = dsp.glide([(0, f_body[0]), (0.25, f_body[1]), (dur, f_body[1])], n)
-    body = sum(a * np.sin(k * ph) for k, a in enumerate(harmonics, start=1)) * np.exp(-t / tau_body)
-    return front, norm(body)
-
-
-def body_modes(seed, freqs=(140, 205, 290, 380), tau=(0.03, 0.026, 0.02, 0.016), dur=0.2, soft=0.004):
-    r = dsp.rng(seed)
-    y = dsp.modal(np.array(freqs) * r.uniform(0.96, 1.04, len(freqs)), [1, 0.8, 0.6, 0.4], tau, dur)
-    return norm(dsp.contact(y, soft))
-
-
 # ---- aerodynamic noise of a moving body: band limit and level follow the speed (power ~ U^6)
 def aero(speed, seed, u0=10.0, k_fc=55.0, fmin=120.0, fmax=5000.0, cap=4.0):
     n = len(speed)
@@ -137,23 +80,6 @@ def aero(speed, seed, u0=10.0, k_fc=55.0, fmin=120.0, fmax=5000.0, cap=4.0):
         return amp / np.sqrt(1 + (fr[None, :] / fc) ** 4) / np.sqrt(1 + (60.0 / np.maximum(fr[None, :], 1)) ** 4)
 
     return dsp.stft_shape(w, g)
-
-
-# ---- the red material: a low harmonic body and a rough mid band under one amplitude modulation.
-#      The modulation rate and depth set the roughness (the tension); they rise in containment.
-def red_core(n, fmod, depth, f0, mid_fc, mid_width_oct, seed):
-    r = dsp.rng(seed)
-    m = (1 + depth * np.sin(2 * np.pi * np.cumsum(fmod) / SR)) / (1 + depth)
-    ph0 = 2 * np.pi * np.cumsum(f0) / SR
-    low = sum(a * np.sin(k * ph0 + r.uniform(0, 6.28)) for k, a in ((1, 0.6), (2, 0.9), (3, 0.7), (4, 0.5), (6, 0.3)))
-
-    def g(tf, fr):
-        fc = np.interp(tf, np.arange(n) / SR, mid_fc)[:, None]
-        wd = np.interp(tf, np.arange(n) / SR, mid_width_oct)[:, None]
-        return np.exp(-0.5 * (np.log2(np.maximum(fr[None, :], 1) / fc) / wd) ** 2)
-
-    mid = dsp.stft_shape(dsp.white(n, seed + 1), g)
-    return norm(low) * m, mid / np.sqrt((mid ** 2).mean() + 1e-12) * 0.3 * m
 
 
 # ---- a glassy resonant surface: inharmonic plate modes with a low loss factor
@@ -287,19 +213,140 @@ def wide_noise(dur, seed, lo, hi, order=2, pinkish=True):
     return np.stack(ch, 1)
 
 
-# ---- the mid part of a pressure hit: a short broadband slap and a few damped modes, so that the
-#      hit reads on a small speaker that has no bass
-def punch(seed, dur=0.25, slap=(400.0, 2500.0), slap_tau=0.012, modes=(150, 230, 330, 470, 640), loss=0.09):
-    r = dsp.rng(seed)
-    n = nsamp(dur)
-    t = np.arange(n) / SR
-    sl = dsp.spectral(r.standard_normal(n), lambda f: dsp.band_gain(f, slap[0], slap[1], 2)) * np.exp(-t / slap_tau)
-    fm = np.array(modes) * r.uniform(0.95, 1.05, len(modes))
-    md = dsp.contact(dsp.modal(fm, 1 / np.arange(1, len(fm) + 1) ** 0.5, dsp.tau_of(fm, loss), dur), 0.0015)
-    return norm(norm(sl) * 0.7 + norm(md))
-
-
 def saturate(x, drive=2.2):
     """Soft clip of a hit normalised to its peak: the peak falls about 7 dB against the small-signal gain."""
     y = norm(x)
     return np.tanh(drive * y) / drive
+
+
+# ================================================================ round 2: what the first listening review changed
+# The owner heard a distant helicopter, bouncing thumps and squelching water. The causes were measured
+# (analyze.mod_peak, tonal_share, blip_share): a periodic amplitude modulation, impacts made of a few
+# sine modes with regular bounces, and short pitched grains. The sources below avoid each of them.
+
+def irregular(n, seed, lo=10.0, hi=90.0):
+    """A modulator with no period: band-limited noise, unit deviation, clipped to +-1.5 and scaled to +-1."""
+    m = dsp.spectral(dsp.white(n, seed), lambda f: dsp.band_gain(f, lo, hi, 2))
+    m = m / (m.std() + 1e-12)
+    return np.clip(m, -1.5, 1.5) / 1.5
+
+
+def red_material(n, tension, seed):
+    """The red material without a rotor: a low rumble, a roar whose band narrows and rises with the
+    tension, and a crackling surface. Every modulation is irregular. tension is an array in 0..1."""
+    t = np.arange(n) / SR
+    depth = 0.5 + 0.35 * tension
+    shared = irregular(n, seed + 20)
+    m1 = 1 + depth * (0.6 * shared + 0.4 * irregular(n, seed + 21))
+    m2 = 1 + depth * (0.6 * shared + 0.4 * irregular(n, seed + 22, 15, 120))
+    rumble = dsp.spectral(dsp.pink(n, seed), lambda f: dsp.band_gain(f, 38, 150, 2))
+    rumble = rumble / np.sqrt((rumble ** 2).mean()) * m1
+
+    def g(tf, fr):
+        ten = np.interp(tf, t, tension)
+        fc = (480 * (1100 / 480) ** ten)[:, None]
+        wd = (1.1 - 0.7 * ten)[:, None]
+        return np.exp(-0.5 * (np.log2(np.maximum(fr[None, :], 1) / fc) / wd) ** 2)
+
+    roar = dsp.stft_shape(dsp.white(n, seed + 1), g)
+    roar = roar / np.sqrt((roar ** 2).mean()) * m2
+    r = dsp.rng(seed + 2)
+    lam = (250 + 650 * tension) / SR
+    hits = r.random(n) < lam
+    cr = np.where(hits, r.uniform(0.4, 1.0, n) * r.choice([-1.0, 1.0], n), 0.0)
+    cr = dsp.spectral(cr, lambda f: dsp.band_gain(f, 2200, 9000, 2))
+    crackle = cr / (np.sqrt((cr ** 2).mean()) + 1e-12) * (1 + 0.5 * irregular(n, seed + 23, 2, 12))
+    return rumble, roar, crackle
+
+
+def burst(seed, lo, hi, tau, dur=None, rise=0.0005, order=2):
+    """A noise burst between lo and hi Hz with an exponential decay: an impact with no pitch."""
+    dur = dur or tau * 8
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+    x = dsp.spectral(dsp.white(n + nsamp(0.05), seed)[: n + nsamp(0.05)], lambda f: dsp.band_gain(f, lo, hi, order))[:n]
+    e = np.exp(-t / tau)
+    k = max(2, nsamp(rise))
+    e[:k] *= 0.5 - 0.5 * np.cos(np.pi * (np.arange(k) + 0.5) / k)
+    return norm(x * e)
+
+
+def whump(seed, tplus=0.0035, dur=0.5):
+    """An overpressure with no pitch: the Friedlander pulse (one cycle), a low noise body, a mid slap."""
+    front = dsp.friedlander(dur, tplus)
+    low = np.zeros(nsamp(dur)); k = burst(seed, 35, 130, 0.045, rise=0.002); low[: len(k)] = k[: len(low)]
+    slap = np.zeros(nsamp(dur)); k = burst(seed + 1, 250, 2600, 0.016); slap[: len(k)] = k[: len(slap)]
+    return front, low, slap
+
+
+def stone_impact(a, v, r):
+    """A fragment of radius a landing at speed v: a clack around ka = 1 (wide, so it has no pitch),
+    a low noise thud that grows with the size, and a hard bright tick."""
+    fpk = min(54.6 / a, 6000.0)
+    seed = int(r.integers(1, 2 ** 31 - 1))
+    clack = burst(seed, 0.5 * fpk, 2.6 * fpk, 0.004 + 0.03 * a)
+    thud = burst(seed + 1, 55, 320, 0.02 + 0.08 * a, rise=0.002 + 0.01 * a)
+    tick = burst(seed + 2, 2200, 8000, 0.0009, dur=0.006)
+    n = max(len(clack), len(thud))
+    y = np.zeros(n)
+    y[: len(clack)] += clack
+    y[: len(thud)] += thud * (a / 0.1) ** 2
+    y[: len(tick)] += tick * 0.5 * (1 + (a / 0.1) ** 2) * min(1.0, v / 6.0)
+    return y * a ** 1.5 * v
+
+
+def rock_fall(a, h, seed):
+    """A fragment that lands on rubble: one impact, sometimes one more contact as it tumbles, and a
+    scatter of small pieces. No train of bounces: rock on rubble does not bounce like a ball."""
+    r = dsp.rng(seed)
+    v = np.sqrt(2 * G * h)
+    y = np.zeros(nsamp(0.9))
+
+    def put(k, t0):
+        s = nsamp(t0)
+        e = min(len(y), s + len(k))
+        if e > s:
+            y[s:e] += k[: e - s]
+
+    put(stone_impact(a, v, r), 0.0)
+    if r.random() < 0.5:
+        put(stone_impact(a * r.uniform(0.5, 0.8), v * r.uniform(0.2, 0.4), r), r.uniform(0.08, 0.26))
+    for _ in range(r.poisson(4 + 30 * a)):
+        t0 = 0.03 + r.exponential(0.11)
+        put(stone_impact(r.uniform(0.008, 0.03), v * r.uniform(0.1, 0.35) * np.exp(-t0 / 0.2), r), t0)
+    return y
+
+
+def dissolve_dry(dur, seed):
+    """Matter that leaves as dust and thin threads, with nothing wet in it: a breath of high noise whose
+    lower edge rises, a few thin tones that fade one by one, and sparse dry ticks above 4 kHz."""
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+    r = dsp.rng(seed)
+
+    def g(tf, fr):
+        lo = np.interp(tf, [0, dur], [1800, 5200])[:, None]
+        return 1 / np.sqrt(1 + (lo / np.maximum(fr[None, :], 1)) ** 6) / np.sqrt(1 + (fr[None, :] / 11000.0) ** 4)
+
+    breath = dsp.stft_shape(dsp.white(n, seed), g)
+    sl = dsp.smooth(dsp.white(n, seed + 1), 0.15)
+    breath = breath / np.sqrt((breath ** 2).mean()) * np.exp(-t / 0.7) * lin(2.0 * sl / (np.abs(sl).max() + 1e-12))
+    threads = np.zeros(n)
+    for f0 in (1530.0, 2040.0, 2720.0, 3460.0, 4580.0):
+        t0 = r.uniform(0.0, 0.35)
+        tau = r.uniform(0.25, 0.6)
+        att = r.uniform(0.08, 0.15)
+        s = nsamp(t0)
+        tt = np.arange(n - s) / SR
+        fr = f0 * (1 + 0.03 * np.minimum(tt / 1.2, 1.0))
+        ph = 2 * np.pi * np.cumsum(fr) / SR
+        env = (1 - np.exp(-tt / (att / 3))) * np.exp(-tt / tau)
+        threads[s:] += (np.sin(ph + r.uniform(0, 6.28)) + np.sin(ph * 1.0017 + r.uniform(0, 6.28))) * 0.5 * env * r.uniform(0.6, 1.0)
+    cnt = r.poisson(40 * 0.5 * (1 - np.exp(-dur / 0.5)))
+    times = -0.5 * np.log(1 - r.random(cnt) * (1 - np.exp(-dur / 0.5)))
+    ticks = np.zeros(n)
+    for t0 in times:
+        k = burst(int(r.integers(1, 2 ** 31 - 1)), 4500, 12000, 0.0005, dur=0.004) * r.exponential(1.0)
+        s = nsamp(t0); e = min(n, s + len(k))
+        ticks[s:e] += k[: e - s]
+    return breath, norm(threads), norm(ticks)

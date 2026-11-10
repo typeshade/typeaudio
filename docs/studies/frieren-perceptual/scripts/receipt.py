@@ -18,9 +18,9 @@ CUES = {
                                ('orbit far', 22.4, 23.2, 'm'), ('containment start', 23.8, 24.4, 'm'), ('containment end', 25.0, 25.68, 'm'),
                                ('shell fracture', 25.69, 25.77, 'i'), ('release', 25.775, 26.1, 'i'), ('defence ring', 26.34, 26.7, 'i'),
                                ('fragments', 27.1, 28.6, 'i'), ('late dust and tail', 29.0, 30.0, 'm'), ('tail end', 31.5, 32.5, 'm')]),
-    'force': dict(t0=136.5, cues=[('bed', 136.6, 137.5, 'm'), ('pin drop 1', 137.6, 137.9, 'i'), ('handling', 138.4, 138.9, 'i'), ('pin drop 2', 140.3, 140.6, 'i'),
+    'force': dict(t0=136.5, cues=[('bed', 136.6, 137.5, 'm'), ('a stone settles far away', 137.6, 137.9, 'i'), ('handling', 138.4, 138.9, 'i'),
                                   ('last two seconds before the force', 143.1, 145.1, 'm'), ('force', 145.18, 145.45, 'i'), ('travel', 145.45, 145.9, 'i'),
-                                  ('column', 145.93, 146.3, 'i'), ('chunks', 146.35, 147.2, 'i'), ('late chunks', 147.5, 148.6, 'i'), ('settled', 149.0, 149.7, 'm'), ('tail end', 151.2, 152.2, 'm')]),
+                                  ('column', 145.93, 146.08, 'i'), ('chunks', 146.09, 147.2, 'i'), ('late chunks', 147.5, 148.6, 'i'), ('settled', 149.0, 149.7, 'm'), ('tail end', 151.2, 152.2, 'm')]),
     'finale': dict(t0=173.0, cues=[('bed', 173.0, 173.15, 'm'), ('arrival', 173.2, 173.9, 'i'), ('bed before preparation', 175.0, 176.7, 'm'), ('preparation', 176.9, 177.49, 'm'),
                                    ('gap before the flash', 177.50, 177.55, 'i'), ('flash', 177.55, 177.8, 'i'), ('beam first second', 177.9, 178.9, 'm'), ('beam third second', 179.9, 180.9, 'm'),
                                    ('beam last second', 180.8, 181.76, 'm'), ('whiteout middle', 182.5, 183.0, 'm'), ('dissolution start', 183.8, 184.4, 'm'), ('dissolution end', 185.2, 185.75, 'm'),
@@ -73,9 +73,9 @@ for name in names:
     g = dsp.lin(meta['master_gain_db'])
     mixsum = sum(L[k].astype(float) for k in L.files)
     checks = {'red': [('lattice-strain', 25.0, 25.69), ('shell-fracture', 25.692, 25.76), ('masonry', 21.57, 21.75), ('defence', 26.34, 26.6), ('particles1', 26.6, 29.0), ('fragment2', 27.13, 27.2), ('dust0', 27.5, 29.0)],
-              'force': [('handling', 138.4, 138.85), ('tick0', 137.6, 137.7), ('travel-air', 145.3, 145.9), ('travel-cloth', 145.3, 145.9), ('column-crack', 145.967, 146.02), ('chunk3', 147.067, 147.12), ('dust', 146.6, 148.5)],
+              'force': [('handling', 138.4, 138.85), ('settle', 137.6, 137.7), ('travel-air', 145.3, 145.9), ('travel-cloth', 145.3, 145.9), ('column-crack', 145.967, 146.02), ('chunk3', 147.02, 147.07), ('dust', 146.6, 148.5)],
               'finale': [('arrival-cloth', 173.2, 173.9), ('preparation', 176.9, 177.49), ('flash-ring', 177.56, 177.8), ('stone0', 178.89, 178.95), ('stone2', 179.77, 179.83), ('strain', 180.14, 180.3),
-                         ('sky-air', 181.0, 183.0), ('dissolve-low', 183.8, 184.6), ('dissolve-high', 184.4, 185.6), ('pebble', 186.95, 187.05), ('closing-cloth', 187.35, 187.85)]}[name]
+                         ('sky-air', 181.0, 183.0), ('dissolve-breath', 183.8, 185.0), ('dissolve-threads', 183.9, 185.0), ('dissolve-ticks', 183.8, 185.0), ('closing-cloth', 187.35, 187.85)]}[name]
     for k, a, b in checks:
         lay = L[k].astype(float)
         nb, best, fbest = A.audible(lay, mixsum - lay, a - t0, b - t0)
@@ -85,10 +85,19 @@ for name in names:
         print('  column crack, first 20 ms band shares:', [round(v, 1) for v in A.bands_share(x, c0, c0 + 0.02)])
     # --- sync: the first sample of each anchored layer against its anchor
     anchors = {'red': [('shell-fracture', 25.692333), ('release', 25.77575)], 'force': [('force', 145.186708), ('column-thud', 145.937458), ('column-crack', 145.967458)],
-               'finale': [('flash', 177.552375), ('beam-core', 177.802625), ('dissolve-low', 183.766917)]}[name]
+               'finale': [('flash', 177.552375), ('beam-core', 177.802625), ('dissolve-breath', 183.766917)]}[name]
     for k, ta in anchors:
         e = np.abs(L[k].astype(float)).max(axis=1)
         first = int(np.argmax(e > e.max() * 1e-3))
         print('  sync  %-14s first sound at %.5f s, anchor %.5f s, difference %+.2f ms' % (k, t0 + first / SR, ta, (t0 + first / SR - ta) * 1000))
     lr = 10 * np.log10((x[:, 0] ** 2).sum() / (x[:, 1] ** 2).sum())
     print('  left against right, whole: %+.2f dB' % lr)
+    # --- what the ear takes the sound for (the first listening review: a rotor, a drum and a ball, water)
+    if name == 'red':
+        print('  periodic modulation: orbit %.1f dB at %.1f Hz; containment %.1f dB at %.1f Hz (white noise reads about 6 dB)' % (A.mod_peak(x, 0.3, 3.5) + A.mod_peak(x, 4.6, 5.6)))
+        print('  band shares of the orbit (20.3 to 23.5 s):', [round(v, 1) for v in A.bands_share(x, 0.3, 3.5)])
+    if name == 'force':
+        for lab, a, b in (('force', 145.186708, 145.31), ('column', 145.937458, 146.06), ('chunk at 146.31', 146.31, 146.40), ('chunk at 147.02', 147.02, 147.10)):
+            print('  share of the 40 to 900 Hz energy in 3 lines, %-16s %.2f (a noise burst reads about 0.3)' % (lab, A.tonal_share(x, a - t0, b - t0)))
+    if name == 'finale':
+        print('  dissolution 183.8 to 185.7 s: strongest-line share of 400 to 4000 Hz %.2f (white noise 0.12), share of the energy in that band %.2f, the strongest line jumps in %.2f of the frames' % A.blip_share(x, 183.8 - t0, 185.7 - t0))
