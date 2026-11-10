@@ -66,7 +66,7 @@ export class StoneBand {
 export class Stones {
   age: u32 = 0;
   key: u32 = 1;
-  /** The length in frames, over which the rate and the sizes move. */
+  /** The length in frames, over which the rate and the sizes move. No impact comes after it: the bands ring out. */
   len: f32 = 1;
   /** The chance of an impact in a frame: `rateA + rateB * u ** 1.5 + rateC * (1 - u) ** 3`, `u` the part of the length played. */
   rateA: f32 = 0;
@@ -128,7 +128,7 @@ export class Stones {
     let size: f32 = this.firstSize;
     if (age == 0) {
       amp = this.first;
-    } else {
+    } else if (u < 1) {
       const v = 1 - u;
       const rate = this.rateA + this.rateB * u * sqrt(u) + this.rateC * v * v * v;
       const word = hash32(this.key ^ hash32(age));

@@ -167,7 +167,9 @@ near `54.6 / a` hertz, where its circumference is one wavelength.
 - `rubble` is stone that falls in a mass: impacts at random times, each the knock and the crack
   of a block of its size. `size` is the middle size, from 0.05 m to 1.5 m. `density` runs from 2 to
   80 impacts a second. `swell` at 0.5 holds the rate; under it the mass thins out over the
-  `duration`, over it the mass grows and its blocks grow with it.
+  `duration`, over it the mass grows and its blocks grow with it. No impact comes after the
+  `duration`: the mass rings out. Small stone at a high `density` is the crunch of a wall that
+  crumbles.
 - `roar` is a blast that rolls through a hall: four bands of noise whose levels wander by
   themselves. `brightness` is the level of the top bands, `motion` how far the levels wander,
   `swell` how far under its full level it starts.

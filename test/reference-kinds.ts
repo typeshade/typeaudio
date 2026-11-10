@@ -489,7 +489,7 @@ export class RefStones {
     let size = this.firstSize;
     if (age === 0) {
       amp = this.first;
-    } else {
+    } else if (u < 1) {
       const v = f(1 - u);
       const rate = f(
         f(this.rateA + f(f(this.rateB * u) * f(Math.sqrt(u)))) + f(f(f(this.rateC * v) * v) * v),

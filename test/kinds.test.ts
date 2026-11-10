@@ -229,6 +229,22 @@ describe('the kinds of experiment 9 tick as the reference does', { timeout: 1200
     // No impact at the first frame: the unit is silent until the first one falls.
     expect(got[0]).toBe(0);
   });
+  test('stones make no impact after their length: the bands only ring out', () => {
+    // An impact in each 50 frames on average, over 2,400 frames, then none: each envelope falls by its `keep` a frame.
+    const args = [47, 2400, 0.02, 0, 0, 0.2, 1.3, 1, 0, 0.25, 0, 0.5] as const;
+    const a = new Stones().shape(...args);
+    const r = new RefStones().shape(...args);
+    setBands(a);
+    setBands(r);
+    const got = run(2400, () => a.tick());
+    expect(got).toEqual(run(2400, () => r.tick()));
+    const at = [a.b0.env, a.b4.env];
+    expect(at[0]).toBeGreaterThan(0);
+    const after = run(2400, () => a.tick());
+    expect(after).toEqual(run(2400, () => r.tick()));
+    expect(a.b0.env / (at[0]! * a.b0.keep ** 2400)).toBeCloseTo(1, 4);
+    expect(a.b4.env / (at[1]! * a.b4.keep ** 2400)).toBeCloseTo(1, 4);
+  });
   test('boom', () => {
     const args = [5, 0.0127, 1.4, 0.00225, 0.08, 0.00005, 0.00003, 288, 9, 0.3] as const;
     const b = new Boom().shape(...args);
@@ -291,6 +307,18 @@ describe('the macros of the kinds of experiment 9', { timeout: 120000 }, () => {
     const share = (size: number): number =>
       mean((k) => above(sound(event('crack', { size, brightness: 0.4, crumble: 0 }), k), 400));
     expect(share(0.15)).toBeGreaterThan(2 * share(0.85));
+  });
+  test('rubble ends with its duration: the last second of its lane holds no new impact', () => {
+    // A dense mass of 0.4 s; its lane is 0.4 s and the tail. After 0.4 s the level only falls.
+    const y = sound(
+      event('rubble', { size: 0.5, density: 0.9, brightness: 0.3, swell: 0.5 }, 0.4),
+      31,
+      60000,
+    );
+    const rms = (a: number, b: number): number => Math.sqrt(energy(y.slice(a, b)) / (b - a));
+    expect(rms(0, 19200)).toBeGreaterThan(0);
+    expect(rms(28800, 33600)).toBeLessThan(0.25 * rms(19200, 24000));
+    expect(rms(38400, 43200)).toBeLessThan(0.25 * rms(28800, 33600));
   });
   test('a crack with crumble has more sound after its first impact than one with none', () => {
     const late = (crumble: number): number =>
