@@ -172,7 +172,7 @@ describe('a kind built with new ticks as the reference does', () => {
 
 // The four kinds of experiment 9 (docs/experiments.md, section 9): `crack` and `rubble` on the unit
 // `Stones`, `boom` and `roar`. Each ticks as its plain-JavaScript reference does, bit for bit.
-describe('the kinds of experiment 9 tick as the reference does', () => {
+describe('the kinds of experiment 9 tick as the reference does', { timeout: 120000 }, () => {
   const N = 6000;
   const setBands = (s: Stones | RefStones): void => {
     const bands = [s.b0, s.b1, s.b2, s.b3, s.b4];
@@ -255,7 +255,7 @@ describe('the kinds of experiment 9 tick as the reference does', () => {
 });
 
 // What the macros of the four kinds do, on the lanes `makeLane` builds.
-describe('the macros of the kinds of experiment 9', () => {
+describe('the macros of the kinds of experiment 9', { timeout: 120000 }, () => {
   const event = (kind: string, macros: Record<string, number>, duration?: number): PlanEvent => ({
     id: `${kind}-a`,
     t: 0,

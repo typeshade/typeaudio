@@ -1,6 +1,6 @@
 // Experiment 9, the force passage of the study as a plan on the engine (docs/experiments.md, section 9).
 //
-//   bun run exp:09 [--tier webgpu|webgl2|cpu] [--blocks 0] [--out <directory>]
+//   bun experiments/09-force-passage/run.ts [--tier webgpu|webgl2|cpu] [--blocks 0] [--out <directory>]
 //
 // It renders `plan.json` (15.7 seconds, the picture from 136.5 to 152.2 s of the study's scene)
 // through the kinds, the spatial chain, the reverb and the guards (`src/render-plan.ts`), on WebGPU

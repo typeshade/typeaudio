@@ -77,7 +77,7 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
 | `src/spatial/`                                   | The spatial chain of experiment 8: `place`, `layers`, `strips`, the transform and the partitioned convolution of the reverb send as kernel functions, and the room (`room.ts`)                                                                                                                |
 | `src/render-plan.ts`, `src/master.ts`            | `renderPlan`: a validated plan to five layer stems and a mix, one `fuse` scope a block; the loudness target and the true-peak limiter                                                                                                                                                         |
 | `experiments/08-sound-design/`                   | Experiment 8: the fixture plan `plan.json`, its harness and its runner (`bun run exp:08`)                                                                                                                                                                                                     |
-| `experiments/09-force-passage/`                  | Experiment 9: the plan of the force passage of the study `plan.json`, its harness and its runner (`bun run exp:09`)                                                                                                                                                                           |
+| `experiments/09-force-passage/`                  | Experiment 9: the plan of the force passage of the study `plan.json`, its harness, its runner (`run.ts`) and its measures (`measure.ts`, `across.ts`, `study.json`)                                                                                                                           |
 | `scripts/`                                       | The Vite build, the headless Chromium and the CPU time of its threads, which the browser check and the experiments share                                                                                                                                                                      |
 
 ## Baselines
@@ -125,7 +125,7 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
   WebGPU and WebGL2 in headless Chromium. It times the render, the loss and a descent's step with
   the gradient of `grad` in four forms, per parameter count. It writes the result as JSON (`--out`);
   its records are in `docs/records/`. `bun run exp:07 --write` writes the patch's modules again.
-- `bun run exp:09`: experiment 9, the plan of the force passage of the study, on WebGPU or WebGL2 in
+- `bun experiments/09-force-passage/run.ts`: experiment 9, the plan of the force passage of the study, on WebGPU or WebGL2 in
   headless Chromium or on the CPU tier in Node (`--tier`). It writes the mix, the reverb's return
   and the stems as WAV and the result as JSON into `experiments/09-force-passage/out/`; its record
   is in `docs/records/`. CI does not run it.
