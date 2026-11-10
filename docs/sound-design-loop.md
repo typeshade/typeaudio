@@ -257,12 +257,16 @@ Observed in experiment 9:
   sound leads.
 - The second plan made the stone heavy with a long, low ring. The owner heard a roll of dull
   thumps: a low band of noise with a long fall is a drum.
+- The fourth plan let four blocks knock, and small stone fall, while the picture held the blocks in
+  the air in slow motion. The owner heard stones that had fallen already.
 
 What follows for the one who writes a plan:
 
 1. Ask for each moment which sound leads, before any event is written.
 2. Set the loudness target so low that the limiter leaves the largest hit its front.
 3. Take the weight of a hit on stone from an `impact` under it. Keep the short fall of the stone.
+4. Write a strike on the frame on which the thing strikes. While the picture holds a thing in the
+   air, write no strike.
 
 The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
 they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks

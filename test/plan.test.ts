@@ -201,7 +201,7 @@ describe('the plan of experiment 9, the force passage', () => {
   });
 
   test('puts the strike, the blast, the hit on the wall and the break in their order', () => {
-    const order = ['strike', 'blast', 'wall-hit', 'split-1', 'break', 'far-land-1'];
+    const order = ['strike', 'blast', 'wall-hit', 'split-1', 'break', 'land-1'];
     const times = order.map((id) => one(id).t);
     expect(times).toEqual([...times].sort((a, b) => a - b));
     // The blast is two frames after the strike: her hair snaps, then she is thrown.
@@ -238,25 +238,42 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(new Set(stone.map((e) => e.position.x)).size).toBeGreaterThanOrEqual(3);
   });
 
-  test('carries one line of small stone from the hit to the fog: the crack that runs, then the wall that crumbles', () => {
+  test('lets the crack that runs say that the wall will give: it starts under the hit and grows to the break', () => {
     const run = one('crack-run');
-    const crumble = one('crumble');
-    // The run starts under the hit and grows; it ends where the crumble starts, on the break.
     expect(run.t - one('wall-hit').t).toBeLessThan(0.1);
     expect(run.macros.swell).toBe(1);
-    expect(Math.abs(eventSpan(run).end - crumble.t)).toBeLessThan(1e-3);
-    expect(crumble.t).toBe(one('break').t);
-    // The crumble thins out and ends after the cut to the fog, not on it.
-    expect(crumble.macros.swell).toBe(0);
-    expect(eventSpan(crumble).end).toBeGreaterThan(p.picture.cuts[3]! + 0.5);
-    expect(one('trickle').t).toBeLessThan(eventSpan(crumble).end);
+    expect(Math.abs(eventSpan(run).end - one('break').t)).toBeLessThan(1e-3);
+    const splits = ['split-1', 'split-2', 'split-3'].map(one);
+    expect(splits.map((e) => e.macros.size)).toEqual(
+      [...splits.map((e) => e.macros.size!)].sort((a, b) => a - b),
+    );
   });
 
-  test('keeps what is loud after the fog far from the camera: the blocks land out of the picture', () => {
+  test('strikes nothing while the blocks hang in the air: the stone of the break ends, and the blocks land after the cut to the fog', () => {
+    const brk = one('break').t;
+    const fog = p.picture.cuts[3]!;
+    const strikes = (e: { kind: string }) =>
+      e.kind === 'crack' || e.kind === 'rubble' || e.kind === 'impact';
+    // No stone and no hit starts from 50 ms after the break to the cut.
+    expect(p.events.filter((e) => strikes(e) && e.t > brk + 0.05 && e.t < fog)).toEqual([]);
+    // The stone of the break makes its last impact within 0.3 s of it: the picture is slow from there.
+    for (const e of p.events.filter((v) => strikes(v) && v.t >= brk && v.t <= brk + 0.05))
+      expect(eventSpan(e).end, e.id).toBeLessThanOrEqual(brk + 0.3);
+    // What goes on under the hang is the mass of the break, with no tone, and slow air.
+    expect(one('hang').t).toBe(brk);
+    expect(one('hang').macros.tone).toBe(0);
+    for (const id of ['drift-1', 'drift-2']) expect(one(id).macros.speed, id).toBeLessThan(0.2);
+    // The first landing comes after the cut, a body and its stone on one frame.
+    expect(one('land-1').t).toBeGreaterThan(fog);
+    expect(one('land-1').t - fog).toBeLessThan(0.3);
+    for (const id of ['land-1', 'land-2']) expect(one(`${id}-stone`).t, id).toBe(one(id).t);
+  });
+
+  test('keeps the landings out of the picture: what is loud after the cut to the fog stands 7 m or more away', () => {
     const fog = p.picture.cuts[3]!;
     const late = p.events.filter((e) => e.t >= fog && e.layer === 'effects');
     expect(late.length).toBeGreaterThanOrEqual(4);
     for (const e of late)
-      if (e.intensity > 0.3) expect(e.position.distance, e.id).toBeGreaterThanOrEqual(9);
+      if (e.intensity > 0.3) expect(e.position.distance, e.id).toBeGreaterThanOrEqual(7);
   });
 });
