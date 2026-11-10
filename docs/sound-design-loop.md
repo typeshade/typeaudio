@@ -263,6 +263,11 @@ Observed in experiment 9:
   blocks of 0.2 m that settle. The owner heard a plastic container that falls, not stone with
   weight. Of the energy of that landing from 60 to 400 Hz, 66 % lay in one band of 15 Hz, and 1 % of
   the whole lay over 2 kHz.
+- The fourth to the sixth plan made the hit on the wall from an `impact` whose pitch starts at
+  171 Hz, with little click, and a dull crack of 0.3 m. The owner heard a hit on a plastic
+  container: thin, with no density. Of the energy of that hit from 60 to 400 Hz, 53 % lay in one
+  band of 15 Hz, and 1 % of the whole lay over 2 kHz.
+- The owner heard the frame of silence before the hit on the wall as the hint of the hit.
 
 What follows for the one who writes a plan:
 
@@ -271,8 +276,9 @@ What follows for the one who writes a plan:
 3. Take the weight of a hit on stone from an `impact` under it. Keep the short fall of the stone.
 4. Write a strike on the frame on which the thing strikes. While the picture holds a thing in the
    air, write no strike.
-5. Make a block of stone that lands from three parts: a hard edge, a deep body with no tone, and
-   grit. Leave out a tone, and leave out blocks of 0.1 to 0.5 m that knock after it.
+5. Make a hit on stone, and a block of stone that lands, from a hard edge, a deep body with no
+   tone and grit; the largest hit has a short, wide burst too. Leave out a tone that the ear
+   follows, a dull top, and blocks of 0.1 to 0.5 m that knock after it.
 
 The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
 they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks

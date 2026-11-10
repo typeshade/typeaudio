@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "The force passage of the study docs/studies/frieren-perceptual (pull request #67 at 07670c9, round 11): picture seconds 136.5 to 152.2. Clip time is picture time minus 136.5 s. The sixth plan (2026-11-10): one sound leads in each moment, the sound that led goes on and ends by itself, and each sound that leads is told before it comes. The hit on the wall is a body on stone, and the break is stone that tears. While the blocks hang in the air and time is slow, nothing strikes; the blocks land after the cut to the fog. A block that lands is a hard edge, a deep body with no tone, and grit.",
+  "description": "The force passage of the study docs/studies/frieren-perceptual (pull request #67 at 07670c9, round 11): picture seconds 136.5 to 152.2. Clip time is picture time minus 136.5 s. The seventh plan (2026-11-10): one sound leads in each moment, the sound that led goes on and ends by itself, and each sound that leads is told before it comes. The hit on the wall is one hard, dense hit on stone; the break is stone that tears. While the blocks hang in the air and time is slow, nothing strikes; the blocks land after the cut to the fog. Stone that is hit, and a block that lands, is a hard edge, a deep body with no tone, and grit.",
   "clip": {
     "duration": 15.7,
     "fps": 23.976
@@ -24,7 +24,7 @@
     }
   },
   "master": {
-    "lufs": -13,
+    "lufs": -14,
     "truePeak": -1
   },
   "seed": 11,
@@ -265,7 +265,7 @@
       "t": 8.770125,
       "kind": "impact",
       "layer": "effects",
-      "intensity": 0.501,
+      "intensity": 0.447,
       "position": {
         "x": 0,
         "y": 0.0,
@@ -282,7 +282,7 @@
       "t": 8.770125,
       "kind": "roar",
       "layer": "effects",
-      "intensity": 0.316,
+      "intensity": 0.282,
       "position": {
         "x": -0.6,
         "y": 0.1,
@@ -300,7 +300,7 @@
       "t": 8.770125,
       "kind": "roar",
       "layer": "effects",
-      "intensity": 0.316,
+      "intensity": 0.282,
       "position": {
         "x": 0.6,
         "y": 0.1,
@@ -360,15 +360,86 @@
         "distance": 3.0
       },
       "macros": {
-        "weight": 0.6,
-        "decay": 0.12,
-        "crack": 0.1
+        "weight": 0.9,
+        "decay": 0.15,
+        "crack": 0.8
       }
     },
     {
-      "id": "wall-thud",
+      "id": "wall-stone",
       "t": 9.437458,
       "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.794,
+      "position": {
+        "x": 0.25,
+        "y": 0.3,
+        "distance": 3.0
+      },
+      "macros": {
+        "size": 0.986,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.2
+    },
+    {
+      "id": "wall-mid",
+      "t": 9.437458,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.891,
+      "position": {
+        "x": 0.25,
+        "y": 0.3,
+        "distance": 3.0
+      },
+      "macros": {
+        "size": 0.624,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.15
+    },
+    {
+      "id": "wall-edge",
+      "t": 9.437458,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.562,
+      "position": {
+        "x": 0.25,
+        "y": 0.3,
+        "distance": 3.0
+      },
+      "macros": {
+        "size": 0.049,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.1
+    },
+    {
+      "id": "wall-body",
+      "t": 9.437458,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.447,
+      "position": {
+        "x": 0.25,
+        "y": 0.3,
+        "distance": 3.0
+      },
+      "macros": {
+        "size": 0.889,
+        "decay": 0.699,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "wall-punch",
+      "t": 9.437458,
+      "kind": "boom",
       "layer": "effects",
       "intensity": 1.0,
       "position": {
@@ -377,11 +448,64 @@
         "distance": 3.0
       },
       "macros": {
-        "size": 0.486,
-        "brightness": 0.2,
-        "crumble": 0.0
+        "size": 0.187,
+        "decay": 0.319,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "wall-thump",
+      "t": 9.437458,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.891,
+      "position": {
+        "x": 0.25,
+        "y": 0.3,
+        "distance": 3.0
       },
-      "duration": 0.15
+      "macros": {
+        "size": 0.0,
+        "decay": 0.176,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "wall-chips",
+      "t": 9.442458,
+      "kind": "rubble",
+      "layer": "effects",
+      "intensity": 0.708,
+      "position": {
+        "x": 0.2,
+        "y": 0.35,
+        "distance": 3
+      },
+      "macros": {
+        "size": 0.054,
+        "density": 1.0,
+        "brightness": 1.0,
+        "swell": 0.0
+      },
+      "duration": 0.2
+    },
+    {
+      "id": "wall-burst",
+      "t": 9.437458,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.891,
+      "position": {
+        "x": 0.25,
+        "y": 0.3,
+        "distance": 3.0
+      },
+      "macros": {
+        "brightness": 0.6,
+        "motion": 0.3,
+        "swell": 0.0
+      },
+      "duration": 0.22
     },
     {
       "id": "dust-burst",
@@ -400,6 +524,23 @@
         "swell": 0.0
       },
       "duration": 0.4
+    },
+    {
+      "id": "hall-answer",
+      "t": 9.472458,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.708,
+      "position": {
+        "x": -0.4,
+        "y": 0.2,
+        "distance": 12
+      },
+      "macros": {
+        "size": 0.611,
+        "decay": 0.875,
+        "tone": 0.0
+      }
     },
     {
       "id": "hall-air-3",
@@ -496,7 +637,7 @@
       "t": 9.979667,
       "kind": "crack",
       "layer": "effects",
-      "intensity": 0.708,
+      "intensity": 0.562,
       "position": {
         "x": 0.1,
         "y": 0.3,
@@ -514,7 +655,7 @@
       "t": 10.024667,
       "kind": "crack",
       "layer": "effects",
-      "intensity": 0.562,
+      "intensity": 0.447,
       "position": {
         "x": 0.6,
         "y": 0.2,
@@ -532,7 +673,7 @@
       "t": 9.989667,
       "kind": "rubble",
       "layer": "effects",
-      "intensity": 1.0,
+      "intensity": 0.794,
       "position": {
         "x": 0.35,
         "y": 0.4,
@@ -551,7 +692,7 @@
       "t": 9.979667,
       "kind": "rubble",
       "layer": "effects",
-      "intensity": 0.794,
+      "intensity": 0.631,
       "position": {
         "x": -0.1,
         "y": 0.5,
@@ -570,7 +711,7 @@
       "t": 9.999667,
       "kind": "rubble",
       "layer": "effects",
-      "intensity": 0.398,
+      "intensity": 0.316,
       "position": {
         "x": -0.2,
         "y": 0.1,

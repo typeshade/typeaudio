@@ -221,21 +221,48 @@ describe('the plan of experiment 9, the force passage', () => {
     }
   });
 
-  test('tells the hit on the wall from the break: a body on stone at one point, then stone that tears', () => {
+  test('tells the hit on the wall from the break: one hit at one point, then stone that tears over time and width', () => {
     const at = (t: number, window: number) =>
       p.events.filter((e) => e.layer === 'effects' && e.t >= t && e.t < t + window);
-    // The hit: one `impact`, and no bright stone on its frame. The wall has not broken yet.
-    const hit = at(one('wall-hit').t, 0.001);
+    // The hit: one `impact`; every part starts within 6 ms; no crack on its frame crumbles.
+    const hit = at(one('wall-hit').t, 0.006);
     expect(hit.filter((e) => e.kind === 'impact').map((e) => e.id)).toEqual(['wall-hit']);
-    for (const e of hit)
-      if (e.kind === 'crack' || e.kind === 'rubble')
-        expect(e.macros.brightness, e.id).toBeLessThanOrEqual(0.3);
-    // The break: no `impact`; cracks and rubble over 50 ms, three or more of them bright.
+    expect(hit.length).toBeGreaterThanOrEqual(6);
+    for (const e of hit) if (e.kind === 'crack') expect(e.macros.crumble, e.id).toBe(0);
+    // The break: no `impact`; cracks that crumble and small stone, started over 40 ms or more and
+    // at three or more places across.
     const brk = at(one('break').t, 0.05);
     expect(brk.some((e) => e.kind === 'impact')).toBe(false);
     const stone = brk.filter((e) => e.kind === 'crack' || e.kind === 'rubble');
-    expect(stone.filter((e) => e.macros.brightness! >= 0.8).length).toBeGreaterThanOrEqual(3);
+    expect(stone.filter((e) => e.kind === 'crack').every((e) => e.macros.crumble! >= 0.6)).toBe(
+      true,
+    );
+    expect(
+      Math.max(...stone.map((e) => e.t)) - Math.min(...stone.map((e) => e.t)),
+    ).toBeGreaterThanOrEqual(0.04);
     expect(new Set(stone.map((e) => e.position.x)).size).toBeGreaterThanOrEqual(3);
+  });
+
+  test('makes the hit on the wall hard and dense: an edge of stone, a wide burst, a deep body with no tone', () => {
+    const t = one('wall-hit').t;
+    // The sub of the `impact` rests at 40.5 Hz or under: no pitch that the ear follows.
+    expect(one('wall-hit').macros.weight).toBeGreaterThanOrEqual(0.9);
+    for (const id of ['wall-body', 'wall-punch', 'wall-thump']) {
+      expect(one(id).kind, id).toBe('boom');
+      expect(one(id).macros.tone, id).toBe(0);
+      expect(one(id).t, id).toBe(t);
+    }
+    // The stone: a large block and a small hard edge, both at full brightness.
+    expect(one('wall-stone').macros.size).toBeGreaterThan(0.95);
+    expect(one('wall-stone').macros.brightness).toBe(1);
+    expect(one('wall-edge').macros.size).toBeLessThan(0.1);
+    expect(one('wall-edge').macros.brightness).toBe(1);
+    // The burst is short: a quarter of a second or less.
+    expect(one('wall-burst').kind).toBe('roar');
+    expect(one('wall-burst').duration).toBeLessThanOrEqual(0.25);
+    // The hall answers after the time the sound takes to come back.
+    expect(one('hall-answer').position.distance).toBeGreaterThanOrEqual(10);
+    expect(one('hall-answer').t).toBeGreaterThan(t);
   });
 
   test('lets the crack that runs say that the wall will give: it starts under the hit and grows to the break', () => {
