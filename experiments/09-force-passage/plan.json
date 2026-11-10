@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "The force passage of the study docs/studies/frieren-perceptual (pull request #67 at 07670c9, round 11): picture seconds 136.5 to 152.2. Clip time is picture time minus 136.5 s. The ninth plan (2026-11-10): one sound leads in each moment, the sound that led goes on and ends by itself, and each sound that leads is told before it comes. A dense roar, the mass, goes on from the blast to the fog under the sounds that lead, as the reference holds one. Stone is a hard edge, a deep body with no tone, and fine grit.",
+  "description": "The force passage of the study docs/studies/frieren-perceptual (pull request #67 at 07670c9, round 11): picture seconds 136.5 to 152.2. Clip time is picture time minus 136.5 s. The eleventh plan (2026-11-10): a dense roar, the mass, goes on from the blast to the fog under the sounds that lead. After the hit on the wall no crack and no rubble sounds: the break and the landings are bursts with no band of their own, deep bodies with no tone, and the roar.",
   "clip": {
     "duration": 15.7,
     "fps": 23.976
@@ -723,82 +723,60 @@
       "duration": 6.2
     },
     {
-      "id": "crack-run",
-      "t": 9.497458,
-      "kind": "rubble",
-      "layer": "effects",
-      "intensity": 0.631,
-      "position": {
-        "x": 0.3,
-        "y": 0.4,
-        "distance": 3
-      },
-      "macros": {
-        "size": 0.0,
-        "density": 0.964,
-        "brightness": 1.0,
-        "swell": 1.0
-      },
-      "duration": 0.482
-    },
-    {
       "id": "split-1",
       "t": 9.69,
-      "kind": "crack",
+      "kind": "impact",
       "layer": "effects",
-      "intensity": 0.2,
+      "intensity": 0.178,
       "position": {
         "x": 0.3,
         "y": 0.5,
         "distance": 3
       },
       "macros": {
-        "size": 0.784,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
+        "weight": 1.0,
+        "decay": 0.1,
+        "crack": 0.6
+      }
     },
     {
       "id": "split-2",
       "t": 9.84,
-      "kind": "crack",
+      "kind": "impact",
       "layer": "effects",
-      "intensity": 0.282,
+      "intensity": 0.251,
       "position": {
         "x": 0.3,
         "y": 0.5,
         "distance": 3
       },
       "macros": {
-        "size": 0.838,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
+        "weight": 1.0,
+        "decay": 0.1,
+        "crack": 0.6
+      }
     },
     {
       "id": "split-3",
       "t": 9.94,
-      "kind": "crack",
+      "kind": "impact",
       "layer": "effects",
-      "intensity": 0.398,
+      "intensity": 0.355,
       "position": {
         "x": 0.3,
         "y": 0.5,
         "distance": 3
       },
       "macros": {
-        "size": 0.883,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
+        "weight": 1.0,
+        "decay": 0.1,
+        "crack": 0.6
+      }
     },
     {
       "id": "break",
       "t": 9.979667,
-      "kind": "crack",
+      "kind": "impact",
       "layer": "effects",
       "intensity": 0.708,
       "position": {
@@ -807,101 +785,44 @@
         "distance": 3
       },
       "macros": {
-        "size": 0.94,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.15
-    },
-    {
-      "id": "break-edge-1",
-      "t": 9.979667,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.447,
-      "position": {
-        "x": 0.1,
-        "y": 0.3,
-        "distance": 3
-      },
-      "macros": {
-        "size": 0.049,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
+        "weight": 1.0,
+        "decay": 0.35,
+        "crack": 0.5
+      }
     },
     {
       "id": "break-2",
-      "t": 10.039667,
-      "kind": "crack",
+      "t": 10.049667,
+      "kind": "impact",
       "layer": "effects",
-      "intensity": 0.562,
+      "intensity": 0.501,
       "position": {
         "x": 0.6,
         "y": 0.3,
         "distance": 3
       },
       "macros": {
-        "size": 0.883,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.15
-    },
-    {
-      "id": "break-edge-2",
-      "t": 10.039667,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.355,
-      "position": {
-        "x": 0.6,
-        "y": 0.3,
-        "distance": 3
-      },
-      "macros": {
-        "size": 0.049,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
+        "weight": 1.0,
+        "decay": 0.35,
+        "crack": 0.5
+      }
     },
     {
       "id": "break-3",
-      "t": 10.109667,
-      "kind": "crack",
+      "t": 10.129667,
+      "kind": "impact",
       "layer": "effects",
-      "intensity": 0.447,
+      "intensity": 0.355,
       "position": {
         "x": -0.25,
         "y": 0.3,
         "distance": 3
       },
       "macros": {
-        "size": 0.838,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.15
-    },
-    {
-      "id": "break-edge-3",
-      "t": 10.109667,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.282,
-      "position": {
-        "x": -0.25,
-        "y": 0.3,
-        "distance": 3
-      },
-      "macros": {
-        "size": 0.049,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
+        "weight": 1.0,
+        "decay": 0.35,
+        "crack": 0.5
+      }
     },
     {
       "id": "break-burst",
@@ -915,49 +836,11 @@
         "distance": 3
       },
       "macros": {
-        "brightness": 0.5,
+        "brightness": 0.4,
         "motion": 0.4,
         "swell": 0.0
       },
-      "duration": 0.35
-    },
-    {
-      "id": "break-grit-1",
-      "t": 9.989667,
-      "kind": "rubble",
-      "layer": "effects",
-      "intensity": 0.794,
-      "position": {
-        "x": -0.15,
-        "y": 0.45,
-        "distance": 3
-      },
-      "macros": {
-        "size": 0.0,
-        "density": 1.0,
-        "brightness": 1.0,
-        "swell": 0.0
-      },
-      "duration": 0.28
-    },
-    {
-      "id": "break-grit-2",
-      "t": 10.019667,
-      "kind": "rubble",
-      "layer": "effects",
-      "intensity": 0.631,
-      "position": {
-        "x": 0.55,
-        "y": 0.45,
-        "distance": 3
-      },
-      "macros": {
-        "size": 0.0,
-        "density": 1.0,
-        "brightness": 1.0,
-        "swell": 0.0
-      },
-      "duration": 0.28
+      "duration": 0.4
     },
     {
       "id": "hang",
@@ -1030,24 +913,6 @@
     {
       "id": "land-1",
       "t": 11.4,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.891,
-      "position": {
-        "x": -0.3,
-        "y": -0.8,
-        "distance": 6
-      },
-      "macros": {
-        "size": 0.922,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.2
-    },
-    {
-      "id": "land-1-hit",
-      "t": 11.4,
       "kind": "impact",
       "layer": "effects",
       "intensity": 0.891,
@@ -1058,8 +923,25 @@
       },
       "macros": {
         "weight": 1.0,
-        "decay": 0.4,
-        "crack": 0.9
+        "decay": 0.6,
+        "crack": 0.35
+      }
+    },
+    {
+      "id": "land-1-body",
+      "t": 11.4,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.794,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 6
+      },
+      "macros": {
+        "size": 0.962,
+        "decay": 0.875,
+        "tone": 0.0
       }
     },
     {
@@ -1067,80 +949,25 @@
       "t": 11.4,
       "kind": "roar",
       "layer": "effects",
-      "intensity": 0.708,
+      "intensity": 0.631,
       "position": {
         "x": -0.3,
         "y": -0.8,
         "distance": 6
       },
       "macros": {
-        "brightness": 0.5,
+        "brightness": 0.2,
         "motion": 0.3,
         "swell": 0.0
       },
-      "duration": 0.3
-    },
-    {
-      "id": "land-1-edge",
-      "t": 11.4,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.794,
-      "position": {
-        "x": -0.3,
-        "y": -0.8,
-        "distance": 6
-      },
-      "macros": {
-        "size": 0.049,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
-    },
-    {
-      "id": "land-1-grit",
-      "t": 11.41,
-      "kind": "rubble",
-      "layer": "effects",
-      "intensity": 0.794,
-      "position": {
-        "x": -0.3,
-        "y": -0.8,
-        "distance": 6
-      },
-      "macros": {
-        "size": 0.054,
-        "density": 1.0,
-        "brightness": 1.0,
-        "swell": 0.0
-      },
-      "duration": 0.25
+      "duration": 0.6
     },
     {
       "id": "land-2",
-      "t": 11.74,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.355,
-      "position": {
-        "x": 0.4,
-        "y": -0.8,
-        "distance": 7
-      },
-      "macros": {
-        "size": 0.838,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.2
-    },
-    {
-      "id": "land-2-hit",
-      "t": 11.74,
+      "t": 11.8,
       "kind": "impact",
       "layer": "effects",
-      "intensity": 0.355,
+      "intensity": 0.447,
       "position": {
         "x": 0.4,
         "y": -0.8,
@@ -1148,120 +975,44 @@
       },
       "macros": {
         "weight": 1.0,
-        "decay": 0.4,
-        "crack": 0.9
+        "decay": 0.6,
+        "crack": 0.35
+      }
+    },
+    {
+      "id": "land-2-body",
+      "t": 11.8,
+      "kind": "boom",
+      "layer": "effects",
+      "intensity": 0.398,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 7
+      },
+      "macros": {
+        "size": 0.854,
+        "decay": 0.766,
+        "tone": 0.0
       }
     },
     {
       "id": "land-2-burst",
-      "t": 11.74,
+      "t": 11.8,
       "kind": "roar",
       "layer": "effects",
-      "intensity": 0.282,
+      "intensity": 0.316,
       "position": {
         "x": 0.4,
         "y": -0.8,
         "distance": 7
       },
       "macros": {
-        "brightness": 0.5,
+        "brightness": 0.2,
         "motion": 0.3,
         "swell": 0.0
       },
-      "duration": 0.3
-    },
-    {
-      "id": "land-2-edge",
-      "t": 11.74,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.316,
-      "position": {
-        "x": 0.4,
-        "y": -0.8,
-        "distance": 7
-      },
-      "macros": {
-        "size": 0.049,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
-    },
-    {
-      "id": "land-2-grit",
-      "t": 11.75,
-      "kind": "rubble",
-      "layer": "effects",
-      "intensity": 0.316,
-      "position": {
-        "x": 0.4,
-        "y": -0.8,
-        "distance": 7
-      },
-      "macros": {
-        "size": 0.054,
-        "density": 1.0,
-        "brightness": 1.0,
-        "swell": 0.0
-      },
-      "duration": 0.25
-    },
-    {
-      "id": "settle",
-      "t": 11.8,
-      "kind": "rubble",
-      "layer": "effects",
-      "intensity": 0.251,
-      "position": {
-        "x": 0.1,
-        "y": -0.8,
-        "distance": 6
-      },
-      "macros": {
-        "size": 0.0,
-        "density": 0.486,
-        "brightness": 0.8,
-        "swell": 0.0
-      },
-      "duration": 1.0
-    },
-    {
-      "id": "trickle",
-      "t": 12.0,
-      "kind": "rubble",
-      "layer": "effects",
-      "intensity": 0.224,
-      "position": {
-        "x": 0.15,
-        "y": -0.1,
-        "distance": 2.5
-      },
-      "macros": {
-        "size": 0.0,
-        "density": 0.376,
-        "brightness": 0.9,
-        "swell": 0.1
-      },
-      "duration": 1.7
-    },
-    {
-      "id": "tick",
-      "t": 12.75,
-      "kind": "crack",
-      "layer": "effects",
-      "intensity": 0.2,
-      "position": {
-        "x": -0.2,
-        "y": 0.2,
-        "distance": 2.5
-      },
-      "macros": {
-        "size": 0.049,
-        "brightness": 1.0,
-        "crumble": 0.0
-      },
-      "duration": 0.1
+      "duration": 0.6
     }
   ]
 }

@@ -283,6 +283,11 @@ Observed in experiment 9:
   the edge of a block, and the break held three such booms at 125 Hz. The owner heard a plastic bin
   that is kicked. A band of noise from 100 to 140 Hz with a short fall is a hollow thing.
 
+- The tenth plan made the break and the landings from large blocks at full brightness, hard edges
+  and fine grit. The owner heard no wall of tons that falls on a floor of stone: a steel bin that
+  is kicked and rolls. The stone kinds were heard as plastic when dull and as steel when bright;
+  both have five fixed bands. The eleventh plan uses neither after the hit on the wall.
+
 What follows for the one who writes a plan:
 
 1. Ask for each moment which sound leads, before any event is written.
