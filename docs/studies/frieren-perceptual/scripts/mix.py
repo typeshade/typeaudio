@@ -137,5 +137,10 @@ class Mix:
             self.limit_db = float(-20 * np.log10(gain.min()))
             self.limited_share = float((gain < 0.99).mean())
         self.drive_db = drive
+        # a level that the limiter would flatten is set after it: (seconds in the mix, dB) points, never above 0 dB
+        env = getattr(self, 'after_db', None)
+        if env:
+            ts = np.array([p[0] - self.t0 for p in env]); vs = np.minimum(np.array([p[1] for p in env], float), 0.0)
+            y = y * lin(np.interp(np.arange(len(y)) / SR, ts, vs))[:, None]
         self.out = dsp.fade(y[:, 0], 0.02, 0.3)[:, None] * np.array([1.0, 0.0]) + dsp.fade(y[:, 1], 0.02, 0.3)[:, None] * np.array([0.0, 1.0])
         return self.out

@@ -1,11 +1,11 @@
 # A sound design of three passages from physical and perceptual models
 
-Status: round 6 rendered and signal-checked on 2026-11-10. The owner listened to round 1 and gave three
+Status: round 7 rendered and signal-checked on 2026-11-10. The owner listened to round 1 and gave three
 remarks. Round 2 answers them. Round 3 follows the picture, which the author inspected frame by frame for
 the first time. The owner watched round 3 with the picture and found it flat. Round 4 answers that. The
 owner found round 4 light, like glass marbles. Round 5 answers that. The owner found the last passage of
-round 5 far from the original sound: the charge, the firing and the beam. Round 6 answers that. Nobody has
-listened to round 6.
+round 5 far from the original sound. Round 6 answers that. The owner named six events of the picture that
+round 6 gave no sound or the wrong sound. Round 7 answers that. Nobody has listened to round 7.
 
 The owner asked on 2026-11-10 for a sound design that is made by calculation, not by ear. The owner listens
 to the result. This study designs the effects of three passages of one fight scene. Each sound has a
@@ -31,15 +31,15 @@ model and a number. Each number has a measurement of the rendered audio.
 
 ## The passages
 
-| Passage | Picture seconds       | File   | SHA-256 of the 24-bit WAV that `scripts/render.py` writes (round 6) |
+| Passage | Picture seconds       | File   | SHA-256 of the 24-bit WAV that `scripts/render.py` writes (round 7) |
 | ------- | --------------------- | ------ | ------------------------------------------------------------------- |
-| Red     | 20.000 to 30.000      | 12.5 s | `709b8abd47baca66ed63e74966cdb3c25620bed9f8814308d1ebca35b9748805`  |
-| Force   | 136.500 to 149.700    | 15.7 s | `bc53bcdd90f28d65408e624b69109cf794a7c246cc2cc7d00db8cfd8b1122c98`  |
-| Finale  | 173.000 to 189.314625 | 18.8 s | `3609979061b697fa0d5de57410ebda14f3810d8704fcc6cc96541334a68a87e7`  |
+| Red     | 20.000 to 30.000      | 12.5 s | `3478e38cd7a6d31ad101f7de0b01d29f3abd81e06c83b7db976c365c0310fbea`  |
+| Force   | 136.500 to 149.700    | 15.7 s | `ed3e162f28d0e56dec2daf656fad4207c017ab85190fa467ea24617697db1327`  |
+| Finale  | 173.000 to 189.314625 | 18.8 s | `ac1b43f74d3ef102c45d1138fb916dcb667ae9b1d31f2ee475e8f2e8c518f0b9`  |
 
 Each file has a tail of 2.5 s after its picture range. The sample rate is 48,000 Hz. One picture frame is
-2,002 samples (24000/1001 frames a second). Rounds 1 to 5 are the commits `b9a6e52`, `1454215`, `c0a4b69`,
-`ee41d60` and `1a5b241`.
+2,002 samples (24000/1001 frames a second). Rounds 1 to 6 are the commits `b9a6e52`, `1454215`, `c0a4b69`,
+`ee41d60`, `1a5b241` and `a3288f0`.
 
 ## The method
 
@@ -54,8 +54,10 @@ Each file has a tail of 2.5 s after its picture range. The sample rate is 48,000
 
 Every layer is set by a loudness target (ITU-R BS.1770 K-weighting; windows of 0.1 s, 0.4 s or 3 s), not by a
 gain. The four bands of the torrent share one gain, so that their spectrum holds. The master puts the highest
-true peak at -2 dBTP. Since round 6 it then raises the sum by a drive (6 dB for red and force, 12 dB for the
-finale); a look-ahead limiter and a soft clip hold the peaks at the same ceiling.
+true peak at -2 dBTP. Since round 6 it then raises the sum by a drive (8 dB for red, 6 dB for force, 14 dB
+for the finale); a look-ahead limiter and a soft clip hold the peaks at the same ceiling. A limiter that
+works 10 dB deep flattens every step of level. Where a step carries the picture, round 7 sets it after the
+limiter (`after_db`): the hit lies 2.5 dB under the pillar, and the black frame between them 11 dB.
 
 ## The first listening review (round 1)
 
@@ -291,68 +293,105 @@ Deviations, open:
 - In the red passage the original does not fall below -5.3 LUFS in any section: music runs through it.
   Round 6 does not change the red passage but for the master.
 
+## The fifth listening review (round 6)
+
+The owner watched round 6 with the picture on 2026-11-10 and named six things. Each is an event of the picture
+that round 6 gave no sound, or the wrong one. The author had read the frames at 4 a second, with 12 to 24 a
+second only around the anchors. For round 7 every span that the owner named was read at 24 frames a second.
+
+| The owner said                                                  | The frames show                                                                                                                                             | Round 7 adds                                                                                                                                                 | Round 6 to round 7                                                            |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Heavy stones tangle in the condensation; the sound drops out    | 23.06 to 23.77 s: blocks fly in from all sides and pack around a glowing core. 23.81 to 24.4 s: plates of stone lock; red seams glow                        | Blocks that strike blocks at a rising rate on three paths to the core, the air of blocks that are pulled in, a grind; five heavy seatings and a grind, close | -17.9 to -14.7 LUFS (pulled in), -14.2 to -12.4 LUFS (lock)                   |
+| The explosion sounds like one ray; there were many, and walls   | 25.78 to 26.26 s: a star of 8 to 10 rays reaches the walls and the vault and holds for half a second                                                        | Eight rays: each leaves with a tear and strikes stone where it lands; three sears in three bands while the rays hold; five falls of what they broke          | Median of layers heard at once 4 to 5; -9.7 to -6.0 LUFS                      |
+| No smoke and no debris after it                                 | 28.53 to 30.21 s: a cloud of smoke fills the hall and rolls; debris flies out of it                                                                         | A billow of low noise, a hiss of dust, three streams of debris, three large pieces, three streaks that pass; stone that falls under the ice from 26.45 s     | -29.0 to -16.4 LUFS                                                           |
+| The wall's debris is not heavy; there is no dust                | 146.03 s: a large plume of dust bursts from the column. 146.4 to 147.7 s: the wall comes down in blocks. 147.78 to 148.4 s: dust fills the frame            | A burst of dust, seven slabs with the deep answer of the floor, small stone that clatters, a hiss of dust for 3.9 s over a billow, a patter in the fog       | Collapse -10.9 to -8.7 LUFS; fog -21.2 to -12.4 LUFS                          |
+| The charge is out of time and so loud that the clone would hear | A ball of light forms at the tip of the staff at 176.86 s, grows for 0.2 s and holds to 177.47 s. She stands one pace behind the clone                      | Nothing grows before 176.86 s. A soft ignition, then a thin breath that comes up with the ball and holds. No swell                                           | Charge -20.0 to -30.9 LUFS; circle -29.9 to -39.1 LUFS                        |
+| The shot, the hit and the changes of view sound like one piece  | 177.51 s: a spark in a wide frame. 177.55 s: white. 177.68 s: the blast at the walls. 177.76 s: black. 177.80 s: the pillar. The view moves in until 178.12 | A shot, the hit, two breaks of the floor, three strikes on walls, a held breath, the strike on the vault with a low surge, a ring, four rips, three falls    | Frames: shot -13.5, hit -10.3, black -17.9, pillar -7.3 dBFS; flat in round 6 |
+
+The dust of the force passage is measured against the original. In the collapse the level from 1 to 4 kHz lies
+under the level from 60 to 250 Hz by 4.4 dB in the original, 9.9 dB in round 6 and 6.4 dB in round 7; from 4
+to 12 kHz by 9.3, 17.6 and 12.8 dB; below 60 Hz by 7.6, 9.6 and 6.4 dB.
+
+Deviations, open:
+
+- Round 6 moved the roar to 177.636 s after the original. Round 7 puts the hit back on the first white frame
+  (177.552 s) and the full torrent on the pillar (177.803 s), with a shot before them, because the owner
+  described the picture as a shot, a hit and changes of view. The original has no separate shot.
+- The collapse is as loud as the force (-8.0 LUFS over 0.4 s against -7.4 LUFS over 0.1 s). The owner asked
+  for weight; whether the force still surprises is a matter for the ear.
+- The charge is 22.7 dB under the hit and 8 dB over the hall. It may be too quiet to be noticed at all.
+- The grind and the sear move fast: the deepest periodic line of the grind alone is 12 to 16 % near 14 Hz. It
+  has no period, but a rattle is what a rotor was made of in round 1.
+- With the ice the median of layers heard at once is 2: the falls of stone and the ice mask one another.
+
 ## The models
 
-| Sound                          | Model                                                                                         | Parameters                                                          |
-| ------------------------------ | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| A crack through a thick solid  | A low knock of noise around `ka = 1` of its size, a dense damped fracture above, a dry edge   | Sizes 0.3 to 2 m; loss factor 0.03, so nothing rings                |
-| A small crack in stone         | A noise burst from `ka = 1` of the piece to 4.5 kHz that falls toward the top; a low knock    | Pieces of 0.12 to 0.5 m                                             |
-| A solid under stress           | Stick and slip: slips at 110 to 240 a second, each interval drawn; wide low resonances        | No period; the resonances lie at 140, 260 and 470 Hz                |
-| Crushed ice                    | Dense noise from 0.7 to 6 kHz with a fast, irregular flutter and a decay                      | It gives a crack its brightness with no pitch                       |
-| Brittle fracture               | A broadband main crack and an avalanche of small cracks: rate `k / (t + c)`, power-law sizes  | Each small crack draws its own modes, so the result is noise        |
-| Strain before a failure        | Small cracks whose rate rises as `1 / (time to failure)`, and two groans                      | 24.75 s to the fracture anchor                                      |
-| Pressure with no visible body  | One Friedlander pulse, a low noise body, a mid slap                                           | Positive phase 3.5 ms; nothing in it has a pitch                    |
-| Impacts of stone and of a body | Noise bursts with an exponential decay                                                        | Band and decay follow the size and the softness of the contact      |
-| A falling column               | Impacts at random times (a Poisson process whose rate falls), sizes drawn on a log scale      | Three streams at three places; a low rumble and gravel under them   |
-| Air of a moving body           | Aerodynamic noise: power follows the sixth power of the speed, the band follows the speed     | Strouhal 0.2 gives no tone for a body of 0.4 m at 10 m/s            |
-| A rock that passes the camera  | A steady noise source on a path of 50 m/s; the level and the Doppler shift come from the path | Nearest distance 1.1 to 2.6 m                                       |
-| The red material               | A low rumble, a roar whose band narrows and rises with the tension, a crackling surface       | Every modulation is band-limited noise between 10 and 120 Hz        |
-| Surprise                       | A level step over the bed, a rise under 10 ms, and no sound in the 0.5 s before               | See the force passage below                                         |
-| Dissolution                    | A breath of high noise whose lower edge rises, thin tones that fade one by one, dry ticks     | Nothing short and pitched between 0.4 and 4 kHz                     |
-| The hall                       | Image sources of a box of 18 by 24 by 14 m; late field with echo density `4 pi c^3 t^2 / V`   | Decay 2.6 s; late level from the critical distance, lowered by 5 dB |
-| A moving source                | The change of the propagation delay                                                           | The Doppler shift follows from the path                             |
-| A torrent of energy            | Turbulence: one measured spectrum in four bands, each with its own noise and wandering level  | Level deviation 1 to 6.5 dB; left and right correlate by about 0.5  |
-| A breath with a pitch          | Narrow bands of noise whose centres wander: a carrier with a random envelope and phase        | Width centre / 6 to centre / 10; no sine                            |
-| The master                     | A drive into a look-ahead limiter (4 ms, release 60 ms) and a soft clip                       | The limiter leaves 4 dB over the ceiling for the clip to round      |
-| A tone that lasts              | A cluster of partials; the pitch and the level of each drift slowly and with no period        | No two partials closer than 100 Hz, so nothing beats                |
-| A tone that moves              | The same cluster on a pitch path from one frequency to another                                | 0.7 s or longer, so it is no blip                                   |
-| Sparks and crackles            | Separate noise pops of 4 to 5 ms between 0.5 and 7 kHz at random times, with bounded sizes    | 16 to 30 a second; a rare large pop must not set the peak           |
-| The answer of a far wall       | The same event, low-passed at 0.7 to 1.8 kHz, from a wall position, 0.15 to 0.31 s later      | One or two walls for each large event                               |
-| The broken staff               | Dry wood: a crack of noise and a short thock; the pieces land as damped clacks of noise       | Irregular times; no train of bounces and no ring                    |
+| Sound                           | Model                                                                                                                  | Parameters                                                          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| A crack through a thick solid   | A low knock of noise around `ka = 1` of its size, a dense damped fracture above, a dry edge                            | Sizes 0.3 to 2 m; loss factor 0.03, so nothing rings                |
+| A small crack in stone          | A noise burst from `ka = 1` of the piece to 4.5 kHz that falls toward the top; a low knock                             | Pieces of 0.12 to 0.5 m                                             |
+| A solid under stress            | Stick and slip: slips at 110 to 240 a second, each interval drawn; wide low resonances                                 | No period; the resonances lie at 140, 260 and 470 Hz                |
+| Crushed ice                     | Dense noise from 0.7 to 6 kHz with a fast, irregular flutter and a decay                                               | It gives a crack its brightness with no pitch                       |
+| Brittle fracture                | A broadband main crack and an avalanche of small cracks: rate `k / (t + c)`, power-law sizes                           | Each small crack draws its own modes, so the result is noise        |
+| Strain before a failure         | Small cracks whose rate rises as `1 / (time to failure)`, and two groans                                               | 24.75 s to the fracture anchor                                      |
+| Pressure with no visible body   | One Friedlander pulse, a low noise body, a mid slap                                                                    | Positive phase 3.5 ms; nothing in it has a pitch                    |
+| Impacts of stone and of a body  | Noise bursts with an exponential decay                                                                                 | Band and decay follow the size and the softness of the contact      |
+| A falling column                | Impacts at random times (a Poisson process whose rate falls), sizes drawn on a log scale                               | Three streams at three places; a low rumble and gravel under them   |
+| Air of a moving body            | Aerodynamic noise: power follows the sixth power of the speed, the band follows the speed                              | Strouhal 0.2 gives no tone for a body of 0.4 m at 10 m/s            |
+| A rock that passes the camera   | A steady noise source on a path of 50 m/s; the level and the Doppler shift come from the path                          | Nearest distance 1.1 to 2.6 m                                       |
+| The red material                | A low rumble, a roar whose band narrows and rises with the tension, a crackling surface                                | Every modulation is band-limited noise between 10 and 120 Hz        |
+| Surprise                        | A level step over the bed, a rise under 10 ms, and no sound in the 0.5 s before                                        | See the force passage below                                         |
+| Dissolution                     | A breath of high noise whose lower edge rises, thin tones that fade one by one, dry ticks                              | Nothing short and pitched between 0.4 and 4 kHz                     |
+| The hall                        | Image sources of a box of 18 by 24 by 14 m; late field with echo density `4 pi c^3 t^2 / V`                            | Decay 2.6 s; late level from the critical distance, lowered by 5 dB |
+| A moving source                 | The change of the propagation delay                                                                                    | The Doppler shift follows from the path                             |
+| A torrent of energy             | Turbulence: one measured spectrum in four bands, each with its own noise and wandering level                           | Level deviation 1 to 6.5 dB; left and right correlate by about 0.5  |
+| A breath with a pitch           | Narrow bands of noise whose centres wander: a carrier with a random envelope and phase                                 | Width centre / 6 to centre / 10; no sine                            |
+| The master                      | A drive into a look-ahead limiter (4 ms, release 60 ms) and a soft clip; levels set after it where a step must stay    | The limiter leaves 4 dB over the ceiling for the clip to round      |
+| Blocks that are pulled together | Impacts at a rising rate: the clack and thud of a block of its size, and the crack of both                             | Blocks of 0.35 to 1 m; three paths that end at the core             |
+| Stone that grinds on stone      | Stick and slip, 60 to 200 slips a second with a jitter of 60 %, through low resonances; a scrape of noise over it      | No period                                                           |
+| A slab that lands               | A deep thud of noise under 100 Hz that lasts, the crack of the slab, small pieces that scatter                         | Slabs of 0.4 to 1.5 m                                               |
+| Dust and smoke                  | A burst of wide noise with a soft rise; a hiss whose level wanders, with a fine grain; a low billow in slow surges     | The hiss lies from 0.7 to 6 kHz in the force passage                |
+| A ray                           | A tear whose band falls fast as it leaves, a crack of thick stone where it lands, noise in its own band while it holds | Eight rays, three bands                                             |
+| The discharge of a staff        | A dry crack, a short low pop and a tear that falls                                                                     | No ring                                                             |
+| A tone that lasts               | A cluster of partials; the pitch and the level of each drift slowly and with no period                                 | No two partials closer than 100 Hz, so nothing beats                |
+| A tone that moves               | The same cluster on a pitch path from one frequency to another                                                         | 0.7 s or longer, so it is no blip                                   |
+| Sparks and crackles             | Separate noise pops of 4 to 5 ms between 0.5 and 7 kHz at random times, with bounded sizes                             | 16 to 30 a second; a rare large pop must not set the peak           |
+| The answer of a far wall        | The same event, low-passed at 0.7 to 1.8 kHz, from a wall position, 0.15 to 0.31 s later                               | One or two walls for each large event                               |
+| The broken staff                | Dry wood: a crack of noise and a short thock; the pieces land as damped clacks of noise                                | Irregular times; no train of bounces and no ring                    |
 
 Two choices are style, not physics, and the study says so. A bare stone hall of this size has a decay of about
 8 to 13 s by Sabine's formula. The study uses 2.6 s so that the events stay readable. The direct sound of the
 far events is raised against the late field by 2 to 10 dB.
 
-## Targets and measurements of round 6
+## Targets and measurements of round 7
 
 `receipt.txt` is the whole output of `scripts/receipt.py`. The table holds the lines that carry the design.
 
-| Passage | Target                                                      | Measured                                                           |
-| ------- | ----------------------------------------------------------- | ------------------------------------------------------------------ |
-| Red     | The perspective changes with the cut                        | -13.0 LUFS in flight, -10.0 close, -17.3 far                       |
-| Red     | No periodic modulation                                      | Depth of the strongest line 6.4 % in the flight                    |
-| Red     | The hits, the fracture, the release and the ice are on time | 0.04 ms or less from each picture time                             |
-| Red     | The release and the ice are the loudest moments             | -6.5 LUFS and -6.9 LUFS over 0.1 s                                 |
-| Red     | The ice speaks of a large body                              | Sharp parts centre at 212 Hz; `weight` +10.7 dB                    |
-| Force   | A level step of 20 dB or more over the bed                  | 27.8 dB (-7.1 LUFS over -34.9 LUFS)                                |
-| Force   | Half the peak within 10 ms of the anchor                    | 0.10 ms                                                            |
-| Force   | No cue in the 0.5 s before the force                        | 0.6 dB over the bed; the held tone of the stare is the one sound   |
-| Force   | The force and the column contact are two events             | -18.5 LUFS between them, 10.9 dB or more below both                |
-| Force   | The column comes down and dies away                         | -9.4, -10.5, -13.7, -20.7, -26.3 LUFS each half second             |
-| Force   | The force and the column contact have no pitch              | Share of the energy in 3 lines 0.47 and 0.52                       |
-| Finale  | The eruption towers over the charge and the gap             | -5.8 LUFS over 0.1 s; 9.8 dB over the charge, 24.2 dB over the gap |
-| Finale  | The torrent starts at full level and holds                  | -6.8, -7.8, -7.5, -8.9 LUFS for each second                        |
-| Finale  | The whiteout is the climax, and the end is quick            | -7.1 LUFS; then -10.8, -16.3, -19.7, -23.2 dBFS each 0.25 s        |
-| Finale  | The torrent has no tone and no period                       | Tones 3 %, noise 89 %; deepest periodic line 5.3 %                 |
-| Finale  | The torrent moves as the original does                      | 50 ms blocks vary by 2.3, 1.5 and 2.7 dB (low, mid, top)           |
-| Finale  | The circle and the remnants stay under the spoken lines     | -30.6 LUFS and -29.4 LUFS                                          |
-| All     | Several layers are heard at once                            | Median 3 to 6 layers in 12 sections, 2 to 3 in the 4 quiet ones    |
-| All     | True peak                                                   | -2.00 dBTP                                                         |
+| Passage | Target                                                 | Measured                                                                              |
+| ------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| Red     | The stones are heard while they are pulled in and lock | -13.8 LUFS and -12.0 LUFS over 0.4 s; a median of 5 layers at once                    |
+| Red     | The burst is many rays that reach the walls            | 8 strikes on stone from 0.045 to 0.26 s after the burst; a median of 5 layers at once |
+| Red     | The release and the ice are the loudest moments        | -5.6 LUFS and -6.6 LUFS over 0.1 s                                                    |
+| Red     | Smoke and debris after the burst                       | -14.9 LUFS over 0.4 s, the level of the flight                                        |
+| Red     | No periodic modulation                                 | Depth of the strongest line 6.5 % in the flight                                       |
+| Red     | The events are on time                                 | 0.04 ms or less from each picture time; the smoke 0.7 ms                              |
+| Force   | A level step of 20 dB or more over the bed             | 28.0 dB (-7.2 LUFS over -35.2 LUFS)                                                   |
+| Force   | No cue in the 0.5 s before the force                   | 0.5 dB over the bed; the held tone of the stare is the one sound                      |
+| Force   | The slabs are heavy                                    | Below 60 Hz the collapse lies 6.4 dB under its 60 to 250 Hz (original 7.6 dB)         |
+| Force   | The dust is heard                                      | From 1 to 4 kHz the collapse lies 6.4 dB under its 60 to 250 Hz (original 4.4 dB)     |
+| Force   | The collapse and its dust die away                     | -8.1, -8.4, -9.6, -11.9, -17.1 LUFS each half second                                  |
+| Force   | The force and the column contact have no pitch         | Share of the energy in 3 lines 0.47 and 0.49                                          |
+| Finale  | The spell is not heard before it is cast               | Circle -39.1 LUFS, charge -30.9 LUFS; the hit is 22.7 dB over the charge              |
+| Finale  | The charge does what the light does                    | It starts at 176.86 s and then holds within 2.5 dB to 177.46 s                        |
+| Finale  | The shot, the hit and the pillar are three events      | Frames: -13.5 (shot), -10.3 (hit), -17.9 (black), -7.3 dBFS (pillar)                  |
+| Finale  | The sound moves in with the view                       | The energy above 1 kHz rises from -16.5 dB to -12.8 dB of the whole                   |
+| Finale  | The torrent holds, and the whiteout is the climax      | -6.4, -7.1, -7.0, -8.4 LUFS for each second; whiteout -6.9 LUFS                       |
+| Finale  | The torrent has no tone and no period                  | Tones 4 %, noise 89 %; deepest periodic line 4.5 %                                    |
+| All     | Several layers are heard at once                       | Median 3 to 6 layers in 18 sections, 0 to 2 in the 4 others                           |
+| All     | True peak                                              | -2.00 dBTP                                                                            |
 
-Integrated loudness: red -12.7 LUFS, force -12.7 LUFS, finale -8.1 LUFS. The limiter goes 2.3, 2.2 and 8.3 dB
-deep and works 7.8 %, 1.9 % and 27.7 % of the time. Every level of red and force is about 6 dB over round 5
-because of the drive; their sounds did not change.
+Integrated loudness: red -13.1 LUFS, force -10.9 LUFS, finale -7.7 LUFS. The limiter goes 4.3, 2.2 and 10.2 dB
+deep and works 7.4 %, 5.9 % and 31.6 % of the time.
 
 The share of energy in 3 lines does not fall below about 0.5 for a short low burst, because a window of
 0.12 s holds few lines below 300 Hz. The measure separates round 1 from the later rounds. It is no proof that
@@ -371,12 +410,12 @@ python3 docs/studies/frieren-perceptual/scripts/reference.py <reference.wav> <ou
 ```
 
 Python 3.13.18 and numpy 2.5.3 gave the files above on 2026-11-10; the preview clips the owner received for
-round 6 hold those files as AAC at 256 kbit/s. `render.py` writes a 24-bit WAV, the samples and the layers of each passage. `spectro.py`
+round 7 hold those files as AAC at 256 kbit/s. `render.py` writes a 24-bit WAV, the samples and the layers of each passage. `spectro.py`
 writes a spectrogram picture of each. `sheet.sh` and `mux.py` need `ffmpeg` and the reference video.
 
 ## What is not verified
 
-- Nobody has listened to round 6. The receipt proves signal properties. It does not prove that the
+- Nobody has listened to round 7. The receipt proves signal properties. It does not prove that the
   stone sounds like stone or that the surprise works. Round 1 met every target of its receipt and still
   sounded like a helicopter, a drum and water. Round 3 met every target of its receipt and still sounded flat.
   Round 4 met every target of its receipt and still sounded like glass marbles.
@@ -420,3 +459,8 @@ The study used these things, and the plan format of experiment 8 does not have t
     no reference, and the fourth listening review named the gap to it.
 12. A master bus with dynamics. With a peak ceiling and no limiter the peaks set the level and every body is
     thin: the crest of the beam was 13 dB where the original has 4 to 7 dB.
+13. An event list from the picture at the frame rate. The fifth listening review named six events that the
+    plan had no sound for; each was plain in the frames at 24 a second and missing at 4 a second. A plan that
+    is checked against such a list would have shown the gaps before a render.
+14. Steps of level that survive the master. A limiter that makes the sound dense also makes a shot, a hit and
+    a pillar one level. The plan needs a way to say which steps must stay.

@@ -15,14 +15,14 @@ out = sys.argv[1]
 names = sys.argv[2:] or ['red', 'force', 'finale']
 CUES = {
     'red': dict(t0=20.0, cues=[('flight with the orb', 20.2, 21.0, 'm'), ('spark hit 1', 21.12, 21.3, 'i'), ('spark hit 2', 21.80, 21.97, 'i'), ('rock bursts near', 21.98, 22.25, 'i'),
-                               ('flame, close', 22.33, 22.76, 'm'), ('wide, orb far', 23.1, 23.7, 'm'), ('cracks spread, close', 23.85, 24.6, 'm'), ('shell, wide', 24.8, 25.68, 'm'),
-                               ('shell fracture', 25.69, 25.77, 'i'), ('release', 25.775, 26.1, 'i'), ('ice burst', 26.276, 26.6, 'i'), ('ice stands', 26.9, 27.8, 'm'),
-                               ('dust cloud', 28.6, 29.9, 'm'), ('wind in hair', 30.4, 32.0, 'm')]),
+                               ('flame, close', 22.33, 22.76, 'm'), ('stones are pulled in, wide', 23.1, 23.75, 'm'), ('plates lock, close', 23.83, 24.4, 'm'), ('plates hold, close', 24.42, 24.75, 'm'), ('sphere, wide', 24.8, 25.68, 'm'),
+                               ('shell fracture', 25.69, 25.77, 'i'), ('release', 25.775, 26.1, 'i'), ('rays and walls', 25.82, 26.26, 'm'), ('ice burst', 26.276, 26.6, 'i'), ('ice stands', 26.9, 27.8, 'm'),
+                               ('smoke and debris', 28.6, 30.1, 'm'), ('wind in hair', 30.4, 32.0, 'm')]),
     'force': dict(t0=136.5, cues=[('shield residue', 136.5, 136.9, 'i'), ('bed under the lines', 137.2, 138.3, 'm'), ('handling', 138.4, 138.9, 'i'),
                                   ('last two seconds before the force', 143.1, 145.1, 'm'), ('force', 145.18, 145.3, 'i'), ('ring and dust', 145.3, 145.75, 'i'),
-                                  ('column', 145.93, 146.08, 'i'), ('collapse', 146.4, 147.6, 'm'), ('fog', 147.8, 148.4, 'm'), ('pinned in the wall', 148.5, 149.6, 'm'), ('tail end', 151.2, 152.2, 'm')]),
-    'finale': dict(t0=173.0, cues=[('bed', 173.1, 173.6, 'm'), ('staff swing', 173.72, 174.4, 'i'), ('circle under the line', 175.0, 176.1, 'm'), ('charge', 176.86, 177.45, 'i'),
-                                   ('gap before the eruption', 177.48, 177.62, 'i'), ('eruption', 177.636, 177.8, 'i'), ('torrent first second', 177.9, 178.9, 'm'), ('torrent third second', 179.9, 180.9, 'm'),
+                                  ('column', 145.93, 146.08, 'i'), ('plume', 146.03, 146.4, 'm'), ('collapse', 146.4, 147.6, 'm'), ('fog', 147.8, 148.4, 'm'), ('pinned in the wall', 148.5, 149.6, 'm'), ('tail end', 151.2, 152.2, 'm')]),
+    'finale': dict(t0=173.0, cues=[('bed', 173.1, 173.6, 'm'), ('staff swing', 173.72, 174.4, 'i'), ('circle under the line', 175.0, 176.8, 'm'), ('charge', 176.9, 177.46, 'm'),
+                                   ('shot', 177.5105, 177.552, 'i'), ('hit', 177.552, 177.72, 'i'), ('pillar, wide', 177.8, 178.1, 'm'), ('torrent, close', 178.15, 179.15, 'm'), ('torrent third second', 179.9, 180.9, 'm'),
                                    ('torrent last second', 180.8, 181.76, 'm'), ('whiteout middle', 182.5, 183.0, 'm'), ('dissolution start', 183.8, 184.4, 'm'), ('dissolution end', 185.0, 185.45, 'm'),
                                    ('last shot under the line', 186.5, 188.2, 'm'), ('fade', 188.8, 189.3, 'm')]),
 }
@@ -62,11 +62,18 @@ for name in names:
         print('  release onset: %.1f dB below the peak after 1 ms, half the peak after %.2f ms; band shares (0.3 s) %s; phone band L100 %.1f' % (o[0], o[1], [round(v, 1) for v in A.bands_share(x, r0, r0 + 0.3)], A.lw(ph, r0, r0 + 0.3, 0.1)))
         print('  the three views of the orb: flight %.1f, close %.1f, far %.1f LUFS' % (A.lw(x, 0.2, 1.0, 0.4), A.lw(x, 2.33, 2.76, 0.4), A.lw(x, 3.1, 3.7, 0.4)))
     if name == 'finale':
-        er = 177.635792 - t0
+        er = 177.552375 - t0
+        fi = 177.510542 - t0
         ph = A.phone(x)
         o = A.onset(x, er)
-        print('  eruption onset: %.1f dB below the peak after 1 ms, half the peak after %.2f ms; L100 %.1f; step over the gap before it %.1f dB' % (o[0], o[1], A.lw(x, er, er + 0.16, 0.1), A.lw(x, er, er + 0.16, 0.1) - A.lw(x, er - 0.15, er - 0.01, 0.1)))
-        print('  the first two white frames (177.552 to 177.636 s): %.1f LUFS over 50 ms at the most' % A.lw(x, 177.552375 - t0, er - 0.002, 0.05))
+        print('  hit onset: %.1f dB below the peak after 1 ms, half the peak after %.2f ms; L100 %.1f' % (o[0], o[1], A.lw(x, er, er + 0.16, 0.1)))
+        print('  stealth: the circle %.1f LUFS and the charge %.1f LUFS; the hit is %.1f dB over the charge; the frame before the shot %.1f dBFS' % (
+            A.lavg(x, 174.9 - t0, 176.8 - t0), A.lavg(x, 176.9 - t0, 177.46 - t0), A.lw(x, er, er + 0.16, 0.1) - A.lavg(x, 176.9 - t0, 177.46 - t0),
+            float(10 * np.log10((x[nsamp(177.472 - t0): nsamp(177.507 - t0)] ** 2).mean() + 1e-12))))
+        print('  the charge follows the light: level each 0.1 s from 176.76 (dBFS):', [round(float(10 * np.log10((x[nsamp(a - t0): nsamp(a + 0.1 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(176.76, 177.46, 0.1)])
+        print('  shot, hit, pillar: level each frame from 177.469 (dBFS):', [round(float(10 * np.log10((x[nsamp(a - t0): nsamp(a + 1001 / 24000 - t0)] ** 2).mean() + 1e-12)), 1) for a in 177.468833 + np.arange(16) * 1001 / 24000])
+        print('  the view moves in from 177.80 to 178.12: share of the energy above 1 kHz %.1f dB at 177.80 to 177.95, %.1f dB at 178.15 to 178.6' % (
+            10 * np.log10(sum(10 ** (v / 10) for v in A.bands_share(x, 177.80 - t0, 177.95 - t0)[3:]) + 1e-12), 10 * np.log10(sum(10 ** (v / 10) for v in A.bands_share(x, 178.15 - t0, 178.6 - t0)[3:]) + 1e-12)))
         print('  torrent, loudness of each second from 177.8, then the whiteout:', [round(A.lavg(x, a - t0, a + 1 - t0), 1) for a in (177.8, 178.8, 179.8, 180.76)], round(A.lavg(x, 181.76 - t0, 183.6 - t0), 1))
         print('  torrent, level each 0.25 s from 183.5 (dBFS):', [round(float(10 * np.log10((x[nsamp(a - t0): nsamp(a + 0.25 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(183.5, 185.5, 0.25)])
         seg = x[nsamp(178.0 - t0): nsamp(181.5 - t0)]
@@ -74,22 +81,26 @@ for name in names:
             (20 * np.log10(np.abs(seg).max() / np.sqrt((seg ** 2).mean())), float(np.corrcoef(seg[:, 0], seg[:, 1])[0, 1])) + tuple(100 * v for v in A.variety(x, 178.0 - t0, 181.5 - t0)) + (100 * A.mod_depth(x, 178.0 - t0, 181.5 - t0)[0], A.mod_depth(x, 178.0 - t0, 181.5 - t0)[1])))
         print('  torrent, third-octave levels against the strongest band, 25 Hz to 12.7 kHz:', [round(float(v), 1) for v in A.third_octaves(x, 178.0 - t0, 181.5 - t0)])
         print('  torrent, the level of 50 ms blocks varies by %.1f dB below 120 Hz, %.1f dB from 200 to 1000 Hz, %.1f dB from 2 to 8 kHz' % A.flutter(x, 178.0 - t0, 181.5 - t0))
-        print('  torrent band shares:', [round(v, 1) for v in A.bands_share(x, 178.5 - t0, 181.5 - t0)], ' phone band torrent %.1f, eruption %.1f' % (A.lavg(ph, 178.5 - t0, 181.5 - t0), A.lw(ph, er, er + 0.16, 0.1)))
+        print('  torrent band shares:', [round(v, 1) for v in A.bands_share(x, 178.5 - t0, 181.5 - t0)], ' phone band torrent %.1f, hit %.1f' % (A.lavg(ph, 178.5 - t0, 181.5 - t0), A.lw(ph, er, er + 0.16, 0.1)))
     # --- is each detail audible against everything else? (ERB bands where it is at least as strong)
     L = np.load('%s/%s-layers.npz' % (out, name))
     g = dsp.lin(meta['master_gain_db'])
     mixsum = sum(L[k].astype(float) for k in L.files)
     checks = {'red': [('orb-flight', 20.2, 22.2), ('orb-voice', 20.2, 22.2), ('orb-sparks0', 20.2, 22.2), ('rock-pass6', 21.55, 21.75), ('spark-hit1', 21.12, 21.2), ('spark-hit2', 21.80, 21.9),
-                      ('flame-close', 22.33, 22.76), ('orb-voice-close', 22.33, 22.76), ('flame-cracks', 22.33, 22.76), ('crack-spread', 23.85, 24.6), ('crack-tone', 23.85, 24.6),
-                      ('shell', 24.8, 25.68), ('shell-tone', 24.8, 25.68), ('shell-strain', 25.2, 25.69), ('shell-fracture', 25.692, 25.76), ('release-fall', 25.8, 26.2), ('release-slap', 26.02, 26.2),
+                      ('flame-close', 22.33, 22.76), ('orb-voice-close', 22.33, 22.76), ('flame-cracks', 22.33, 22.76), ('clump-c', 23.1, 23.77), ('clump-l', 23.1, 23.77), ('pull1', 23.17, 23.43), ('clump-grind', 23.3, 23.77),
+                      ('lock2', 24.09, 24.3), ('lock-grind', 23.85, 24.4), ('crack-spread', 23.85, 24.6), ('crack-tone', 23.85, 24.6),
+                      ('shell', 24.8, 25.68), ('shell-tone', 24.8, 25.68), ('shell-strain', 25.2, 25.69), ('shell-fracture', 25.692, 25.76), ('release-fall', 25.8, 26.2), ('release-slap', 26.02, 26.2), ('ray-hit0', 25.82, 26.0), ('ray-hit4', 25.92, 26.1), ('ray-sear1', 25.84, 26.25), ('ray-debris0', 25.98, 26.4),
                       ('shell-groan1', 25.28, 25.64), ('ice-boom', 26.28, 26.6), ('ice-crack', 26.28, 26.5), ('ice-slab3', 26.445, 26.7), ('ice-crush0', 26.29, 26.6), ('ice-groan1', 26.78, 27.28), ('ice-tick0', 26.93, 27.15),
-                      ('ice-mist', 27.0, 28.3), ('hair-cloth', 30.4, 32.0), ('wind-tone', 30.6, 32.0)],
+                      ('ice-mist', 27.0, 28.3), ('wall-debris0', 26.9, 28.4), ('smoke', 28.6, 30.1), ('smoke-hiss', 28.6, 30.1), ('debris-rain0', 28.6, 30.1), ('chunk1', 29.17, 29.6), ('streak1', 28.95, 29.25),
+                      ('hair-cloth', 30.4, 32.0), ('wind-tone', 30.6, 32.0)],
               'force': [('shield-residue', 136.5, 136.9), ('settle0', 137.05, 137.4), ('handling', 138.4, 138.85), ('far-thump0', 138.95, 139.3), ('stare', 143.3, 145.1),
                         ('floor-crack', 145.2, 145.6), ('shock-ring', 145.3, 145.7), ('grit0', 145.27, 145.6), ('force-slap0', 145.34, 145.6), ('travel-air', 145.3, 145.75),
-                        ('column-crack', 145.967, 146.02), ('staff-snap', 145.95, 146.1), ('column-cracks', 146.03, 146.7), ('staff-piece1', 146.61, 146.9), ('collapse1', 146.4, 147.6),
+                        ('column-crack', 145.967, 146.02), ('staff-snap', 145.95, 146.1), ('plume', 146.03, 146.5), ('column-cracks', 146.03, 146.7), ('staff-piece1', 146.61, 146.9), ('collapse1', 146.4, 147.6),
+                        ('slab2', 146.93, 147.3), ('slab4', 147.31, 147.6), ('clatter0', 146.5, 147.7), ('dust-hiss', 146.4, 148.4), ('dust-billow', 146.4, 148.4), ('fog-patter', 147.8, 148.5),
                         ('collapse-gravel', 146.5, 147.6), ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('wall-groan', 148.88, 149.3), ('splinters', 148.85, 149.7)],
-              'finale': [('staff-swing', 173.8, 174.3), ('circle', 175.0, 176.7), ('circle-low', 175.0, 176.7), ('tip-sparks', 176.2, 176.84), ('ignite', 176.84, 177.0), ('draw', 177.0, 177.45),
-                         ('gather-low', 177.1, 177.45), ('gather', 177.1, 177.45), ('blast', 177.64, 177.8), ('blast-wall', 177.64, 177.8), ('blast-crack', 177.64, 177.8),
+              'finale': [('staff-swing', 173.8, 174.3), ('circle', 175.0, 176.7), ('charge', 177.05, 177.46), ('charge-air', 177.05, 177.46), ('fire', 177.51, 177.55),
+                         ('blast', 177.552, 177.7), ('blast-wall', 177.552, 177.7), ('floor-break1', 177.64, 177.8), ('wall-hit0', 177.68, 177.85), ('vault-hit', 177.83, 178.0), ('floor-ring', 177.9, 178.2),
+                         ('flare', 178.19, 178.3), ('rip2', 178.31, 178.5), ('vault-debris0', 178.55, 178.9),
                          ('beam-rumble', 178.2, 181.0), ('beam-body', 178.2, 181.0), ('beam-tear', 178.2, 181.0), ('beam-sear', 178.2, 181.0), ('beam-howl', 178.2, 181.0),
                          ('beam-crackle0', 178.2, 181.0), ('blocks0', 178.2, 181.0), ('ring2', 179.25, 179.6), ('strain', 180.14, 180.3),
                          ('dissolve-breath', 183.8, 185.0), ('dissolve-threads', 183.9, 185.0), ('dissolve-tone', 183.9, 185.0), ('remnants', 185.9, 187.5), ('rest', 186.6, 188.3)]}[name]
@@ -101,8 +112,8 @@ for name in names:
         c0 = 145.967458 - t0
         print('  column crack, first 20 ms band shares:', [round(v, 1) for v in A.bands_share(x, c0, c0 + 0.02)])
     # --- sync: the first sample of each anchored layer against its anchor
-    anchors = {'red': [('spark-hit1', 21.12), ('spark-hit2', 21.80), ('shell-fracture', 25.692333), ('release', 25.77575), ('ice-crack', 26.27625)], 'force': [('force', 145.186708), ('column-thud', 145.937458), ('column-crack', 145.967458)],
-               'finale': [('ignite', 176.84), ('blast', 177.635792), ('beam-body', 177.635792), ('dissolve-breath', 183.766917), ('staff-swing', 173.72)]}[name]
+    anchors = {'red': [('spark-hit1', 21.12), ('spark-hit2', 21.80), ('lock0', 23.83), ('shell-fracture', 25.692333), ('release', 25.77575), ('ray-hit0', 25.82075), ('ice-crack', 26.27625), ('smoke', 28.53)], 'force': [('force', 145.186708), ('column-thud', 145.937458), ('column-crack', 145.967458), ('slab0', 146.47)],
+               'finale': [('ignite', 176.86), ('fire', 177.510542), ('blast', 177.552375), ('beam-body', 177.552375), ('vault-hit', 177.832625), ('dissolve-breath', 183.766917), ('staff-swing', 173.72)]}[name]
     for k, ta in anchors:
         e = np.abs(L[k].astype(float)).max(axis=1)
         first = int(np.argmax(e > e.max() * 1e-3))
@@ -121,9 +132,9 @@ for name in names:
     if name == 'finale':
         print('  dissolution 183.8 to 185.7 s: strongest-line share of 400 to 4000 Hz %.2f (white noise 0.12), share of the energy in that band %.2f, the strongest line jumps in %.2f of the frames' % A.blip_share(x, 183.8 - t0, 185.7 - t0))
     # --- one sound or several (the second listening review: flat, one sound at a time)
-    SPANS = {'red': [('flight', 20.0, 22.3), ('close, whip, far', 22.3, 23.8), ('cracks and shell', 23.8, 25.69), ('release and defence', 25.69, 27.0), ('aftermath', 27.0, 30.0), ('wind', 30.25, 32.3)],
-             'force': [('before the force', 136.6, 145.1), ('force and flight', 145.19, 145.93), ('column and collapse', 145.94, 147.75), ('fog and wall', 147.75, 149.65)],
-             'finale': [('before the circle', 173.0, 174.46), ('circle and charge', 174.46, 177.46), ('eruption and torrent', 177.64, 181.76), ('whiteout', 181.76, 183.76), ('dissolution', 183.77, 185.45), ('last shot', 185.5, 188.3)]}[name]
+    SPANS = {'red': [('flight', 20.0, 22.3), ('close and whip', 22.3, 23.05), ('stones pulled in', 23.06, 23.78), ('plates lock', 23.8, 24.77), ('sphere', 24.8, 25.69), ('burst and rays', 25.77, 26.27), ('ice', 26.28, 28.45), ('smoke', 28.53, 30.2), ('wind', 30.25, 32.3)],
+             'force': [('before the force', 136.6, 145.1), ('force and flight', 145.19, 145.93), ('column and plume', 145.94, 146.4), ('collapse', 146.4, 147.75), ('fog', 147.78, 148.45), ('wall', 148.5, 149.65)],
+             'finale': [('before the circle', 173.0, 174.46), ('circle and charge', 174.46, 177.46), ('shot, hit and pillar', 177.51, 178.12), ('torrent', 178.12, 181.76), ('whiteout', 181.76, 183.76), ('dissolution', 183.77, 185.45), ('last shot', 185.5, 188.3)]}[name]
     LL = {k: L[k] for k in L.files}
     ts, cnt, full, heard = A.streams(LL, g)
     for lab, a, b in SPANS:
@@ -133,9 +144,9 @@ for name in names:
         print('  layers  %-24s loudest layer %5.1f dB under the sum, %2d within 6 dB of it; heard at once: median %d, three or more %3.0f %% of the time; tones %2.0f %%, transients %2.0f %%, noise %2.0f %%' % (
             lab, lead, near, np.median(cnt[sel]), 100 * (cnt[sel] >= 3).mean(), 100 * v[0], 100 * v[1], 100 * v[2]))
     # --- the size of things (the third listening review: glass marbles, too light)
-    SIZES = {'red': [('flight', 20.0, 22.3), ('cracks and shell', 23.8, 25.69), ('release', 25.77, 26.25), ('ice burst', 26.28, 26.7), ('ice stands', 26.7, 28.4)],
+    SIZES = {'red': [('flight', 20.0, 22.3), ('stones pulled in', 23.06, 23.78), ('plates lock', 23.8, 24.77), ('burst and rays', 25.77, 26.27), ('ice burst', 26.28, 26.7), ('ice stands', 26.7, 28.4), ('smoke', 28.53, 30.2)],
              'force': [('before the force', 136.6, 145.1), ('force', 145.19, 145.6), ('column', 145.94, 146.3), ('collapse', 146.3, 147.75), ('fog and wall', 147.75, 149.65)],
-             'finale': [('circle and charge', 174.46, 177.46), ('eruption', 177.64, 177.8), ('torrent', 177.9, 181.7), ('whiteout', 181.76, 183.6), ('dissolution', 183.77, 185.45)]}[name]
+             'finale': [('circle and charge', 174.46, 177.46), ('hit', 177.552, 177.8), ('torrent', 177.9, 181.7), ('whiteout', 181.76, 183.6), ('dissolution', 183.77, 185.45)]}[name]
     for lab, a, b in SIZES:
         fc, rad, share = A.size_cue(x, a - t0, b - t0)
         print('  size  %-24s sharp and pitched parts centre at %5.0f Hz (ka = 1 of a body of %5.1f cm); %4.1f %% of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz %+5.1f dB; band shares %s' % (

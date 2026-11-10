@@ -533,3 +533,112 @@ def howl(dur, seed, centres, q=7.0, wander=0.05, rate=1.5):
         ph = 2 * np.pi * np.cumsum(fc * 2 ** (wander * np.clip(w, -2.5, 2.5))) / SR
         y += (ab[0] * np.cos(ph) - ab[1] * np.sin(ph)) / (ab[0].std() + 1e-12) / (i + 1) ** 0.5
     return norm(y)
+
+
+# ================================================================ round 7: every event of the picture has its sound
+# The owner named what the picture shows and the sound left out: heavy stones that are pulled together and
+# lock, an explosion of many rays that reach the walls, smoke and debris after it, slabs of a wall that fall
+# and their dust, a charge that must be quiet, and a firing that is a shot, a hit and three changes of view.
+
+def puff(dur, seed, lo=150.0, hi=5000.0, rise=0.04, tau=0.5, tilt=0.5):
+    """Dust that is thrown out: a wide burst of noise with a soft rise and a long fall. Returns (n, 2)."""
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+    e = np.exp(-t / tau)
+    k = max(2, nsamp(rise))
+    e[:k] *= (0.5 - 0.5 * np.cos(np.pi * (np.arange(k) + 0.5) / k))
+    ch = [dsp.spectral(dsp.white(n, seed + c), lambda f: dsp.band_gain(f, lo, hi, 2) * (lo / np.maximum(f, lo)) ** tilt) for c in range(2)]
+    y = np.stack(ch, axis=1) * e[:, None]
+    return y / (np.abs(y).max() + 1e-12)
+
+
+def dust(dur, seed, lo=1500.0, hi=10000.0, sd=2.0, grain=0.35, tilt=0.3):
+    """Dust and grit that hang and fall: a hiss whose level wanders, with a fine grain of tiny impacts in it.
+    Returns (n, 2); the two sides share nothing, as a cloud around the listener."""
+    n = nsamp(dur)
+    ch = []
+    for c in range(2):
+        x = dsp.spectral(dsp.white(n, seed + c), lambda f: dsp.band_gain(f, lo, hi, 2) * (lo / np.maximum(f, lo)) ** tilt)
+        x = x / np.sqrt((x ** 2).mean()) * level_walk(n, seed + 10 + c, sd, 0.4, 7.0)
+        g = sand(dur, seed + 20 + c, rate0=1800.0, tau=dur * 4, f_lo=2500.0, f_hi=9000.0)
+        ch.append(x + 2.0 * g[:n] / (np.sqrt((g[:n] ** 2).mean()) + 1e-12) * grain)
+    return np.stack(ch, axis=1)
+
+
+def billow(dur, seed, lo=70.0, hi=700.0, sd=3.0):
+    """A cloud of smoke or dust that rolls: low noise in slow, irregular surges. Returns (n, 2)."""
+    n = nsamp(dur)
+    ch = []
+    for c in range(2):
+        x = dsp.spectral(dsp.white(n, seed + c), lambda f: dsp.band_gain(f, lo, hi, 2) * (lo / np.maximum(f, lo)) ** 0.5)
+        ch.append(x / np.sqrt((x ** 2).mean()) * level_walk(n, seed + 10 + c, sd, 0.3, 3.0))
+    return np.stack(ch, axis=1)
+
+
+def slab_fall(seed, size=1.0):
+    """A slab of stone that lands: the floor answers with a deep thud of noise under 100 Hz that lasts, the
+    slab cracks, and small pieces scatter after it."""
+    hc = heavy_crack(seed, size=size, dur=0.35, k_rate=6, bright=0.7)
+    thud = burst(seed + 5, 26.0, 95.0, 0.18 + 0.1 * min(size, 2.0), rise=0.006)
+    sc = tumble(0.7, seed + 7, lambda t: 16.0 * np.exp(-t / 0.22), sizes=(0.05, 0.15), speed=(2.0, 5.0))
+    y = np.zeros(max(len(hc), len(thud), len(sc)))
+    y[: len(hc)] += hc
+    y[: len(thud)] += 1.1 * thud
+    y[: len(sc)] += 0.3 * norm(sc)
+    return norm(y)
+
+
+def block_hit(seed, size=0.6, v=8.0):
+    """A block of stone that strikes another: the clack and thud of its size, and the crack of both."""
+    r = dsp.rng(seed)
+    k = norm(stone_impact(size, v, r))
+    c = heavy_crack(seed + 3, size=size, dur=0.2, k_rate=3, bright=0.5)
+    y = np.zeros(max(len(k), len(c)))
+    y[: len(k)] += k
+    y[: len(c)] += 0.8 * c
+    return norm(y)
+
+
+def grind(dur, seed, r_lo=60.0, r_hi=200.0, res=(90.0, 210.0, 480.0), jitter=0.6, scrape=1.2):
+    """Stone that grinds on stone: stick and slip. The slips come 60 to 200 times a second with a jitter of
+    60 %, so there is no period and no rattle; each is a short burst of noise through wide low resonances. A
+    scrape of noise lies over them and follows their level."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    path = r_lo * (r_hi / r_lo) ** (0.5 + 0.5 * irregular(n, seed + 1, 0.7, 5.0))
+    y = np.zeros(n + nsamp(0.1))
+    L = nsamp(0.004)
+    t = r.uniform(0, 0.02)
+    while t < dur:
+        i = min(n - 1, nsamp(t))
+        y[i: i + L] += r.standard_normal(L)[: len(y) - i] * r.uniform(0.3, 1.0)
+        t += (1.0 / path[i]) * (1 + jitter * r.uniform(-1, 1))
+    low = sum(dsp.bp(y, f, 2.0) / (k + 1) ** 0.5 for k, f in enumerate(res))
+    env = dsp.smooth(np.abs(low), 0.03)
+    sc = dsp.spectral(dsp.white(len(y), seed + 2), lambda f: dsp.band_gain(f, 500.0, 4000.0, 2) * (500.0 / np.maximum(f, 500.0)) ** 0.5)
+    out = norm(low) + scrape * norm(sc * env)
+    return norm(dsp.fade(out, 0.03, 0.08))
+
+
+def lance(seed, dur=0.09, f0=6000.0, f1=700.0):
+    """A ray that leaves its source: a short tear whose band falls fast. Returns (n, 2)."""
+    return band_sweep(dur, seed, f0, f1, width_oct=1.3, attack=0.12, wide=True)
+
+
+def sear(dur, seed, lo=900.0, hi=6000.0, sd=4.0):
+    """A ray that is held: noise in a band whose level moves fast and with no period."""
+    n = nsamp(dur)
+    x = dsp.spectral(dsp.white(n, seed), lambda f: dsp.band_gain(f, lo, hi, 2) * (lo / np.maximum(f, lo)) ** 0.6)
+    return norm(x / np.sqrt((x ** 2).mean()) * level_walk(n, seed + 1, sd, 3.0, 30.0))
+
+
+def shot(seed):
+    """The discharge of a staff: a dry crack, a short low pop, and a tear that falls. No ring."""
+    crack = tilted_burst(seed, 800.0, 9000.0, 0.006, tilt=0.4)
+    pop = burst(seed + 1, 80.0, 320.0, 0.02, rise=0.001)
+    zap = band_sweep(0.07, seed + 2, 7000.0, 900.0, width_oct=1.2, attack=0.1)
+    y = np.zeros(max(len(crack), len(pop), len(zap)))
+    y[: len(crack)] += crack
+    y[: len(pop)] += 0.7 * pop
+    y[: len(zap)] += 0.6 * norm(zap)
+    return norm(y)
