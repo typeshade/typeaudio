@@ -1,0 +1,454 @@
+{
+  "experiment": "09-force-passage",
+  "date": "2026-11-10T09:17:21.174Z",
+  "commit": "60408fafbaa517b6e69054bede32a6cadcd3855b",
+  "dirty": true,
+  "buildInfo": {
+    "version": "0.1.0",
+    "revision": null
+  },
+  "machine": {
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 4,
+    "os": "linux 6.18.44-fc-v338",
+    "bun": "1.4.4"
+  },
+  "options": {
+    "tier": "cpu",
+    "blocks": 470,
+    "stems": true
+  },
+  "files": [
+    "mix-cpu.wav",
+    "wet-cpu.wav",
+    "stem-dialogue-cpu.wav",
+    "stem-foley-cpu.wav",
+    "stem-effects-cpu.wav",
+    "stem-ambience-cpu.wav",
+    "stem-music-cpu.wav"
+  ],
+  "tier": "cpu",
+  "requested": "cpu",
+  "info": {
+    "build": {
+      "version": "0.1.0",
+      "revision": null
+    },
+    "tier": "cpu",
+    "webgpu": null,
+    "webgl": null,
+    "subgroups": null
+  },
+  "frames": 481280,
+  "sampleRate": 48000,
+  "timing": {
+    "blocks": 470,
+    "budgetMs": 21.333333333333332,
+    "ms": {
+      "median": 1435.9316049999907,
+      "p95": 1687.9847810000065,
+      "min": 1194.0830850000493,
+      "max": 2051.589129000029,
+      "mean": 1453.0109501449874
+    },
+    "firstMs": 1507.6014959999993,
+    "over": 469,
+    "realTime": 0.014680982365391455
+  },
+  "hostMs": 697747.978708,
+  "reverbPrepareMs": 13920.269085,
+  "master": {
+    "lufsBefore": -23.498554811797927,
+    "normalizeDb": 10.498554811797927,
+    "limiterMinDb": -3.928813404998798
+  },
+  "placed": [
+    {
+      "id": "hall-air-1",
+      "start": 0,
+      "end": 408960
+    },
+    {
+      "id": "shield-residue",
+      "start": 0,
+      "end": 76800
+    },
+    {
+      "id": "settle-1",
+      "start": 26400,
+      "end": 93600
+    },
+    {
+      "id": "handling-1",
+      "start": 91200,
+      "end": 102328
+    },
+    {
+      "id": "far-thump-1",
+      "start": 117600,
+      "end": 171864
+    },
+    {
+      "id": "settle-2",
+      "start": 139200,
+      "end": 206400
+    },
+    {
+      "id": "handling-2",
+      "start": 204000,
+      "end": 218170
+    },
+    {
+      "id": "settle-3",
+      "start": 230400,
+      "end": 297600
+    },
+    {
+      "id": "far-thump-2",
+      "start": 242400,
+      "end": 296914
+    },
+    {
+      "id": "stare",
+      "start": 288000,
+      "end": 408960
+    },
+    {
+      "id": "strike",
+      "start": 416962,
+      "end": 450996
+    },
+    {
+      "id": "hall-air-2",
+      "start": 416962,
+      "end": 450802
+    },
+    {
+      "id": "blast",
+      "start": 420966,
+      "end": 450996
+    },
+    {
+      "id": "blast-roar-l",
+      "start": 420966,
+      "end": 444966
+    },
+    {
+      "id": "blast-roar-r",
+      "start": 420966,
+      "end": 444966
+    },
+    {
+      "id": "ring",
+      "start": 424806,
+      "end": 444006
+    },
+    {
+      "id": "rush",
+      "start": 444660,
+      "end": 450900
+    },
+    {
+      "id": "wall-hit",
+      "start": 452998,
+      "end": 548299
+    },
+    {
+      "id": "wall-stone",
+      "start": 452998,
+      "end": 510598
+    },
+    {
+      "id": "hall-air-3",
+      "start": 452998,
+      "end": 750598
+    },
+    {
+      "id": "dust-burst",
+      "start": 452998,
+      "end": 472198
+    },
+    {
+      "id": "crack-run",
+      "start": 460800,
+      "end": 526560
+    },
+    {
+      "id": "split-1",
+      "start": 465120,
+      "end": 517920
+    },
+    {
+      "id": "split-2",
+      "start": 473280,
+      "end": 526080
+    },
+    {
+      "id": "break",
+      "start": 479024,
+      "end": 622663
+    },
+    {
+      "id": "break-stone",
+      "start": 479024,
+      "end": 546224
+    },
+    {
+      "id": "crumble",
+      "start": 482864,
+      "end": 589088
+    },
+    {
+      "id": "block-1",
+      "start": 485760,
+      "end": 543360
+    },
+    {
+      "id": "block-2",
+      "start": 495840,
+      "end": 553440
+    },
+    {
+      "id": "block-3",
+      "start": 509760,
+      "end": 567360
+    },
+    {
+      "id": "block-4",
+      "start": 525120,
+      "end": 582720
+    },
+    {
+      "id": "dust",
+      "start": 526686,
+      "end": 651486
+    },
+    {
+      "id": "far-land-1",
+      "start": 548160,
+      "end": 719339
+    },
+    {
+      "id": "far-rubble",
+      "start": 549600,
+      "end": 650400
+    },
+    {
+      "id": "far-land-2",
+      "start": 564960,
+      "end": 691754
+    },
+    {
+      "id": "trickle",
+      "start": 578400,
+      "end": 703200
+    },
+    {
+      "id": "tick",
+      "start": 612000,
+      "end": 664800
+    }
+  ],
+  "groups": [
+    {
+      "calls": "whooshes",
+      "tier": "cpu"
+    },
+    {
+      "calls": "impacts",
+      "tier": "cpu"
+    },
+    {
+      "calls": "winds",
+      "tier": "cpu"
+    },
+    {
+      "calls": "drones",
+      "tier": "cpu"
+    },
+    {
+      "calls": "cloths",
+      "tier": "cpu"
+    },
+    {
+      "calls": "cracks",
+      "tier": "cpu"
+    },
+    {
+      "calls": "booms",
+      "tier": "cpu"
+    },
+    {
+      "calls": "rubbles",
+      "tier": "cpu"
+    },
+    {
+      "calls": "roars",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "gather",
+      "tier": "cpu"
+    },
+    {
+      "calls": "history",
+      "tier": "cpu"
+    },
+    {
+      "calls": "place",
+      "tier": "cpu"
+    },
+    {
+      "calls": "layers",
+      "tier": "cpu"
+    },
+    {
+      "calls": "strips",
+      "tier": "cpu"
+    },
+    {
+      "calls": "sendSum",
+      "tier": "cpu"
+    },
+    {
+      "calls": "pad",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "store",
+      "tier": "cpu"
+    },
+    {
+      "calls": "accumulate2",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "fftStage",
+      "tier": "cpu"
+    },
+    {
+      "calls": "overlap2",
+      "tier": "cpu"
+    },
+    {
+      "calls": "pack",
+      "tier": "cpu"
+    }
+  ]
+}

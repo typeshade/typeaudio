@@ -73,6 +73,17 @@ export interface PlanPicture {
   motion: number[];
 }
 
+/**
+ * A silence: from `t`, for `duration` seconds, the mix is silent, the reverb's return too. It is a
+ * cut: an event that sounds when the silence starts ends there and does not come back after it.
+ */
+export interface PlanSilence {
+  /** The start in seconds. */
+  t: number;
+  /** The length in seconds. */
+  duration: number;
+}
+
 export interface SoundPlan {
   version: 1;
   description?: string;
@@ -81,6 +92,8 @@ export interface SoundPlan {
   master: PlanMaster;
   seed: number;
   picture: PlanPicture;
+  /** The silences, sorted by `t`; none overlaps another. */
+  silences: PlanSilence[];
   events: PlanEvent[];
 }
 

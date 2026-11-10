@@ -32,6 +32,9 @@ export { Drone } from './kinds/drone.shade.ts';
 export { Footstep } from './kinds/footstep.shade.ts';
 export { Cloth } from './kinds/cloth.shade.ts';
 export { Stem } from './kinds/voice.shade.ts';
+export { StoneBand, Stones } from './kinds/stones.shade.ts';
+export { Boom } from './kinds/boom.shade.ts';
+export { Roar, RoarBand } from './kinds/roar.shade.ts';
 export {
   Lane,
   WhooshLane,
@@ -43,6 +46,10 @@ export {
   FootstepLane,
   ClothLane,
   VoiceLane,
+  CrackLane,
+  BoomLane,
+  RubbleLane,
+  RoarLane,
   whooshes,
   impacts,
   shimmers,
@@ -52,10 +59,23 @@ export {
   footsteps,
   cloths,
   voices,
+  cracks,
+  booms,
+  rubbles,
+  roars,
   gather,
 } from './kinds/lanes.shade.ts';
-export { noise } from './kinds/noise.shade.ts';
-export { eventKey, KIND_GAIN, KIND_INDEX, KIND_PEAK, makeLane } from './kinds/make.ts';
+export { noise, smooth } from './kinds/noise.shade.ts';
+export {
+  eventKey,
+  KIND_GAIN,
+  KIND_INDEX,
+  KIND_PEAK,
+  makeLane,
+  ROAR_BANDS,
+  STONE_BANDS,
+  STONE_TAIL,
+} from './kinds/make.ts';
 export type { Made, MakeOptions } from './kinds/make.ts';
 export {
   Spatial,

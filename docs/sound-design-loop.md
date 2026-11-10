@@ -7,7 +7,8 @@ the plan format and its validator and the analyzers (pull request #36), the kind
 chain, the layered render and the master (pull request #38, record
 `docs/records/08-sound-design-container.md`). Not built: the mix-profile matcher (item 4) and the speed
 work (item 5) of the section "What the engine must gain, in order". The device runs are pending. The statements about what the engine will do are design,
-not measurement.
+not measurement. The section "One sound leads" is the owner's rule of 2026-11-10 for the one who
+writes a plan; the owner said on that day to write it here.
 
 ## Why one generated track fails
 
@@ -59,15 +60,16 @@ All times are in seconds from the start of the clip. All positions are in the li
 
 Plan fields:
 
-| Field     | Type   | Meaning                                                                                  |
-| --------- | ------ | ---------------------------------------------------------------------------------------- |
-| `version` | number | The plan format version. It is `1`.                                                      |
-| `clip`    | object | `duration` in seconds and `fps`.                                                         |
-| `scene`   | object | `room` and `listener`, as below.                                                         |
-| `master`  | object | Optional. `lufs` (default -23) and `truePeak` in dBTP (default -1).                      |
-| `picture` | object | Optional. `cuts` and `motion`: the cuts and the peaks of motion, each a list of seconds. |
-| `events`  | array  | The events, in any order. The engine sorts them by `t`, then by `id`.                    |
-| `seed`    | number | The seed of every random choice. The default is `0`.                                     |
+| Field      | Type   | Meaning                                                                                  |
+| ---------- | ------ | ---------------------------------------------------------------------------------------- |
+| `version`  | number | The plan format version. It is `1`.                                                      |
+| `clip`     | object | `duration` in seconds and `fps`.                                                         |
+| `scene`    | object | `room` and `listener`, as below.                                                         |
+| `master`   | object | Optional. `lufs` (default -23) and `truePeak` in dBTP (default -1).                      |
+| `picture`  | object | Optional. `cuts` and `motion`: the cuts and the peaks of motion, each a list of seconds. |
+| `silences` | array  | Optional. The silences, each a `t` and a `duration` in seconds. See "A silence".         |
+| `events`   | array  | The events, in any order. The engine sorts them by `t`, then by `id`.                    |
+| `seed`     | number | The seed of every random choice. The default is `0`.                                     |
 
 The plan has no sample rate. The sample rate is a fact of the renderer: it renders at 48 kHz and
 returns the rate with the render. The analyzers take the rate as an argument.
@@ -100,7 +102,22 @@ Event fields:
 
 The validator refuses a plan for each of these: an unknown kind, a layer that does not match the
 kind, a macro the kind does not define, a value out of range, an event past `clip.duration`, a
-repeated `id`.
+repeated `id`, a silence that overlaps another or runs past the clip, an event that starts inside a
+silence.
+
+### A silence
+
+A silence is a cut. From its `t`, for its `duration`, the mix is silent: the stems, the dry render
+and the reverb's return. An event that sounds when the silence starts ends there and does not come
+back after it. An event may start at the end of a silence, and it keeps its first frame. The mix
+falls into the silence over 4 ms.
+
+A silence before a hit is the held breath: a hint of what comes ("One sound leads"). The room's
+answer to a sound runs on after the sound
+stops, so a gap between two events is not a silence: the reverb fills it. The plan states the
+silence, and the renderer makes it after the reverb and before the master measures the mix.
+
+Experiment 9 added the field. A silence is 0.01 to 10 seconds long, and a plan holds at most 16.
 
 ### The kinds
 
@@ -111,17 +128,21 @@ the duration over which the swell rises, and the sound holds at its peak for the
 draws its take from the event's key within its macro ranges, so repeated events differ (the
 `variation` guard). The first kinds are:
 
-| Kind       | Sort       | Layer    | Macros                      |
-| ---------- | ---------- | -------- | --------------------------- |
-| `whoosh`   | procedural | effects  | `speed`, `brightness`       |
-| `impact`   | procedural | effects  | `weight`, `decay`, `crack`  |
-| `shimmer`  | procedural | effects  | `density`, `height`         |
-| `riser`    | procedural | effects  | `length`, `pitch`           |
-| `wind`     | procedural | ambience | `gust`, `howl`              |
-| `drone`    | procedural | music    | `pitch`, `darkness`         |
-| `footstep` | grain      | foley    | `surface`, `weight`, `pace` |
-| `cloth`    | grain      | foley    | `fabric`, `speed`           |
-| `voice`    | stem       | dialogue | none                        |
+| Kind       | Sort       | Layer    | Macros                                   |
+| ---------- | ---------- | -------- | ---------------------------------------- |
+| `whoosh`   | procedural | effects  | `speed`, `brightness`                    |
+| `impact`   | procedural | effects  | `weight`, `decay`, `crack`               |
+| `shimmer`  | procedural | effects  | `density`, `height`                      |
+| `riser`    | procedural | effects  | `length`, `pitch`                        |
+| `wind`     | procedural | ambience | `gust`, `howl`                           |
+| `drone`    | procedural | music    | `pitch`, `darkness`                      |
+| `footstep` | grain      | foley    | `surface`, `weight`, `pace`              |
+| `cloth`    | grain      | foley    | `fabric`, `speed`                        |
+| `voice`    | stem       | dialogue | none                                     |
+| `crack`    | procedural | effects  | `size`, `brightness`, `crumble`          |
+| `boom`     | procedural | effects  | `size`, `decay`, `tone`                  |
+| `rubble`   | procedural | effects  | `size`, `density`, `brightness`, `swell` |
+| `roar`     | procedural | effects  | `brightness`, `motion`, `swell`          |
 
 The grains of one event do not clump. In `footstep` and `cloth`, `drawGrains` lets no more than two
 grains of one cloud sound at the same time (N = 2). It skips a drawn start that would be a third.
@@ -135,6 +156,33 @@ whatever the key. The macros and the draw still shape the sound: the thud agains
 pitches, the lengths and the starts.
 
 The list is a starting set. Each experiment and each later change may add kinds.
+
+Experiment 9 added four kinds, for a scene of stone and force. Three of them carry a size, because
+the weight of a sound is the size of the thing that makes it: a block of radius `a` metres sounds
+near `54.6 / a` hertz, where its circumference is one wavelength.
+
+- `crack` is one crack of a solid. `size` runs from a block of 0.05 m to one of 2 m. `brightness` is
+  its dry edge. `crumble` is the smaller cracks that follow it, over the `duration`.
+- `boom` is the body of a heavy hit: a band of noise and two damped modes that sink a little.
+  `size` sets the pitch, from 140 Hz to 56 Hz. `decay` runs from 0.12 s to 1.2 s. `tone` is the
+  share of the modes. The weight of a hit is a body near 100 Hz that lasts.
+- `rubble` is stone that falls in a mass: impacts at random times, each the knock and the crack
+  of a block of its size. `size` is the middle size, from 0.05 m to 1.5 m. `density` runs from 2 to
+  80 impacts a second. `swell` at 0.5 holds the rate; under it the mass thins out over the
+  `duration`, over it the mass grows and its blocks grow with it. No impact comes after the
+  `duration`: the mass rings out. Small stone at a high `density` is the crunch of a wall that
+  crumbles.
+- `roar` is a blast that rolls through a hall: four bands of noise whose levels wander by
+  themselves. `brightness` is the level of the top bands, `motion` how far the levels wander,
+  `swell` how far under its full level it starts.
+
+`crack` and `rubble` share one unit, `Stones`. It holds no state for an impact: each impact raises
+the envelopes of five bands of noise, and the envelopes decay, the low ones slowly. So any number
+of impacts costs the same.
+
+The level of a `rubble` follows its `density` as well as its `intensity`: a denser mass has more
+impacts on one another. The peak of one take of the four kinds differs from the median of the
+kind, since they are noise under envelopes.
 
 ### An event
 
@@ -170,6 +218,107 @@ The user says the whoosh is too thin. The system turns the top hypothesis into t
 
 The engine applies it to every `whoosh` and keeps the plan's other events as they are. The
 render of every other kind is the same bits as before.
+
+## One sound leads
+
+This is a rule for the one who writes a plan. The owner gave it on 2026-11-10, in three listening
+reviews of experiment 9 (`docs/records/09-force-passage-container-2.md`,
+`docs/records/09-force-passage-container-3.md`). It comes from one passage and one listener. It is
+design, not measurement.
+
+The reasons behind the rule, from the practice of sound for film, are in
+`docs/sound-design-theory.md`.
+
+A plan follows the picture. The first question for each moment is which sound the viewer attends
+to. That sound leads. The rule has one part for each time.
+
+- **The present.** One sound leads in each moment: the one the picture shows. The other sounds
+  explain it, as the room and the dust do, or they are out. Two things that the picture shows as
+  two are two sounds. A body that hits a wall is not the wall that breaks.
+- **The past.** The sound that led goes on when another sound takes the lead. It becomes a part of
+  the room, under the new sound, and it ends by itself. A sound stops on a cut only when the
+  picture goes to another scene.
+- **The future.** The sound gives a hint of what comes. A sound that will lead starts small under
+  the sound that leads now, and it grows. A rush arrives on a hit. A silence stands before the
+  largest hit.
+
+What a plan has for each part:
+
+| Part        | In the plan                                                                                                                                                                                  |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The present | The `intensity` of the events of one moment: the sound that leads has the highest. A kind, a size and a place of its own for each thing that the picture tells apart.                        |
+| The past    | A `duration` that runs past the onset of the next sound that leads. A `rubble` whose `swell` is under 0.5, so that the mass thins out. An end after a cut, not on it.                        |
+| The future  | A `rubble` or a `roar` that starts under the sound that leads now, with a `swell` over 0.5. `sync: 'arrive'` for a rush that ends on the hit. A silence (`silences`). A hero impact (below). |
+
+Observed in experiment 9:
+
+- The first plan held 59 events, one or more for each row of a list of what the passage needs. The
+  owner heard a clatter. The third plan held 37 events and asked for each moment which sound
+  leads. The owner said that it holds together far better.
+- In the first plan the limiter went 9.3 dB deep, and the hit on the wall stood 1.8 dB over the
+  80 ms before it. A master that limits every loud moment brings them to one level, and then no
+  sound leads.
+- The second plan made the stone heavy with a long, low ring. The owner heard a roll of dull
+  thumps: a low band of noise with a long fall is a drum.
+- The fourth plan let four blocks knock, and small stone fall, while the picture held the blocks in
+  the air in slow motion. The owner heard stones that had fallen already.
+- The fifth plan made a landing from an `impact`, a crack of a block under 1 m that crumbles, and
+  blocks of 0.2 m that settle. The owner heard a plastic container that falls, not stone with
+  weight. Of the energy of that landing from 60 to 400 Hz, 66 % lay in one band of 15 Hz, and 1 % of
+  the whole lay over 2 kHz.
+- The fourth to the sixth plan made the hit on the wall from an `impact` whose pitch starts at
+  171 Hz, with little click, and a dull crack of 0.3 m. The owner heard a hit on a plastic
+  container: thin, with no density. Of the energy of that hit from 60 to 400 Hz, 53 % lay in one
+  band of 15 Hz, and 1 % of the whole lay over 2 kHz.
+- The owner heard the frame of silence before the hit on the wall as the hint of the hit.
+- The seventh plan made that hit from a hard edge, a wide burst and a deep body with no tone, and
+  the owner was satisfied with it. Its break held cracks that crumble and shards: blocks of 0.05 to
+  0.65 m that knock, 80 a second. The owner heard plastic, or a steel bin that is kicked.
+
+- The eighth plan held no block of a middle size. The owner heard plastic still: the sound must be
+  denser, and the reference shows how. The reference holds one dense roar from the blast to the fog,
+  in every band from 40 Hz to 10 kHz. The eighth plan's mix was empty between its events, and
+  nearly empty over 500 Hz.
+- The owner asked what rings under the wind at the start. It was two `cloth` events: the grains of
+  a `cloth` are heard as small bells.
+
+- The ninth plan made a landing from a `boom` at 60 Hz, one at 115 Hz with a fall of 0.2 s, and
+  the edge of a block, and the break held three such booms at 125 Hz. The owner heard a plastic bin
+  that is kicked. A band of noise from 100 to 140 Hz with a short fall is a hollow thing.
+
+- The tenth plan made the break and the landings from large blocks at full brightness, hard edges
+  and fine grit. The owner heard no wall of tons that falls on a floor of stone: a steel bin that
+  is kicked and rolls. The stone kinds were heard as plastic when dull and as steel when bright;
+  both have five fixed bands. The eleventh plan uses neither after the hit on the wall.
+
+- The eleventh to the thirteenth plan made a landing with no stone kind: bursts, bodies with no
+  tone, and bright roars for the tear and the crush. The owner heard a high hiss that grates, and
+  asked for the hit of a block of stone on the floor in its place. The fifteenth plan makes a
+  landing from the parts of the hit on the wall, which the owner accepted.
+
+What follows for the one who writes a plan:
+
+1. Ask for each moment which sound leads, before any event is written.
+2. Set the loudness target so low that the limiter leaves the largest hit its front.
+3. Take the weight of a hit on stone from an `impact` under it. Keep the short fall of the stone.
+4. Write a strike on the frame on which the thing strikes. While the picture holds a thing in the
+   air, write no strike.
+5. Make stone from a hard edge, a deep body with no tone and fine grit; a large hit has a short,
+   wide burst too. Leave out a tone that the ear follows, a dull top, and blocks of 0.1 to 0.7 m
+   that knock: a `crack` that crumbles, and a `rubble` of that size.
+
+6. When the picture holds one event from start to end, hold a mass under the sounds that lead: a
+   wide `roar` that goes on from the first of them and falls step by step. Sounds with silence
+   between them are heard as thin.
+
+7. Make a mass of tons that lands from the owner's four layers: the ground, a sub that is felt,
+   first or with the hit; the hit, a burst that tears as thunder does; the crush, stone that is
+   ground to pieces under the weight; and the ring of the place, a heavy tail of seconds.
+
+The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
+they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks
+for a silence before an impact and for build-ups: they are the hints of the future. No analyzer
+measures the rule. The plan tests of experiment 9 (`test/plan.test.ts`) hold it for one plan.
 
 ## The vocabulary
 

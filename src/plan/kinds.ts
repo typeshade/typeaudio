@@ -29,4 +29,12 @@ export const KINDS: Record<string, KindDefinition> = {
   footstep: { sort: 'grain', layer: 'foley', macros: macros('surface', 'weight', 'pace') },
   cloth: { sort: 'grain', layer: 'foley', macros: macros('fabric', 'speed') },
   voice: { sort: 'stem', layer: 'dialogue', macros: {} },
+  crack: { sort: 'procedural', layer: 'effects', macros: macros('size', 'brightness', 'crumble') },
+  boom: { sort: 'procedural', layer: 'effects', macros: macros('size', 'decay', 'tone') },
+  rubble: {
+    sort: 'procedural',
+    layer: 'effects',
+    macros: macros('size', 'density', 'brightness', 'swell'),
+  },
+  roar: { sort: 'procedural', layer: 'effects', macros: macros('brightness', 'motion', 'swell') },
 };

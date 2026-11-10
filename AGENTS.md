@@ -43,41 +43,43 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
 
 ## Documents
 
-| Document                    | What it is                                                                                                                   |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `docs/vision.md`            | The developer-experience contract, the catalog of what the engine does, the architecture, the boundaries, the experiments    |
-| `docs/architecture.md`      | The detail of the architecture: the loop shapes, the block plan, banks, buses, events, transports                            |
-| `docs/compiler-asks.md`     | The compiler proposals this engine rests on and its asks of the compiler (issues first), each with its status                |
-| `docs/experiments.md`       | The experiments in order, with their status and what each decides                                                            |
-| `docs/sound-design-loop.md` | The design of the sound-design loop: a model writes a plan, the engine renders it; the plan format and the checklist         |
-| `docs/lanes.md`             | A design note: spreading an event over several lanes, three options with costs and a recommendation, for the owner to decide |
-| `docs/records/`             | The record of each run of an experiment: the command, the commit, the pin, the device, the numbers                           |
-| `docs/device-runs.md`       | The procedure of a device run on the owner's machine, and the record it leaves                                               |
-| `compiler-changes.md`       | The compiler proposals this repository has handled, recorded when the pin moves                                              |
+| Document                      | What it is                                                                                                                   |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `docs/vision.md`              | The developer-experience contract, the catalog of what the engine does, the architecture, the boundaries, the experiments    |
+| `docs/architecture.md`        | The detail of the architecture: the loop shapes, the block plan, banks, buses, events, transports                            |
+| `docs/compiler-asks.md`       | The compiler proposals this engine rests on and its asks of the compiler (issues first), each with its status                |
+| `docs/experiments.md`         | The experiments in order, with their status and what each decides                                                            |
+| `docs/sound-design-loop.md`   | The design of the sound-design loop: a model writes a plan, the engine renders it; the plan format and the checklist         |
+| `docs/sound-design-theory.md` | The theory of sound for picture that the loop works from, and what experiment 9 found against it                             |
+| `docs/lanes.md`               | A design note: spreading an event over several lanes, three options with costs and a recommendation, for the owner to decide |
+| `docs/records/`               | The record of each run of an experiment: the command, the commit, the pin, the device, the numbers                           |
+| `docs/device-runs.md`         | The procedure of a device run on the owner's machine, and the record it leaves                                               |
+| `compiler-changes.md`         | The compiler proposals this repository has handled, recorded when the pin moves                                              |
 
 ## The code
 
-| Path                                             | What it is                                                                                                                                                                            |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/units/*.shade.ts`                           | The units, as exported classes: `Oscillator` (abstract), `Sine`, `Saw`, `OnePole`, `Biquad` (abstract), `Lowpass`, `Envelope`, `Grain`, `Cloud`                                       |
-| `src/kernels/*.shade.ts`                         | The kernels, each a loop and nothing else: `synth` over a bank of `Voice` (shape V), `mixdown` (G), `gain` and `drive` (F), `peak` (R)                                                |
-| `src/kernels/grains.shade.ts`                    | The grain scheduler's kernels: `cull` and `spawn` push onto a list whose count stays on the device, `play` renders it (shape G)                                                       |
-| `src/bank.ts`, `src/render.ts`, `src/explain.ts` | The host API, exported by `src/index.ts`: `bank`, `plan`, `render` (one `fuse` plan per block) and `explain`                                                                          |
-| `test/`                                          | The unit tests and their plain-JavaScript reference (`test/reference.ts`); `test/browser/`, the browser check                                                                         |
-| `experiments/01-round-trip/`                     | Experiment 1: its kernel, its harness and its runner                                                                                                                                  |
-| `experiments/02-worklet/`                        | Experiment 2: its worklet processors, its page and its runner                                                                                                                         |
-| `experiments/03-fft/`                            | Experiment 3: the FFT entry in three twiddle variants, two probes, the `f64` reference, the harness and its runner; the 2,048-point table entry of experiment 5                       |
-| `experiments/04-additive/`                       | Experiment 4: its partials and sums, its plain-JavaScript reference, its harness and its runner                                                                                       |
-| `experiments/05-convolution/`                    | Experiment 5: the kernels of the partitioned convolution, the impulse response, the `f64` references, the oracle's run, the harness and its runner                                    |
-| `experiments/06-granular/`                       | Experiment 6: its two kernels of measurement, its harness over the grain scheduler, its page and its runner                                                                           |
-| `experiments/07-sound-match/`                    | Experiment 7: the FM patch and its loss written by a generator, the four forms of the gradient, the harness and its runner                                                            |
-| `src/plan/`                                      | The plan of experiment 8: its types, the kind table (`kinds.ts`) and `validatePlan`; only a validated plan reaches a renderer                                                         |
-| `src/analyze/`                                   | The analyzers of experiment 8, host-side and pure: loudness, true peak, spectral tilt, onsets, correlation, similarity and `checklist`                                                |
-| `src/kinds/`                                     | The kinds of experiment 8, one unit class a file (`whoosh`, `impact`, `shimmer`, `riser`, `wind`, `drone`, `footstep`, `cloth`, `voice`), `lanes.shade.ts` (one lane class and one kernel for each kind) and `makeLane` |
-| `src/spatial/`                                   | The spatial chain of experiment 8: `place`, `layers`, `strips`, the transform and the partitioned convolution of the reverb send as kernel functions, and the room (`room.ts`)        |
-| `src/render-plan.ts`, `src/master.ts`            | `renderPlan`: a validated plan to five layer stems and a mix, one `fuse` scope a block; the loudness target and the true-peak limiter                                                 |
-| `experiments/08-sound-design/`                   | Experiment 8: the fixture plan `plan.json`, its harness and its runner (`bun run exp:08`)                                                                                             |
-| `scripts/`                                       | The Vite build, the headless Chromium and the CPU time of its threads, which the browser check and the experiments share                                                              |
+| Path                                             | What it is                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/units/*.shade.ts`                           | The units, as exported classes: `Oscillator` (abstract), `Sine`, `Saw`, `OnePole`, `Biquad` (abstract), `Lowpass`, `Envelope`, `Grain`, `Cloud`                                                                                                                                               |
+| `src/kernels/*.shade.ts`                         | The kernels, each a loop and nothing else: `synth` over a bank of `Voice` (shape V), `mixdown` (G), `gain` and `drive` (F), `peak` (R)                                                                                                                                                        |
+| `src/kernels/grains.shade.ts`                    | The grain scheduler's kernels: `cull` and `spawn` push onto a list whose count stays on the device, `play` renders it (shape G)                                                                                                                                                               |
+| `src/bank.ts`, `src/render.ts`, `src/explain.ts` | The host API, exported by `src/index.ts`: `bank`, `plan`, `render` (one `fuse` plan per block) and `explain`                                                                                                                                                                                  |
+| `test/`                                          | The unit tests and their plain-JavaScript reference (`test/reference.ts`); `test/browser/`, the browser check                                                                                                                                                                                 |
+| `experiments/01-round-trip/`                     | Experiment 1: its kernel, its harness and its runner                                                                                                                                                                                                                                          |
+| `experiments/02-worklet/`                        | Experiment 2: its worklet processors, its page and its runner                                                                                                                                                                                                                                 |
+| `experiments/03-fft/`                            | Experiment 3: the FFT entry in three twiddle variants, two probes, the `f64` reference, the harness and its runner; the 2,048-point table entry of experiment 5                                                                                                                               |
+| `experiments/04-additive/`                       | Experiment 4: its partials and sums, its plain-JavaScript reference, its harness and its runner                                                                                                                                                                                               |
+| `experiments/05-convolution/`                    | Experiment 5: the kernels of the partitioned convolution, the impulse response, the `f64` references, the oracle's run, the harness and its runner                                                                                                                                            |
+| `experiments/06-granular/`                       | Experiment 6: its two kernels of measurement, its harness over the grain scheduler, its page and its runner                                                                                                                                                                                   |
+| `experiments/07-sound-match/`                    | Experiment 7: the FM patch and its loss written by a generator, the four forms of the gradient, the harness and its runner                                                                                                                                                                    |
+| `src/plan/`                                      | The plan of experiment 8: its types, the kind table (`kinds.ts`) and `validatePlan`; experiment 9 added the silences; only a validated plan reaches a renderer                                                                                                                                |
+| `src/analyze/`                                   | The analyzers of experiment 8, host-side and pure: loudness, true peak, spectral tilt, onsets, correlation, similarity and `checklist`                                                                                                                                                        |
+| `src/kinds/`                                     | The kinds of experiments 8 and 9, one unit class a file (`whoosh`, `impact`, `shimmer`, `riser`, `wind`, `drone`, `footstep`, `cloth`, `voice`, and `crack` and `rubble` on `stones.shade.ts`, `boom`, `roar`), `lanes.shade.ts` (one lane class and one kernel for each kind) and `makeLane` |
+| `src/spatial/`                                   | The spatial chain of experiment 8: `place`, `layers`, `strips`, the transform and the partitioned convolution of the reverb send as kernel functions, and the room (`room.ts`)                                                                                                                |
+| `src/render-plan.ts`, `src/master.ts`            | `renderPlan`: a validated plan to five layer stems and a mix, one `fuse` scope a block; the loudness target and the true-peak limiter                                                                                                                                                         |
+| `experiments/08-sound-design/`                   | Experiment 8: the fixture plan `plan.json`, its harness and its runner (`bun run exp:08`)                                                                                                                                                                                                     |
+| `experiments/09-force-passage/`                  | Experiment 9: the plan of the force passage of the study `plan.json`, its harness, its runner (`run.ts`) and its measures (`measure.ts`, `across.ts`, `study.json`)                                                                                                                           |
+| `scripts/`                                       | The Vite build, the headless Chromium and the CPU time of its threads, which the browser check and the experiments share                                                                                                                                                                      |
 
 ## Baselines
 
@@ -124,6 +126,10 @@ device the engine makes (D6) wait for later pull requests. Nothing here is publi
   WebGPU and WebGL2 in headless Chromium. It times the render, the loss and a descent's step with
   the gradient of `grad` in four forms, per parameter count. It writes the result as JSON (`--out`);
   its records are in `docs/records/`. `bun run exp:07 --write` writes the patch's modules again.
+- `bun experiments/09-force-passage/run.ts`: experiment 9, the plan of the force passage of the study, on WebGPU or WebGL2 in
+  headless Chromium or on the CPU tier in Node (`--tier`). It writes the mix, the reverb's return
+  and the stems as WAV and the result as JSON into `experiments/09-force-passage/out/`; its record
+  is in `docs/records/`. CI does not run it.
 
 CI (`.github/workflows/ci.yml`) runs one job, `typecheck + unit`: `bun install`, `bun run check`
 and `bun run test`. Every claim of a result names the command, the date, the commit and the

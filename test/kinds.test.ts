@@ -8,10 +8,20 @@ import { Drone } from '../src/kinds/drone.shade.ts';
 import { Footstep } from '../src/kinds/footstep.shade.ts';
 import { Cloth } from '../src/kinds/cloth.shade.ts';
 import { Stem } from '../src/kinds/voice.shade.ts';
+import { StoneBand, Stones } from '../src/kinds/stones.shade.ts';
+import { Boom } from '../src/kinds/boom.shade.ts';
+import { Roar } from '../src/kinds/roar.shade.ts';
 import { ImpactLane, VoiceLane } from '../src/kinds/lanes.shade.ts';
 import { Svf, svfCoef } from '../src/units/svf.shade.ts';
 import { Cloud, Grain } from '../src/units/grain.shade.ts';
-import { eventKey, KIND_PEAK, makeLane, type Made } from '../src/kinds/make.ts';
+import {
+  eventKey,
+  KIND_PEAK,
+  makeLane,
+  ROAR_BANDS,
+  STONE_BANDS,
+  type Made,
+} from '../src/kinds/make.ts';
 import { validatePlan, type PlanEvent } from '../src/plan/index.ts';
 import plan from '../experiments/08-sound-design/plan.json';
 import { RefCloud, RefGrain } from './reference.ts';
@@ -26,10 +36,15 @@ import {
   RefSvf,
   RefWhoosh,
   RefWind,
+  RefBoom,
+  RefRoar,
+  RefStoneBand,
+  RefStones,
   refNoise,
+  refSmooth,
   refSvfCoef,
 } from './reference-kinds.ts';
-import { noise } from '../src/kinds/noise.shade.ts';
+import { noise, smooth } from '../src/kinds/noise.shade.ts';
 import { eventSimilarity } from '../src/analyze/index.ts';
 
 // Each kind on the CPU tier, built with `new` on the host (compiler change 0109) and held to the
@@ -153,6 +168,222 @@ describe('a kind built with new ticks as the reference does', () => {
     expect(x.map((v) => s.at(v))).toEqual(x.map((v) => r.at(v)));
     expect(s.at(0)).toBe(0);
   });
+});
+
+// The four kinds of experiment 9 (docs/experiments.md, section 9): `crack` and `rubble` on the unit
+// `Stones`, `boom` and `roar`. Each ticks as its plain-JavaScript reference does, bit for bit.
+describe('the kinds of experiment 9 tick as the reference does', { timeout: 120000 }, () => {
+  const N = 6000;
+  const setBands = (s: Stones | RefStones): void => {
+    const bands = [s.b0, s.b1, s.b2, s.b3, s.b4];
+    STONE_BANDS.forEach((b, i) => {
+      bands[i]!.set(
+        svfCoef(b.hz, SR),
+        1.2,
+        Math.exp(-1 / (b.tau * SR)),
+        b.hz / 54.6,
+        b.edge,
+        b.gain * 0.4,
+      );
+    });
+  };
+  test('smooth is the noise of the whole frames on both sides, joined by a smoothstep', () => {
+    const xs = Array.from({ length: 400 }, (_, i) => i * 0.037);
+    expect(xs.map((x) => smooth(9, x))).toEqual(xs.map((x) => refSmooth(9, x)));
+    expect(smooth(9, 3)).toBe(noise(9, 3));
+    expect(Math.abs(smooth(9, 3.5) - (noise(9, 3) + noise(9, 4)) / 2)).toBeLessThan(1e-6);
+  });
+  test('a band of the stones: an impact raises its envelope, and the envelope decays', () => {
+    const b = new StoneBand().set(svfCoef(180, SR), 1.2, 0.999, 180 / 54.6, 0.5, 2);
+    const r = new RefStoneBand().set(refSvfCoef(180, SR), 1.2, 0.999, 180 / 54.6, 0.5, 2);
+    b.hit(0.8, 0.3, 0.4);
+    r.hit(0.8, 0.3, 0.4);
+    expect(b.env).toBe(r.env);
+    expect(b.env).toBeGreaterThan(0);
+    const raised = b.env;
+    const xs = Array.from({ length: 500 }, (_, i) => refNoise(3, i));
+    expect(xs.map((x) => b.tick(x))).toEqual(xs.map((x) => r.tick(x)));
+    expect(b.env).toBe(r.env);
+    expect(b.env).toBeLessThan(raised * 0.999 ** 400);
+  });
+  test('stones with a first impact and smaller ones after it (a crack)', () => {
+    const args = [41, 14400, 0, 0, 0.002, 0.09, 1.2, 1, 0, 0.3, 0.46, 0.6] as const;
+    const a = new Stones().shape(...args);
+    const r = new RefStones().shape(...args);
+    setBands(a);
+    setBands(r);
+    const got = run(N, () => a.tick());
+    expect(got).toEqual(run(N, () => r.tick()));
+    expect(energy(got)).toBeGreaterThan(0);
+    expect(got[0]).not.toBe(0);
+  });
+  test('stones that grow in rate and in size (rubble)', () => {
+    const args = [43, 4800, 0.0002, 0.004, 0.001, 0.2, 1.3, 0.35, 0.65, 0.25, 0, 0.5] as const;
+    const a = new Stones().shape(...args);
+    const r = new RefStones().shape(...args);
+    setBands(a);
+    setBands(r);
+    const got = run(N, () => a.tick());
+    expect(got).toEqual(run(N, () => r.tick()));
+    expect(energy(got)).toBeGreaterThan(0);
+    // No impact at the first frame: the unit is silent until the first one falls.
+    expect(got[0]).toBe(0);
+  });
+  test('stones make no impact after their length: the bands only ring out', () => {
+    // An impact in each 50 frames on average, over 2,400 frames, then none: each envelope falls by its `keep` a frame.
+    const args = [47, 2400, 0.02, 0, 0, 0.2, 1.3, 1, 0, 0.25, 0, 0.5] as const;
+    const a = new Stones().shape(...args);
+    const r = new RefStones().shape(...args);
+    setBands(a);
+    setBands(r);
+    const got = run(2400, () => a.tick());
+    expect(got).toEqual(run(2400, () => r.tick()));
+    const at = [a.b0.env, a.b4.env];
+    expect(at[0]).toBeGreaterThan(0);
+    const after = run(2400, () => a.tick());
+    expect(after).toEqual(run(2400, () => r.tick()));
+    expect(a.b0.env / (at[0]! * a.b0.keep ** 2400)).toBeCloseTo(1, 4);
+    expect(a.b4.env / (at[1]! * a.b4.keep ** 2400)).toBeCloseTo(1, 4);
+  });
+  test('boom', () => {
+    const args = [5, 0.0127, 1.4, 0.00225, 0.08, 0.00005, 0.00003, 288, 9, 0.3] as const;
+    const b = new Boom().shape(...args);
+    const r = new RefBoom().shape(...args);
+    const got = run(N, () => b.tick());
+    expect(got).toEqual(run(N, () => r.tick()));
+    expect(energy(got)).toBeGreaterThan(0);
+  });
+  test('roar', () => {
+    const a = new Roar().shape(9, 5000, 1200, 0.6, 0.65, 0.8);
+    const r = new RefRoar().shape(9, 5000, 1200, 0.6, 0.65, 0.8);
+    for (const x of [a, r]) {
+      const bands = [x.b0, x.b1, x.b2, x.b3];
+      ROAR_BANDS.forEach((b, i) => {
+        bands[i]!.set(svfCoef(b.hz, SR), b.damp, b.gain, b.depth, b.rate / SR);
+      });
+    }
+    const got = run(N, () => a.tick());
+    expect(got).toEqual(run(N, () => r.tick()));
+    expect(energy(got)).toBeGreaterThan(0);
+    // It has fallen to silence at the end of its length.
+    expect(got[5000]).toBe(0);
+  });
+});
+
+// What the macros of the four kinds do, on the lanes `makeLane` builds.
+describe('the macros of the kinds of experiment 9', { timeout: 120000 }, () => {
+  const event = (kind: string, macros: Record<string, number>, duration?: number): PlanEvent => ({
+    id: `${kind}-a`,
+    t: 0,
+    kind,
+    layer: 'effects',
+    intensity: 1,
+    position: { x: 0, y: 0, distance: 2 },
+    macros,
+    sync: 'onset',
+    ...(duration === undefined ? {} : { duration }),
+  });
+  const sound = (e: PlanEvent, key: number, frames = 24000): number[] => {
+    const made = makeLane(e, { sr: SR, key });
+    made.lane.end = made.length;
+    return run(Math.min(made.length, frames), () => tickOf(made)(0));
+  };
+  /** The energy of `y` after a one-pole highpass at `hz`, over its whole energy. */
+  const above = (y: number[], hz: number): number => {
+    const k = 1 - Math.exp((-2 * Math.PI * hz) / SR);
+    let z = 0;
+    let hi = 0;
+    for (const v of y) {
+      z += k * (v - z);
+      hi += (v - z) * (v - z);
+    }
+    return hi / energy(y);
+  };
+  const keys = [11, 12, 13, 14, 15, 16];
+  const mean = (f: (key: number) => number): number =>
+    keys.reduce((s, k) => s + f(k), 0) / keys.length;
+
+  test('a crack of a larger size is lower', () => {
+    const share = (size: number): number =>
+      mean((k) => above(sound(event('crack', { size, brightness: 0.4, crumble: 0 }), k), 400));
+    expect(share(0.15)).toBeGreaterThan(2 * share(0.85));
+  });
+  test('rubble ends with its duration: the last second of its lane holds no new impact', () => {
+    // A dense mass of 0.4 s; its lane is 0.4 s and the tail. After 0.4 s the level only falls.
+    const y = sound(
+      event('rubble', { size: 0.5, density: 0.9, brightness: 0.3, swell: 0.5 }, 0.4),
+      31,
+      60000,
+    );
+    const rms = (a: number, b: number): number => Math.sqrt(energy(y.slice(a, b)) / (b - a));
+    expect(rms(0, 19200)).toBeGreaterThan(0);
+    expect(rms(28800, 33600)).toBeLessThan(0.25 * rms(19200, 24000));
+    expect(rms(38400, 43200)).toBeLessThan(0.25 * rms(28800, 33600));
+  });
+  test('a crack with crumble has more sound after its first impact than one with none', () => {
+    const late = (crumble: number): number =>
+      mean((k) => {
+        const y = sound(event('crack', { size: 0.6, brightness: 0.4, crumble }, 0.5), k);
+        return energy(y.slice(9600, 21600));
+      });
+    expect(late(1)).toBeGreaterThan(3 * late(0));
+  });
+  test('a boom of a larger size is lower, and a longer decay lasts longer', () => {
+    const crossings = (size: number): number => {
+      const y = sound(event('boom', { size, decay: 0.6, tone: 1 }), 21, 12000);
+      let n = 0;
+      for (let i = 1; i < y.length; i++) if (y[i - 1]! < 0 !== y[i]! < 0) n++;
+      return n;
+    };
+    expect(crossings(0.1)).toBeGreaterThan(1.5 * crossings(0.9));
+    const late = (decay: number): number => {
+      const y = sound(event('boom', { size: 0.5, decay, tone: 0.5 }), 22, 48000);
+      return energy(y.slice(14400)) / energy(y);
+    };
+    expect(late(0.9)).toBeGreaterThan(5 * late(0.2));
+  });
+  test('rubble of a higher density has more energy, and its swell moves the energy late or early', () => {
+    const e = (density: number, swell: number): PlanEvent =>
+      event('rubble', { size: 0.5, density, brightness: 0.3, swell }, 0.4);
+    const total = (density: number): number => mean((k) => energy(sound(e(density, 0.5), k)));
+    expect(total(0.9)).toBeGreaterThan(3 * total(0.3));
+    const lateShare = (swell: number): number =>
+      mean((k) => {
+        const y = sound(e(0.9, swell), k);
+        return energy(y.slice(9600, 19200)) / energy(y.slice(0, 19200));
+      });
+    expect(lateShare(1)).toBeGreaterThan(lateShare(0) + 0.3);
+  });
+  test('a brighter roar has more of its energy above 1.5 kHz, and a roar ends at its length', () => {
+    const e = (brightness: number): PlanEvent =>
+      event('roar', { brightness, motion: 0.5, swell: 0.5 }, 0.3);
+    const share = (brightness: number): number => mean((k) => above(sound(e(brightness), k), 1500));
+    expect(share(1)).toBeGreaterThan(2 * share(0));
+    const made = makeLane(e(0.5), { sr: SR, key: 5 });
+    expect(made.length).toBe(Math.round(0.3 * SR));
+  });
+  test('each of the four kinds has its median peak within 1.5 dB of KIND_PEAK at intensity 1 and its default macros', () => {
+    const median = (xs: number[]): number =>
+      [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]!;
+    const defaults: Record<string, Record<string, number>> = {
+      crack: { size: 0.5, brightness: 0.5, crumble: 0.5 },
+      boom: { size: 0.5, decay: 0.5, tone: 0.5 },
+      rubble: { size: 0.5, density: 0.5, brightness: 0.5, swell: 0.5 },
+      roar: { brightness: 0.5, motion: 0.5, swell: 0.5 },
+    };
+    for (const [kind, macros] of Object.entries(defaults)) {
+      const peaks = Array.from({ length: 32 }, (_, k) => {
+        const y = sound(event(kind, macros), Math.imul(k + 1, 2654435761) >>> 0, 48000);
+        return Math.max(...y.map(Math.abs));
+      });
+      const db = 20 * Math.log10(median(peaks) / KIND_PEAK);
+      expect(Math.abs(db), `${kind}: ${median(peaks)}`).toBeLessThan(1.5);
+      // Twice the intensity is twice the peak: the level is linear in it.
+      const half = sound({ ...event(kind, macros), intensity: 0.5 }, 99, 4800);
+      const full = sound(event(kind, macros), 99, 4800);
+      expect(Math.max(...half.map(Math.abs)) * 2).toBeCloseTo(Math.max(...full.map(Math.abs)), 4);
+    }
+  }, 120000);
 });
 
 describe('a lane', () => {

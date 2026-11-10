@@ -381,3 +381,260 @@ export class RefStem {
     return f(f(x) * this.level);
   }
 }
+
+/** WGSL's `u32()` of an `f32`: toward zero, held in [0, 2^32 - 1]. */
+const u32of = (x: number): number => Math.min(Math.max(Math.trunc(x), 0), 4294967295);
+
+/** `smooth` of `src/kinds/noise.shade.ts`. */
+export const refSmooth = (key: number, x: number): number => {
+  const i = u32of(f(x));
+  const fr = f(f(x) - f(i));
+  const s = f(f(fr * fr) * f(3 - f(2 * fr)));
+  const n0 = refNoise(key, i);
+  const n1 = refNoise(key, (i + 1) >>> 0);
+  return f(n0 + f(f(n1 - n0) * s));
+};
+
+export class RefStoneBand {
+  svf = new RefSvf();
+  svf2 = new RefSvf();
+  env = 0;
+  keep = f(0.999);
+  coef = f(0.1);
+  ratio = 1;
+  edge = 0;
+  gain = 1;
+  set(coef: number, damp: number, keep: number, ratio: number, edge: number, gain: number): this {
+    this.coef = f(coef);
+    this.svf.damping(damp);
+    this.svf2.damping(damp);
+    this.keep = f(keep);
+    this.ratio = f(ratio);
+    this.edge = f(edge);
+    this.gain = f(gain);
+    return this;
+  }
+  hit(amp: number, size: number, bright: number): void {
+    amp = f(amp);
+    size = f(size);
+    bright = f(bright);
+    const r = f(this.ratio * size);
+    const p = f(r / f(1.15));
+    const k = f(f(2 * p) / f(1 + f(p * p)));
+    const knock = f(f(1.2) * f(k * k));
+    const q = f(Math.sqrt(r));
+    const r2 = f(r * r);
+    const body = f(Math.min(f(r2 * r2), 1) / f(Math.sqrt(q)));
+    this.env = f(this.env + f(amp * f(f(knock + body) + f(this.edge * bright))));
+  }
+  tick(x: number): number {
+    const y = f(f(this.svf2.step(this.svf.step(x, this.coef), this.coef) * this.env) * this.gain);
+    this.env = f(this.env * this.keep);
+    return y;
+  }
+}
+
+export class RefStones {
+  age = 0;
+  key = 1;
+  len = 1;
+  rateA = 0;
+  rateB = 0;
+  rateC = 0;
+  sizeLo = f(0.1);
+  sizeLog = 1;
+  grow0 = 1;
+  grow1 = 0;
+  bright = f(0.3);
+  first = 0;
+  firstSize = f(0.5);
+  b0 = new RefStoneBand();
+  b1 = new RefStoneBand();
+  b2 = new RefStoneBand();
+  b3 = new RefStoneBand();
+  b4 = new RefStoneBand();
+  shape(
+    key: number,
+    len: number,
+    rateA: number,
+    rateB: number,
+    rateC: number,
+    sizeLo: number,
+    sizeLog: number,
+    grow0: number,
+    grow1: number,
+    bright: number,
+    first: number,
+    firstSize: number,
+  ): this {
+    this.key = key >>> 0;
+    this.len = f(len);
+    this.rateA = f(rateA);
+    this.rateB = f(rateB);
+    this.rateC = f(rateC);
+    this.sizeLo = f(sizeLo);
+    this.sizeLog = f(sizeLog);
+    this.grow0 = f(grow0);
+    this.grow1 = f(grow1);
+    this.bright = f(bright);
+    this.first = f(first);
+    this.firstSize = f(firstSize);
+    return this;
+  }
+  tick(): number {
+    const age = this.age;
+    this.age = age + 1;
+    const u = Math.min(f(f(age) / this.len), 1);
+    let amp = 0;
+    let size = this.firstSize;
+    if (age === 0) {
+      amp = this.first;
+    } else if (u < 1) {
+      const v = f(1 - u);
+      const rate = f(
+        f(this.rateA + f(f(this.rateB * u) * f(Math.sqrt(u)))) + f(f(f(this.rateC * v) * v) * v),
+      );
+      const word = refHash32((this.key ^ refHash32(age)) >>> 0);
+      if (refUniform(word) < rate) {
+        size = f(
+          f(this.sizeLo * f(Math.exp(f(refUniform(refHash32((word ^ 1) >>> 0)) * this.sizeLog)))) *
+            f(this.grow0 + f(this.grow1 * u)),
+        );
+        amp = f(
+          f(size * f(Math.sqrt(size))) *
+            f(f(0.5) + f(f(0.5) * refUniform(refHash32((word ^ 2) >>> 0)))),
+        );
+      }
+    }
+    if (amp > 0) {
+      this.b0.hit(amp, size, this.bright);
+      this.b1.hit(amp, size, this.bright);
+      this.b2.hit(amp, size, this.bright);
+      this.b3.hit(amp, size, this.bright);
+      this.b4.hit(amp, size, this.bright);
+    }
+    const y0 = this.b0.tick(refNoise((this.key ^ 101) >>> 0, age));
+    const y1 = this.b1.tick(refNoise((this.key ^ 102) >>> 0, age));
+    const y2 = this.b2.tick(refNoise((this.key ^ 103) >>> 0, age));
+    const y3 = this.b3.tick(refNoise((this.key ^ 104) >>> 0, age));
+    const y4 = this.b4.tick(refNoise((this.key ^ 105) >>> 0, age));
+    return f(f(f(f(y0 + y1) + y2) + y3) + y4);
+  }
+}
+
+export class RefBoom {
+  age = 0;
+  key = 1;
+  svf = new RefSvf();
+  svf2 = new RefSvf();
+  m0 = refSine();
+  m1 = refSine();
+  coef = f(0.01);
+  base = f(0.002);
+  glide = f(0.08);
+  glideRate = f(0.0001);
+  decay = f(0.0001);
+  rise = 288;
+  aNoise = 1;
+  aTone = f(0.3);
+  shape(
+    key: number,
+    coef: number,
+    damp: number,
+    base: number,
+    glide: number,
+    glideRate: number,
+    decay: number,
+    rise: number,
+    aNoise: number,
+    aTone: number,
+  ): this {
+    this.key = key >>> 0;
+    this.coef = f(coef);
+    this.svf.damping(damp);
+    this.svf2.damping(damp);
+    this.base = f(base);
+    this.glide = f(glide);
+    this.glideRate = f(glideRate);
+    this.decay = f(decay);
+    this.rise = f(rise);
+    this.aNoise = f(aNoise);
+    this.aTone = f(aTone);
+    return this;
+  }
+  tick(): number {
+    const age = this.age;
+    this.age = age + 1;
+    const a = f(age);
+    const band = this.svf2.step(this.svf.step(refNoise(this.key, age), this.coef), this.coef);
+    const g = f(1 - f(this.glide * f(1 - f(Math.exp(f(-a * this.glideRate))))));
+    this.m0.inc = f(this.base * g);
+    this.m1.inc = f(f(this.base * f(0.72)) * g);
+    const tone = f(this.m0.tick() + f(f(0.7) * this.m1.tick()));
+    const r = Math.min(f(a / this.rise), 1);
+    const env = f(f(Math.exp(f(-a * this.decay))) * f(f(r * r) * f(3 - f(2 * r))));
+    return f(f(f(band * this.aNoise) + f(tone * this.aTone)) * env);
+  }
+}
+
+export class RefRoarBand {
+  svf = new RefSvf();
+  svf2 = new RefSvf();
+  coef = f(0.1);
+  gain = 1;
+  depth = 0;
+  rate = f(0.0001);
+  set(coef: number, damp: number, gain: number, depth: number, rate: number): this {
+    this.coef = f(coef);
+    this.svf.damping(damp);
+    this.svf2.damping(damp);
+    this.gain = f(gain);
+    this.depth = f(depth);
+    this.rate = f(rate);
+    return this;
+  }
+  tick(key: number, age: number, a: number): number {
+    const walk = f(Math.exp(f(this.depth * refSmooth((key ^ 977) >>> 0, f(a * this.rate)))));
+    return f(
+      f(this.svf2.step(this.svf.step(refNoise(key, age), this.coef), this.coef) * this.gain) * walk,
+    );
+  }
+}
+
+export class RefRoar {
+  age = 0;
+  key = 1;
+  len = 1;
+  att = 1200;
+  low = f(0.6);
+  hold = f(0.65);
+  gain = 1;
+  b0 = new RefRoarBand();
+  b1 = new RefRoarBand();
+  b2 = new RefRoarBand();
+  b3 = new RefRoarBand();
+  shape(key: number, len: number, att: number, low: number, hold: number, gain: number): this {
+    this.key = key >>> 0;
+    this.len = f(len);
+    this.att = f(att);
+    this.low = f(low);
+    this.hold = f(hold);
+    this.gain = f(gain);
+    return this;
+  }
+  tick(): number {
+    const age = this.age;
+    this.age = age + 1;
+    const a = f(age);
+    const u = Math.min(f(a / this.len), 1);
+    const y0 = this.b0.tick((this.key ^ 201) >>> 0, age, a);
+    const y1 = this.b1.tick((this.key ^ 202) >>> 0, age, a);
+    const y2 = this.b2.tick((this.key ^ 203) >>> 0, age, a);
+    const y3 = this.b3.tick((this.key ^ 204) >>> 0, age, a);
+    const swell = f(this.low + f(f(1 - this.low) * Math.min(f(u / this.hold), 1)));
+    const t = Math.max(f(f(1 - u) / f(1 - this.hold)), 0);
+    const tail = Math.min(f(t * t), 1);
+    const env = f(f(Math.min(f(a / this.att), 1) * swell) * tail);
+    return f(f(f(f(f(y0 + y1) + y2) + y3) * env) * this.gain);
+  }
+}

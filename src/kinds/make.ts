@@ -7,11 +7,15 @@
 import type { PlanEvent } from '../plan/types.ts';
 import { Cloud, Grain } from '../units/grain.shade.ts';
 import {
+  BoomLane,
   ClothLane,
+  CrackLane,
   DroneLane,
   FootstepLane,
   ImpactLane,
   RiserLane,
+  RoarLane,
+  RubbleLane,
   ShimmerLane,
   VoiceLane,
   WhooshLane,
@@ -26,8 +30,12 @@ import { Drone } from './drone.shade.ts';
 import { Footstep } from './footstep.shade.ts';
 import { Cloth } from './cloth.shade.ts';
 import { Stem } from './voice.shade.ts';
+import { Stones } from './stones.shade.ts';
+import { Boom } from './boom.shade.ts';
+import { Roar } from './roar.shade.ts';
+import { svfCoef } from '../units/svf.shade.ts';
 
-/** The kinds in the order of the `kinds` array that `gather` reads and of its `w0` to `w8`. */
+/** The kinds in the order of the `kinds` array that `gather` reads. */
 export const KIND_INDEX = {
   whoosh: 0,
   impact: 1,
@@ -38,6 +46,10 @@ export const KIND_INDEX = {
   footstep: 6,
   cloth: 7,
   voice: 8,
+  crack: 9,
+  boom: 10,
+  rubble: 11,
+  roar: 12,
 } as const;
 
 /**
@@ -45,6 +57,17 @@ export const KIND_INDEX = {
  * the master, so this only sets how the kinds sit against one another.
  */
 export const KIND_PEAK = 0.5;
+
+/**
+ * The gains of the four kinds of experiment 9, measured on 32 keys of each at its default macros
+ * (2026-11-10): they bring the median peak at intensity 1 to `KIND_PEAK`. The four are noise under
+ * envelopes, so the peak of one take differs from the median: by up to 4 dB for `crack`, `boom`
+ * and `roar`, and by more for `rubble`, whose impacts fall at random.
+ */
+const CRACK_GAIN = 0.375;
+const BOOM_GAIN = 0.77;
+const RUBBLE_GAIN = 0.58;
+const ROAR_GAIN = 1.24;
 
 /**
  * The gain that brings the peak of each procedural kind, at intensity 1, to about `KIND_PEAK`
@@ -60,6 +83,10 @@ export const KIND_GAIN: Record<string, number> = {
   wind: 0.35,
   drone: 0.4,
   voice: 1,
+  crack: CRACK_GAIN,
+  boom: BOOM_GAIN,
+  rubble: RUBBLE_GAIN,
+  roar: ROAR_GAIN,
 };
 
 /** A hash of two words to [0, 2^32). */
@@ -122,6 +149,10 @@ export type Made = { length: number } & (
   | { kind: 'footstep'; lane: FootstepLane }
   | { kind: 'cloth'; lane: ClothLane }
   | { kind: 'voice'; lane: VoiceLane }
+  | { kind: 'crack'; lane: CrackLane }
+  | { kind: 'boom'; lane: BoomLane }
+  | { kind: 'rubble'; lane: RubbleLane }
+  | { kind: 'roar'; lane: RoarLane }
 );
 
 export interface MakeOptions {
@@ -176,6 +207,80 @@ function drawGrains(
     end = g.start + g.length;
   }
   return end;
+}
+
+/**
+ * The five bands of `Stones`: the centre in hertz, the seconds its envelope takes to fall to 1/e, the
+ * gain that levels the bands (a low band of noise is weak), and its share of an impact's dry edge.
+ * The centres lie 1.4 octaves apart, from the knock of a block of 0.8 m to the edge of a crack.
+ */
+export const STONE_BANDS = [
+  { hz: 70, tau: 0.15, gain: 9, edge: 0 },
+  { hz: 180, tau: 0.085, gain: 5.5, edge: 0 },
+  { hz: 480, tau: 0.045, gain: 3.2, edge: 0 },
+  { hz: 1300, tau: 0.022, gain: 1.9, edge: 0.5 },
+  { hz: 3400, tau: 0.01, gain: 1.2, edge: 1 },
+] as const;
+/** The seconds a lane of stones sounds after its last impact: the lowest band's fall by 60 dB. */
+export const STONE_TAIL = 1;
+
+/** The four bands of `Roar`: the centre in hertz, the damping, the gain, how far the level wanders (a natural log) and how fast (hertz). */
+export const ROAR_BANDS = [
+  { hz: 55, damp: 1.4, gain: 3.6, depth: 0.115, rate: 3.2 },
+  { hz: 300, damp: 2, gain: 2.8, depth: 0.15, rate: 4.2 },
+  { hz: 1100, damp: 1.6, gain: 1.3, depth: 0.63, rate: 8.2 },
+  { hz: 3000, damp: 1.4, gain: 0.07, depth: 0.75, rate: 9.5 },
+] as const;
+
+interface StonesShape {
+  key: number;
+  sr: number;
+  /** The seconds over which the rate and the sizes move. */
+  span: number;
+  /** Impacts a second: `a + b * u ** 1.5 + c * (1 - u) ** 3`. */
+  a: number;
+  b: number;
+  c: number;
+  /** The smallest and the largest size, in metres. */
+  lo: number;
+  hi: number;
+  grow0: number;
+  grow1: number;
+  bright: number;
+  first: number;
+  firstSize: number;
+  gain: number;
+}
+
+/** A `Stones` with its five bands set. */
+function stones(o: StonesShape): Stones {
+  const s = new Stones().shape(
+    o.key,
+    o.span * o.sr,
+    o.a / o.sr,
+    o.b / o.sr,
+    o.c / o.sr,
+    o.lo,
+    Math.log(o.hi / o.lo),
+    o.grow0,
+    o.grow1,
+    o.bright,
+    o.first,
+    o.firstSize,
+  );
+  const bands = [s.b0, s.b1, s.b2, s.b3, s.b4];
+  STONE_BANDS.forEach((band, i) => {
+    const b = bands[i]!;
+    b.set(
+      svfCoef(band.hz, o.sr),
+      1.2,
+      Math.exp(-1 / (band.tau * o.sr)),
+      band.hz / 54.6,
+      band.edge,
+      band.gain * o.gain,
+    );
+  });
+  return s;
 }
 
 /** Builds the lane of `e`. The caller sets `lane.start` and `lane.end` from the sync and the length. */
@@ -348,6 +453,104 @@ export function makeLane(e: PlanEvent, o: MakeOptions): Made {
       fresh.lp.k = unit.lp.k;
       lane.cloth = fitPeak(unit, fresh, length, e.intensity * KIND_PEAK);
       return { kind: 'cloth', lane, length };
+    }
+    case 'crack': {
+      const lane = new CrackLane();
+      // A block of 0.05 to 2 m. Each take moves the size by up to 8 % and the dry edge by up to 10 %.
+      // `crumble` is the smaller cracks that follow the first: up to 90 a second at the start, each
+      // 0.15 to 0.5 of the size, thinning to none over the duration.
+      const size = 0.05 * 40 ** m.size! * (0.92 + 0.16 * j(1));
+      const span = e.duration ?? 0.3 + 0.5 * size;
+      length = frames(span + STONE_TAIL, sr);
+      lane.stones = stones({
+        key,
+        sr,
+        span,
+        a: 0,
+        b: 0,
+        c: 90 * m.crumble!,
+        lo: 0.15 * size,
+        hi: 0.5 * size,
+        grow0: 1,
+        grow1: 0,
+        bright: 0.8 * m.brightness! * (0.9 + 0.2 * j(2)),
+        first: size ** 1.5,
+        firstSize: size,
+        gain: lvl / size ** 1.5,
+      });
+      return { kind: 'crack', lane, length };
+    }
+    case 'boom': {
+      const lane = new BoomLane();
+      // The pitch runs from 140 Hz (small) to 56 Hz (large), the decay from 0.12 to 1.2 s. Each take
+      // moves the pitch by up to 6 % and the decay by up to 10 %.
+      const f = 140 * 0.4 ** m.size! * (0.94 + 0.12 * j(1));
+      const tau = 0.12 * 10 ** m.decay! * (0.9 + 0.2 * j(2));
+      const tone = 0.6 * m.tone!;
+      length = frames(Math.min(7 * tau, 4), sr);
+      lane.boom = new Boom().shape(
+        key,
+        svfCoef(0.9 * f, sr),
+        1.4,
+        f / sr,
+        0.08,
+        1 / (0.6 * tau * sr),
+        1 / (tau * sr),
+        0.006 * sr,
+        12.9 * (1 - tone) * lvl,
+        tone * lvl,
+      );
+      return { kind: 'boom', lane, length };
+    }
+    case 'rubble': {
+      const lane = new RubbleLane();
+      // Blocks around 0.05 to 1.5 m, from 0.45 to 1.5 of that size, 2 to 80 impacts a second at the
+      // most. `swell` at 0.5 holds the rate; under it the mass thins to a tenth, over it the mass
+      // grows from a tenth and its blocks from a third of their size. Each take moves the size by up to 8 %.
+      const centre = 0.05 * 30 ** m.size! * (0.92 + 0.16 * j(1));
+      const hi = 1.5 * centre;
+      const span = e.duration ?? 1;
+      length = frames(span + STONE_TAIL, sr);
+      const most = 2 * 40 ** m.density!;
+      const s = 2 * m.swell! - 1;
+      lane.stones = stones({
+        key,
+        sr,
+        span,
+        a: most * (1 - 0.9 * Math.abs(s)),
+        b: s > 0 ? most * 0.9 * s : 0,
+        c: s < 0 ? most * 0.9 * -s : 0,
+        lo: 0.45 * centre,
+        hi,
+        grow0: s > 0 ? 1 - 0.65 * s : 1,
+        grow1: s > 0 ? 0.65 * s : 0,
+        bright: 0.8 * m.brightness! * (0.9 + 0.2 * j(2)),
+        first: 0,
+        firstSize: centre,
+        // The largest block sets the scale, and a dense mass is held back: its impacts lie on one another.
+        gain: lvl / (hi ** 1.5 * Math.sqrt(1 + 0.12 * most)),
+      });
+      return { kind: 'rubble', lane, length };
+    }
+    case 'roar': {
+      const lane = new RoarLane();
+      length = frames(e.duration ?? 1, sr);
+      const top = 0.4 + 1.2 * m.brightness!;
+      const move = 2 * m.motion!;
+      const roar = new Roar().shape(key, length, 0.025 * sr, 1 - 0.8 * m.swell!, 0.65, lvl);
+      const bands = [roar.b0, roar.b1, roar.b2, roar.b3];
+      ROAR_BANDS.forEach((band, i) => {
+        const g = i === 2 ? top : i === 3 ? top * top : 1;
+        bands[i]!.set(
+          svfCoef(band.hz, sr),
+          band.damp,
+          band.gain * g,
+          band.depth * move,
+          band.rate / sr,
+        );
+      });
+      lane.roar = roar;
+      return { kind: 'roar', lane, length };
     }
     default: {
       // voice: the stem's own length, at the event's level.

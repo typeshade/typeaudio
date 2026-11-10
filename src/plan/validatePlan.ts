@@ -1,11 +1,23 @@
 import { KINDS } from './kinds.ts';
 import { eventSpan, LAYERS, MATERIALS } from './types.ts';
-import type { PlanEvent, PlanLayer, PlanMaterial, PlanSync, SoundPlan, Vec3 } from './types.ts';
+import type {
+  PlanEvent,
+  PlanLayer,
+  PlanMaterial,
+  PlanSilence,
+  PlanSync,
+  SoundPlan,
+  Vec3,
+} from './types.ts';
 
 /** The most events a plan holds. */
 export const MAX_EVENTS = 256;
 /** The longest clip, in seconds. */
 export const MAX_DURATION = 600;
+/** The most silences a plan holds, and the shortest and the longest silence, in seconds. */
+export const MAX_SILENCES = 16;
+export const MIN_SILENCE = 0.01;
+export const MAX_SILENCE = 10;
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -37,8 +49,9 @@ function times(owner: string, field: string, v: unknown, duration: number): numb
  * Validates a plan and returns it normalized: the defaults filled, the events sorted by `t` and then
  * by `id`, every macro present. It throws an `Error` of one sentence that names the event and the
  * field. It refuses an unknown kind, a layer that does not match the kind, a macro the kind does
- * not define, a value out of range, an event outside the clip, a repeated `id` and more than
- * `MAX_EVENTS` events.
+ * not define, a value out of range, an event outside the clip, a repeated `id`, more than
+ * `MAX_EVENTS` events, a silence that overlaps another or runs past the clip, and an event that
+ * starts inside a silence.
  */
 export function validatePlan(raw: unknown): SoundPlan {
   if (!isRecord(raw) || raw.version !== 1) throw new Error('Plan: field "version" must be 1.');
@@ -85,6 +98,32 @@ export function validatePlan(raw: unknown): SoundPlan {
     cuts: times('Picture', 'cuts', pictureIn.cuts ?? [], duration),
     motion: times('Picture', 'motion', pictureIn.motion ?? [], duration),
   };
+
+  if (raw.silences !== undefined && !Array.isArray(raw.silences))
+    throw new Error('Plan: field "silences" must be a list of silences.');
+  const silencesIn: unknown[] = raw.silences ?? [];
+  if (silencesIn.length > MAX_SILENCES)
+    throw new Error(`Plan: field "silences" holds at most ${MAX_SILENCES} silences.`);
+  const silences: PlanSilence[] = silencesIn
+    .map((s: unknown, index: number) => {
+      const owner = `Silence ${index}`;
+      if (!isRecord(s)) throw new Error(`${owner}: must be an object.`);
+      const t = number(owner, 't', s.t, 0, duration);
+      const length = number(owner, 'duration', s.duration, MIN_SILENCE, MAX_SILENCE);
+      if (t + length > duration + 1e-9)
+        throw new Error(
+          `${owner}: field "duration" ends the silence after the clip ends at ${duration} s.`,
+        );
+      return { t, duration: length };
+    })
+    .sort((a, b) => a.t - b.t);
+  silences.forEach((s, i) => {
+    const before = silences[i - 1];
+    if (before !== undefined && s.t < before.t + before.duration - 1e-9)
+      throw new Error(
+        `Silence at ${s.t} s: field "t" lies inside the silence from ${before.t} to ${before.t + before.duration} s.`,
+      );
+  });
 
   const ids = new Set<string>();
   const events: PlanEvent[] = raw.events.map((e: unknown, index: number) => {
@@ -137,6 +176,13 @@ export function validatePlan(raw: unknown): SoundPlan {
     };
     if (length !== undefined) event.duration = length;
     const span = eventSpan(event);
+    const inside = silences.find(
+      (s) => span.start >= s.t - 1e-9 && span.start < s.t + s.duration - 1e-9,
+    );
+    if (inside !== undefined)
+      throw new Error(
+        `${owner}: field "t" starts the sound inside the silence from ${inside.t} to ${inside.t + inside.duration} s; a sound starts before a silence or at its end.`,
+      );
     if (span.start < -1e-9)
       throw new Error(`${owner}: field "duration" starts the sound before the clip starts.`);
     if (span.end > duration + 1e-9)
@@ -147,7 +193,7 @@ export function validatePlan(raw: unknown): SoundPlan {
   });
   events.sort((a, b) => a.t - b.t || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 
-  const plan: SoundPlan = { version: 1, clip, scene, master, seed, picture, events };
+  const plan: SoundPlan = { version: 1, clip, scene, master, seed, picture, silences, events };
   if (typeof raw.description === 'string') plan.description = raw.description;
   return plan;
 }
