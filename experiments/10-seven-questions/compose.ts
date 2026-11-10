@@ -6,7 +6,22 @@
 // accepted definition from the store by its name, and effects lie on it as nodes.
 
 import { ROOMS, SAMPLE_RATE, pitched, random, roomOf } from './definitions.ts';
-import { readEntry, renderEntry, renderParts, type Stereo } from './store.ts';
+import type { Parts, Stereo, StoreEntry } from './store.ts';
+
+/**
+ * Where a composition takes its sounds: the entries of the store by name, and their renders. The
+ * store in Node (`nodeSource` of `store.ts`) renders in headless Chromium; the page of the site
+ * renders on the viewer's own device.
+ */
+export interface Source {
+  readonly read: (name: string) => StoreEntry;
+  readonly parts: (name: string) => Promise<Parts>;
+}
+
+const summed = (p: Parts): Stereo => [
+  p.dry[0].map((v, i) => v + p.wet[0][i]!),
+  p.dry[1].map((v, i) => v + p.wet[1][i]!),
+];
 import { limiterGain } from '../../src/master.ts';
 
 /** An effect node on a stored sound. */
@@ -94,10 +109,10 @@ export interface StoredSound {
  * radiating area as its face), and up to 4 dB more by distance. Small pieces are many: the size
  * follows a power law from the smallest to the largest.
  */
-export function scattered(sound: StoredSound): StoredSound[] {
+export function scattered(sound: StoredSound, read: (name: string) => StoreEntry): StoredSound[] {
   const sc = sound.scatter;
   if (!sc) return [sound];
-  const base = resolved({ ...sound, scatter: undefined });
+  const base = resolved({ ...sound, scatter: undefined }, read);
   const rnd = random(sc.seed);
   const [small, large] = sc.size;
   const out: StoredSound[] = [];
@@ -250,39 +265,38 @@ export function shaped(source: Stereo, sound: StoredSound): { sound: Stereo; fro
  * A sound whose `from.store` names an accepted sound of the store takes that sound's `from` and
  * its effects, and its own effects follow them.
  */
-export function resolved(sound: StoredSound): StoredSound {
-  const entry = readEntry(sound.from.store);
+export function resolved(sound: StoredSound, read: (name: string) => StoreEntry): StoredSound {
+  const entry = read(sound.from.store);
   if (!entry.sound) return sound;
-  const inner = resolved({
-    ...sound,
-    from: entry.sound.from as StoredSound['from'],
-    effects: entry.sound.effects as StoredSound['effects'],
-  });
+  const inner = resolved(
+    {
+      ...sound,
+      from: entry.sound.from as StoredSound['from'],
+      effects: entry.sound.effects as StoredSound['effects'],
+    },
+    read,
+  );
   return { ...inner, effects: [...inner.effects, ...sound.effects] };
 }
 
 /** The composition: the bed, every stored sound at its second and level, and the ceiling. */
-export async function compose(c: Composition): Promise<Stereo> {
-  const bed = await renderEntry(c.bed.store);
-  const bedDb = (await renderParts(c.bed.store)).normalizeDb;
+export async function compose(c: Composition, source: Source): Promise<Stereo> {
+  const bedParts = await source.parts(c.bed.store);
+  const bed = summed(bedParts);
+  const bedDb = bedParts.normalizeDb;
   const out = bed.map((x) => x.slice()) as unknown as Stereo;
   const ref = rms(
     bed,
     Math.round((c.reference.at - c.bed.from) * SAMPLE_RATE),
     Math.round((c.reference.at + c.reference.length - c.bed.from) * SAMPLE_RATE),
   );
-  for (const sound of c.sounds.flatMap((given) => scattered(resolved(given)))) {
-    const parts = await renderParts(sound.from.store);
-    const source: Stereo =
-      sound.from.part === 'dry'
-        ? parts.dry
-        : [
-            parts.dry[0].map((v, i) => v + parts.wet[0][i]!),
-            parts.dry[1].map((v, i) => v + parts.wet[1][i]!),
-          ];
-    const plain = shaped(source, { ...sound, effects: [] }).sound;
+  const read = source.read;
+  for (const sound of c.sounds.flatMap((given) => scattered(resolved(given, read), read))) {
+    const parts = await source.parts(sound.from.store);
+    const input: Stereo = sound.from.part === 'dry' ? parts.dry : summed(parts);
+    const plain = shaped(input, { ...sound, effects: [] }).sound;
     const own = rms(plain, 0, Math.round(c.reference.length * SAMPLE_RATE));
-    const { sound: made, front } = shaped(source, sound);
+    const { sound: made, front } = shaped(input, sound);
     const gain =
       (sound.level === 'plan' ? 10 ** ((bedDb - parts.normalizeDb) / 20) : ref / (own || 1)) *
       10 ** (-sound.why.under / 20);
@@ -309,4 +323,33 @@ export async function compose(c: Composition): Promise<Stereo> {
   const gain = limiterGain(out, SAMPLE_RATE, -1);
   for (const x of out) for (let i = 0; i < x.length; i++) x[i]! *= gain[i]!;
   return out;
+}
+
+/** A variant of a composition: what it keeps, takes and leaves out of the sounds. */
+export interface Variant {
+  /** The effect nodes it keeps; all when it names none. */
+  readonly effects?: readonly string[];
+  readonly part?: 'dry' | 'mix';
+  /** Store entries it takes in place of others, by name. */
+  readonly use?: Readonly<Record<string, string>>;
+  /** The sounds it leaves out, by id. */
+  readonly drop?: readonly string[];
+}
+
+/** The composition of a variant: its sounds, with the effect nodes and the entries it names. */
+export function withVariant(c: Composition, variant: Variant): Composition {
+  const sounds = c.sounds
+    .filter((s) => !variant.drop?.includes(s.id))
+    .map((s) => ({
+      ...s,
+      from: {
+        ...s.from,
+        store: variant.use?.[s.from.store] ?? s.from.store,
+        part: variant.part ?? s.from.part,
+      },
+      effects: variant.effects
+        ? s.effects.filter((e) => variant.effects!.includes(Object.keys(e)[0]!))
+        : s.effects,
+    }));
+  return { ...c, sounds };
 }
