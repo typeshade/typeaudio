@@ -9,17 +9,18 @@ devices yet.
 
 ## Status
 
-| #   | Experiment                                                 | Decides                                                                       | Status                                                                                                                                                                                                                                                 |
-| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I                      | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending                                                                                                                                                 |
-| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K                        | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending                                                                                                                                                    |
-| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J                                  | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending                                                                                                                                                        |
-| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I                     | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending                                                                                                                                                   |
-| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                       | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending                                                                                                                                                |
-| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
-| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
-| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
-| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
+| #   | Experiment                                                 | Decides                                                                             | Status                                                                                                                                                                                                                                                 |
+| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I                            | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending                                                                                                                                                 |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K                              | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending                                                                                                                                                    |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J                                        | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending                                                                                                                                                        |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I                           | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending                                                                                                                                                   |
+| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                             | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending                                                                                                                                                |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                               | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                          | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
+| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed       | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
+| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan                   | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
+| 10  | The same passage, by a model with better tools             | Which tools a model needs to reach an expert's sound, and how far each one takes it | statement only; not started                                                                                                                                                                                                                            |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -412,3 +413,63 @@ experiment:
 
 The theory behind these and what the engine lacks are `docs/sound-design-theory.md`. The device runs were
 not made.
+
+## 10. The same passage, by a model with better tools
+
+Experiment 9 asked how fast a model makes the sound of a passage with the tools the engine has. It
+ended on 2026-11-10 (`docs/records/09-force-passage-container-5.md`): the structure was right by the
+fifth plan, and a block of stone that lands was not reached in sixteen. The owner said on the same day
+what the next question is: with finer and better tools, how far does a model get?
+
+**Question.** Which tools does a model need to reach the sound an expert makes for a picture? How far
+does each tool take it, measured against experiment 9 on the same passage?
+
+**Decides.** What the engine gains next for the sound-design loop. Whether a model can work from
+accepted sounds and a few transforms. Whether a measure nearer to the ear can stand in for a listener
+before a render reaches one.
+
+**The tools.** Each answers a place where experiment 9 stopped (`docs/sound-design-theory.md`,
+section 9).
+
+| Tool                       | What it is                                                                                                                | Where experiment 9 stopped                                                        | How sure the gain is |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------- |
+| A. A transform of an event | A plan lowers an event, or a group of events, by one ratio: every frequency down and every length up. Level and count too | The owner accepted the hit on the wall lowered by two octaves, outside the engine | High                 |
+| B. Accepted sounds         | A sound that the owner accepted has a name, and a plan uses it by that name as the timbre of a material                   | One accepted sound solved what sixteen plans of new recipes did not               | High                 |
+| C. A measure near the ear  | A number that says whether two sounds are heard as one cause: stone or a bin                                              | Band levels, the share of one tone and flatness did not tell them apart           | Low: research        |
+| D. Density in the master   | Saturation before the ceiling                                                                                             | The limiter went 8.7 dB deep, and the mix stayed thinner than the reference       | High                 |
+
+Tool C may need a model of hearing or a learned audio model from outside this repository. Recordings
+as material are not a tool of this experiment; the statement names them as the alternative.
+
+**Method.**
+
+1. Build tool A and tool B. Hold each to a test, as the kinds are.
+2. Make the force passage again from a first plan, with tools A and B and the rule of
+   `docs/sound-design-loop.md`, "One sound leads".
+3. Put the mix on the picture for the owner. Count the reviews until the owner accepts the passage.
+4. Build tool D. Repeat steps 2 and 3 from the accepted plan.
+5. Survey what tool C can be. Write the options with their costs for the owner to decide.
+6. If the owner chooses an option, build tool C and repeat steps 2 and 3 on a passage the owner has
+   not heard: the red passage or the finale of the study.
+7. Write a record for each step that renders.
+
+**Measures.** Against experiment 9, on the same passage:
+
+| Measure          | What it is                                        | Experiment 9                             |
+| ---------------- | ------------------------------------------------- | ---------------------------------------- |
+| Reviews          | The owner's reviews until the passage is accepted | 16, and not accepted                     |
+| Reach            | For each moment: accepted, to be mended, or wrong | One moment accepted: the hit on the wall |
+| The first render | The reach of the render before any review         | Heard as things of a house thrown about  |
+
+**What it does not do.** It has one listener. The owner has heard the force passage many times, so
+steps 2 to 4 measure the tools on a passage that the listener knows; step 6 is the test on a new one.
+It does not decide whether recordings enter the engine.
+
+**Open questions for the owner.**
+
+1. A transform of one event, or of a group of events? The accepted landing was a group, the whole hit
+   on the wall, lowered together. A group changes the plan format.
+2. May tool C use a model from outside this repository?
+3. The same passage first, as the method says, or a new passage from the start?
+
+**Status.** Statement only. Nothing is built. The statement waits for the owner's review.
