@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import plan from '../experiments/08-sound-design/plan.json';
 import force from '../experiments/09-force-passage/plan.json';
-import { KINDS, LAYERS, validatePlan, MAX_EVENTS } from '../src/plan/index.ts';
+import { eventSpan, KINDS, LAYERS, validatePlan, MAX_EVENTS } from '../src/plan/index.ts';
 
 // The plan format (docs/sound-design-loop.md). Each refusal is one sentence that names the event and
 // the field. No renderer reads the plan here.
@@ -187,19 +187,45 @@ describe('the plan of experiment 9, the force passage', () => {
       expect(kinds.has(kind), kind).toBe(true);
   });
 
-  test('has one silence, which ends where the strike starts; what sounds before it starts before it', () => {
-    expect(p.silences).toHaveLength(1);
-    const s = p.silences[0]!;
-    expect(Math.abs(s.t + s.duration - one('strike').t)).toBeLessThan(1e-6);
-    expect(one('stare').t).toBeLessThan(s.t);
-    expect(one('stare').t + one('stare').duration!).toBeGreaterThan(s.t);
+  test('has two silences: one that ends where the strike starts, and one frame that ends where the hit on the wall starts', () => {
+    expect(p.silences).toHaveLength(2);
+    const [first, second] = p.silences;
+    expect(Math.abs(first!.t + first!.duration - one('strike').t)).toBeLessThan(1e-6);
+    expect(one('stare').t).toBeLessThan(first!.t);
+    expect(one('stare').t + one('stare').duration!).toBeGreaterThan(first!.t);
+    expect(second!.duration).toBeCloseTo(1001 / 24000, 5);
+    expect(Math.abs(second!.t + second!.duration - one('wall-hit').t)).toBeLessThan(1e-6);
+    // The rush arrives where the second silence starts.
+    expect(eventSpan(one('rush')).end).toBeLessThanOrEqual(second!.t);
+    expect(second!.t - eventSpan(one('rush')).end).toBeLessThan(0.01);
   });
 
-  test('puts the strike, the blast, the hit on the wall and the breakout in their order', () => {
-    const order = ['strike', 'blast', 'wall-crack', 'crack-run', 'breakout-first', 'land-1'];
+  test('puts the strike, the blast, the hit on the wall and the break in their order', () => {
+    const order = ['strike', 'blast', 'wall-hit', 'split-1', 'break', 'far-land-1'];
     const times = order.map((id) => one(id).t);
     expect(times).toEqual([...times].sort((a, b) => a - b));
     // The blast is two frames after the strike: her hair snaps, then she is thrown.
     expect(one('blast').t - one('strike').t).toBeCloseTo(2002 / 24000, 5);
+  });
+
+  test('lets the hit on the wall lead: it is the largest event, and the air of the blast has ended before it', () => {
+    const hit = one('wall-hit');
+    expect(hit.kind).toBe('impact');
+    expect(hit.intensity).toBe(1);
+    expect(Math.max(...p.events.map((e) => e.intensity))).toBe(hit.intensity);
+    const flight = p.events.filter((e) => e.t >= one('blast').t && e.t < hit.t);
+    expect(flight.length).toBeGreaterThanOrEqual(4);
+    for (const e of flight) {
+      expect(e.intensity, e.id).toBeLessThan(0.6);
+      if (e.kind === 'roar') expect(eventSpan(e).end, e.id).toBeLessThan(hit.t - 0.08);
+    }
+  });
+
+  test('keeps what is loud after the fog far from the camera: the blocks land out of the picture', () => {
+    const fog = p.picture.cuts[3]!;
+    const late = p.events.filter((e) => e.t >= fog && e.layer === 'effects');
+    expect(late.length).toBeGreaterThanOrEqual(4);
+    for (const e of late)
+      if (e.intensity > 0.3) expect(e.position.distance, e.id).toBeGreaterThanOrEqual(9);
   });
 });

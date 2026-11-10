@@ -67,8 +67,8 @@
   "anchors": [
     { "id": "strike", "picture": 145.186708 },
     { "id": "blast", "picture": 145.270125 },
-    { "id": "wall-crack", "picture": 145.937458 },
-    { "id": "breakout-first", "picture": 146.479667 }
+    { "id": "wall-hit", "picture": 145.937458 },
+    { "id": "break", "picture": 146.479667 }
   ],
   "integratedLufs": -8.8
 }
