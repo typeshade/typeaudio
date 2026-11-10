@@ -92,3 +92,38 @@ export function overlap2(out: array<f32>, tail: array<f32>, frames: array<vec2>)
     tail[i] = frames[c * POINTS + n + FRAMES].x;
   }
 }
+
+// `pad` and `store` were experiment 5's (`experiments/05-convolution/convolution.shade.ts`, which
+// keeps its own copy for its oracle): an engine module does not import an experiment.
+
+/**
+ * Writes the block `input` as the real parts of the first 1,024 points of `padded`, with imaginary
+ * parts of 0. The second half of `padded` is the zero padding: the engine makes `padded` zeroed and
+ * no call writes its second half.
+ *
+ * The loop runs over the 2,048 points and writes only under `if (j < FRAMES)`, so `input` is read
+ * only at indices 0 to 1023. The call's check of the arrays a loop reads sees the guard at the
+ * compiler pin `415b276a` (compiler issue #997, fixed by #1029). Earlier pins refused this form
+ * before it ran (`pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0
+ * to 2047.`), and this kernel looped over the frames.
+ */
+export function pad(padded: array<vec2>, input: array<f32>) {
+  for (let j: u32 = 0; j < POINTS; j++) {
+    if (j < FRAMES) {
+      padded[j] = vec2(input[j], 0.);
+    }
+  }
+}
+
+/**
+ * Writes the spectrum of the newest block into slot `slot` of the delay line `line`.
+ *
+ * The index is written `slot * POINTS + j`. The loop proof of rule R3 admits it at the compiler pin
+ * `415b276a` (compiler issue #983, fixed by #994). Earlier pins refused it with TS8070 and this
+ * kernel wrote `j * 1 + slot * POINTS`.
+ */
+export function store(line: array<vec2>, spectrum: array<vec2>, slot: u32) {
+  for (let j: u32 = 0; j < POINTS; j++) {
+    line[slot * POINTS + j] = spectrum[j];
+  }
+}

@@ -5,9 +5,8 @@
 // `accumulate2`, the inverse stages and `overlap2`: 28 calls inside the block's `fuse` scope.
 
 import type { Device, Resident } from 'typeshade/runtime';
-import { pad, store } from '../../experiments/05-convolution/convolution.shade.ts';
-import { twiddleTable } from '../../experiments/03-fft/signals.ts';
-import { accumulate2, fftStage, overlap2 } from './fft.shade.ts';
+import { twiddleTable } from '../analyze/fft.ts';
+import { accumulate2, fftStage, overlap2, pad, store } from './fft.shade.ts';
 
 const FRAMES = 1024;
 const POINTS = 2048;
