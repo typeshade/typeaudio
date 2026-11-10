@@ -6,7 +6,7 @@
 // accepted definition from the store by its name, and effects lie on it as nodes.
 
 import { ROOMS, SAMPLE_RATE, pitched, roomOf } from './definitions.ts';
-import { renderEntry, renderParts, type Stereo } from './store.ts';
+import { readEntry, renderEntry, renderParts, type Stereo } from './store.ts';
 import { limiterGain } from '../../src/master.ts';
 
 /** An effect node on a stored sound. */
@@ -148,6 +148,21 @@ export function shaped(source: Stereo, sound: StoredSound): { sound: Stereo; fro
   return { sound: out, front: lead / ratio };
 }
 
+/**
+ * A sound whose `from.store` names an accepted sound of the store takes that sound's `from` and
+ * its effects, and its own effects follow them.
+ */
+export function resolved(sound: StoredSound): StoredSound {
+  const entry = readEntry(sound.from.store);
+  if (!entry.sound) return sound;
+  const inner = resolved({
+    ...sound,
+    from: entry.sound.from as StoredSound['from'],
+    effects: entry.sound.effects as StoredSound['effects'],
+  });
+  return { ...inner, effects: [...inner.effects, ...sound.effects] };
+}
+
 /** The composition: the bed, every stored sound at its second and level, and the ceiling. */
 export async function compose(c: Composition): Promise<Stereo> {
   const bed = await renderEntry(c.bed.store);
@@ -157,7 +172,8 @@ export async function compose(c: Composition): Promise<Stereo> {
     Math.round((c.reference.at - c.bed.from) * SAMPLE_RATE),
     Math.round((c.reference.at + c.reference.length - c.bed.from) * SAMPLE_RATE),
   );
-  for (const sound of c.sounds) {
+  for (const given of c.sounds) {
+    const sound = resolved(given);
     const parts = await renderParts(sound.from.store);
     const source: Stereo =
       sound.from.part === 'dry'

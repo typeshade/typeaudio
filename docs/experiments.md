@@ -650,4 +650,22 @@ Measured on the variant `loud`, over the first 0.3 s: the hit on the wall -11.7 
 before the landing -19.0 dB as before, the first landing -6.8 dB, 4.9 dB over the hit. With the new
 ceiling, `solid` puts its landing 2.3 dB over the hit.
 
-**Status.** The first module, from the store. The owner's review of the variant `loud` is the next step.
+**Review 5, 2026-11-10.** The owner accepted the variant `loud`: "it looks right". It went into the
+store as `store/stone-landing.json`: an accepted sound made from another entry through its effect
+nodes, used again by its name. A composition of it renders the same samples as `loud` (largest
+difference 0).
+
+**Measures of the first module**, against experiment 9:
+
+| Measure          | Experiment 9, the block that lands       | Experiment 10, the first module                            |
+| ---------------- | ---------------------------------------- | ---------------------------------------------------------- |
+| Reviews          | 11, and not accepted                     | 5: two of the physics render, three of the store render    |
+| Reach            | Wrong, then plausible outside the engine | Accepted                                                   |
+| The first render | A plastic container that falls           | Physics: inside a bamboo tube. Store: a shipping container |
+
+What decided it, as the agent reads the reviews: the timbre came from a sound the owner had accepted,
+and every review after that was answered by one node with a measured cause (a lowered room, a long
+low ring, a ceiling that scaled the whole passage). The definitions of physics did not reach the
+timbre; they stay in `definitions.ts` as the first form of tool B.
+
+**Status.** The first module is accepted. Its sounds are in the store: `wall-hit`, `stone-landing`.

@@ -22,6 +22,11 @@ export interface StoreEntry {
   readonly events?: readonly { readonly t: number; readonly [key: string]: unknown }[];
   /** A whole plan of the engine. */
   readonly plan?: { readonly clip: { readonly duration: number } };
+  /**
+   * A sound made from another entry through effect nodes (`compose.ts`): an accepted sound that is
+   * used again by its name. Its `from` and `effects` take the place of a sound's own.
+   */
+  readonly sound?: { readonly from: unknown; readonly effects: readonly unknown[] };
 }
 
 /** A stereo sound: the left and the right. */

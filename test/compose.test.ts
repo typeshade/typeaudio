@@ -1,7 +1,7 @@
 // Experiment 10: a stored sound through its effect nodes.
 
 import { describe, expect, it } from 'vitest';
-import { shaped, type StoredSound } from '../experiments/10-seven-questions/compose.ts';
+import { resolved, shaped, type StoredSound } from '../experiments/10-seven-questions/compose.ts';
 
 const SR = 48000;
 // A test source: silence, then at 4 ms a click and a ring of 400 Hz that dies.
@@ -85,5 +85,27 @@ describe('a stored sound through its effects', () => {
     expect(peak(hot[0])).toBeCloseTo(peak(low[0]), 6);
     expect(energy(hot[0])).toBeGreaterThan(1.5 * energy(low[0]));
     expect(none[0]).toEqual(low[0]);
+  });
+});
+
+describe('the store', () => {
+  it('an accepted sound is used by its name: it takes its source and its effects', () => {
+    const r = resolved({
+      id: 'land',
+      from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
+      effects: [{ pitch: 0.9 }],
+      when: { at: 0 },
+      why: { part: 'leads', under: 0 },
+    });
+    expect(r.from.store).toBe('wall-hit');
+    expect(r.from.part).toBe('dry');
+    expect(r.effects.map((e) => Object.keys(e)[0])).toEqual([
+      'pitch',
+      'front',
+      'damp',
+      'saturate',
+      'room',
+      'pitch',
+    ]);
   });
 });
