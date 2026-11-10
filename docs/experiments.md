@@ -9,18 +9,18 @@ devices yet.
 
 ## Status
 
-| #   | Experiment                                                 | Decides                                                                             | Status                                                                                                                                                                                                                                                 |
-| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I                            | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending                                                                                                                                                 |
-| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K                              | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending                                                                                                                                                    |
-| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J                                        | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending                                                                                                                                                        |
-| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I                           | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending                                                                                                                                                   |
-| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                             | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending                                                                                                                                                |
-| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                               | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
-| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                          | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
-| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed       | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
-| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan                   | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
-| 10  | The same passage, by a model with better tools             | Which tools a model needs to reach an expert's sound, and how far each one takes it | statement only; not started                                                                                                                                                                                                                            |
+| #   | Experiment                                                 | Decides                                                                       | Status                                                                                                                                                                                                                                                 |
+| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | The round trip per block size                              | The real-time block size and the lookahead; asks H and I                      | harness ready; container run recorded (`docs/records/01-round-trip-container.md`); device runs pending                                                                                                                                                 |
+| 2   | The CPU tier inside an AudioWorklet                        | Whether the latency-critical path exists; asks F and K                        | harness ready; container run recorded (`docs/records/02-worklet-container.md`); device runs pending                                                                                                                                                    |
+| 3   | The FFT entry held to the oracle on three tiers            | Where the FFT lives (ask G); asks C, E and J                                  | harness ready; container run recorded (`docs/records/03-fft-container.md`); device runs pending                                                                                                                                                        |
+| 4   | A 10,000-partial additive render with the fuse report read | The graph layer's shape and `explain`; asks A, B, D and I                     | harness ready; container run recorded (`docs/records/04-additive-container.md`); device runs pending                                                                                                                                                   |
+| 5   | A 10-second partitioned convolution                        | Reverb by impulse response in the catalog; asks E and G                       | harness ready; container run recorded (`docs/records/05-convolution-container.md`); device runs pending                                                                                                                                                |
+| 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
+| 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
+| 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
+| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
+| 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -414,96 +414,133 @@ experiment:
 The theory behind these and what the engine lacks are `docs/sound-design-theory.md`. The device runs were
 not made.
 
-## 10. The same passage, by a model with better tools
+## 10. A sound from seven questions, by a model with better tools
 
 Experiment 9 asked how fast a model makes the sound of a passage with the tools the engine has. It
 ended on 2026-11-10 (`docs/records/09-force-passage-container-5.md`): the structure was right by the
-fifth plan, and a block of stone that lands was not reached in sixteen. The owner said on the same day
-what the next question is: with finer and better tools, how far does a model get?
+fifth plan, one sound was accepted, and a block of stone that lands was not reached in sixteen plans.
+The owner said on the same day what the next question is: with finer and better tools, how far does a
+model get? This statement holds what the owner and the agent settled in that conversation. Nothing in
+it is built.
 
 **Question.** Which tools does a model need to reach the sound an expert makes for a picture? How far
-does each tool take it, measured against experiment 9 on the same passage?
+does each tool take it, module by module, against experiment 9?
 
-**Decides.** What the engine gains next for the sound-design loop. Whether a model can work from
-accepted sounds and a few transforms. Whether a measure nearer to the ear can stand in for a listener
-before a render reaches one.
+**Decides.** The form of a plan. How the engine defines a material and a gesture. Where an effect
+sits. Whether a measure built here can stand in for a listener before a render reaches one.
 
-**The tools.** Each answers a place where experiment 9 stopped (`docs/sound-design-theory.md`,
-section 9).
+### What the owner settled
 
-| Tool                       | What it is                                                                                                                | Where experiment 9 stopped                                                        | How sure the gain is |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------- |
-| A. A transform of an event | A plan lowers an event, or a group of events, by one ratio: every frequency down and every length up. Level and count too | The owner accepted the hit on the wall lowered by two octaves, outside the engine | High                 |
-| B. Accepted sounds         | A sound that the owner accepted has a name, and a plan uses it by that name as the timbre of a material                   | One accepted sound solved what sixteen plans of new recipes did not               | High                 |
-| C. A measure near the ear  | A number that says whether two sounds are heard as one cause: stone or a bin                                              | Band levels, the share of one tone and flatness did not tell them apart           | Low: research        |
-| D. Density in the master   | Saturation before the ceiling                                                                                             | The limiter went 8.7 dB deep, and the mix stayed thinner than the reference       | High                 |
+| The owner said                                                                                 | What follows                                                                                                |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| The landing lowered by two octaves was plausible, not a sound of full marks                    | A transform is a tool, not the answer. The material of a sound is the work                                  |
+| A model from outside is not forbidden; the aim is to build the tool here and to hold all of it | The measure near the ear is built in this repository first                                                  |
+| The work goes module by module                                                                 | The unit of the experiment is a module: one sound with what leads to it, made, heard and accepted by itself |
+| A sound is made to be used again, as in Houdini                                                | Definitions with a few parameters, joined as nodes; a transform lies on a definition and does not change it |
+| Not one node "stone-hit": the material stone, and how a hit joins it                           | A material and a gesture are two definitions, and a contact joins them                                      |
+| A sound keeps to seven questions: when, where, and the rest                                    | A plan states each sound as seven answers                                                                   |
+| What the engine cannot do is an effect to be made, if a sound is made step by step             | An effect is a node after any step                                                                          |
+| Animation is another case                                                                      | The answers are read from the drawing, not from the real world, and they are made larger                    |
+| A shock wave can be stated: it is physics                                                      | A medium is a material too. Only what carries a feeling, and a silence, lie outside physics                 |
 
-Tool C may need a model of hearing or a learned audio model from outside this repository. Recordings
-as material are not a tool of this experiment; the statement names them as the alternative.
+### A sound as seven answers
 
-**Method.**
+A plan states one sound as its answers to seven questions. The agent read "seven" as the six of who,
+what, when, where, why and how, and "how much". The owner has not confirmed that reading.
 
-1. Build tool A and tool B. Hold each to a test, as the kinds are.
-2. Make the force passage again from a first plan, with tools A and B and the rule of
-   `docs/sound-design-loop.md`, "One sound leads".
-3. Put the mix on the picture for the owner. Count the reviews until the owner accepts the passage.
-4. Build tool D. Repeat steps 2 and 3 from the accepted plan.
-5. Survey what tool C can be. Write the options with their costs for the owner to decide.
-6. If the owner chooses an option, build tool C and repeat steps 2 and 3 on a passage the owner has
-   not heard: the red passage or the finale of the study.
-7. Write a record for each step that renders.
+| Question | What it states                                                                    | Its unit in a plan                                            |
+| -------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Who      | The thing that moves: its material and its size                                   | A name; metres as the drawing shows them                      |
+| What     | The thing that is met: its material and its size                                  | A name; metres as the drawing shows them                      |
+| How      | The gesture: a hit, a tear, a roll, a grind, a press, a flow                      | A name                                                        |
+| How much | The force of the gesture, its count and its length                                | A grade read from the result in the drawing; a count; seconds |
+| When     | The frame, the speed of the picture, and what the sound follows and what it tells | Frames and seconds; a ratio for a slow picture                |
+| Where    | The place in the picture, the distance, the room                                  | Metres on three axes; a name for the room                     |
+| Why      | The part the sound plays: it leads, it explains, it hints, it rings on            | A name; decibels under the sound that leads                   |
 
-**Measures.** Against experiment 9, on the same passage:
+"Why" is the section "One sound leads" of `docs/sound-design-loop.md`. A sound with no answer to it is
+out. "How much" is read backwards from what the drawing shows: a wall that breaks was hit hard enough
+to break it, whoever hit it.
 
-| Measure          | What it is                                        | Experiment 9                             |
-| ---------------- | ------------------------------------------------- | ---------------------------------------- |
-| Reviews          | The owner's reviews until the passage is accepted | 16, and not accepted                     |
-| Reach            | For each moment: accepted, to be mended, or wrong | One moment accepted: the hit on the wall |
-| The first render | The reach of the render before any review         | Heard as things of a house thrown about  |
+### What a sound is made from
 
-**What it does not do.** It has one listener. The owner has heard the force passage many times, so
-steps 2 to 4 measure the tools on a passage that the listener knows; step 6 is the test on a new one.
-It does not decide whether recordings enter the engine.
+| Definition | What it holds                                                                                                                                                                         | Its units                                              |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Material   | How a thing answers a force: where its partials lie, how fast they die, how hard it is, when it breaks and into what. A solid, a medium such as air, or an energy that a work invents | kg/m³, Pa, m/s, a loss factor, J/m², metres of a piece |
+| Body       | A material with a size: the answer of the material, moved to that size. A larger body is lower and longer                                                                             | Metres                                                 |
+| Gesture    | The shape of a force in time                                                                                                                                                          | Seconds; a count a second                              |
+| Contact    | Two bodies and one gesture. The softer body sets the front; the force sets how bright the answer is and whether a body breaks                                                         | Computed: joules, milliseconds                         |
+| Effect     | A node after a sound, after a group, after the room or after the mix: pitch, length, saturation, spread, the form of the output                                                       | A ratio; decibels                                      |
+| Style      | How far a work makes its sounds larger than physics, and how dense and how bright it is                                                                                               | A ratio                                                |
 
-**The owner's answers** (2026-11-10), to three questions of the first statement.
+The definitions of a material keep physical units: stone is stone in any work. A plan keeps the units
+of the drawing. A ratio lies between them: what physics computes, times what the work asks for.
 
-1. _A transform of one event, or of a group?_ The landing that was lowered by two octaves was
-   plausible. It was not a sound of full marks. So a transform is a tool, and it is not the answer:
-   the experiment aims past it, at the material of a sound.
-2. _May tool C use a model from outside this repository?_ It is not forbidden. The aim is to build
-   the tool here and to hold all of it.
-3. _The same passage first, or a new one?_ The work goes module by module: a part of a passage is
-   made, heard and accepted by itself.
+A definition has a name and is used again. A material, a gesture, a group of sounds that the owner
+accepted: each goes into a store, and a plan takes it by its name with a few parameters.
 
-**What the answers change.**
+### The tools
 
-- **Modules.** The unit of the experiment is a module, not a passage. A module is one sound of the
-  picture with what leads to it and what follows it: a few seconds, rendered and heard alone, with its
-  own count of reviews. The force passage has these modules: the stare and the silence; the strike and
-  the blast; the hit on the wall; the crack that runs and the break; the blocks that hang; the block
-  that lands; the end. A passage is its accepted modules, joined and heard once more as a whole.
-- **Tool E, material.** Since a lowered sound is not full marks, the experiment needs the material
-  itself: stone as many partials at irregular places that die fast, and thousands of fine breaks a
-  second (`docs/sound-design-theory.md`, sections 3 and 9). How sure the gain is: unknown. Prototype 1
-  of record 09-5 was such a material, and it has no review.
-- **Tool C is built here.** The first form of it is a model of hearing in this repository: bands as
-  the ear has them, masking, and the shape of a sound in time. A learned model from outside is the
-  fallback, and the survey of step 5 says what each can tell apart.
-- **The order.** The first module is the block that lands: it is where experiment 9 stopped, and it
-  needs tools A, B, D and E at once.
+| Tool                      | What it is                                                                  | How sure the gain is |
+| ------------------------- | --------------------------------------------------------------------------- | -------------------- |
+| A. The form of a plan     | A sound as seven answers, in the units of the drawing                       | High                 |
+| B. Materials and gestures | The definitions above, with a contact that joins them                       | Unknown              |
+| C. Effects                | A node after any step: pitch and length first, then saturation and spread   | High                 |
+| D. A store                | Accepted definitions by name                                                | High                 |
+| E. A measure near the ear | A model of hearing built here: the bands of the ear, masking, shape in time | Low: research        |
 
-**The method, by module.** It replaces steps 2 to 4 and step 6 above.
+Tool B is where experiment 9 stopped. The stone of the engine has five fixed bands and was heard as
+plastic and as a steel bin. Prototype 1 of record 09-5 is a first form of another stone; it has no
+review.
 
-1. Choose a module. State what the picture shows in it and which sound leads.
-2. Render the module alone, with what leads to it, on the tools that exist.
-3. Put it on its piece of the picture for the owner. Count the reviews until the owner accepts it.
-4. Record the module: its plan, the tools it used, the reviews, and what it still lacks.
-5. When every module of a passage is accepted, join them and hear the passage as a whole.
+### Method, by module
+
+1. Choose a module. State its sounds as seven answers.
+2. Build what the module needs of the tools, and no more.
+3. Render the module alone, with what leads to it.
+4. Put it on its piece of the picture for the owner. Count the reviews until the owner accepts it.
+5. Record the module: its answers, the definitions it used, the reviews, what it still lacks.
+6. Put what was accepted into the store.
+7. When the modules of a passage are accepted, join them and hear the passage as a whole.
+
+**The first module.** The material stone and the gesture hit, in two contacts: a body on a wall of
+stone, and a block of stone on a floor of stone. Both come from one definition of stone. Experiment 9
+accepted the first and did not reach the second.
+
+**Measures**, for each module, against experiment 9.
+
+| Measure          | What it is                                       | Experiment 9, the block that lands       |
+| ---------------- | ------------------------------------------------ | ---------------------------------------- |
+| Reviews          | The owner's reviews until the module is accepted | 11, and not accepted                     |
+| Reach            | Accepted, to be mended, or wrong                 | Wrong, then plausible outside the engine |
+| The first render | The reach of the render before any review        | A plastic container that falls           |
+
+### What this statement leaves out
+
+- **Output for many speakers and for headphones, and a standard to send it in.** A sound that is a
+  definition with a place can be rendered for any set of speakers, as an object of Dolby Atmos is, and
+  it can be made again for the device that plays it. That is a direction this form leaves open. It is
+  not a part of this experiment.
+- **Recordings as material.** The practice of film starts from them. This experiment builds its
+  materials.
+- **What carries a feeling.** A tone under a stare is nearer to music than to physics. The kinds of
+  experiment 8 stay as they are for it.
+
+### What it changes in the design, and what is not known
+
+- A plan in the units of the drawing meets a rule of `docs/vision.md`: a macro runs from 0 to 1. The
+  macros can stay inside a kind, under the new form. The owner decides.
+- An effect after any step needs the flow of a plan to be a graph. The engine has a graph layer
+  (`src/graph/`). Whether the flow of `renderPlan` can lie on it was not looked at.
+- The definitions of a material are a model of physics. How much of one the engine can run in a
+  block on a device is not known.
+- The agent that writes these definitions cannot hear. Until tool E exists, each step is judged by
+  the owner.
 
 **Open questions for the owner.**
 
-1. Is the block that lands the right first module?
-2. For a module, is a clip of a few seconds enough to judge, or does the owner want the moment
-   before it at full length?
+1. Are the seven questions the ones in the table?
+2. Is the first module right: stone and a hit, in the two contacts?
+3. For a module, is a clip of a few seconds enough to judge?
 
-**Status.** Statement only, with the owner's first answers. Nothing is built.
+**Status.** Statement only. Nothing is built.
