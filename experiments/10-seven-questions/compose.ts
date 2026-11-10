@@ -73,6 +73,11 @@ export interface StoredSound {
     readonly until: number;
     /** How wide the copies lie, 0 to 1. */
     readonly width: number;
+    /**
+     * How the sizes fall between the two: P(size > x) goes as x^-power. 1.5 (the default) makes
+     * small pieces many; 0 spreads the sizes evenly.
+     */
+    readonly power?: number;
     readonly seed: number;
   };
 }
@@ -91,11 +96,12 @@ export function scattered(sound: StoredSound): StoredSound[] {
   const [small, large] = sc.size;
   const out: StoredSound[] = [];
   for (let i = 0; i < sc.count; i++) {
-    // A power law: P(size > x) falls as x^-1.5 between the two sizes.
+    // A power law: P(size > x) falls as x^-power between the two sizes; even when power is 0.
     const u = rnd();
-    const a = small ** -1.5;
-    const b = large ** -1.5;
-    const size = (a - u * (a - b)) ** (-1 / 1.5);
+    const power = sc.power ?? 1.5;
+    const a = small ** -power;
+    const b = large ** -power;
+    const size = power === 0 ? small + u * (large - small) : (a - u * (a - b)) ** (-1 / power);
     let t = sound.when.at - sc.spread * Math.log(1 - rnd());
     if (t > sc.until) t = sound.when.at + rnd() * (sc.until - sound.when.at);
     let pitchDone = false;

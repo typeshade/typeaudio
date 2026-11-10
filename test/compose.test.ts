@@ -144,4 +144,29 @@ describe('the store', () => {
       copies.filter((c) => 0.25 / (c.effects[0] as { pitch: number }).pitch < 0.2).length,
     ).toBeGreaterThan(15);
   });
+
+  it('a scatter with power 0 spreads the sizes evenly', () => {
+    const copies = scattered(
+      resolved({
+        id: 'blocks',
+        from: { store: 'stone-landing', start: 0, length: 0, fade: 0 },
+        effects: [],
+        when: { at: 10 },
+        why: { part: 'explains', under: 0 },
+        scatter: {
+          count: 200,
+          size: [0.5, 1],
+          power: 0,
+          spread: 0.4,
+          until: 11,
+          width: 1,
+          seed: 7,
+        },
+      }),
+    );
+    const sizes = copies.map((c) => 0.25 / (c.effects[0] as { pitch: number }).pitch);
+    const upper = sizes.filter((x) => x > 0.75).length;
+    expect(upper).toBeGreaterThan(70);
+    expect(upper).toBeLessThan(130);
+  });
 });

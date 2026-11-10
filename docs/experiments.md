@@ -732,5 +732,11 @@ place. Sizes follow a power law, so small pieces are many. The variant `slow-sca
 landing and scatters 30 copies of `stone-landing`, sizes 0.12 to 0.6, from 147.86 s to 149.3 s, in
 place of the second landing. A composition of five variants takes 10.7 s.
 
+**Review 10, 2026-11-10.** Not two large ones: dozens of large ones, with small ones as well. The
+`scatter` node takes a `power` (0 spreads the sizes evenly). The variant `slow-many` keeps the first
+landing and adds 24 large copies (sizes 0.55 to 1.0, even, 6 dB under the first landing at most) and
+30 small ones (0.12 to 0.5). Against one landing, the fog holds -8.8 dB to 148.8 s and -10.3 dB to
+149.4 s, where one landing had -10.6 and -16.9 dB.
+
 **Status.** Two modules are accepted, and their sounds are in the store: `wall-hit`, `stone-landing`,
 `blast`. The third, the hang, waits for the owner's review of its two variants.
