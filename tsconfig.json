@@ -21,6 +21,9 @@
     "experiments/**/node.ts",
     "test/browser/run.ts",
     "test/browser-options.test.ts",
-    "test/fft.test.ts"
+    "test/fft.test.ts",
+    "test/quality/audio.test.ts",
+    "test/quality/transport.test.ts",
+    "test/quality/workflow.test.ts"
   ]
 }

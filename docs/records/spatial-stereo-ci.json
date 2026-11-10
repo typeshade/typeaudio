@@ -1,0 +1,121 @@
+{
+  "sourceCommit": "52cd2fdea3d05daaea75de7706e19591850fdd7f",
+  "baseCommit": "93d9a7c6086fe7f8b80a97aef3aa2198e077cae2",
+  "compilerPin": "87af4eb0d9d15f02b66b8341b72cab0944290472",
+  "date": "2026-11-06",
+  "ci": "https://github.com/typeshade/typeaudio/actions/runs/42200547017",
+  "compilerFeedback": "https://github.com/typeshade/typeaudio/actions/runs/42200546996",
+  "validation": {
+    "typecheck": "passed",
+    "unitTests": 63,
+    "spatialTests": 16,
+    "feedback": "passed",
+    "websiteTypecheck": "passed",
+    "websiteBuild": "passed",
+    "worklet": {
+      "context": "Chromium OfflineAudioContext",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "maxSampleError": 0
+    }
+  },
+  "artifacts": {
+    "name": "spatial-runtime",
+    "id": 13492789353,
+    "contents": [
+      "listener-stereo.wav",
+      "listener-stereo.json",
+      "benchmark.json"
+    ]
+  },
+  "benchmark": {
+    "date": "2026-11-06T10:10:32.083Z",
+    "commit": "53a0532a3be716fc355d51f9d8ea65a39d647853",
+    "runtime": {
+      "node": "26.3.0",
+      "bun": "1.4.4",
+      "boringssl": "41bf9b59c2ebf277a7aa427e1ecad5cc80dd4d4f",
+      "openssl": "1.1.0",
+      "llhttp": "9.4.2",
+      "libarchive": "27cbc7827172698143e440801fc0ba39ccb4f1f5",
+      "mimalloc": "92ef6587c57b262f6e6abf513f7776a2f8d12aeb",
+      "picohttpparser": "f4d94b48b31e0abae029ebeafcfd9ca0680ede58",
+      "uwebsockets": "38afee6c84fcf48c0edb2466aa4b27d287a59c30",
+      "webkit": "d6375c72affe0f70222cdcb45012b10f0bf3a9d5",
+      "zig": "04e7f6ac1e009525bc00934f20199c68f04e0a24",
+      "zlib": "12731092979c6d07f42da27da673a9f6c7b13586",
+      "tinycc": "05f0fafaa3be31e31d7b4b5c17dc60f62c991171",
+      "lolhtml": "725ce499aa9b71e38b7a2d0a9fbb6d7294a4079e",
+      "ares": "c7a3138dcfe3bb0eaaf10c0c24c36dc66dc790ab",
+      "libdeflate": "92e6a0db9fa848d742f9eb286c92afc60f2c3dda",
+      "usockets": "38afee6c84fcf48c0edb2466aa4b27d287a59c30",
+      "lshpack": "cf0f70dd10b352194c97448eb5d00b4aa484f531",
+      "zstd": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+      "v8": "14.6.202.34-node.20",
+      "uv": "1.48.0",
+      "napi": "10",
+      "icu": "78.3",
+      "unicode": "17.0",
+      "sqlite": "3.53.4",
+      "typescript": "7.0.2",
+      "modules": "147"
+    },
+    "device": {
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "platform": "linux",
+      "arch": "x64"
+    },
+    "frames": 128,
+    "sampleRate": 48000,
+    "scope": "CPU bus processing and prepared-target updates; excludes source synthesis, geometry preparation, device scheduling, GC guarantees and measured output underruns.",
+    "rows": [
+      {
+        "capacity": 1,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "p50Ms": 0.002555000000000973,
+        "p95Ms": 0.004158000000000328,
+        "p99Ms": 0.008696000000000481,
+        "maxMs": 0.18781199999999743,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 8,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "p50Ms": 0.007253999999996097,
+        "p95Ms": 0.008124999999999716,
+        "p99Ms": 0.015048000000000172,
+        "maxMs": 0.04869099999999804,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 32,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "p50Ms": 0.01804400000000328,
+        "p95Ms": 0.028503999999998086,
+        "p99Ms": 0.03808099999999115,
+        "maxMs": 0.06369400000001235,
+        "overBudgetBlocks": 0
+      },
+      {
+        "capacity": 64,
+        "blocks": 2000,
+        "budgetMs": 2.6666666666666665,
+        "p50Ms": 0.035066000000000486,
+        "p95Ms": 0.046948000000014645,
+        "p99Ms": 0.05748800000000642,
+        "maxMs": 0.13840999999999326,
+        "overBudgetBlocks": 0
+      }
+    ]
+  },
+  "limitations": [
+    "No physical-device deadline measurement",
+    "No listening review",
+    "No HRTF, room reflections, Doppler or head tracking",
+    "Spatial shader/tier parity remains open"
+  ],
+  "execution": "Local executor became unavailable during implementation. Remaining source changes and validation used the GitHub connector and GitHub Actions."
+}

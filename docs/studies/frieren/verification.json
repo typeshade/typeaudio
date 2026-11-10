@@ -1,0 +1,46 @@
+{
+  "schema": "typeaudio.picture-study-verification",
+  "version": 1,
+  "date": "2026-11-06T12:49:09.165818+00:00",
+  "helperSourceCommit": "316a08fe47f1e95ff498bc5ef2c44d5a10d9cf1f",
+  "scripts": {
+    "docs/studies/frieren/scripts/extract_frames.py": "83002b31fc6de53d829cc150c88bde25a1128c97caaacdbaf390b3071447aeb7",
+    "docs/studies/frieren/scripts/measure_mix.py": "91508b548e18f24203791057cda8b6e8900531f27a803c268ed9022e6084fabc"
+  },
+  "referenceSha256": "6f1856eb09d5522f05dfbb5e813df208e99b94fe391c346139e62bb5b0fba87c",
+  "sceneDecode": {
+    "command": "ffmpeg -v error -xerror -i reference.mp4 -t 189.314625 -map 0:v:0 -map 0:a:0 -f null -",
+    "result": "passed",
+    "stderr": "empty",
+    "scope": "Both streams in the proposed scene range; not the full container or uploader outro."
+  },
+  "documentAudit": {
+    "result": "passed",
+    "checks": [
+      "JSON parsing",
+      "Python AST parsing",
+      "Relative document links",
+      "41 ordered positive-duration editorial regions within the proposed range",
+      "15 anchors mapped to recorded presentation timestamps and frame hashes",
+      "514 distinct inspected frame hashes",
+      "757 mixed-signal CSV windows",
+      "git diff --check"
+    ]
+  },
+  "reproduction": {
+    "anchorFrames": 175,
+    "matchingHashesAfterLabelCorrection": 175,
+    "audioFrames": 8348775,
+    "audioSampleRate": 44100,
+    "finiteAudio": true
+  },
+  "notPerformed": [
+    "Auditory review",
+    "Stem separation",
+    "New synthesis or remix",
+    "Web editor import or deployment",
+    "R2 upload",
+    "Binaural perception or hardware performance validation",
+    "Live YouTube offset measurement"
+  ]
+}

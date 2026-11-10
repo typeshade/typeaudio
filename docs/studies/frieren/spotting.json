@@ -1,0 +1,1038 @@
+{
+  "schema": "typeaudio.picture-study",
+  "version": 1,
+  "referenceSha256": "6f1856eb09d5522f05dfbb5e813df208e99b94fe391c346139e62bb5b0fba87c",
+  "sourceTimebase": "decoded presentation timestamps in seconds; zero-based frame indices",
+  "proposedRangeSeconds": [
+    0,
+    189.314625
+  ],
+  "rangeStatus": "editorial proposal preserving the closing fade; uploader transition is not treated as a precise hard cut",
+  "onlineOffsetVerified": false,
+  "runtimeImportStatus": "analysis sidecar, not an implemented Web project schema",
+  "anchors": [
+    {
+      "id": "red-first-flash",
+      "frame": 93,
+      "pts": 3.878875,
+      "kind": "visible-change",
+      "observation": "First visible red line at the hand; preceding frame has no red line.",
+      "imageSha256": "bff954d1963b182a71b625050be419adea599dade591486db432293b5e551455"
+    },
+    {
+      "id": "red-fracture",
+      "frame": 616,
+      "pts": 25.692333,
+      "kind": "visible-change",
+      "observation": "Red lattice begins breaking before the radial release.",
+      "imageSha256": "b67f1406a106f6faee2ab9439c82169e7bfd305247d1890100321f82a8958303"
+    },
+    {
+      "id": "red-radial-release",
+      "frame": 618,
+      "pts": 25.77575,
+      "kind": "visible-change",
+      "observation": "First large radial violet-white release from the red lattice.",
+      "imageSha256": "d24a304aa23f2ee1fd4938c0ce48d2b768c2a48c74effb8a153001718033fc20"
+    },
+    {
+      "id": "violet-first-spark",
+      "frame": 1056,
+      "pts": 44.044,
+      "kind": "visible-change",
+      "observation": "First visible violet spark at the raised staff; frame 1055 has none.",
+      "imageSha256": "79f14fbc8a665c29e86a2db1ff09b2dd7437644d191b2f3eecb5180fd19a9987"
+    },
+    {
+      "id": "violet-burst",
+      "frame": 1366,
+      "pts": 56.973583,
+      "kind": "visible-change",
+      "observation": "Field changes into a broad bright release.",
+      "imageSha256": "e3e742a2c223ba3353c40ad6c85a71cbe9221b9e61ed2ba74edc1fe65a934093"
+    },
+    {
+      "id": "blue-wide-shot",
+      "frame": 1493,
+      "pts": 62.270542,
+      "kind": "shot-reveal",
+      "observation": "Cut reveals an already extended blue beam; physical launch time is not established.",
+      "imageSha256": "6b5ab831a5fe05c553519c6528579c0c39acfafaee522719b2cac48c2112c375"
+    },
+    {
+      "id": "fern-close-salvo",
+      "frame": 3038,
+      "pts": 126.709917,
+      "kind": "shot-reveal",
+      "observation": "Cut to Fern and already visible emission traces; not the first shot of the whole salvo.",
+      "imageSha256": "54b57505d89295eb182c1fd94ab9e78a0677166b19319f8cd78edde60cab1cb4"
+    },
+    {
+      "id": "clone-foot-contact",
+      "frame": 3165,
+      "pts": 132.006875,
+      "kind": "contact-bracket",
+      "observation": "First clearly planted boot after descent; nearest contact bracket is frames 3164–3165.",
+      "imageSha256": "7bf2df5f01e7cc09ca38bd83b2b3615d208ff42ffde59f2d78b3883af6ecce22"
+    },
+    {
+      "id": "force-response",
+      "frame": 3481,
+      "pts": 145.186708,
+      "kind": "visible-change",
+      "observation": "Hair abruptly moves upward before the body is thrown backwards.",
+      "imageSha256": "2f37dd77f5077b0c579745a61a6e2995b647c6240330a75a2d6f70edff6dd055"
+    },
+    {
+      "id": "column-contact",
+      "frame": 3499,
+      "pts": 145.937458,
+      "kind": "visible-change",
+      "observation": "Contact dust appears at the column after the airborne body in frame 3498.",
+      "imageSha256": "c26cbb2c3212e56038a0427a20a82894f6bd2609121a16545b014e7cc8d2a4f6"
+    },
+    {
+      "id": "final-flash",
+      "frame": 4257,
+      "pts": 177.552375,
+      "kind": "visible-change",
+      "observation": "First graphic white flash after the wide hall view.",
+      "imageSha256": "83ff1bc80964c8d52ebef65b9265ebd2061866a97eb720b42d02f0fa458c7fe4"
+    },
+    {
+      "id": "final-established-beam",
+      "frame": 4263,
+      "pts": 177.802625,
+      "kind": "visible-change",
+      "observation": "First established vertical beam after the brief black graphic frame.",
+      "imageSha256": "a9d6503faae74538f9d99d643c380f8f71327817483553f1d173f854b235f4fb"
+    },
+    {
+      "id": "closing-still-visible",
+      "frame": 4538,
+      "pts": 189.272417,
+      "kind": "visibility-sample",
+      "observation": "Closing reassurance shot remains faintly recognizable during the fade.",
+      "imageSha256": "ccd72ee84356e88ae209c0f30a66cce097fcfd980f25e36961afd13e27887585"
+    },
+    {
+      "id": "proposed-study-end",
+      "frame": 4539,
+      "pts": 189.314125,
+      "kind": "editorial-choice",
+      "observation": "Proposed exclusive endpoint at the near-black transition; not an identified hard cut.",
+      "imageSha256": "4221bd1f8e203376634ee3d6cf65a8cc390274c1534c24c4178d5c330d6120b0"
+    },
+    {
+      "id": "outro-recognizable",
+      "frame": 4549,
+      "pts": 189.731208,
+      "kind": "visibility-sample",
+      "observation": "Unrelated uploader poster is clearly recognizable; transition begins earlier.",
+      "imageSha256": "2ff7d9e3cc3bc7084aed5aa7571aae7ab8d15c59dbe2d3ee0666243fdab100a0"
+    }
+  ],
+  "events": [
+    {
+      "id": "FRN-001",
+      "regionSeconds": [
+        0,
+        3.878875
+      ],
+      "title": "Opening aftermath",
+      "observation": "A fade reveals hanging dust and damaged stone.",
+      "dramaticGoal": "Establish an event already in progress.",
+      "proposedSourceDesign": "Residual low air and sparse falling grains; avoid a new explosion at time zero.",
+      "proposedSpatialIntent": "Stable hall bed with remote debris.",
+      "priority": "bed",
+      "evidenceFrames": [
+        0,
+        48
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-002",
+      "regionSeconds": [
+        3.878875,
+        7.7
+      ],
+      "title": "Red formation",
+      "observation": "Red flicker and a dark-cored orb form near the hand; surrounding lines distort.",
+      "dramaticGoal": "Give contained energy a recognizable identity.",
+      "proposedSourceDesign": "Seeded turbulent low-mid core, restrained beating modes and a growing edge.",
+      "proposedSpatialIntent": "Bind formation to the caster before any travelling trajectory.",
+      "priority": "hero",
+      "evidenceFrames": [
+        93,
+        108,
+        144
+      ],
+      "anchorIds": [
+        "red-first-flash"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-003",
+      "regionSeconds": [
+        7.7,
+        9.5
+      ],
+      "title": "Evasion",
+      "observation": "The defender turns while light crosses the frame.",
+      "dramaticGoal": "Read agility without another impact.",
+      "proposedSourceDesign": "Short cloth and air displacement following body motion.",
+      "proposedSpatialIntent": "Narrow foreground movement; carry the orb across the cut.",
+      "priority": "support",
+      "evidenceFrames": [
+        192
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-004",
+      "regionSeconds": [
+        9.5,
+        17
+      ],
+      "title": "Red orbit through masonry",
+      "observation": "A red path crosses loose stone and the defender changes pose.",
+      "dramaticGoal": "Separate source travel, stone contacts and defence.",
+      "proposedSourceDesign": "Persistent orb plus short contact excitations; do not restart it at each cut.",
+      "proposedSpatialIntent": "Authored pass-by path with distance and occlusion hypotheses.",
+      "priority": "hero",
+      "evidenceFrames": [
+        240,
+        288,
+        384
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-005",
+      "regionSeconds": [
+        17,
+        23.8
+      ],
+      "title": "Return orbit and contacts",
+      "observation": "The orb sweeps around the chamber, tears through fragments and crosses near camera.",
+      "dramaticGoal": "Make approach, closest passage and departure legible.",
+      "proposedSourceDesign": "Velocity-shaped noise edge and selective debris; no identical crack at every fragment.",
+      "proposedSpatialIntent": "One coherent orbit, edited listening perspective across shots.",
+      "priority": "hero",
+      "evidenceFrames": [
+        432,
+        527,
+        539,
+        557
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-006",
+      "regionSeconds": [
+        23.8,
+        25.692333
+      ],
+      "title": "Red containment",
+      "observation": "A red cracked shell encloses the target.",
+      "dramaticGoal": "Compress attention before rupture.",
+      "proposedSourceDesign": "Narrow the spectral body, increase modulation tension and reduce competing debris.",
+      "proposedSpatialIntent": "Contract apparent spread; retain the hall quietly.",
+      "priority": "hero",
+      "evidenceFrames": [
+        575,
+        611
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-007",
+      "regionSeconds": [
+        25.692333,
+        26.3
+      ],
+      "title": "Red rupture",
+      "observation": "The shell fractures, then bright radial arms expand.",
+      "dramaticGoal": "Distinguish shell fracture from energetic release.",
+      "proposedSourceDesign": "Short fracture attack followed by expanding turbulent body, separately editable.",
+      "proposedSpatialIntent": "Local contact then outward spread and delayed room response.",
+      "priority": "hero",
+      "evidenceFrames": [
+        616,
+        618,
+        629
+      ],
+      "anchorIds": [
+        "red-fracture",
+        "red-radial-release"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-008",
+      "regionSeconds": [
+        26.3,
+        30
+      ],
+      "title": "Defensive dispersion",
+      "observation": "Pale geometric light and particles stream around the standing defender.",
+      "dramaticGoal": "Make energy resolution identifiable.",
+      "proposedSourceDesign": "Decaying inharmonic modes and thinning particles; avoid a second generic bass hit.",
+      "proposedSpatialIntent": "Fragments widen while the direct body recedes.",
+      "priority": "support",
+      "evidenceFrames": [
+        635,
+        659,
+        719
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-009",
+      "regionSeconds": [
+        30,
+        33.4
+      ],
+      "title": "Human-scale reaction",
+      "observation": "Hair and clothing move in close view.",
+      "dramaticGoal": "Restore scale after the large effect.",
+      "proposedSourceDesign": "Small filtered fabric excitation and residual moving air.",
+      "proposedSpatialIntent": "Close dry detail over a continuous distant hall.",
+      "priority": "support",
+      "evidenceFrames": [
+        767
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-010",
+      "regionSeconds": [
+        33.4,
+        40.6
+      ],
+      "title": "Large stone displacement",
+      "observation": "Large slabs rise or shift around the airborne figure before the heavy mass descends.",
+      "dramaticGoal": "Distinguish magical suspension from ordinary falling debris.",
+      "proposedSourceDesign": "Slow structural strain, mass movement, then contact preparation.",
+      "proposedSpatialIntent": "Broad moving masses; invented depth must remain labelled.",
+      "priority": "hero",
+      "evidenceFrames": [
+        815,
+        863,
+        911,
+        959
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-011",
+      "regionSeconds": [
+        40.6,
+        43.25
+      ],
+      "title": "Masonry landing",
+      "observation": "The large structure hits and a dust wave spreads.",
+      "dramaticGoal": "Express weight through causal layers.",
+      "proposedSourceDesign": "Hard fracture, lower modal body, sparse secondary contacts and a later dust tail.",
+      "proposedSpatialIntent": "Contact-local transient with broad hall response.",
+      "priority": "hero",
+      "evidenceFrames": [
+        1007
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-012",
+      "regionSeconds": [
+        44.044,
+        45.7
+      ],
+      "title": "Violet formation",
+      "observation": "Small violet arcs flicker around the raised staff before sustained discharge.",
+      "dramaticGoal": "Establish instability unlike the red orb.",
+      "proposedSourceDesign": "Irregular seeded pulse bursts and band-limited noisy modulation.",
+      "proposedSpatialIntent": "Initially small and attached to the staff.",
+      "priority": "hero",
+      "evidenceFrames": [
+        1056,
+        1073,
+        1085
+      ],
+      "anchorIds": [
+        "violet-first-spark"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-013",
+      "regionSeconds": [
+        45.7,
+        49.6
+      ],
+      "title": "Arc and shield contact",
+      "observation": "Violet branches strike geometric shields and spread across stone.",
+      "dramaticGoal": "Keep the attack and resisting material distinct.",
+      "proposedSourceDesign": "Arc crackle plus contact-triggered shield resonances; selective branch transients.",
+      "proposedSpatialIntent": "Contact points can move without sweeping the whole bus.",
+      "priority": "hero",
+      "evidenceFrames": [
+        1103,
+        1115,
+        1151
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-014",
+      "regionSeconds": [
+        49.6,
+        56.973583
+      ],
+      "title": "Sustained electrical pressure",
+      "observation": "A large violet field expands across the hall around the defender.",
+      "dramaticGoal": "Sustain tension without dense undifferentiated noise.",
+      "proposedSourceDesign": "Slow spectral evolution and bounded irregular microattacks; reserve headroom.",
+      "proposedSpatialIntent": "Distributed field plus a stable foreground contact.",
+      "priority": "hero",
+      "evidenceFrames": [
+        1199,
+        1247,
+        1319,
+        1364
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-015",
+      "regionSeconds": [
+        56.973583,
+        60
+      ],
+      "title": "Violet release",
+      "observation": "A bright field burst resolves into arcs, fragments and dust.",
+      "dramaticGoal": "Differentiate release from charge and from the earlier red event.",
+      "proposedSourceDesign": "Compact release, interrupted residual arcs and rapidly thinning particles.",
+      "proposedSpatialIntent": "Expansion then a continuous diffuse tail.",
+      "priority": "hero",
+      "evidenceFrames": [
+        1366,
+        1370,
+        1403
+      ],
+      "anchorIds": [
+        "violet-burst"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-016",
+      "regionSeconds": [
+        62.270542,
+        67.98
+      ],
+      "title": "Blue counterattack",
+      "observation": "A wide shot reveals a blue beam, followed by debris and a shield.",
+      "dramaticGoal": "Contrast coherent precision with unstable arcs.",
+      "proposedSourceDesign": "Clear beam edge and held body, then independent shield and stone contacts.",
+      "proposedSpatialIntent": "Localize emission, flight and target separately.",
+      "priority": "hero",
+      "evidenceFrames": [
+        1493,
+        1510,
+        1528,
+        1582,
+        1630
+      ],
+      "anchorIds": [
+        "blue-wide-shot"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-017",
+      "regionSeconds": [
+        71.3,
+        74.5
+      ],
+      "title": "Distant exchange",
+      "observation": "Small emission flashes and flying debris remain visible in wider shots.",
+      "dramaticGoal": "Keep action alive behind character attention.",
+      "proposedSourceDesign": "Reduced-density distant beam accents with narrower high-frequency detail.",
+      "proposedSpatialIntent": "Background depth; avoid foreground-sized attacks.",
+      "priority": "support",
+      "evidenceFrames": [
+        1726,
+        1774
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-018",
+      "regionSeconds": [
+        74.5,
+        82.5
+      ],
+      "title": "Explanation and transition",
+      "observation": "Character close-ups and subtitles interrupt the continuous action before a dark transition.",
+      "dramaticGoal": "Protect comprehension and create room for renewed escalation.",
+      "proposedSourceDesign": "Lower sustained effects while preserving meaningful distant continuations.",
+      "proposedSpatialIntent": "Continuous bed; perspective is a mix decision, not a new room.",
+      "priority": "protected-gap",
+      "evidenceFrames": [
+        1822,
+        1918,
+        1966
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-019",
+      "regionSeconds": [
+        82.5,
+        86.253
+      ],
+      "title": "Multicolour assembly",
+      "observation": "Coloured discs, bands and geometric forms accumulate and transform.",
+      "dramaticGoal": "Communicate complexity with a small number of intelligible motifs.",
+      "proposedSourceDesign": "Two or three interacting tonal/noise motifs; do not assign a bell to every visible dot.",
+      "proposedSpatialIntent": "Differentiate foreground assembly from surrounding defence.",
+      "priority": "hero",
+      "evidenceFrames": [
+        1990,
+        2026,
+        2050,
+        2062
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-020",
+      "regionSeconds": [
+        86.003,
+        90.9
+      ],
+      "title": "Assembly release",
+      "observation": "Bright multicolour energy and fragments expand into a held attack.",
+      "dramaticGoal": "Carry one energy trajectory through the cut.",
+      "proposedSourceDesign": "One attack into evolving sustain, with separate debris and shield contacts.",
+      "proposedSpatialIntent": "Release broadens; target remains localizable.",
+      "priority": "hero",
+      "evidenceFrames": [
+        2062,
+        2074,
+        2092,
+        2158
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-021",
+      "regionSeconds": [
+        93.6,
+        101.5
+      ],
+      "title": "Large rotating attack",
+      "observation": "Broad rings and a bright column develop into a dark-edged beam shape.",
+      "dramaticGoal": "Increase scale through duration and spatial extent.",
+      "proposedSourceDesign": "Slowly evolving body and rotating modulation; avoid arbitrary stereo spinning.",
+      "proposedSpatialIntent": "Extended source with persistent room energy.",
+      "priority": "hero",
+      "evidenceFrames": [
+        2254,
+        2302,
+        2350,
+        2398
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-022",
+      "regionSeconds": [
+        101.5,
+        104.48
+      ],
+      "title": "Dark fan against defence",
+      "observation": "Numerous dark blue-edged forms press around the geometric shield.",
+      "dramaticGoal": "Make pressure and resistance coexist.",
+      "proposedSourceDesign": "Rough shear texture under separated shield contacts; controlled high-frequency density.",
+      "proposedSpatialIntent": "Several dominant contact objects rather than one voice per visible branch.",
+      "priority": "hero",
+      "evidenceFrames": [
+        2434,
+        2470,
+        2494
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-023",
+      "regionSeconds": [
+        104.48,
+        110.8
+      ],
+      "title": "Shield fracture",
+      "observation": "Close views show cracks, wedges and bright shield fragments around the defender.",
+      "dramaticGoal": "Give structural failure its own contour.",
+      "proposedSourceDesign": "Inharmonic stress modes, fracture transients and sparse small fragments.",
+      "proposedSpatialIntent": "Near dry fractures over the existing broad field.",
+      "priority": "hero",
+      "evidenceFrames": [
+        2505,
+        2565,
+        2577,
+        2601,
+        2637
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-024",
+      "regionSeconds": [
+        111,
+        115.5
+      ],
+      "title": "Counter preparation",
+      "observation": "Staff detail and the defender prepare another action amid suspended fragments.",
+      "dramaticGoal": "Shift attention back to a deliberate source.",
+      "proposedSourceDesign": "Controlled tonal preparation and close handling detail.",
+      "proposedSpatialIntent": "Contract focus around staff and hand.",
+      "priority": "support",
+      "evidenceFrames": [
+        2685,
+        2733
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-025",
+      "regionSeconds": [
+        115.5,
+        119
+      ],
+      "title": "Counter through fragments",
+      "observation": "A beam and fragments cross around the reacting opponent.",
+      "dramaticGoal": "Preserve attack direction and response.",
+      "proposedSourceDesign": "Short launch, moving beam body and selective debris.",
+      "proposedSpatialIntent": "Edited source-to-target movement with an explicit perspective change.",
+      "priority": "hero",
+      "evidenceFrames": [
+        2781,
+        2829
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-026",
+      "regionSeconds": [
+        119,
+        123.75
+      ],
+      "title": "Fern aims",
+      "observation": "Fern holds layered circles while the camera establishes her position.",
+      "dramaticGoal": "Create readiness without spending the climax early.",
+      "proposedSourceDesign": "Low-level stable circle modes with restrained close cloth.",
+      "proposedSpatialIntent": "Small source at Fern; preserve the hall behind her.",
+      "priority": "support",
+      "evidenceFrames": [
+        2877,
+        2925,
+        2961
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-027",
+      "regionSeconds": [
+        123.75,
+        125.5
+      ],
+      "title": "Evasion and first crossing beam",
+      "observation": "The opponent turns before a large blue streak crosses the picture.",
+      "dramaticGoal": "Separate evasive movement from the beam passage.",
+      "proposedSourceDesign": "Short air/cloth movement and a precise passing beam.",
+      "proposedSpatialIntent": "Follow observed screen crossing; do not invent measured depth.",
+      "priority": "hero",
+      "evidenceFrames": [
+        2967,
+        2991,
+        2997
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-028",
+      "regionSeconds": [
+        125.5,
+        131.25
+      ],
+      "title": "Fern repeated salvo",
+      "observation": "Emission flashes, close views of repeated firing and alternating blue beams fill the chamber.",
+      "dramaticGoal": "Make individual attacks readable within the sustained barrage.",
+      "proposedSourceDesign": "Articulated starts, shared held texture and modest variation; avoid duplicate starts at shot cuts.",
+      "proposedSpatialIntent": "Fern remains the source across wide and close views.",
+      "priority": "hero",
+      "evidenceFrames": [
+        3021,
+        3038,
+        3063,
+        3087,
+        3123,
+        3141
+      ],
+      "anchorIds": [
+        "fern-close-salvo"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-029",
+      "regionSeconds": [
+        131.25,
+        136.5
+      ],
+      "title": "Wounded clone emerges",
+      "observation": "A boot descends into view; the wounded clone stands amid dust and fading shield pieces.",
+      "dramaticGoal": "Restore bodily scale and apparent victory.",
+      "proposedSourceDesign": "Light boot contact, fabric and thinning shield residue.",
+      "proposedSpatialIntent": "Ground-level contact near the body; sustained battle layer recedes.",
+      "priority": "support",
+      "evidenceFrames": [
+        3159,
+        3165,
+        3213,
+        3261
+      ],
+      "anchorIds": [
+        "clone-foot-contact"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-030",
+      "regionSeconds": [
+        136.5,
+        145.186708
+      ],
+      "title": "Threat without a visible projectile",
+      "observation": "Fern reacts, then the picture holds the clone and returns to Fern’s eyes.",
+      "dramaticGoal": "Preserve uncertainty and the surprise of the next action.",
+      "proposedSourceDesign": "Reduce chosen background layers; avoid a directional charge or warning whoosh.",
+      "proposedSpatialIntent": "Hold the listening perspective until the bodily response.",
+      "priority": "protected-gap",
+      "evidenceFrames": [
+        3309,
+        3411,
+        3441,
+        3479
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-031",
+      "regionSeconds": [
+        145.186708,
+        145.937458
+      ],
+      "title": "Unseen-force response",
+      "observation": "Hair snaps and the body is propelled backwards without a drawn projectile.",
+      "dramaticGoal": "Create abrupt loss of control.",
+      "proposedSourceDesign": "Compact pressure transient, brief body movement and travel air; no long precharge.",
+      "proposedSpatialIntent": "Start close to the affected body, then follow displacement.",
+      "priority": "hero",
+      "evidenceFrames": [
+        3481,
+        3485,
+        3495
+      ],
+      "anchorIds": [
+        "force-response"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-032",
+      "regionSeconds": [
+        145.937458,
+        149.7
+      ],
+      "title": "Column contact and damage",
+      "observation": "Contact dust appears; the column breaks and the body remains against the damaged stone.",
+      "dramaticGoal": "Make bodily contact distinct from architectural failure.",
+      "proposedSourceDesign": "Body thud, stone fracture, larger chunks and later small settling fragments.",
+      "proposedSpatialIntent": "Contact-local attack followed by hall reflections and sparse wider debris.",
+      "priority": "hero",
+      "evidenceFrames": [
+        3499,
+        3512,
+        3542,
+        3572
+      ],
+      "anchorIds": [
+        "column-contact"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-033",
+      "regionSeconds": [
+        149.7,
+        160.5
+      ],
+      "title": "Disorientation",
+      "observation": "Darkened eyelid views, a hand and broken stone accompany the reaction.",
+      "dramaticGoal": "Create a subjective recovery rather than more spectacle.",
+      "proposedSourceDesign": "Propose a restrained perspective reduction; no automatic tinnitus tone.",
+      "proposedSpatialIntent": "Narrower, drier bodily detail; return room energy gradually.",
+      "priority": "protected-gap",
+      "evidenceFrames": [
+        3596,
+        3644,
+        3692,
+        3740,
+        3836
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-034",
+      "regionSeconds": [
+        160.5,
+        173
+      ],
+      "title": "Distance and recognition",
+      "observation": "A distant figure on a circle alternates with Fern’s close reaction.",
+      "dramaticGoal": "Let distance and realization carry the scene.",
+      "proposedSourceDesign": "Quiet sustained circle texture, occasional stone movement and a continuous low bed.",
+      "proposedSpatialIntent": "Distant circle distinct from near bodily perspective.",
+      "priority": "support",
+      "evidenceFrames": [
+        3884,
+        3980,
+        4028,
+        4076,
+        4124
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-035",
+      "regionSeconds": [
+        173,
+        176.75
+      ],
+      "title": "Rear arrival",
+      "observation": "A staff and Frieren enter behind the clone at close range.",
+      "dramaticGoal": "Make the reversal readable without a premature heroic blast.",
+      "proposedSourceDesign": "Small cloth/handling cue and controlled air displacement.",
+      "proposedSpatialIntent": "Reframe source behind the clone, not automatically behind the real listener.",
+      "priority": "support",
+      "evidenceFrames": [
+        4160,
+        4178,
+        4196,
+        4232
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-036",
+      "regionSeconds": [
+        176.75,
+        177.552375
+      ],
+      "title": "Close-range preparation",
+      "observation": "A small light gathers at the close staff while both figures remain framed.",
+      "dramaticGoal": "Reserve the major expansion for the flash.",
+      "proposedSourceDesign": "Compact rising body with a short preparatory envelope.",
+      "proposedSpatialIntent": "Small apparent source before rapid expansion.",
+      "priority": "hero",
+      "evidenceFrames": [
+        4238,
+        4250,
+        4255
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-037",
+      "regionSeconds": [
+        177.552375,
+        177.802625
+      ],
+      "title": "Final graphic flash",
+      "observation": "The hall changes to graphic white and black impact frames.",
+      "dramaticGoal": "Provide a distinct initiation to the sustained finale.",
+      "proposedSourceDesign": "Short high-definition attack with controlled pressure; do not normalize this cue independently.",
+      "proposedSpatialIntent": "Local attack broadens into room excitation.",
+      "priority": "hero",
+      "evidenceFrames": [
+        4257,
+        4260,
+        4262
+      ],
+      "anchorIds": [
+        "final-flash"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-038",
+      "regionSeconds": [
+        177.802625,
+        181.765
+      ],
+      "title": "Final sustained beam",
+      "observation": "A vertical beam, rings, falling stone and the opened upper space fill the image.",
+      "dramaticGoal": "Convey height and large extent through a held body.",
+      "proposedSourceDesign": "Evolving coherent core, turbulent edge, selected chunks and continuous room excitation.",
+      "proposedSpatialIntent": "Extended vertical intent; true height requires the planned binaural renderer.",
+      "priority": "hero",
+      "evidenceFrames": [
+        4263,
+        4280,
+        4328,
+        4352
+      ],
+      "anchorIds": [
+        "final-established-beam"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-039",
+      "regionSeconds": [
+        181.765,
+        183.766917
+      ],
+      "title": "Whiteout and decay",
+      "observation": "The bright column blooms until the picture becomes almost white.",
+      "dramaticGoal": "Release energy before the intimate closing image.",
+      "proposedSourceDesign": "Long controlled decay and thinning high-frequency texture.",
+      "proposedSpatialIntent": "Direct energy recedes while the tail continues.",
+      "priority": "support",
+      "evidenceFrames": [
+        4358,
+        4370,
+        4394
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-040",
+      "regionSeconds": [
+        183.766917,
+        185.75
+      ],
+      "title": "Clone dissolution",
+      "observation": "Dark legs emerge through the white fade, taper into strands and shed particles.",
+      "dramaticGoal": "Resolve the magical entity rather than imply cloth settling.",
+      "proposedSourceDesign": "Collapsing resonant modes and sparse dry particulate decay; audition material candidates.",
+      "proposedSpatialIntent": "Localized disintegration against the returning room bed.",
+      "priority": "hero",
+      "evidenceFrames": [
+        4406,
+        4418,
+        4424,
+        4442,
+        4448
+      ],
+      "anchorIds": [],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    },
+    {
+      "id": "FRN-041",
+      "regionSeconds": [
+        185.75,
+        189.314625
+      ],
+      "title": "Reassurance and scene fade",
+      "observation": "The final shot shows Frieren in the foreground and Fern seated at the damaged column.",
+      "dramaticGoal": "Allow recovery and the closing spoken line to resolve.",
+      "proposedSourceDesign": "Small remaining debris and gentle room decay; preserve the fade beyond 188 seconds.",
+      "proposedSpatialIntent": "Stable room and human scale, with no new spectacle.",
+      "priority": "protected-gap",
+      "evidenceFrames": [
+        4454,
+        4472,
+        4513,
+        4538
+      ],
+      "anchorIds": [
+        "closing-still-visible",
+        "proposed-study-end"
+      ],
+      "timing": "Editorial region; only named anchors have inspected-frame precision.",
+      "reviewStatus": "visually-analysed; source and mix proposals require listening"
+    }
+  ]
+}

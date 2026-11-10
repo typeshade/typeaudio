@@ -1,0 +1,26 @@
+{
+  "referenceSha256": "6f1856eb09d5522f05dfbb5e813df208e99b94fe391c346139e62bb5b0fba87c",
+  "rangeSeconds": [
+    0,
+    189.314625
+  ],
+  "sampleRate": 44100,
+  "channels": 2,
+  "decodedFrames": 8348775,
+  "windowSeconds": 0.25,
+  "samplePeakDbfs": 3.3372351564736986,
+  "rmsDbfs": -6.808398994276859,
+  "samplesAtOrAboveFullScale": 366369,
+  "integratedLufs": -4.23,
+  "truePeakDbtp": 3.54,
+  "loudnessRangeLu": 7.2,
+  "gatingThresholdLufs": -14.7,
+  "method": "Explicit atrim before FFmpeg loudnorm first-pass input measurements; no normalized audio is saved.",
+  "fft": "Per-channel Hann-window power averaged across stereo; fractions normalized to 20 Hz\u201320 kHz.",
+  "interpretation": "Original dialogue, music and effects are mixed together. RMS, width and spectra do not identify sources or establish sound-design quality.",
+  "tools": {
+    "ffmpeg": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers",
+    "numpy": "2.3.5",
+    "matplotlib": "3.10.8"
+  }
+}
