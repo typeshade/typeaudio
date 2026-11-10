@@ -20,7 +20,7 @@ CUES = {
                                ('smoke and debris', 28.6, 30.1, 'm'), ('wind in hair', 30.4, 32.0, 'm')]),
     'force': dict(t0=136.5, cues=[('shield residue', 136.5, 136.9, 'i'), ('bed under the lines', 137.2, 138.3, 'm'), ('handling', 138.4, 138.9, 'i'),
                                   ('last two seconds before the force', 143.1, 145.1, 'm'), ('force', 145.18, 145.3, 'i'), ('ring and dust', 145.3, 145.75, 'i'),
-                                  ('column', 145.93, 146.08, 'i'), ('plume', 146.03, 146.4, 'm'), ('collapse', 146.4, 147.6, 'm'), ('fog', 147.8, 148.4, 'm'), ('pinned in the wall', 148.5, 149.6, 'm'), ('tail end', 151.2, 152.2, 'm')]),
+                                  ('wall hit', 145.93, 146.08, 'i'), ('jet of dust', 146.03, 146.25, 'm'), ('split and breakout', 146.26, 146.65, 'i'), ('blocks in the air', 146.7, 147.7, 'm'), ('landings in the dust', 147.8, 148.45, 'i'), ('crater', 148.9, 149.6, 'm'), ('tail end', 151.2, 152.2, 'm')]),
     'finale': dict(t0=173.0, cues=[('bed', 173.1, 173.6, 'm'), ('staff swing', 173.72, 174.4, 'i'), ('circle under the line', 175.0, 176.8, 'm'), ('charge', 176.9, 177.46, 'm'),
                                    ('shot', 177.5105, 177.552, 'i'), ('hit', 177.552, 177.72, 'i'), ('pillar, wide', 177.8, 178.1, 'm'), ('torrent, close', 178.15, 179.15, 'm'), ('torrent third second', 179.9, 180.9, 'm'),
                                    ('torrent last second', 180.8, 181.76, 'm'), ('whiteout middle', 182.5, 183.0, 'm'), ('dissolution start', 183.8, 184.4, 'm'), ('dissolution end', 185.0, 185.45, 'm'),
@@ -53,6 +53,8 @@ for name in names:
         print('  force: loudest 100 ms in the half second before it: %.1f LUFS (bed average %.1f)' % (A.lw(x, f0 - 0.5, f0 - 0.001, 0.1), A.lavg(x, f0 - 2.0, f0 - 0.5)))
         print('  gap: quietest 100 ms between the force and the column: %.1f LUFS' % min(A.lw(x, a, a + 0.1, 0.1) for a in np.arange(f0 + 0.3, 145.937458 - t0 - 0.1, 0.02)))
         print('  collapse: loudness each half second from 146.3:', [round(A.lavg(x, a - t0, a + 0.5 - t0), 1) for a in (146.3, 146.8, 147.3, 147.8, 148.3, 148.8)])
+        print('  after the wall hit: level each 0.1 s from 145.9 (dBFS):', [round(float(10 * np.log10((x[nsamp(a - t0): nsamp(a + 0.1 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(145.9, 147.75, 0.1)])
+        print('  landings in the dust: rise of the level at each landing (80 ms after against 80 ms before):', ['%.2f s %+.1f dB' % (a, 10 * np.log10(((x[nsamp(a - t0): nsamp(a + 0.08 - t0)] ** 2).mean() + 1e-12) / ((x[nsamp(a - 0.08 - t0): nsamp(a - t0)] ** 2).mean() + 1e-12))) for a in (147.84, 148.05, 148.34, 148.62, 148.93)])
         print('  phone band (350 Hz to 9 kHz): force L100 %.1f, column L100 %.1f, bed %.1f' % (A.lw(ph, f0, f0 + 0.25, 0.1), A.lw(ph, 145.937458 - t0, 146.3 - t0, 0.1), A.lavg(ph, f0 - 2.0, f0 - 0.01)))
         print('  band shares of the force (0.3 s):', [round(v, 1) for v in A.bands_share(x, f0, f0 + 0.3)], ' of the column:', [round(v, 1) for v in A.bands_share(x, 145.937458 - t0, 146.3 - t0)])
     if name == 'red':
@@ -95,9 +97,10 @@ for name in names:
                       ('hair-cloth', 30.4, 32.0), ('wind-tone', 30.6, 32.0)],
               'force': [('shield-residue', 136.5, 136.9), ('settle0', 137.05, 137.4), ('handling', 138.4, 138.85), ('far-thump0', 138.95, 139.3), ('stare', 143.3, 145.1),
                         ('floor-crack', 145.2, 145.6), ('shock-ring', 145.3, 145.7), ('grit0', 145.27, 145.6), ('force-slap0', 145.34, 145.6), ('travel-air', 145.3, 145.75),
-                        ('column-crack', 145.967, 146.02), ('staff-snap', 145.95, 146.1), ('plume', 146.03, 146.5), ('column-cracks', 146.03, 146.7), ('staff-piece1', 146.61, 146.9), ('collapse1', 146.4, 147.6),
-                        ('slab2', 146.93, 147.3), ('slab4', 147.31, 147.6), ('clatter0', 146.5, 147.7), ('dust-hiss', 146.4, 148.4), ('dust-billow', 146.4, 148.4), ('fog-patter', 147.8, 148.5),
-                        ('collapse-gravel', 146.5, 147.6), ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('wall-groan', 148.88, 149.3), ('splinters', 148.85, 149.7)],
+                        ('wall-hit', 145.94, 146.0), ('wall-crater', 145.967, 146.02), ('dust-jet', 146.03, 146.5), ('wall-split', 146.26, 146.45), ('breakout', 146.47, 146.7), ('block-knock1', 146.97, 147.2),
+                        ('wall-rumble', 146.6, 147.3), ('dust-hiss', 146.4, 148.4), ('dust-billow', 146.4, 148.4), ('land0', 147.84, 148.04), ('land1', 148.05, 148.3), ('land2', 148.34, 148.6),
+                        ('land3', 148.62, 148.9), ('land4', 148.93, 149.2), ('land-patter', 147.95, 148.9),
+                        ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('wall-groan', 148.88, 149.3)],
               'finale': [('staff-swing', 173.8, 174.3), ('circle', 175.0, 176.7), ('charge', 177.05, 177.46), ('charge-air', 177.05, 177.46), ('fire', 177.51, 177.55),
                          ('blast', 177.552, 177.7), ('blast-wall', 177.552, 177.7), ('floor-break1', 177.64, 177.8), ('wall-hit0', 177.68, 177.85), ('vault-hit', 177.83, 178.0), ('floor-ring', 177.9, 178.2),
                          ('flare', 178.19, 178.3), ('rip2', 178.31, 178.5), ('vault-debris0', 178.55, 178.9),
@@ -112,7 +115,7 @@ for name in names:
         c0 = 145.967458 - t0
         print('  column crack, first 20 ms band shares:', [round(v, 1) for v in A.bands_share(x, c0, c0 + 0.02)])
     # --- sync: the first sample of each anchored layer against its anchor
-    anchors = {'red': [('spark-hit1', 21.12), ('spark-hit2', 21.80), ('lock0', 23.83), ('shell-fracture', 25.692333), ('release', 25.77575), ('ray-hit0', 25.82075), ('ice-crack', 26.27625), ('smoke', 28.53)], 'force': [('force', 145.186708), ('column-thud', 145.937458), ('column-crack', 145.967458), ('slab0', 146.47)],
+    anchors = {'red': [('spark-hit1', 21.12), ('spark-hit2', 21.80), ('lock0', 23.83), ('shell-fracture', 25.692333), ('release', 25.77575), ('ray-hit0', 25.82075), ('ice-crack', 26.27625), ('smoke', 28.53)], 'force': [('force', 145.186708), ('wall-hit', 145.937458), ('wall-crater', 145.967458), ('wall-split', 146.26), ('breakout', 146.47), ('land1', 148.05), ('land2', 148.34)],
                'finale': [('ignite', 176.86), ('fire', 177.510542), ('blast', 177.552375), ('beam-body', 177.552375), ('vault-hit', 177.832625), ('dissolve-breath', 183.766917), ('staff-swing', 173.72)]}[name]
     for k, ta in anchors:
         e = np.abs(L[k].astype(float)).max(axis=1)
@@ -133,7 +136,7 @@ for name in names:
         print('  dissolution 183.8 to 185.7 s: strongest-line share of 400 to 4000 Hz %.2f (white noise 0.12), share of the energy in that band %.2f, the strongest line jumps in %.2f of the frames' % A.blip_share(x, 183.8 - t0, 185.7 - t0))
     # --- one sound or several (the second listening review: flat, one sound at a time)
     SPANS = {'red': [('flight', 20.0, 22.3), ('close and whip', 22.3, 23.05), ('stones pulled in', 23.06, 23.78), ('plates lock', 23.8, 24.77), ('sphere', 24.8, 25.69), ('burst and rays', 25.77, 26.27), ('ice', 26.28, 28.45), ('smoke', 28.53, 30.2), ('wind', 30.25, 32.3)],
-             'force': [('before the force', 136.6, 145.1), ('force and flight', 145.19, 145.93), ('column and plume', 145.94, 146.4), ('collapse', 146.4, 147.75), ('fog', 147.78, 148.45), ('wall', 148.5, 149.65)],
+             'force': [('before the force', 136.6, 145.1), ('force and flight', 145.19, 145.93), ('hit, jet and breakout', 145.94, 146.65), ('blocks in the air', 146.65, 147.75), ('landings in the dust', 147.78, 148.45), ('crater', 148.5, 149.65)],
              'finale': [('before the circle', 173.0, 174.46), ('circle and charge', 174.46, 177.46), ('shot, hit and pillar', 177.51, 178.12), ('torrent', 178.12, 181.76), ('whiteout', 181.76, 183.76), ('dissolution', 183.77, 185.45), ('last shot', 185.5, 188.3)]}[name]
     LL = {k: L[k] for k in L.files}
     ts, cnt, full, heard = A.streams(LL, g)
@@ -145,7 +148,7 @@ for name in names:
             lab, lead, near, np.median(cnt[sel]), 100 * (cnt[sel] >= 3).mean(), 100 * v[0], 100 * v[1], 100 * v[2]))
     # --- the size of things (the third listening review: glass marbles, too light)
     SIZES = {'red': [('flight', 20.0, 22.3), ('stones pulled in', 23.06, 23.78), ('plates lock', 23.8, 24.77), ('burst and rays', 25.77, 26.27), ('ice burst', 26.28, 26.7), ('ice stands', 26.7, 28.4), ('smoke', 28.53, 30.2)],
-             'force': [('before the force', 136.6, 145.1), ('force', 145.19, 145.6), ('column', 145.94, 146.3), ('collapse', 146.3, 147.75), ('fog and wall', 147.75, 149.65)],
+             'force': [('before the force', 136.6, 145.1), ('force', 145.19, 145.6), ('wall hit', 145.94, 146.3), ('blocks in the air', 146.65, 147.75), ('landings in the dust', 147.78, 148.45), ('crater', 148.5, 149.65)],
              'finale': [('circle and charge', 174.46, 177.46), ('hit', 177.552, 177.8), ('torrent', 177.9, 181.7), ('whiteout', 181.76, 183.6), ('dissolution', 183.77, 185.45)]}[name]
     for lab, a, b in SIZES:
         fc, rad, share = A.size_cue(x, a - t0, b - t0)

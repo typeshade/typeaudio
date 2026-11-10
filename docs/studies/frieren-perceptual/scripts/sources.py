@@ -444,21 +444,6 @@ def groan(dur, seed, r_lo=110.0, r_hi=240.0, res=(140.0, 260.0, 470.0), jitter=0
     return norm(dsp.fade(out, 0.03, 0.08))
 
 
-def wood_snap(seed):
-    """A wooden staff that breaks: a dry crack and a short thock. Wood is damped, so nothing rings."""
-    top = tilted_burst(seed, 500.0, 6000.0, 0.006, tilt=0.5)
-    thock = burst(seed + 1, 180.0, 900.0, 0.018, rise=0.001)
-    y = np.zeros(max(len(top), len(thock)))
-    y[: len(top)] += top
-    y[: len(thock)] += 1.1 * thock
-    return norm(y)
-
-
-def wood_clack(seed, lo=180.0, hi=1100.0, tau=0.015):
-    """A piece of wood that lands on stone: one damped clack of noise."""
-    return burst(seed, lo, hi, tau, rise=0.0008)
-
-
 def crush(dur, seed, tau, lo=700.0, hi=6000.0):
     """Ice or stone that is crushed: dense noise with a fast, irregular flutter and a decay. It gives a
     crack its brightness with no pitch, so it speaks of no small ringing body."""
@@ -575,11 +560,12 @@ def billow(dur, seed, lo=70.0, hi=700.0, sd=3.0):
     return np.stack(ch, axis=1)
 
 
-def slab_fall(seed, size=1.0):
+def slab_fall(seed, size=1.0, tail=1.0):
     """A slab of stone that lands: the floor answers with a deep thud of noise under 100 Hz that lasts, the
-    slab cracks, and small pieces scatter after it."""
+    slab cracks, and small pieces scatter after it. `tail` shortens the thud, for landings that follow one
+    another and must each be heard alone."""
     hc = heavy_crack(seed, size=size, dur=0.35, k_rate=6, bright=0.7)
-    thud = burst(seed + 5, 26.0, 95.0, 0.18 + 0.1 * min(size, 2.0), rise=0.006)
+    thud = burst(seed + 5, 26.0, 95.0, tail * (0.18 + 0.1 * min(size, 2.0)), rise=0.006)
     sc = tumble(0.7, seed + 7, lambda t: 16.0 * np.exp(-t / 0.22), sizes=(0.05, 0.15), speed=(2.0, 5.0))
     y = np.zeros(max(len(hc), len(thud), len(sc)))
     y[: len(hc)] += hc

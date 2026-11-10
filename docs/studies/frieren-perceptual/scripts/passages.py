@@ -1,4 +1,4 @@
-"""The three passages, round 7. Times are picture seconds (source presentation timestamps).
+"""The three passages, round 8. Times are picture seconds (source presentation timestamps).
 Every event follows the picture: the frames of the reference were inspected on 2026-11-10.
 Every level is a loudness target in LUFS before the master gain; every position is in metres
 (+x right, +y up, forward is -z, the listener is the camera).
@@ -315,39 +315,43 @@ def force():
     m.add('travel-cloth', fl, FORCE + 0.05, P, target=-29, kind='m')
     m.add_wide('whip', S.band_sweep(0.16, 232, 500, 3500, wide=True), 145.78, target=-22, kind='i')
 
-    # 145.937: the column, seen from the side: a body, then stone, then a plume of dust
+    # ---- the wall, read from the frames at 24 a second. Every sound here belongs to one event of this list, and
+    # an event that the frames do not show gets no sound (ledger.py checks both).
+    #   145.937           hit       her body strikes the wall; a first puff of dust
+    #   145.98 to 146.4   jet       a jet of dust shoots out to the left and grows
+    #   146.26            split     the wall splits along a vertical line
+    #   146.47            breakout  large blocks leave the wall, in front of the dust
+    #   146.5 to 147.72   airborne  the blocks turn in the air and sink out of the frame
+    #   147.76 to 148.9   land      dust fills the frame; the blocks reach the floor in it (the original: 148.05 and 148.34 s)
+    #   148.49 to 149.66  crater    she hangs in a round crater of cracked wall; dust drifts across
     col = (1.0, 1.5, -5.0)
     thud = np.zeros(nsamp(0.9))
     for k_, w_ in ((S.burst(244, 50, 320, 0.07, rise=0.008), 1.0), (S.burst(245, 35, 90, 0.09, rise=0.01), 0.6), (S.burst(246, 120, 600, 0.03, rise=0.005), 0.45)):
         thud[: len(k_)] += w_ * k_[: len(thud)]
-    m.add('column-thud', S.saturate(S.norm(thud), 1.6), COLUMN, col, target=-10, kind='i', focus_db=5, send_db=-2)
-    m.add('column-crack', S.heavy_crack(241, size=1.5, dur=0.5, k_rate=12, bright=0.9), COLUMN + 0.030, col, target=-14.5, kind='i', focus_db=5, send_db=-2)
-    # 146.03: a plume of dust bursts out of the column, to the left, and it is large
-    m.add_wide('plume', S.puff(1.8, 247, 150.0, 5000.0, rise=0.05, tau=0.55), COLUMN + 0.05, target=-17, kind='i', send_db=-6)
-    m.add('plume-left', S.puff(1.4, 249, 100.0, 1200.0, rise=0.06, tau=0.45).mean(axis=1), COLUMN + 0.06, line((0.8, 1.5, -5.0), (-3.5, 1.5, -4.0), nsamp(1.4)), target=-18, kind='i', send_db=-6)
-
-    # 146.30 to 147.75: the column comes down: blocks fall over one another, a low rumble, crumbling stone
-    for i, pos in enumerate(((0.2, 0.8, -4.5), (1.2, 0.5, -5.2), (2.0, 1.0, -5.8))):
-        tu = S.tumble(1.45, 270 + i, lambda t: 3.2 - 1.1 * t, sizes=(0.2, 0.6), speed=(3.0, 7.0))
-        m.add('collapse%d' % i, tu, 146.30, pos, target=-21, kind='m', focus_db=5)
-    ru = S.wide_noise(3.2, 274, 30, 110, order=3)
-    ru *= curve([(146.05, 0), (146.6, 1), (147.6, 0.8), (148.0, 0.12), (148.6, 0)], 146.05, len(ru))[:, None]
-    m.add_wide('collapse-rumble', ru, 146.05, target=-22, kind='m', send_db=-6)
-    # the wall comes down in slabs: seven of them, each with the deep answer of the floor
-    for i, (t, size, pos) in enumerate(((146.47, 1.1, (0.4, 0.0, -4.6)), (146.70, 0.8, (1.8, 0.0, -5.4)), (146.93, 1.5, (1.0, 0.0, -5.0)), (147.08, 0.7, (-0.3, 0.0, -4.4)),
-                                        (147.31, 1.2, (2.2, 0.0, -5.8)), (147.49, 0.9, (0.8, 0.0, -4.8)), (147.63, 1.3, (1.5, 0.0, -5.2)))):
-        m.add('slab%d' % i, S.slab_fall(600 + i, size=size), t, pos, target=-19, kind='i', focus_db=5)
+    m.add('wall-hit', S.saturate(S.norm(thud), 1.6), COLUMN, col, target=-10, kind='i', focus_db=5, send_db=-2)
+    m.add('wall-crater', S.heavy_crack(241, size=1.5, dur=0.5, k_rate=12, bright=0.9), COLUMN + 0.030, col, target=-14.5, kind='i', focus_db=5, send_db=-2)
+    m.add_wide('dust-jet', S.puff(1.8, 247, 150.0, 5000.0, rise=0.05, tau=0.55), COLUMN + 0.05, target=-17, kind='i', send_db=-6)
+    m.add('dust-jet-left', S.puff(1.4, 249, 100.0, 1200.0, rise=0.06, tau=0.45).mean(axis=1), COLUMN + 0.06, line((0.8, 1.5, -5.0), (-3.5, 1.5, -4.0), nsamp(1.4)), target=-18, kind='i', send_db=-6)
+    m.add('wall-split', S.heavy_crack(434, size=1.0, dur=0.3, k_rate=6, bright=0.8), 146.26, col, target=-17, kind='i', focus_db=5)
+    m.add('breakout', S.heavy_crack(435, size=1.6, dur=0.5, k_rate=10, bright=0.8), 146.47, col, target=-14, kind='i', focus_db=5)
+    # in the air the blocks only knock one another now and then; the wall still gives, low, and that dies away
+    ru = S.wide_noise(1.3, 274, 30, 110, order=3)
+    ru *= curve([(146.45, 0), (146.6, 1), (147.0, 0.6), (147.75, 0)], 146.45, len(ru))[:, None]
+    m.add_wide('wall-rumble', ru, 146.45, target=-24, kind='m', send_db=-6)
+    for i, (t, size, pos) in enumerate(((146.69, 0.7, (0.6, 2.2, -4.8)), (146.97, 0.5, (0.0, 1.8, -4.5)), (147.26, 0.8, (0.9, 1.3, -4.9)), (147.52, 0.6, (-0.4, 0.9, -4.4)))):
+        m.add('block-knock%d' % i, S.block_hit(270 + i, size=size, v=3.0), t, pos, target=-23, kind='i', focus_db=5)
     # the dust: it is thrown out at 146.0, it fills the frame from 147.78 to 148.4, and it thins while she hangs in the wall
     dh = S.dust(3.9, 610, 700.0, 6000.0, grain=0.15, tilt=0.6) * curve([(146.0, 0), (146.25, 0.8), (147.0, 0.9), (147.78, 1.0), (148.4, 1.0), (148.9, 0.18), (149.7, 0.06), (149.9, 0)], 146.0, nsamp(3.9))[:, None]
-    m.add_wide('dust-hiss', dh, 146.0, target=-18, kind='m')
-    # small stone that clatters down between the slabs
-    for i, pos in enumerate(((0.0, 0.0, -4.5), (1.8, 0.0, -5.5))):
-        ct = S.tumble(1.5, 616 + i, lambda t: 12.0 - 5.0 * t, sizes=(0.04, 0.12), speed=(3.0, 6.0))
-        m.add('clatter%d' % i, ct, 146.38, pos, target=-20, kind='m', focus_db=5)
+    m.add_wide('dust-hiss', dh, 146.0, target=-20, kind='m')
     db = S.billow(2.9, 612, 90.0, 700.0) * curve([(146.0, 0), (146.3, 1), (147.6, 0.9), (148.4, 0.5), (148.9, 0)], 146.0, nsamp(2.9))[:, None]
-    m.add_wide('dust-billow', db, 146.0, target=-23, kind='m', send_db=-8)
-    gv = S.gravel(2.1, 275) * curve([(146.2, 0), (146.6, 1), (147.6, 0.8), (148.3, 0)], 146.2, nsamp(2.1))
-    m.add('collapse-gravel', gv, 146.2, (1.0, 0.6, -5.0), target=-20, kind='m', focus_db=5)
+    m.add_wide('dust-billow', db, 146.0, target=-24, kind='m', send_db=-8)
+    # the blocks reach the floor in the dust: five landings, each one alone (short tails, a quarter of a second apart),
+    # the two large ones where the original has its two
+    for i, (t, size, pos, tg) in enumerate(((147.84, 0.7, (0.3, 0.0, -4.4), -16), (148.05, 1.3, (1.2, 0.0, -5.0), -12.5), (148.34, 1.1, (1.9, 0.0, -5.4), -13.5),
+                                            (148.62, 0.6, (0.6, 0.0, -3.6), -19), (148.93, 0.4, (-0.9, 0.0, -3.4), -23))):
+        m.add('land%d' % i, S.slab_fall(600 + i, size=size, tail=0.45), t, pos, target=tg, kind='i', focus_db=5)
+    pt = S.tumble(1.1, 614, lambda t: 9.0 - 6.0 * t, sizes=(0.03, 0.08), speed=(2.0, 4.0))
+    m.add('land-patter', pt, 147.9, (0.5, 0.0, -3.5), target=-28, kind='m', focus_db=3)
 
     # ---- round 4: a tone that holds, the walls' answers, sharp cracks, grit, small bells
     # the hall is alive under the spoken lines: a stone settles now and then, far away
@@ -365,31 +369,14 @@ def force():
     for i, pos in enumerate(((-1.8, 0.3, -1.2), (1.8, 0.3, -1.2))):
         gr = S.gravel(0.55, 431 + i) * np.exp(-np.arange(nsamp(0.55)) / (0.2 * SR))
         m.add('grit%d' % i, gr, FORCE + 0.08, pos, target=-26, kind='m', send_db=-8)
-    # the column cracks before it falls: six sharp cracks, and the contact comes back from the far wall
-    cc = ticks([0.10, 0.19, 0.31, 0.42, 0.55, 0.71], lambda i: S.heavy_crack(434 + i, size=rr.uniform(0.5, 1.0), dur=0.2, k_rate=4, bright=0.8) * rr.uniform(0.6, 1.0), 1.6)
-    m.add('column-cracks', cc, COLUMN, col, target=-14, kind='i', focus_db=5)
-    # her staff breaks at the contact and its pieces land on the stone: dry wood, damped, at irregular times
-    m.add('staff-snap', S.wood_snap(460), COLUMN + 0.012, (0.9, 1.5, -5.0), target=-18, kind='i', focus_db=5)
-    for i, (t, x) in enumerate(((146.42, 0.2), (146.61, 1.6), (147.03, 0.8))):
-        m.add('staff-piece%d' % i, S.wood_clack(461 + i), t, (x, 0.2, -4.8), target=-25, kind='i', focus_db=5)
-    m.add('column-slap', S.slap(S.saturate(S.norm(thud), 1.6), 1000), COLUMN + 0.21, (-8.5, 2.0, -8.0), target=-21, kind='i', send_db=-4)
-
     m.drive_db = 6.0
-    # 147.75 to 148.45: dust fills the frame: two dull knocks and a hiss
-    kn = ticks([0.0, 0.26], lambda i: dsp.lp(np.concatenate([S.stone_impact(0.2, 3.0, rr), np.zeros(2400)]), 500), 0.9)
-    m.add('fog-knocks', kn, 147.88, (0.8, 0.5, -5.0), target=-30, kind='i', focus_db=3)
-    m.add('fog-dust', S.sand(1.6, 276, rate0=2500, tau=0.6), 147.55, (0.5, 0.6, -4.0), target=-33, kind='m', focus_db=3)
-    pt = S.tumble(0.9, 614, lambda t: 11.0 - 7.0 * t, sizes=(0.03, 0.08), speed=(2.0, 4.0))
-    m.add('fog-patter', pt, 147.8, (0.5, 0.0, -3.5), target=-28, kind='m', focus_db=3)
-
-    # 148.5 to 149.65: she is pinned in the cracked wall, close: pebbles, the wall ticking, shards of her staff
+    # 148.49 to 149.66, the crater: she hangs in the cracked wall, close: small stone that runs down, the wall that ticks and groans
     near = (0.0, 1.2, -2.5)
     tr = ticks([0.12, 0.28, 0.45, 0.58, 0.80, 1.02], lambda i: S.stone_impact(rr.uniform(0.05, 0.1), 2.0, rr), 1.4)
     m.add('trickle', tr, 148.5, (0.4, 0.2, -2.3), target=-30, kind='i', send_db=-8)
     wc = ticks([0.20, 0.65, 0.95], lambda i: S.stone_crack(rr, size=rr.uniform(0.2, 0.4)) * rr.uniform(0.6, 1.0), 1.5)
     m.add('wall-ticks', wc, 148.5, near, target=-28, kind='i', send_db=-8)
     m.add('wall-groan', S.groan(0.4, 285), 148.88, near, target=-34, kind='m', send_db=-8)
-    m.add('splinters', ticks([0.35, 1.10], lambda i: S.wood_clack(286 + i, 400, 2200, 0.006) * rr.uniform(0.6, 1.0), 1.4), 148.5, (-0.6, 0.6, -2.4), target=-36, kind='i', send_db=-8)
     return m
 
 
