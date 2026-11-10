@@ -34,5 +34,3 @@ jobs:
           name: graph-feedback-baseline
           include-hidden-files: true
           path: .feedback/
-      - run: bun run check:website
-      - run: bun run build:website

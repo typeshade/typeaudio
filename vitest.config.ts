@@ -9,5 +9,5 @@ import { typeshade } from 'typeshade/vite';
 // moves past the fix.
 export default defineConfig({
   plugins: [typeshade()],
-  test: { include: ['test/**/*.test.ts', 'website/audio.test.ts'], fsModuleCache: false },
+  test: { include: ['test/**/*.test.ts'], fsModuleCache: false },
 });

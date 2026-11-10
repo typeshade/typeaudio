@@ -22,16 +22,11 @@
     "exp:06": "bun experiments/06-granular/run.ts",
     "exp:07": "bun experiments/07-sound-match/run.ts",
     "exp:08": "bun experiments/08-sound-design/run.ts",
-    "dev:website": "vite --config website/vite.config.ts",
-    "build:website": "vite build --config website/vite.config.ts && bun scripts/site-docs.ts",
-    "check:website": "tsc -p website/tsconfig.json",
-    "test:website": "bun website/check-browser.ts",
     "feedback": "bun scripts/feedback.ts",
     "test:feedback": "vitest run test/graph-feedback.test.ts"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
-    "marked": "17.0.1",
     "playwright-core": "1.64.1",
     "typescript": "5.6.3",
     "typeshade": "https://github.com/typeshade/typeshade/archive/415b276a7408936cb483d05ca8bb39e797b05966.tar.gz",
