@@ -243,7 +243,8 @@ describe('the plan of experiment 9, the force passage', () => {
     // rests at 35 Hz, a `boom` with no tone under 100 Hz, and a `roar`.
     const after = p.events.filter((e) => e.t > one('wall-hit').t + 0.01 && e.layer === 'effects');
     expect(after.filter((e) => e.kind === 'crack' || e.kind === 'rubble')).toEqual([]);
-    for (const e of after.filter((v) => v.kind === 'impact')) expect(e.macros.weight, e.id).toBe(1);
+    for (const e of after.filter((v) => v.kind === 'impact'))
+      expect(e.macros.weight, e.id).toBeGreaterThanOrEqual(0.9);
     for (const e of after.filter((v) => v.kind === 'boom')) {
       expect(e.macros.tone, e.id).toBe(0);
       expect(140 * 0.4 ** e.macros.size!, e.id).toBeLessThan(100);
@@ -342,11 +343,13 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(one('land-2').intensity).toBeLessThan(one('land-1').intensity);
   });
 
-  test('keeps the landings out of the picture: what is loud after the cut to the fog stands 6 m or more away', () => {
-    const fog = p.picture.cuts[3]!;
-    const late = p.events.filter((e) => e.t >= fog && e.layer === 'effects');
-    expect(late.length).toBeGreaterThanOrEqual(4);
-    for (const e of late)
-      if (e.intensity > 0.3) expect(e.position.distance, e.id).toBeGreaterThanOrEqual(6);
+  test('lets the first landing weigh: near, with the slam of the hit on the wall, after a quiet hang', () => {
+    const land = one('land-1');
+    expect(land.position.distance).toBeLessThanOrEqual(4);
+    const slam = one('land-1-slam');
+    expect(slam.t).toBe(land.t);
+    expect(slam.macros).toEqual(one('wall-hit').macros);
+    // The mass under the hang is lower than the mass under the hit by 10 dB or more.
+    expect(one('hang-mass-l').intensity).toBeLessThan(one('hit-mass-l').intensity * 0.32);
   });
 });

@@ -568,7 +568,7 @@
       "t": 10.429667,
       "kind": "roar",
       "layer": "effects",
-      "intensity": 0.316,
+      "intensity": 0.224,
       "position": {
         "x": -0.55,
         "y": 0.1,
@@ -640,7 +640,7 @@
       "t": 10.429667,
       "kind": "roar",
       "layer": "effects",
-      "intensity": 0.316,
+      "intensity": 0.224,
       "position": {
         "x": 0.55,
         "y": 0.1,
@@ -919,7 +919,7 @@
       "position": {
         "x": -0.3,
         "y": -0.9,
-        "distance": 6
+        "distance": 3.5
       },
       "macros": {
         "size": 1.0,
@@ -936,12 +936,29 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 6
+        "distance": 3.5
       },
       "macros": {
         "weight": 1.0,
         "decay": 0.8,
         "crack": 1.0
+      }
+    },
+    {
+      "id": "land-1-slam",
+      "t": 11.4,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 1.0,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 3.5
+      },
+      "macros": {
+        "weight": 0.9,
+        "decay": 0.15,
+        "crack": 0.8
       }
     },
     {
@@ -953,7 +970,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 6
+        "distance": 3.5
       },
       "macros": {
         "brightness": 1.0,
@@ -971,7 +988,7 @@
       "position": {
         "x": -0.15,
         "y": -0.8,
-        "distance": 6
+        "distance": 3.5
       },
       "macros": {
         "brightness": 1.0,
@@ -989,7 +1006,7 @@
       "position": {
         "x": -0.3,
         "y": -0.8,
-        "distance": 6
+        "distance": 3.5
       },
       "macros": {
         "size": 0.726,
@@ -1006,7 +1023,7 @@
       "position": {
         "x": 0.3,
         "y": -0.5,
-        "distance": 8
+        "distance": 5.5
       },
       "macros": {
         "brightness": 0.1,
@@ -1041,7 +1058,7 @@
       "position": {
         "x": 0.4,
         "y": -0.9,
-        "distance": 7
+        "distance": 4.5
       },
       "macros": {
         "size": 1.0,
@@ -1058,12 +1075,29 @@
       "position": {
         "x": 0.4,
         "y": -0.8,
-        "distance": 7
+        "distance": 4.5
       },
       "macros": {
         "weight": 1.0,
         "decay": 0.5599999999999999,
         "crack": 1.0
+      }
+    },
+    {
+      "id": "land-2-slam",
+      "t": 11.84,
+      "kind": "impact",
+      "layer": "effects",
+      "intensity": 0.398,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "weight": 0.9,
+        "decay": 0.15,
+        "crack": 0.8
       }
     },
     {
@@ -1075,7 +1109,7 @@
       "position": {
         "x": 0.4,
         "y": -0.8,
-        "distance": 7
+        "distance": 4.5
       },
       "macros": {
         "brightness": 1.0,
@@ -1093,7 +1127,7 @@
       "position": {
         "x": 0.2,
         "y": -0.8,
-        "distance": 7
+        "distance": 4.5
       },
       "macros": {
         "brightness": 1.0,
@@ -1111,7 +1145,7 @@
       "position": {
         "x": 0.4,
         "y": -0.8,
-        "distance": 7
+        "distance": 4.5
       },
       "macros": {
         "size": 0.726,
@@ -1128,7 +1162,7 @@
       "position": {
         "x": -0.4,
         "y": -0.5,
-        "distance": 9
+        "distance": 6.5
       },
       "macros": {
         "brightness": 0.1,
