@@ -229,18 +229,36 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(hit.filter((e) => e.kind === 'impact').map((e) => e.id)).toEqual(['wall-hit']);
     expect(hit.length).toBeGreaterThanOrEqual(6);
     for (const e of hit) if (e.kind === 'crack') expect(e.macros.crumble, e.id).toBe(0);
-    // The break: no `impact`; cracks that crumble and small stone, started over 40 ms or more and
-    // at three or more places across.
-    const brk = at(one('break').t, 0.05);
+    // The break: no `impact`. Three large blocks tear off one after the other, over 0.1 s or more,
+    // each smaller and lower than the last, at three places across.
+    const brk = at(one('break').t, 0.2);
     expect(brk.some((e) => e.kind === 'impact')).toBe(false);
-    const stone = brk.filter((e) => e.kind === 'crack' || e.kind === 'rubble');
-    expect(stone.filter((e) => e.kind === 'crack').every((e) => e.macros.crumble! >= 0.6)).toBe(
-      true,
-    );
-    expect(
-      Math.max(...stone.map((e) => e.t)) - Math.min(...stone.map((e) => e.t)),
-    ).toBeGreaterThanOrEqual(0.04);
-    expect(new Set(stone.map((e) => e.position.x)).size).toBeGreaterThanOrEqual(3);
+    const tears = ['break', 'break-2', 'break-3'].map(one);
+    expect(tears[2]!.t - tears[0]!.t).toBeGreaterThanOrEqual(0.1);
+    for (let i = 1; i < tears.length; i++) {
+      expect(tears[i]!.t, tears[i]!.id).toBeGreaterThan(tears[i - 1]!.t);
+      expect(tears[i]!.macros.size, tears[i]!.id).toBeLessThan(tears[i - 1]!.macros.size!);
+      expect(tears[i]!.intensity, tears[i]!.id).toBeLessThan(tears[i - 1]!.intensity);
+    }
+    expect(new Set(tears.map((e) => e.position.x)).size).toBe(3);
+    expect(one('break-burst').kind).toBe('roar');
+  });
+
+  test('holds no block of a middle size after the hit: a crack is a large block or a hard edge, and a rubble is fine grit', () => {
+    // The owner heard blocks of 0.1 to 0.7 m that knock as things of a house, as plastic and as a
+    // steel bin that is kicked. After the frame of the hit, a crack is a block of 0.9 m or more or
+    // an edge of 0.06 m, no crack crumbles, and the middle size of a rubble is under 0.07 m.
+    const after = p.events.filter((e) => e.t > one('wall-hit').t + 0.01);
+    const cracks = after.filter((e) => e.kind === 'crack');
+    expect(cracks.length).toBeGreaterThanOrEqual(10);
+    for (const e of cracks) {
+      const size = e.macros.size!;
+      expect(size >= 0.78 || size <= 0.05, `${e.id}: size ${size}`).toBe(true);
+      expect(e.macros.crumble, e.id).toBe(0);
+      expect(e.macros.brightness, e.id).toBeGreaterThanOrEqual(0.9);
+    }
+    for (const e of after.filter((v) => v.kind === 'rubble'))
+      expect(e.macros.size, e.id).toBeLessThan(0.1);
   });
 
   test('makes the hit on the wall hard and dense: an edge of stone, a wide burst, a deep body with no tone', () => {
@@ -281,11 +299,11 @@ describe('the plan of experiment 9, the force passage', () => {
     const fog = p.picture.cuts[3]!;
     const strikes = (e: { kind: string }) =>
       e.kind === 'crack' || e.kind === 'rubble' || e.kind === 'impact';
-    // No stone and no hit starts from 50 ms after the break to the cut.
-    expect(p.events.filter((e) => strikes(e) && e.t > brk + 0.05 && e.t < fog)).toEqual([]);
-    // The stone of the break makes its last impact within 0.3 s of it: the picture is slow from there.
-    for (const e of p.events.filter((v) => strikes(v) && v.t >= brk && v.t <= brk + 0.05))
-      expect(eventSpan(e).end, e.id).toBeLessThanOrEqual(brk + 0.3);
+    // No stone and no hit starts from 0.15 s after the break to the cut.
+    expect(p.events.filter((e) => strikes(e) && e.t > brk + 0.15 && e.t < fog)).toEqual([]);
+    // The stone of the break makes its last impact within 0.35 s of it: the picture is slow from there.
+    for (const e of p.events.filter((v) => strikes(v) && v.t >= brk && v.t <= brk + 0.15))
+      expect(eventSpan(e).end, e.id).toBeLessThanOrEqual(brk + 0.35);
     // What goes on under the hang is the mass of the break, with no tone, and slow air.
     expect(one('hang').t).toBe(brk);
     expect(one('hang').macros.tone).toBe(0);

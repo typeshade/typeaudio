@@ -268,6 +268,9 @@ Observed in experiment 9:
   container: thin, with no density. Of the energy of that hit from 60 to 400 Hz, 53 % lay in one
   band of 15 Hz, and 1 % of the whole lay over 2 kHz.
 - The owner heard the frame of silence before the hit on the wall as the hint of the hit.
+- The seventh plan made that hit from a hard edge, a wide burst and a deep body with no tone, and
+  the owner was satisfied with it. Its break held cracks that crumble and shards: blocks of 0.05 to
+  0.65 m that knock, 80 a second. The owner heard plastic, or a steel bin that is kicked.
 
 What follows for the one who writes a plan:
 
@@ -276,9 +279,9 @@ What follows for the one who writes a plan:
 3. Take the weight of a hit on stone from an `impact` under it. Keep the short fall of the stone.
 4. Write a strike on the frame on which the thing strikes. While the picture holds a thing in the
    air, write no strike.
-5. Make a hit on stone, and a block of stone that lands, from a hard edge, a deep body with no
-   tone and grit; the largest hit has a short, wide burst too. Leave out a tone that the ear
-   follows, a dull top, and blocks of 0.1 to 0.5 m that knock after it.
+5. Make stone from a hard edge, a deep body with no tone and fine grit; a large hit has a short,
+   wide burst too. Leave out a tone that the ear follows, a dull top, and blocks of 0.1 to 0.7 m
+   that knock: a `crack` that crumbles, and a `rubble` of that size.
 
 The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
 they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks
