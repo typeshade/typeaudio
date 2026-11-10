@@ -7,7 +7,8 @@ the plan format and its validator and the analyzers (pull request #36), the kind
 chain, the layered render and the master (pull request #38, record
 `docs/records/08-sound-design-container.md`). Not built: the mix-profile matcher (item 4) and the speed
 work (item 5) of the section "What the engine must gain, in order". The device runs are pending. The statements about what the engine will do are design,
-not measurement.
+not measurement. The section "One sound leads" is the owner's rule of 2026-11-10 for the one who
+writes a plan; the owner said on that day to write it here.
 
 ## Why one generated track fails
 
@@ -111,7 +112,8 @@ and the reverb's return. An event that sounds when the silence starts ends there
 back after it. An event may start at the end of a silence, and it keeps its first frame. The mix
 falls into the silence over 4 ms.
 
-A silence before a hit is the held breath. The room's answer to a sound runs on after the sound
+A silence before a hit is the held breath: a hint of what comes ("One sound leads"). The room's
+answer to a sound runs on after the sound
 stops, so a gap between two events is not a silence: the reverb fills it. The plan states the
 silence, and the renderer makes it after the reverb and before the master measures the mix.
 
@@ -216,6 +218,56 @@ The user says the whoosh is too thin. The system turns the top hypothesis into t
 
 The engine applies it to every `whoosh` and keeps the plan's other events as they are. The
 render of every other kind is the same bits as before.
+
+## One sound leads
+
+This is a rule for the one who writes a plan. The owner gave it on 2026-11-10, in three listening
+reviews of experiment 9 (`docs/records/09-force-passage-container-2.md`,
+`docs/records/09-force-passage-container-3.md`). It comes from one passage and one listener. It is
+design, not measurement.
+
+A plan follows the picture. The first question for each moment is which sound the viewer attends
+to. That sound leads. The rule has one part for each time.
+
+- **The present.** One sound leads in each moment: the one the picture shows. The other sounds
+  explain it, as the room and the dust do, or they are out. Two things that the picture shows as
+  two are two sounds. A body that hits a wall is not the wall that breaks.
+- **The past.** The sound that led goes on when another sound takes the lead. It becomes a part of
+  the room, under the new sound, and it ends by itself. A sound stops on a cut only when the
+  picture goes to another scene.
+- **The future.** The sound gives a hint of what comes. A sound that will lead starts small under
+  the sound that leads now, and it grows. A rush arrives on a hit. A silence stands before the
+  largest hit.
+
+What a plan has for each part:
+
+| Part        | In the plan                                                                                                                                                                                  |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The present | The `intensity` of the events of one moment: the sound that leads has the highest. A kind, a size and a place of its own for each thing that the picture tells apart.                        |
+| The past    | A `duration` that runs past the onset of the next sound that leads. A `rubble` whose `swell` is under 0.5, so that the mass thins out. An end after a cut, not on it.                        |
+| The future  | A `rubble` or a `roar` that starts under the sound that leads now, with a `swell` over 0.5. `sync: 'arrive'` for a rush that ends on the hit. A silence (`silences`). A hero impact (below). |
+
+Observed in experiment 9:
+
+- The first plan held 59 events, one or more for each row of a list of what the passage needs. The
+  owner heard a clatter. The third plan held 37 events and asked for each moment which sound
+  leads. The owner said that it holds together far better.
+- In the first plan the limiter went 9.3 dB deep, and the hit on the wall stood 1.8 dB over the
+  80 ms before it. A master that limits every loud moment brings them to one level, and then no
+  sound leads.
+- The second plan made the stone heavy with a long, low ring. The owner heard a roll of dull
+  thumps: a low band of noise with a long fall is a drum.
+
+What follows for the one who writes a plan:
+
+1. Ask for each moment which sound leads, before any event is written.
+2. Set the loudness target so low that the limiter leaves the largest hit its front.
+3. Take the weight of a hit on stone from an `impact` under it. Keep the short fall of the stone.
+
+The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
+they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks
+for a silence before an impact and for build-ups: they are the hints of the future. No analyzer
+measures the rule. The plan tests of experiment 9 (`test/plan.test.ts`) hold it for one plan.
 
 ## The vocabulary
 

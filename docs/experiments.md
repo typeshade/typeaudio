@@ -409,4 +409,6 @@ The engine gained four kinds (`crack`, `boom`, `rubble`, `roar`) and the plan ga
   `fd8937faf341c8cd67708385a0300d2b7253b0bd`. The hit is a body on stone and the break is stone that
   tears; one line of small stone runs from the hit to the fog.
 
-The owner's listening review of the fourth plan is pending, and so are the device runs.
+The owner said on 2026-11-10 to write the rule into the design: it is the section "One sound leads" of
+`docs/sound-design-loop.md`. The owner's listening review of the fourth plan is pending, and so are the
+device runs.
