@@ -575,7 +575,7 @@
         "distance": 3.5
       },
       "macros": {
-        "brightness": 0.4,
+        "brightness": 0.15,
         "motion": 0.4,
         "swell": 0.0
       },
@@ -593,7 +593,7 @@
         "distance": 5
       },
       "macros": {
-        "brightness": 0.35,
+        "brightness": 0.1,
         "motion": 0.4,
         "swell": 0.0
       },
@@ -647,7 +647,7 @@
         "distance": 3.5
       },
       "macros": {
-        "brightness": 0.4,
+        "brightness": 0.15,
         "motion": 0.4,
         "swell": 0.0
       },
@@ -665,7 +665,7 @@
         "distance": 5
       },
       "macros": {
-        "brightness": 0.35,
+        "brightness": 0.1,
         "motion": 0.4,
         "swell": 0.0
       },
@@ -939,32 +939,69 @@
         "distance": 3.5
       },
       "macros": {
-        "weight": 1.0,
-        "decay": 0.8,
-        "crack": 1.0
-      }
-    },
-    {
-      "id": "land-1-slam",
-      "t": 11.4,
-      "kind": "impact",
-      "layer": "effects",
-      "intensity": 1.0,
-      "position": {
-        "x": -0.3,
-        "y": -0.8,
-        "distance": 3.5
-      },
-      "macros": {
         "weight": 0.9,
         "decay": 0.15,
         "crack": 0.8
       }
     },
     {
-      "id": "land-1-tear",
+      "id": "land-1-stone",
       "t": 11.4,
-      "kind": "roar",
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.794,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 3.5
+      },
+      "macros": {
+        "size": 0.986,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.2
+    },
+    {
+      "id": "land-1-mid",
+      "t": 11.4,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.891,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 3.5
+      },
+      "macros": {
+        "size": 0.624,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.15
+    },
+    {
+      "id": "land-1-edge",
+      "t": 11.4,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.562,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 3.5
+      },
+      "macros": {
+        "size": 0.049,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.1
+    },
+    {
+      "id": "land-1-punch",
+      "t": 11.4,
+      "kind": "boom",
       "layer": "effects",
       "intensity": 1.0,
       "position": {
@@ -973,29 +1010,45 @@
         "distance": 3.5
       },
       "macros": {
-        "brightness": 1.0,
-        "motion": 0.6,
-        "swell": 0.0
-      },
-      "duration": 0.28
+        "size": 0.187,
+        "decay": 0.319,
+        "tone": 0.0
+      }
     },
     {
-      "id": "land-1-crush",
-      "t": 11.45,
-      "kind": "roar",
+      "id": "land-1-thump",
+      "t": 11.4,
+      "kind": "boom",
       "layer": "effects",
-      "intensity": 0.355,
+      "intensity": 0.891,
       "position": {
-        "x": -0.15,
+        "x": -0.3,
         "y": -0.8,
         "distance": 3.5
       },
       "macros": {
-        "brightness": 1.0,
-        "motion": 1.0,
+        "size": 0.0,
+        "decay": 0.176,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "land-1-burst",
+      "t": 11.4,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.891,
+      "position": {
+        "x": -0.3,
+        "y": -0.8,
+        "distance": 3.5
+      },
+      "macros": {
+        "brightness": 0.6,
+        "motion": 0.3,
         "swell": 0.0
       },
-      "duration": 1.1
+      "duration": 0.22
     },
     {
       "id": "land-1-body",
@@ -1078,32 +1131,69 @@
         "distance": 4.5
       },
       "macros": {
-        "weight": 1.0,
-        "decay": 0.5599999999999999,
-        "crack": 1.0
-      }
-    },
-    {
-      "id": "land-2-slam",
-      "t": 11.84,
-      "kind": "impact",
-      "layer": "effects",
-      "intensity": 0.398,
-      "position": {
-        "x": 0.4,
-        "y": -0.8,
-        "distance": 4.5
-      },
-      "macros": {
         "weight": 0.9,
         "decay": 0.15,
         "crack": 0.8
       }
     },
     {
-      "id": "land-2-tear",
+      "id": "land-2-stone",
       "t": 11.84,
-      "kind": "roar",
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.316,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "size": 0.986,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.2
+    },
+    {
+      "id": "land-2-mid",
+      "t": 11.84,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.355,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "size": 0.624,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.15
+    },
+    {
+      "id": "land-2-edge",
+      "t": 11.84,
+      "kind": "crack",
+      "layer": "effects",
+      "intensity": 0.224,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "size": 0.049,
+        "brightness": 1.0,
+        "crumble": 0.0
+      },
+      "duration": 0.1
+    },
+    {
+      "id": "land-2-punch",
+      "t": 11.84,
+      "kind": "boom",
       "layer": "effects",
       "intensity": 0.398,
       "position": {
@@ -1112,29 +1202,45 @@
         "distance": 4.5
       },
       "macros": {
-        "brightness": 1.0,
-        "motion": 0.6,
-        "swell": 0.0
-      },
-      "duration": 0.28
+        "size": 0.187,
+        "decay": 0.319,
+        "tone": 0.0
+      }
     },
     {
-      "id": "land-2-crush",
-      "t": 11.89,
-      "kind": "roar",
+      "id": "land-2-thump",
+      "t": 11.84,
+      "kind": "boom",
       "layer": "effects",
-      "intensity": 0.141,
+      "intensity": 0.355,
       "position": {
-        "x": 0.2,
+        "x": 0.4,
         "y": -0.8,
         "distance": 4.5
       },
       "macros": {
-        "brightness": 1.0,
-        "motion": 1.0,
+        "size": 0.0,
+        "decay": 0.176,
+        "tone": 0.0
+      }
+    },
+    {
+      "id": "land-2-burst",
+      "t": 11.84,
+      "kind": "roar",
+      "layer": "effects",
+      "intensity": 0.355,
+      "position": {
+        "x": 0.4,
+        "y": -0.8,
+        "distance": 4.5
+      },
+      "macros": {
+        "brightness": 0.6,
+        "motion": 0.3,
         "swell": 0.0
       },
-      "duration": 0.77
+      "duration": 0.22
     },
     {
       "id": "land-2-body",

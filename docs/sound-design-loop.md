@@ -288,6 +288,11 @@ Observed in experiment 9:
   is kicked and rolls. The stone kinds were heard as plastic when dull and as steel when bright;
   both have five fixed bands. The eleventh plan uses neither after the hit on the wall.
 
+- The eleventh to the thirteenth plan made a landing with no stone kind: bursts, bodies with no
+  tone, and bright roars for the tear and the crush. The owner heard a high hiss that grates, and
+  asked for the hit of a block of stone on the floor in its place. The fifteenth plan makes a
+  landing from the parts of the hit on the wall, which the owner accepted.
+
 What follows for the one who writes a plan:
 
 1. Ask for each moment which sound leads, before any event is written.

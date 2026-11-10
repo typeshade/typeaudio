@@ -237,45 +237,25 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(tears[0]!.intensity).toBeLessThan(one('wall-hit').intensity);
   });
 
-  test('uses no crack and no rubble after the hit on the wall: no band that rings', () => {
-    // The owner heard the stone kinds as plastic when they are dull and as a steel bin that is
-    // kicked when they are bright. After the frame of the hit the plan holds an `impact` whose sub
-    // rests at 35 Hz, a `boom` with no tone under 100 Hz, and a `roar`.
+  test('uses no crack and no rubble from the hit on the wall to the fog, and no crack that crumbles after it', () => {
+    // The owner heard a run of the stone kinds as plastic when they are dull and as a steel bin
+    // that is kicked when they are bright. One hit that holds them satisfied the owner. So the
+    // break holds none, and a landing holds them on its one frame only.
+    const fog = p.picture.cuts[3]!;
     const after = p.events.filter((e) => e.t > one('wall-hit').t + 0.01 && e.layer === 'effects');
-    expect(after.filter((e) => e.kind === 'crack' || e.kind === 'rubble')).toEqual([]);
+    expect(after.filter((e) => e.t < fog && (e.kind === 'crack' || e.kind === 'rubble'))).toEqual(
+      [],
+    );
+    expect(after.filter((e) => e.kind === 'rubble')).toEqual([]);
+    for (const e of after.filter((v) => v.kind === 'crack')) expect(e.macros.crumble, e.id).toBe(0);
     for (const e of after.filter((v) => v.kind === 'impact'))
       expect(e.macros.weight, e.id).toBeGreaterThanOrEqual(0.9);
-    for (const e of after.filter((v) => v.kind === 'boom')) {
-      expect(e.macros.tone, e.id).toBe(0);
-      expect(140 * 0.4 ** e.macros.size!, e.id).toBeLessThan(100);
-    }
+    for (const e of after.filter((v) => v.kind === 'boom')) expect(e.macros.tone, e.id).toBe(0);
     // The three splits before the break grow.
     const splits = ['split-1', 'split-2', 'split-3'].map(one);
     expect(splits.map((e) => e.intensity)).toEqual(
       [...splits.map((e) => e.intensity)].sort((a, b) => a - b),
     );
-  });
-
-  test('makes the hit on the wall hard and dense: an edge of stone, a wide burst, a deep body with no tone', () => {
-    const t = one('wall-hit').t;
-    // The sub of the `impact` rests at 40.5 Hz or under: no pitch that the ear follows.
-    expect(one('wall-hit').macros.weight).toBeGreaterThanOrEqual(0.9);
-    for (const id of ['wall-body', 'wall-punch', 'wall-thump']) {
-      expect(one(id).kind, id).toBe('boom');
-      expect(one(id).macros.tone, id).toBe(0);
-      expect(one(id).t, id).toBe(t);
-    }
-    // The stone: a large block and a small hard edge, both at full brightness.
-    expect(one('wall-stone').macros.size).toBeGreaterThan(0.95);
-    expect(one('wall-stone').macros.brightness).toBe(1);
-    expect(one('wall-edge').macros.size).toBeLessThan(0.1);
-    expect(one('wall-edge').macros.brightness).toBe(1);
-    // The burst is short: a quarter of a second or less.
-    expect(one('wall-burst').kind).toBe('roar');
-    expect(one('wall-burst').duration).toBeLessThanOrEqual(0.25);
-    // The hall answers after the time the sound takes to come back.
-    expect(one('hall-answer').position.distance).toBeGreaterThanOrEqual(10);
-    expect(one('hall-answer').t).toBeGreaterThan(t);
   });
 
   test('strikes nothing while the blocks hang in the air: the stone of the break ends, and the blocks land after the cut to the fog', () => {
@@ -317,39 +297,33 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(one('blast').macros.weight).toBe(1);
   });
 
-  test('makes a landing from the four layers of the owner: the ground, the hit that tears, the crush, the ring of the hall', () => {
+  test('makes a landing as the hit on the wall: a block of stone on a floor of stone, with no roar that hisses', () => {
+    const wall = (id: string) => one(`wall-${id}`);
     for (const id of ['land-1', 'land-2']) {
       const hit = one(id);
-      expect(hit.kind, id).toBe('impact');
-      // 1. The ground comes first: a body with no tone at 56 Hz, 30 ms before the hit.
-      const ground = one(`${id}-ground`);
-      expect(hit.t - ground.t, id).toBeCloseTo(0.03, 5);
-      expect(ground.macros.tone, id).toBe(0);
-      expect(140 * 0.4 ** ground.macros.size!, id).toBeLessThan(60);
-      // 2. The hit tears: the widest burst of an `impact`, and a bright roar of under 0.3 s.
-      expect(hit.macros.crack, id).toBe(1);
-      expect(one(`${id}-tear`).macros.brightness, id).toBe(1);
-      expect(one(`${id}-tear`).duration, id).toBeLessThan(0.3);
-      // 3. The crush follows it, far lower, and wanders.
-      const crush = one(`${id}-crush`);
-      expect(crush.t, id).toBeGreaterThan(hit.t);
-      expect(crush.intensity, id).toBeLessThan(0.5 * hit.intensity);
-      expect(crush.macros.motion, id).toBe(1);
-      // 4. The hall rings for seconds: a dark roar, and the far wall that answers.
-      expect(one(`${id}-ring`).duration, id).toBeGreaterThanOrEqual(2);
+      // The same `impact`, stone, punch and thump as the hit on the wall, on one frame.
+      expect(hit.macros, id).toEqual(one('wall-hit').macros);
+      for (const part of ['stone', 'mid', 'edge', 'punch', 'thump']) {
+        const e = one(`${id}-${part}`);
+        expect(e.t, e.id).toBe(hit.t);
+        expect(e.kind, e.id).toBe(wall(part).kind);
+        expect(e.macros, e.id).toEqual(wall(part).macros);
+      }
+      // The ground comes 30 ms before it, and the hall rings after it: a dark roar of seconds.
+      expect(hit.t - one(`${id}-ground`).t, id).toBeCloseTo(0.03, 5);
       expect(one(`${id}-ring`).macros.brightness, id).toBeLessThanOrEqual(0.2);
       expect(one(`${id}-answer`).position.distance, id).toBeGreaterThanOrEqual(10);
+      // The only bright roar of a landing is its burst, under a quarter of a second.
+      const roars = p.events.filter((e) => e.kind === 'roar' && e.id.startsWith(`${id}-`));
+      for (const r of roars)
+        if (r.macros.brightness! > 0.2) expect(r.duration, r.id).toBeLessThanOrEqual(0.25);
     }
     expect(one('land-2').intensity).toBeLessThan(one('land-1').intensity);
-  });
-
-  test('lets the first landing weigh: near, with the slam of the hit on the wall, after a quiet hang', () => {
-    const land = one('land-1');
-    expect(land.position.distance).toBeLessThanOrEqual(4);
-    const slam = one('land-1-slam');
-    expect(slam.t).toBe(land.t);
-    expect(slam.macros).toEqual(one('wall-hit').macros);
-    // The mass under the hang is lower than the mass under the hit by 10 dB or more.
-    expect(one('hang-mass-l').intensity).toBeLessThan(one('hit-mass-l').intensity * 0.32);
+    expect(one('land-1').position.distance).toBeLessThanOrEqual(4);
+    // The mass under the hang and in the fog is dark and low.
+    for (const id of ['hang-mass-l', 'fog-mass-l']) {
+      expect(one(id).macros.brightness, id).toBeLessThanOrEqual(0.2);
+      expect(one(id).intensity, id).toBeLessThan(one('hit-mass-l').intensity * 0.42);
+    }
   });
 });
