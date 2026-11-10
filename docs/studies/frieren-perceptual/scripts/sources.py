@@ -660,3 +660,34 @@ def boom(seed, f=110.0, tau=0.4, tone=0.3, dur=None):
         md += a * np.sin(2 * np.pi * np.cumsum(fm * glide) / SR + r.uniform(0, 6.28))
     md = md / (np.abs(md).max() + 1e-12)
     return norm(((1 - tone) * nz + tone * md) * env)
+
+
+# ================================================================ round 11: a wall that fails is many blocks
+# The owner found the breaking of the wall strange. The frames show about 35 blocks that leave the wall within
+# two frames and fall together for 1.2 s. Round 10 had one crack for them and four knocks. Stone that falls in
+# a mass is heard as its impacts: blocks on blocks and blocks on the wall, at random times, each with the knock
+# and the crack of its size. It is no hiss.
+
+def rubble(dur, seed, rate, sizes=(0.3, 1.0), bright=0.25, body=0.0):
+    """Blocks of stone that strike one another while they fall: impacts at random times, rate(t) a second.
+    Each is the knock and the crack of its size (`stone_crack`), and the larger block is the louder one
+    (amplitude ~ size ** 1.5). With body > 0 a block of more than 0.6 m also has the short boom of its size."""
+    r = dsp.rng(seed)
+    n = nsamp(dur)
+    y = np.zeros(n + nsamp(1.2))
+    rmax = max(rate(u) for u in np.linspace(0, dur, 60))
+    t = 0.0
+    while True:
+        t += r.exponential(1.0 / rmax)
+        if t >= dur:
+            break
+        if r.random() > rate(t) / rmax:
+            continue
+        a = np.exp(r.uniform(np.log(sizes[0]), np.log(sizes[1])))
+        k = stone_crack(r, size=a, bright=bright) * a ** 1.5 * r.uniform(0.5, 1.0)
+        s = nsamp(t)
+        y[s: s + len(k)] += k[: len(y) - s]
+        if body and a > 0.6:
+            b = boom(int(r.integers(1, 2 ** 31 - 1)), f=125.0 / a ** 0.3, tau=0.1 + 0.12 * a) * body * a ** 1.5
+            y[s: s + len(b)] += b[: len(y) - s]
+    return y[: n + nsamp(0.6)]

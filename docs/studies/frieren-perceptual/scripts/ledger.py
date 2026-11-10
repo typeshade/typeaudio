@@ -25,13 +25,14 @@ EVENTS = {
             ('icestands', 26.61, 28.45, 'the ice stands; mist at its feet; specks of frost in the air'),
             ('smoke', 28.53, 30.21, 'wide: a cloud of smoke rolls slowly; thin trails arc out of it; nothing lands in the frame'), ('face', 30.25, 32.3, 'close: her face; hair in the wind')],
     'force': [('residue', 136.5, 137.1, 'the last pieces of the shield fade'), ('lines', 136.75, 142.25, 'close: Fern speaks three lines'),
-              ('stare', 142.5, 145.15, 'close: the face of the clone'), ('force', 145.187, 145.3, 'her hair snaps; she is thrown'),
-              ('ring', 145.3, 145.76, 'a ring runs through the air; dust lifts where she stood'), ('flight', 145.24, 145.78, 'she flies to the far wall'),
-              ('whip', 145.78, 145.9, 'the camera whips to the wall'), ('hit', 145.937, 146.0, 'her body strikes the wall; a first puff of dust'),
-              ('jet', 145.98, 146.4, 'a jet of dust shoots out to the left and grows'), ('split', 146.26, 146.45, 'the wall splits along a vertical line'),
-              ('breakout', 146.47, 146.65, 'large blocks leave the wall'), ('airborne', 146.5, 147.72, 'the blocks turn in the air and sink out of the frame'),
-              ('dust', 146.0, 149.7, 'dust rolls, fills the frame from 147.78 to 148.4, and thins'),
-              ('land', 147.76, 149.8, 'in the dust the blocks reach the floor, and the heap settles'), ('crater', 148.49, 149.66, 'close: she hangs in a round crater of cracked wall'),
+              ('stare', 142.5, 145.0, 'close: the face of the clone'), ('hush', 145.06, 145.15, 'close: her eyes widen'), ('strike', 145.187, 145.27, 'her hair snaps'),
+              ('thrown', 145.270, 145.35, 'she is thrown back'), ('ring', 145.31, 145.77, 'a ring runs out through the air; dust is thrown up at both sides and grows'),
+              ('flight', 145.27, 145.78, 'she flies to the far wall and gets small'), ('whip', 145.81, 145.9, 'the camera whips to the wall'),
+              ('hit', 145.937, 146.0, 'her body strikes the wall, high up; a first puff of dust'), ('jet', 145.98, 146.44, 'a jet of dust shoots out to the left and grows'),
+              ('cracks', 146.19, 146.46, 'pieces come loose at the top; a band of rubble runs down the wall'), ('breakout', 146.48, 146.6, 'about 35 blocks leave the wall within two frames'),
+              ('airborne', 146.5, 147.73, 'the blocks fall together, slowly, and turn; the wall has a hole'),
+              ('dust', 146.0, 149.7, 'dust rolls, fills the frame from 147.77 to 148.4, and thins'),
+              ('land', 147.77, 149.8, 'in the dust the blocks reach the floor, and the heap settles'), ('crater', 148.49, 149.66, 'close: she hangs in a round crater of cracked wall'),
               ('black', 149.70, 150.02, 'black frames: her eyes are shut'), ('eye', 150.06, 152.2, 'her eye opens on the floor; rubble lies there')],
     'finale': [('swing', 173.62, 174.4, 'the head of the staff comes out of the dust'), ('gather', 174.46, 177.47, 'a lit circle under the clone, the staff behind her; sparks at its tip from 176.0'),
                ('charge', 176.86, 177.47, 'a ball of light forms at the tip of the staff, grows for 0.2 s and holds'),
@@ -51,9 +52,9 @@ LAYERS = {
             (r'ice-boom|ice-crack|ice-slab|ice-rise', 'ice'), (r'ice-groan|ice-tick|ice-mist|ice-work|ice-frost', 'icestands'), (r'wall-debris', '@offscreen'),
             (r'smoke|debris-rain|chunk|streak', 'smoke'), (r'hair-|wind-tone', 'face'), (r'settle', '@offscreen')],
     'force': [(r'bed', '@hall'), (r'shield-residue', 'residue'), (r'handling', 'lines'), (r'settle|far-', '@offscreen'), (r'stare', '@mood'),
-              (r'force-slap', '@echo'), (r'force$|floor-crack', 'force'), (r'shock-ring|blast-dust|grit', 'ring'), (r'travel-', 'flight'), (r'whip', 'whip'),
-              (r'wall-hit|wall-boom|wall-crater', 'hit'), (r'dust-jet', 'jet'), (r'wall-split', 'split'), (r'breakout', 'breakout'), (r'wall-rumble|block-knock', 'airborne'),
-              (r'dust-hiss|dust-billow', 'dust'), (r'land|rubble|heap-roll', 'land'), (r'trickle|wall-ticks|wall-groan', 'crater')],
+              (r'strike', 'strike'), (r'force', 'thrown'), (r'blast-roar', '@echo'), (r'shock-ring|dust-surge', 'ring'), (r'travel-', 'flight'), (r'whip', 'whip'),
+              (r'wall-hit|wall-boom|wall-crack', 'hit'), (r'dust-jet', 'jet'), (r'crack-run|wall-strain|loose-stone', 'cracks'), (r'breakout', 'breakout'),
+              (r'block-fall|grit-rain|hole-crack|wall-rumble', 'airborne'), (r'dust-hiss|dust-billow', 'dust'), (r'land|rubble|heap-roll', 'land'), (r'trickle|wall-ticks|wall-groan', 'crater')],
     'finale': [(r'bed', '@hall'), (r'staff-', 'swing'), (r'circle|gather-', 'gather'), (r'ignite|charge', 'charge'), (r'fire', 'shot'), (r'blast', 'hit'),
                (r'shock-out|floor-break', 'blastout'), (r'wall-hit', 'walls'), (r'vault-hit|pillar-boom', 'pillar'), (r'floor-ring', 'floorring'), (r'flare', 'flare'),
                (r'rip|blocks', 'blocks'), (r'vault-debris|last-settle', '@offscreen'), (r'ring\d', 'rings'), (r'beam-', 'torrent'), (r'strain', 'highcrack'),
@@ -61,7 +62,7 @@ LAYERS = {
 }
 
 # events that the frames show and that make no sound of their own
-QUIET = {'force': {'stare', 'black', 'eye'}}
+QUIET = {'force': {'stare', 'hush', 'black', 'eye'}}
 
 out = sys.argv[1]
 bad = 0

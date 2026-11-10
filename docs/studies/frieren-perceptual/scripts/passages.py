@@ -1,4 +1,4 @@
-"""The three passages, round 10. Times are picture seconds (source presentation timestamps).
+"""The three passages, round 11. Times are picture seconds (source presentation timestamps).
 Every event follows the picture: the frames of the reference were inspected on 2026-11-10.
 Every level is a loudness target in LUFS before the master gain; every position is in metres
 (+x right, +y up, forward is -z, the listener is the camera).
@@ -324,118 +324,156 @@ def red():
 
 # =============================================================== force, 136.5 to 149.7 s
 def force():
+    """Round 11. The owner found round 10 slack: no tension, and a wall that breaks strangely. The list of what
+    each moment needs is in the README (the ninth listening review); the letters here are its items.
+    A  tension: a dark tone that grows under the stare, a silence before the strike, a strike in two beats
+       (her hair snaps, then she is thrown), and no sag between the blast and the wall
+    B  the flight: the blast, its roar in the hall, the ring, the dust at both sides, her own rush, the whip
+    C  the hit: a body on stone, the crack of the stone, the body of the wall, the first dust, and no more
+    D  the wall fails: a run of cracks that grows, the strain of the masonry, loose stone, the jet of dust
+    E  the breakout and the fall: a volley of blocks, a low surge, blocks that strike one another, grit, late cracks
+    F  the landings and what follows: a cascade with three heavy ones, the heap that settles, the crater"""
     m = Mix('force', 136.5, 149.7)
     T0 = 136.5
-    full_bed(m, T0, 15.7, 201, -41.0, [(136.5, 0), (142.4, 0), (142.6, -2.5), (FORCE + 0.05, -2.5), (146.5, 0), (152.2, 0)])
+    HUSH = 145.02               # everything stops; the reference is silent from 145.00 to 145.12 s
+    BLAST = 145.270125          # frame 3483: the first frame that shows her thrown
+    BRK = 146.479667            # frame 3512: the first frame with the blocks out of the wall
+    FOG = 147.772625            # frame 3543: the cut to the dust
+    full_bed(m, T0, 15.7, 201, -43.0, [(136.5, 0), (142.4, 0), (142.6, -2.5), (HUSH - 0.03, -2.5), (HUSH, -80), (FORCE - 0.004, -80), (FORCE + 0.02, -2.5),
+                                       (146.5, 0), (152.2, 0)])
     rr = dsp.rng(210)
 
     # 136.5: the last pieces of the clone's shield fade; then two close faces and three spoken lines: only air
-    m.add('shield-residue', S.sand(0.7, 211, rate0=900, tau=0.25), 136.5, (-2.0, 1.5, -6.0), target=-40, kind='m')
-    m.add('handling', S.cloth(0.45, 212), 138.4, (-0.5, 1.2, -2.0), target=-37, kind='i', send_db=-6)
-    m.add('handling2', S.cloth(0.35, 213, density=300), 140.75, (0.4, 1.1, -2.0), target=-39, kind='i', send_db=-6)
-    # far away in the dungeon something heavy lands, twice; dust runs down a wall
+    m.add('shield-residue', S.sand(0.7, 211, rate0=900, tau=0.25), 136.5, (-2.0, 1.5, -6.0), target=-42, kind='m')
+    m.add('handling', S.cloth(0.45, 212), 138.4, (-0.5, 1.2, -2.0), target=-39, kind='i', send_db=-6)
+    m.add('handling2', S.cloth(0.35, 213, density=300), 140.75, (0.4, 1.1, -2.0), target=-41, kind='i', send_db=-6)
+    # far away in the dungeon something heavy lands, twice; dust runs down a wall; a stone settles now and then
     for i, (t, pos) in enumerate(((138.95, (-6.0, 0.0, -11.0)), (141.55, (5.0, 0.0, -12.0)))):
-        m.add('far-thump%d' % i, S.burst(214 + i, 35, 110, 0.16, rise=0.012), t, pos, target=-36, kind='i')
-    m.add('far-trickle', S.sand(1.4, 216, rate0=500, tau=0.7), 139.1, (3.5, 0.5, -7.0), target=-42, kind='m')
+        m.add('far-thump%d' % i, S.burst(214 + i, 35, 110, 0.16, rise=0.012), t, pos, target=-38, kind='i')
+    m.add('far-trickle', S.sand(1.4, 216, rate0=500, tau=0.7), 139.1, (3.5, 0.5, -7.0), target=-44, kind='m')
+    for i, (t, a, pos) in enumerate(((137.05, 0.15, (-5.0, 0, -10.0)), (139.4, 0.12, (4.0, 0, -8.0)), (141.3, 0.2, (-2.0, 0, -12.0)))):
+        m.add('settle%d' % i, S.rock_fall(a, 0.3, 420 + i), t, pos, target=-39, kind='i')
 
-    # 145.187: the force. Nothing announces it and nothing in it has a pitch.
+    # ---- A. 142.5 to 145.02, the stare: a dark breath of narrow noise, low, that grows and holds no chord
+    # (the reference has a low held tone at -22 dBFS here; rounds 1 to 10 had the bed alone, at -37).
+    st = S.howl(HUSH - 142.5, 424, (55.0, 92.0, 139.0, 233.0, 370.0), q=9.0, wander=0.012, rate=0.8)
+    st *= curve([(142.5, 0), (143.4, 0.45), (144.4, 0.75), (HUSH - 0.03, 1.0), (HUSH, 0)], 142.5, len(st))
+    m.add('stare', st, 142.5, (0.0, 1.6, -6.0), target=-37, kind='r', send_db=-14)
+    # 145.02 to 145.187: nothing. Her eyes widen. The silence is the held breath; `after_db` below makes it whole.
+
+    # ---- A. 145.187, the strike: her hair snaps. A dry crack with no low end, short.
+    sk = np.zeros(nsamp(0.3))
+    for k_, w_ in ((S.burst(221, 350, 2600, 0.016, rise=0.0008), 1.0), (S.tilted_burst(222, 900.0, 6000.0, 0.006, tilt=0.5), 0.6), (S.burst(223, 120, 400, 0.02, rise=0.002), 0.5)):
+        sk[: len(k_)] += w_ * k_
+    m.add('strike', S.norm(sk), FORCE, (0.0, 1.5, -2.0), target=-10, kind='i', er_db=-3, send_db=-14)
+
+    # ---- B. 145.270, she is thrown: the blast. A pressure front, a low body, her ribs, a slap; and a boom under it.
     front, low, slap = S.whump(220, tplus=0.0035, dur=0.7)
     n = len(front)
     ribs = np.zeros(n); k = S.burst(223, 90, 450, 0.028, rise=0.004); ribs[: len(k)] = k
-    snap = np.zeros(n)
-    sn = dsp.spectral(dsp.white(nsamp(0.08), 221), lambda f: dsp.band_gain(f, 1500, 6000, 2)) * np.exp(-np.arange(nsamp(0.08)) / (0.011 * SR))
-    s = nsamp(0.008); snap[s: s + len(sn)] = S.norm(sn)
-    hit = 0.55 * front + 0.9 * low + 0.5 * ribs + 0.7 * slap + 0.55 * snap
-    m.add('force', S.saturate(hit), FORCE, (0.0, 1.3, -2.2), target=-10, kind='i', er_db=-3, send_db=-8)
-
-    # 145.30 to 145.76: a ring runs through the air and dust lifts where she stood
-    m.add_wide('shock-ring', S.band_sweep(0.5, 261, 600, 2600, width_oct=1.3, attack=0.12, wide=True), FORCE + 0.05, target=-16, kind='i', send_db=-6)
-    m.add('blast-dust', S.burst(262, 40, 160, 0.14, rise=0.02), FORCE + 0.06, (0.0, 0.5, -1.5), target=-20, kind='i', send_db=-6)
-
-    # she flies back to the far column: air and cloth go with her
-    T = 145.78 - (FORCE + 0.05)
+    hit = 0.55 * front + 0.9 * low + 0.5 * ribs + 0.7 * slap
+    m.add('force', S.saturate(hit), BLAST, (0.0, 1.3, -2.2), target=-9, kind='i', er_db=-3, send_db=-6)
+    m.add('force-boom', S.boom(225, f=78.0, tau=0.45), BLAST, (0.0, 0.8, -2.2), target=-10, kind='i', send_db=-6)
+    # The blast rolls through the hall for as long as she flies. Round 10 fell by 13 dB here; the reference holds
+    # its highest level. Turbulence in four bands, with less top than the torrent of the finale. It thins on the
+    # last frame of the whip, so that the hit on the wall lands.
+    RD = COLUMN + 0.3 - BLAST
+    nr = nsamp(RD)
+    renv = curve([(BLAST, 0), (BLAST + 0.025, 0.6), (145.5, 0.8), (145.80, 1.0), (145.875, 1.0), (COLUMN - 0.012, 0.5), (COLUMN + 0.05, 0.35), (COLUMN + 0.3, 0)], BLAST, nr)
+    roar = sum(st_ * lin(w_) for st_, w_ in zip(S.turbulence(RD, 226, corr=0.4), (0.0, 0.0, -2.0, -10.0))) * renv[:, None]
+    m.add_wide('blast-roar', roar, BLAST, target=-10.5, kind='m', send_db=-12)
+    # 145.31 to 145.77: a ring runs out through the air and passes; dust is thrown up at both sides and grows
+    m.add_wide('shock-ring', S.band_sweep(0.5, 261, 500, 2400, width_oct=1.3, attack=0.15, wide=True), BLAST + 0.03, target=-17, kind='i', send_db=-6)
+    for i, x_ in enumerate((-3.5, 3.5)):
+        ds = S.puff(0.75, 262 + i, 70.0, 700.0, rise=0.22, tau=0.3, tilt=0.8).mean(axis=1)
+        m.add('dust-surge%d' % i, ds, 145.30, (x_, 0.4, -1.5), target=-19, kind='i', send_db=-8)
+    # she flies back to the far wall: air and cloth go with her, and they sink as she gets small
+    T = 145.78 - BLAST
     nt = nsamp(T)
     u = 1 - (1 - np.arange(nt) / nt) ** 1.6
-    a, b = np.array([0.0, 1.3, -2.2]), np.array([0.3, 1.6, -9.5])
+    a, b = np.array([0.0, 1.3, -2.2]), np.array([0.3, 3.0, -11.0])
     P = a[None, :] + (b - a)[None, :] * u[:, None]
-    m.add('travel-air', S.aero(speed_of(P), 230, u0=8.0) * dsp.fade(np.ones(nt), 0.01, 0.03), FORCE + 0.05, P, target=-26, kind='m')
-    fl = S.cloth(T, 231, density=520) * (0.6 + 0.4 * np.sin(2 * np.pi * 18 * np.arange(nt) / SR))
-    m.add('travel-cloth', fl, FORCE + 0.05, P, target=-29, kind='m')
-    m.add_wide('whip', S.band_sweep(0.16, 232, 500, 3500, wide=True), 145.78, target=-22, kind='i')
+    m.add('travel-air', S.aero(speed_of(P), 230, u0=8.0) * dsp.fade(np.ones(nt), 0.01, 0.03), BLAST, P, target=-22, kind='m')
+    fl = S.cloth(T, 231, density=520) * (0.6 + 0.4 * S.irregular(nt, 233, 8, 30))
+    m.add('travel-cloth', fl, BLAST, P, target=-29, kind='m')
+    # 145.81 to 145.90: the camera whips to the wall
+    m.add_wide('whip', S.band_sweep(0.13, 232, 400, 3000, width_oct=1.2, attack=0.8, wide=True), 145.80, target=-19, kind='i')
 
-    # ---- the wall, read from the frames at 24 a second. Every sound here belongs to one event of this list, and
-    # an event that the frames do not show gets no sound (ledger.py checks both).
-    #   145.937           hit       her body strikes the wall; a first puff of dust
-    #   145.98 to 146.4   jet       a jet of dust shoots out to the left and grows
-    #   146.26            split     the wall splits along a vertical line
-    #   146.47            breakout  large blocks leave the wall, in front of the dust
-    #   146.5 to 147.72   airborne  the blocks turn in the air and sink out of the frame
-    #   147.76 to 148.9   land      dust fills the frame; the blocks reach the floor in it (the original: 148.05 and 148.34 s)
-    #   148.49 to 149.66  crater    she hangs in a round crater of cracked wall; dust drifts across
-    #   149.70 to 150.02  black     her eyes are shut
-    #   150.06 to 152.2   eye       her eye opens on the floor: rubble lies there
+    # ---- C. 145.937, the hit, high on a tall wall, seen from its side. A body on stone, the crack of the stone
+    # where it gives, the body of the wall near 100 Hz that lasts, the first dust. Nothing else sounds here.
     col = (1.0, 1.5, -5.0)
+    hitp = (0.9, 5.0, -5.6)
     thud = np.zeros(nsamp(0.9))
     for k_, w_ in ((S.burst(244, 50, 320, 0.07, rise=0.008), 1.0), (S.burst(245, 35, 90, 0.09, rise=0.01), 0.6), (S.burst(246, 120, 600, 0.03, rise=0.005), 0.45)):
         thud[: len(k_)] += w_ * k_[: len(thud)]
-    # The hit is a body near 100 Hz that lasts for a second (the reference holds 60 to 150 Hz within 3 dB for 0.8 s),
-    # with the short thud of the contact in front of it. The crack and the dust are darker and lie under it.
-    m.add('wall-hit', S.saturate(S.norm(thud), 1.6), COLUMN, col, target=-13, kind='i', focus_db=5, send_db=-2)
-    m.add('wall-boom', S.boom(243, f=112.0, tau=1.0), COLUMN, col, target=-9, kind='i', focus_db=5, send_db=-2)
-    m.add('wall-crater', S.heavy_crack(241, size=1.5, dur=0.5, k_rate=12, bright=0.3), COLUMN + 0.030, col, target=-18, kind='i', focus_db=5, send_db=-2)
+    m.add('wall-hit', S.saturate(S.norm(thud), 1.6), COLUMN, hitp, target=-12, kind='i', focus_db=5, send_db=-2)
+    m.add('wall-boom', S.boom(243, f=108.0, tau=0.7), COLUMN, col, target=-9, kind='i', focus_db=5, send_db=-6)
+    # the crack has its energy from 300 Hz to 4 kHz; its dry edge is small (round 8 was harsh, round 10 was dull)
+    m.add('wall-crack', S.heavy_crack(241, size=1.8, dur=0.45, k_rate=14, bright=0.3), COLUMN + 0.006, hitp, target=-11, kind='i', focus_db=5, send_db=-2)
     m.add_wide('dust-jet', S.puff(1.8, 247, 100.0, 1600.0, rise=0.05, tau=0.55, tilt=0.9), COLUMN + 0.05, target=-25, kind='i', send_db=-6)
-    m.add('dust-jet-left', S.puff(1.4, 249, 100.0, 1200.0, rise=0.06, tau=0.45).mean(axis=1), COLUMN + 0.06, line((0.8, 1.5, -5.0), (-3.5, 1.5, -4.0), nsamp(1.4)), target=-25, kind='i', send_db=-6)
-    m.add('wall-split', S.heavy_crack(434, size=1.0, dur=0.3, k_rate=6, bright=0.35), 146.26, col, target=-20, kind='i', focus_db=5)
-    bo = S.heavy_crack(435, size=1.6, dur=0.5, k_rate=10, bright=0.35); bb = S.boom(436, f=98.0, tau=0.45)
-    bk = np.zeros(max(len(bo), len(bb))); bk[: len(bo)] += 0.7 * bo; bk[: len(bb)] += 1.0 * bb
-    m.add('breakout', S.norm(bk), 146.47, col, target=-19, kind='i', focus_db=5)
-    # in the air the blocks only knock one another now and then; the wall still gives, low, and that dies away
-    ru = S.wide_noise(1.3, 274, 45, 150, order=3)
-    ru *= curve([(146.45, 0), (146.6, 1), (147.0, 0.6), (147.75, 0)], 146.45, len(ru))[:, None]
-    m.add_wide('wall-rumble', ru, 146.45, target=-22, kind='m', send_db=-6)
-    for i, (t, size, pos) in enumerate(((146.69, 0.7, (0.6, 2.2, -4.8)), (146.97, 0.5, (0.0, 1.8, -4.5)), (147.26, 0.8, (0.9, 1.3, -4.9)), (147.52, 0.6, (-0.4, 0.9, -4.4)))):
-        m.add('block-knock%d' % i, S.block_hit(270 + i, size=size, v=3.0), t, pos, target=-23, kind='i', focus_db=5)
-    # The dust: it is thrown out at 146.0, it fills the frame from 147.78 to 148.4, and it thins while she hangs in the
-    # wall. The owner heard noise here (round 9), so the dust is low and soft now: a roll under 500 Hz, and a hiss
-    # that is 7 dB lower and has no top.
+    m.add('dust-jet-left', S.puff(1.4, 249, 100.0, 1200.0, rise=0.06, tau=0.45).mean(axis=1), COLUMN + 0.06, line((0.8, 3.5, -5.0), (-3.5, 3.0, -4.0), nsamp(1.4)), target=-25, kind='i', send_db=-6)
+
+    # ---- D. 145.99 to 146.46, the wall fails: the crack runs down from the hit. A run of cracks that come faster
+    # and get larger; the masonry strains under them; from 146.19 pieces come loose at the top and rattle down.
+    c0 = COLUMN + 0.05
+    span = BRK - 0.015 - c0
+    ct, t = [], 0.0
+    while True:
+        t += rr.exponential(1.0 / (12.0 + 45.0 * (t / span) ** 1.5))
+        if t >= span:
+            break
+        ct.append(t)
+    ct = np.array(ct)
+    run = ticks(ct, lambda i: S.stone_crack(rr, size=(0.25 + 0.9 * ct[i] / span) * rr.uniform(0.6, 1.0), bright=0.3) * (0.35 + 0.65 * ct[i] / span) * rr.uniform(0.6, 1.0), span + 0.4)
+    m.add('crack-run', run, c0, line(hitp, (1.0, 2.0, -5.2), len(run)), target=-14, kind='m', focus_db=4, send_db=-4)
+    sn = S.grind(span, 437, r_lo=50.0, r_hi=160.0, res=(80.0, 190.0, 430.0), scrape=0.6)
+    sn = sn * curve([(c0, 0.3), (c0 + span, 1.0), (c0 + span + 0.2, 1.0)], c0, len(sn))
+    m.add('wall-strain', sn, c0, col, target=-18, kind='m', focus_db=4, send_db=-4)
+    m.add('loose-stone', S.rubble(BRK - 146.19, 438, lambda t: 28.0, sizes=(0.06, 0.2), bright=0.3), 146.19, line(hitp, (1.0, 2.5, -5.2), nsamp(BRK - 146.19 + 0.6)), target=-21, kind='m', focus_db=3)
+
+    # ---- E. 146.480, the breakout: about 35 blocks leave the wall within two frames. A volley of heavy cracks at
+    # irregular times, and the low surge of a wall that loses its face.
+    bt = np.sort(np.concatenate([[0.0], rr.uniform(0.012, 0.19, 9)]))
+    vol = ticks(bt, lambda i: S.heavy_crack(440 + i, size=rr.uniform(0.9, 1.8), dur=0.25, k_rate=6, bright=0.3) * rr.uniform(0.6, 1.0), 0.8)
+    m.add('breakout', vol, BRK, (1.0, 3.5, -5.3), target=-11, kind='i', focus_db=4, send_db=-9)
+    m.add('breakout-boom', S.boom(436, f=82.0, tau=0.45), BRK, col, target=-10, kind='i', focus_db=4, send_db=-9)
+    # 146.5 to 147.73: the blocks fall together, slowly: they are one to two metres. They strike one another and
+    # the wall, less and less often as they spread; grit and small stone rain with them; the edge of the hole
+    # breaks three times more; the wall keeps a low roll. Nothing reaches the floor while the blocks are seen.
+    FALL = BRK + 0.05
+    for i, (pa, pb) in enumerate((((0.2, 4.0, -4.8), (-0.4, 1.0, -4.4)), ((1.4, 3.5, -5.2), (1.6, 0.8, -5.0)), ((0.8, 2.5, -4.6), (0.6, 0.5, -4.2)))):
+        fb = S.rubble(FOG - FALL + 0.1, 450 + i, lambda t: 12.0 * np.exp(-t / 0.5) + 1.5, sizes=(0.4, 1.3), bright=0.25, body=0.4)
+        m.add('block-fall%d' % i, fb, FALL + 0.03 * i, line(pa, pb, len(fb)), target=-18, kind='m', focus_db=4, send_db=-10)
+    gr = S.rubble(FOG - FALL + 0.4, 455, lambda t: 50.0 * np.exp(-t / 0.9) + 6.0, sizes=(0.05, 0.2), bright=0.3)
+    m.add('grit-rain', gr, FALL, (0.6, 1.5, -4.5), target=-21, kind='m', focus_db=3)
+    for i, (t, size) in enumerate(((146.81, 0.8), (147.12, 0.6), (147.44, 0.7))):
+        m.add('hole-crack%d' % i, S.heavy_crack(460 + i, size=size, dur=0.25, k_rate=5, bright=0.3), t, (1.0, 4.0, -5.4), target=-19, kind='i', focus_db=4)
+    ru = S.wide_noise(2.9, 274, 40, 160, order=3)
+    ru *= curve([(BRK, 0), (BRK + 0.08, 1), (147.0, 0.6), (FOG, 0.35), (148.5, 0.25), (149.3, 0)], BRK, len(ru))[:, None]
+    m.add_wide('wall-rumble', ru, BRK, target=-21, kind='m', send_db=-10)
+    # The dust: thrown out at 146.0, it fills the frame from 147.77 to 148.4, and it thins while she hangs in the wall.
+    # It is low and soft (the owner heard noise in round 9): a roll under 450 Hz and a hiss with no top.
     dh = S.dust(3.9, 610, 250.0, 2200.0, grain=0.06, tilt=0.9) * curve([(146.0, 0), (146.25, 0.8), (147.0, 0.9), (147.78, 1.0), (148.4, 1.0), (148.9, 0.3), (149.7, 0.1), (149.9, 0)], 146.0, nsamp(3.9))[:, None]
     m.add_wide('dust-hiss', dh, 146.0, target=-29, kind='m')
     db = S.billow(3.4, 612, 60.0, 450.0) * curve([(146.0, 0), (146.3, 1), (147.6, 0.9), (148.4, 0.6), (149.0, 0.25), (149.4, 0)], 146.0, nsamp(3.4))[:, None]
     m.add_wide('dust-billow', db, 146.0, target=-25, kind='m', send_db=-8)
-    # The blocks reach the floor in the dust: five landings, the two large ones where the original has its two.
-    # Round 9 ended there: after the last large landing the level fell by 25 dB in a second, and the picture ran on
-    # for three seconds. A heap of stone does not stop at once. The landings get smaller and rarer, the heap rolls
-    # and knocks as it settles, the floor keeps a low roll, and all of it dies away through the black frames.
+
+    # ---- F. 147.77 on, the dust fills the frame and the blocks reach the floor in it: a cascade of landings in
+    # which three heavy ones stand out (the two large ones where the original has its two). They get smaller and
+    # rarer, the heap rolls and knocks as it settles, the floor keeps a low roll, and all of it dies away through
+    # the black frames (round 10).
+    lc = S.rubble(1.5, 615, lambda t: 12.0 * np.exp(-t / 0.55) + 1.5, sizes=(0.3, 0.9), bright=0.2, body=0.8)
+    m.add('land-cascade', lc, 147.80, (0.8, 0.0, -4.4), target=-17, kind='m', focus_db=4, send_db=-4)
     for i, (t, size, pos, tg) in enumerate(((147.84, 0.7, (0.3, 0.0, -4.4), -16), (148.05, 1.3, (1.2, 0.0, -5.0), -12.5), (148.34, 1.1, (1.9, 0.0, -5.4), -13.5),
                                             (148.62, 0.6, (0.6, 0.0, -3.6), -18), (148.93, 0.5, (-0.9, 0.0, -3.4), -20), (149.31, 0.4, (1.5, 0.0, -4.2), -23),
                                             (149.78, 0.3, (-0.3, 0.0, -3.9), -27))):
         m.add('land%d' % i, S.slab_fall(600 + i, size=size, tail=1.0 if size >= 1.0 else 0.6), t, pos, target=tg, kind='i', focus_db=5)
-    pt = S.tumble(1.1, 614, lambda t: 9.0 - 6.0 * t, sizes=(0.03, 0.08), speed=(2.0, 4.0))
-    m.add('land-patter', pt, 147.9, (0.5, 0.0, -3.5), target=-28, kind='m', focus_db=3)
     for i, (pos, tg) in enumerate((((1.6, 0.0, -4.6), -21), ((-0.7, 0.0, -3.8), -23))):
         rb = S.tumble(3.3, 616 + i, lambda t: 11.0 * np.exp(-t / 0.85) + 0.7, sizes=(0.12, 0.45), speed=(1.5, 4.0))
         rb *= curve([(148.5, 1.0), (149.7, 1.0), (150.1, 0.5), (151.6, 0.25), (152.0, 0.0)], 148.3 + 0.2 * i, len(rb))
         m.add('rubble%d' % i, rb, 148.3 + 0.2 * i, pos, target=tg, kind='m', focus_db=3)
     sr = S.billow(4.0, 618, 38.0, 150.0, sd=2.5) * curve([(148.0, 0), (148.5, 1), (149.2, 0.6), (150.2, 0.3), (151.3, 0.1), (152.0, 0)], 148.0, nsamp(4.0))[:, None]
     m.add_wide('heap-roll', sr, 148.0, target=-24, kind='m', send_db=-6)
-
-    # ---- round 4: a tone that holds, the walls' answers, sharp cracks, grit, small bells
-    # the hall is alive under the spoken lines: a stone settles now and then, far away
-    for i, (t, a, pos) in enumerate(((137.05, 0.15, (-5.0, 0, -10.0)), (139.4, 0.12, (4.0, 0, -8.0)), (141.3, 0.2, (-2.0, 0, -12.0)))):
-        m.add('settle%d' % i, S.rock_fall(a, 0.3, 420 + i), t, pos, target=-37, kind='i')
-    # the clone's stare, 142.5 to the force: a dark, low tone that only holds; the force cuts it
-    st = S.voice(FORCE - 142.5, 424, [110.0, 165.0, 247.0, 370.0], wander=0.004, breath=0.3)
-    st *= curve([(142.5, 0), (143.3, 1), (FORCE - 0.003, 1), (FORCE, 0)], 142.5, len(st))
-    m.add('stare', st, 142.5, (0.0, 1.6, -6.0), target=-40, kind='m', send_db=-2)
-    # the force comes back from two walls, and the stone floor cracks where she stood
-    fs = S.saturate(hit)
-    m.add('force-slap0', S.slap(fs, 1200), FORCE + 0.15, (-8.5, 2.0, -5.0), target=-22, kind='i', send_db=-4)
-    m.add('force-slap1', S.slap(fs, 900), FORCE + 0.26, (8.5, 3.0, -10.0), target=-25, kind='i', send_db=-4)
-    m.add('floor-crack', S.heavy_crack(430, size=1.2, dur=0.5, k_rate=9, bright=0.7), FORCE + 0.012, (0.0, 0.1, -2.0), target=-17, kind='i', send_db=-4)
-    for i, pos in enumerate(((-1.8, 0.3, -1.2), (1.8, 0.3, -1.2))):
-        gr = S.gravel(0.55, 431 + i) * np.exp(-np.arange(nsamp(0.55)) / (0.2 * SR))
-        m.add('grit%d' % i, gr, FORCE + 0.08, pos, target=-26, kind='m', send_db=-8)
-    m.drive_db = 6.0
     # 148.49 to 149.66, the crater: she hangs in the cracked wall, close: small stone runs down it, the wall ticks and
     # groans. It goes on, thinner, while her eyes are shut and when her eye opens on the rubble.
     near = (0.0, 1.2, -2.5)
@@ -445,6 +483,11 @@ def force():
     wc = ticks([0.20, 0.65, 0.95, 1.52, 2.31], lambda i: S.stone_crack(rr, size=rr.uniform(0.2, 0.4)) * rr.uniform(0.6, 1.0) * (1.0, 1.0, 1.0, 0.6, 0.4)[i], 2.9)
     m.add('wall-ticks', wc, 148.5, near, target=-28, kind='i', send_db=-8)
     m.add('wall-groan', S.groan(0.4, 285), 148.88, near, target=-34, kind='m', send_db=-8)
+
+    # The master. The flight and the failing wall lie near the ceiling for 1.5 s, so the drive is deeper than in
+    # round 10. The silence before the strike is made after the limiter: the hall's answer to the stare stops too.
+    m.drive_db = 10.0
+    m.after_db = [(136.5, 0.0), (HUSH - 0.03, 0.0), (HUSH, -90.0), (FORCE - 0.003, -90.0), (FORCE, 0.0), (152.5, 0.0)]
     return m
 
 
