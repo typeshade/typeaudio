@@ -19,7 +19,7 @@ devices yet.
 | 6   | A granular scheduler on `push` and device-resident counts  | What the device schedules; issue #539                                         | harness ready; container run recorded (`docs/records/06-granular-container.md`); device runs pending                                                                                                                                                   |
 | 7   | A sound match with function-level `grad`                   | Differentiable audio in the catalog; ask L                                    | harness ready; container run recorded (`docs/records/07-sound-match-container.md`); device runs pending                                                                                                                                                |
 | 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
-| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | harness ready; container run recorded (`docs/records/09-force-passage-container.md`); the owner's listening review and the device runs pending                                                                                                         |
+| 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | harness ready; container runs recorded (`docs/records/09-force-passage-container.md`, `docs/records/09-force-passage-container-2.md`); the owner's listening review of the third plan and the device runs pending                                      |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -388,8 +388,19 @@ kind with a size carries the weight that the study's models carry.
 copy the study's renderer: the engine places each event with its own spatial chain and masters the mix
 with its own guards.
 
-**Status.** Harness ready; the first container run is recorded (`docs/records/09-force-passage-container.md`,
-commit `77125bd1947cbbf1796150ff52574302f1e0f2ba`): reference numbers on WebGPU on SwiftShader. The engine
-gained four kinds (`crack`, `boom`, `rubble`, `roar`) and the plan gained the silence
-(`docs/sound-design-loop.md`). The owner's listening review of the engine's render is pending, and so are the
-device runs.
+**Status.** Harness ready; two container runs are recorded: reference numbers on WebGPU on SwiftShader.
+The engine gained four kinds (`crack`, `boom`, `rubble`, `roar`) and the plan gained the silence
+(`docs/sound-design-loop.md`).
+
+- The first run is `docs/records/09-force-passage-container.md`, at commit
+  `77125bd1947cbbf1796150ff52574302f1e0f2ba`. The owner listened to it on 2026-11-10: the hit that breaks
+  a wall sounded as objects of a house thrown about.
+- A second plan made every stone low and long. It was not recorded. The owner listened to it on the same
+  day: a roll of dull thumps, apart from the picture. The owner then gave the rule of the design: the
+  picture says which sound leads in each moment; the rest explains it or is out; and a silence says that
+  a larger hit comes.
+- The second recorded run is `docs/records/09-force-passage-container-2.md`, of the third plan. It
+  follows that rule: 37 events, where the first plan held 59. The record gives the measured causes and
+  what changed in the engine: a `rubble` ends with its `duration`.
+
+The owner's listening review of the third plan is pending, and so are the device runs.
