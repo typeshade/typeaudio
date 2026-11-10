@@ -272,3 +272,44 @@ def mod_depth(x, a, b, lo=12.0, hi=95.0):
     m = (f >= lo) & (f <= hi)
     i = int(np.argmax(E[m]))
     return float(E[m][i]), float(f[m][i])
+
+
+def size_cue(x, a, b, nfft=2048, hop=512, split=2000.0):
+    """What size of thing the sharp and the pitched parts speak of, between a and b seconds. The cells that
+    `variety` counts as tones or transients are taken alone. Returns their centre frequency (the mean on a
+    log scale, weighted by energy), the radius of a body whose ka = 1 lies there (54.6 / f, in metres), and
+    the share of the whole energy that is sharp or pitched above `split` Hz. A marble rings at several
+    kilohertz; a block of a metre speaks near 55 Hz."""
+    seg = x[max(0, nsamp(a)): nsamp(b)].mean(axis=1)
+    win = dsp.hann(nfft)
+    nf = max(3, 1 + (len(seg) - nfft) // hop)
+    idx = np.minimum(np.arange(nfft)[None, :] + hop * np.arange(nf)[:, None], len(seg) - 1)
+    S = np.abs(np.fft.rfft(seg[idx] * win, axis=1))
+    fr = np.fft.rfftfreq(nfft, 1 / SR)
+    keep = (fr >= 60) & (fr <= 12000)
+    S, f = S[:, keep], fr[keep]
+    kt = max(3, int(round(0.2 * SR / hop)) | 1)
+    kf = max(3, int(round(500 / (SR / nfft))) | 1)
+
+    def med(a_, k, axis):
+        pad = [(0, 0), (0, 0)]
+        pad[axis] = (k // 2, k // 2)
+        sl = np.lib.stride_tricks.sliding_window_view(np.pad(a_, pad, mode='edge'), k, axis=axis)
+        return np.median(sl, axis=-1)
+
+    H, P = med(S, kt, 0), med(S, kf, 1)
+    E = S ** 2
+    sharp = E * ((H > 2 * P) | (P > 2 * H))
+    w = sharp.sum(axis=0)
+    fc = float(np.exp((w * np.log(f)).sum() / max(w.sum(), 1e-30)))
+    return fc, 54.6 / fc, float(sharp[:, f >= split].sum() / max(E.sum(), 1e-30))
+
+
+def weight(x, a, b):
+    """How heavy a stretch is: the level between 30 and 250 Hz against the level between 2 and 10 kHz, in dB."""
+    seg = x[max(0, nsamp(a)): nsamp(b)].mean(axis=1)
+    P = np.abs(np.fft.rfft(seg * np.hanning(len(seg)))) ** 2
+    f = np.fft.rfftfreq(len(seg), 1 / SR)
+    lo = P[(f >= 30) & (f < 250)].sum()
+    hi = P[(f >= 2000) & (f < 10000)].sum()
+    return float(10 * np.log10(max(lo, 1e-30) / max(hi, 1e-30)))

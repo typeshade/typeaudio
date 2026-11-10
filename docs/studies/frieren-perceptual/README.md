@@ -1,9 +1,9 @@
 # A sound design of three passages from physical and perceptual models
 
-Status: round 4 rendered and signal-checked on 2026-11-10. The owner listened to round 1 and gave three
+Status: round 5 rendered and signal-checked on 2026-11-10. The owner listened to round 1 and gave three
 remarks. Round 2 answers them. Round 3 follows the picture, which the author inspected frame by frame for
-the first time. The owner watched round 3 with the picture and found it flat. Round 4 answers that.
-Nobody has listened to round 4.
+the first time. The owner watched round 3 with the picture and found it flat. Round 4 answers that. The
+owner found round 4 light, like glass marbles. Round 5 answers that. Nobody has listened to round 5.
 
 The owner asked on 2026-11-10 for a sound design that is made by calculation, not by ear. The owner listens
 to the result. This study designs the effects of three passages of one fight scene. Each sound has a
@@ -26,15 +26,15 @@ model and a number. Each number has a measurement of the rendered audio.
 
 ## The passages
 
-| Passage | Picture seconds       | File   | SHA-256 of the 24-bit WAV that `scripts/render.py` writes (round 4) |
+| Passage | Picture seconds       | File   | SHA-256 of the 24-bit WAV that `scripts/render.py` writes (round 5) |
 | ------- | --------------------- | ------ | ------------------------------------------------------------------- |
-| Red     | 20.000 to 30.000      | 12.5 s | `9d1609ccd5add22e53a0168cdfd4401d24d15a412007e3ff5db373b0e6f3dc8d`  |
-| Force   | 136.500 to 149.700    | 15.7 s | `b0472f66da9b77860ad6e44d5221b44e01dfa3a5accbc7bf1cef599c4e2afd20`  |
-| Finale  | 173.000 to 189.314625 | 18.8 s | `d7e5fd7439e4ba14651eeb2a42bef68ca054507c164b8e2af571ccc1caf5e77a`  |
+| Red     | 20.000 to 30.000      | 12.5 s | `2c5456dfb02c8acbd02c931981da79299d51a9c2be693eb76323d2ce78181fde`  |
+| Force   | 136.500 to 149.700    | 15.7 s | `b6857b1d26b018ad70116d1e5443bb8fbc912abca7da715beaa2a415f041b53e`  |
+| Finale  | 173.000 to 189.314625 | 18.8 s | `bb964ff1a064c04bb92983ff913ac37207ac6bc5a9f802bf72157b7f03677def`  |
 
 Each file has a tail of 2.5 s after its picture range. The sample rate is 48,000 Hz. One picture frame is
-2,002 samples (24000/1001 frames a second). Rounds 1, 2 and 3 are the commits `b9a6e52`, `1454215` and
-`c0a4b69`.
+2,002 samples (24000/1001 frames a second). Rounds 1 to 4 are the commits `b9a6e52`, `1454215`, `c0a4b69`
+and `ee41d60`.
 
 ## The method
 
@@ -156,13 +156,74 @@ spectrum, and a steady tone lowers that median: it reads 11.2 dB in the flight o
 3, while the depth of the modulation did not grow. The share between 0.4 and 4 kHz grew in the dissolution
 because the falling tone lies there. That tone lasts 1.7 s and is no grain, but the ear decides it.
 
+## The third listening review (round 4)
+
+The owner watched round 4 with the picture on 2026-11-10 and said that it feels like glass marbles and too
+light, and named the ice of the first passage. Round 4 had no target for the size that a sound speaks of.
+
+Measured cause in round 4: a body of radius `a` metres speaks near `ka = 1`, which is `54.6 / a` Hz. The sharp
+moments and the rings that round 4 added lay between 2.5 and 9 kHz: glass ticks of three damped modes, bells,
+a shield ring, sparkles, pops. That is the pitch of a body of 1 to 2 cm. The frames from 26.28 to 28.45 s
+show slabs of ice that are far taller than the standing figure. They shoot up within six frames and stand,
+and mist spreads at their feet. Nothing small falls.
+
+`scripts/analyze.py` has two measures for this. `size_cue` takes the parts that `variety` counts as tones
+or transients and gives their centre frequency, the radius whose `ka = 1` lies there, and the share of the
+whole energy that is sharp or pitched above 2 kHz. `weight` is the level between 30 and 250 Hz against the
+level between 2 and 10 kHz.
+
+Changes in round 5:
+
+- Every ring of a small body is gone: the shield ring, the sparkles, the shards, the shimmer, the bells of
+  the staff, the thin tone of the stare, the glints of the circle, the ring of the flash.
+- The ice is a boom of noise under 100 Hz, seven cracks of thick ice (1.6 m and six slabs of 0.7 to 1.8 m,
+  at irregular times), crushed ice (noise with no pitch), the answer of the far wall, slabs that groan as they
+  settle, and mist. Its first sound is on the first frame of the ice, at 26.27625 s.
+- A crack has a size. `heavy_crack` is a low knock of noise around `ka = 1`, a dense damped fracture above
+  it and a dry edge of noise. Larger sizes are lower and longer. The low part is noise over three octaves, so
+  it has no pitch.
+- The stone that hits, bursts, settles and tumbles is 1.7 to 6 times larger. The staff is dry wood.
+- The stare before the force is a dark low cluster. The voice over the beam lies on harmonics 4 to 16 of the
+  beam's core.
+
+| Section               | Centre of the sharp and pitched parts, Hz | Radius with `ka = 1` there, cm | Sharp or pitched above 2 kHz, % of the energy | `weight`, dB   |
+| --------------------- | ----------------------------------------- | ------------------------------ | --------------------------------------------- | -------------- |
+| Red: ice burst        | 1083 to 232                               | 5.0 to 23.5                    | 15.7 to 0.3                                   | -5.5 to +10.9  |
+| Red: ice stands       | 1731 to 210                               | 3.2 to 26.0                    | 32.8 to 0.1                                   | -9.1 to +13.7  |
+| Red: cracks and shell | 430 to 364                                | 12.7 to 15.0                   | 5.3 to 0.9                                    | +0.5 to +4.6   |
+| Red: release          | 283 to 241                                | 19.3 to 22.7                   | 0.5 to 0.2                                    | +13.7 to +18.1 |
+| Force: before         | 1177 to 179                               | 4.6 to 30.5                    | 16.6 to 1.4                                   | +5.7 to +8.2   |
+| Force: force          | 388 to 217                                | 14.1 to 25.2                   | 5.1 to 0.8                                    | +6.9 to +8.1   |
+| Force: column         | 690 to 346                                | 7.9 to 15.8                    | 4.7 to 0.9                                    | +6.3 to +11.9  |
+| Force: collapse       | 301 to 180                                | 18.1 to 30.3                   | 1.6 to 0.8                                    | +10.6 to +12.8 |
+| Force: fog and wall   | 1512 to 266                               | 3.6 to 20.6                    | 14.2 to 1.2                                   | -3.7 to +6.6   |
+| Finale: flash         | 236 to 562                                | 23.1 to 9.7                    | 3.2 to 1.2                                    | +12.2 to +12.2 |
+| Finale: beam          | 591 to 295                                | 9.2 to 18.5                    | 2.6 to 0.2                                    | +4.9 to +7.0   |
+| Finale: dissolution   | 2155 to 1780                              | 2.5 to 3.1                     | 30.3 to 26.7                                  | -6.6 to -4.8   |
+
+Each cell is round 4 to round 5. The dissolution stays light: the picture shows thin strands. The centre of
+the flash rose because the crack that replaces its glassy ring has an edge of noise; its `weight` did not
+change.
+
+Deviations, open:
+
+- The radius is 15 to 30 cm, not the metres of the picture. The measure takes every sharp part between 60 Hz
+  and 12 kHz, and a crack has an edge. It compares rounds; it is no calibrated size.
+- Round 5 gives back part of round 4. The median count of layers heard at once fell from 6 to 4 in the
+  release and the ice, from 6 to 5 in the flash and the beam, from 5 to 4 in the flight, and from 4 to 3 in
+  the column and the collapse and in the aftermath of the ice. Heavy sounds mask more.
+- The beam's own period of 49 Hz reads 17.1 % in `mod_depth` (round 3: 15.3 %, round 4: 10.6 %).
+
 ## The models
 
 | Sound                          | Model                                                                                         | Parameters                                                          |
 | ------------------------------ | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Shield and glassy cracks       | Damped modes. The decay time of a mode is `1 / (pi * f * loss)`                               | Loss factor 0.0025 to 0.006                                         |
+| A crack through a thick solid  | A low knock of noise around `ka = 1` of its size, a dense damped fracture above, a dry edge   | Sizes 0.3 to 2 m; loss factor 0.03, so nothing rings                |
+| A small crack in stone         | A noise burst from `ka = 1` of the piece to 4.5 kHz that falls toward the top; a low knock    | Pieces of 0.12 to 0.5 m                                             |
+| A solid under stress           | Stick and slip: slips at 110 to 240 a second, each interval drawn; wide low resonances        | No period; the resonances lie at 140, 260 and 470 Hz                |
+| Crushed ice                    | Dense noise from 0.7 to 6 kHz with a fast, irregular flutter and a decay                      | It gives a crack its brightness with no pitch                       |
 | Brittle fracture               | A broadband main crack and an avalanche of small cracks: rate `k / (t + c)`, power-law sizes  | Each small crack draws its own modes, so the result is noise        |
-| Strain before a failure        | Micro-cracks whose rate rises as `1 / (time to failure)`                                      | 24.75 s to the fracture anchor                                      |
+| Strain before a failure        | Small cracks whose rate rises as `1 / (time to failure)`, and two groans                      | 24.75 s to the fracture anchor                                      |
 | Pressure with no visible body  | One Friedlander pulse, a low noise body, a mid slap                                           | Positive phase 3.5 ms; nothing in it has a pitch                    |
 | Impacts of stone and of a body | Noise bursts with an exponential decay                                                        | Band and decay follow the size and the softness of the contact      |
 | A falling column               | Impacts at random times (a Poisson process whose rate falls), sizes drawn on a log scale      | Three streams at three places; a low rumble and gravel under them   |
@@ -175,40 +236,39 @@ because the falling tone lies there. That tone lasts 1.7 s and is no grain, but 
 | A moving source                | The change of the propagation delay                                                           | The Doppler shift follows from the path                             |
 | A tone that lasts              | A cluster of partials; the pitch and the level of each drift slowly and with no period        | No two partials closer than 100 Hz, so nothing beats                |
 | A tone that moves              | The same cluster on a pitch path from one frequency to another                                | 0.7 s or longer, so it is no blip                                   |
-| Sparks                         | Separate noise pops of a few milliseconds at random times, with bounded sizes                 | 28 to 60 a second; a rare large pop must not set the peak           |
+| Sparks                         | Separate noise pops of 5 ms between 0.5 and 5 kHz at random times, with bounded sizes         | 16 to 18 a second; a rare large pop must not set the peak           |
 | The answer of a far wall       | The same event, low-passed at 0.7 to 1.8 kHz, from a wall position, 0.15 to 0.31 s later      | One or two walls for each large event                               |
-| A piece of the broken staff    | Four damped modes above 1.8 kHz at irregular times                                            | No train of bounces and nothing low, so it is no drum and no ball   |
+| The broken staff               | Dry wood: a crack of noise and a short thock; the pieces land as damped clacks of noise       | Irregular times; no train of bounces and no ring                    |
 
 Two choices are style, not physics, and the study says so. A bare stone hall of this size has a decay of about
 8 to 13 s by Sabine's formula. The study uses 2.6 s so that the events stay readable. The direct sound of the
 far events is raised against the late field by 2 to 10 dB.
 
-## Targets and measurements of round 4
+## Targets and measurements of round 5
 
 `receipt.txt` is the whole output of `scripts/receipt.py`. The table holds the lines that carry the design.
 
-| Passage | Target                                               | Measured                                                         |
-| ------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
-| Red     | The perspective changes with the cut                 | -17.7 LUFS in flight, -14.4 close, -22.3 far                     |
-| Red     | No periodic modulation                               | Depth of the strongest line 7.2 % in the flight                  |
-| Red     | The hits, the fracture and the release are on time   | 0.02 ms or less from each picture time                           |
-| Red     | The release is the loudest moment                    | -9.8 LUFS over 0.1 s                                             |
-| Force   | A level step of 20 dB or more over the bed           | 28.2 dB (-12.6 LUFS over -40.8 LUFS)                             |
-| Force   | Half the peak within 10 ms of the anchor             | 0.12 ms                                                          |
-| Force   | No cue in the 0.5 s before the force                 | 1.5 dB over the bed; the held tone of the stare is the one sound |
-| Force   | The force and the column contact are two events      | -25.8 LUFS between them, 13 dB or more below both                |
-| Force   | The column comes down and dies away                  | -16.6, -17.4, -20.6, -27.9, -33.0 LUFS each half second          |
-| Force   | The column contact has no pitch                      | Share of its energy in 3 lines 0.51                              |
-| Finale  | The flash is the loudest moment                      | -11.4 LUFS over 0.1 s; 20.5 dB over the gap before               |
-| Finale  | The beam holds its loudness for 4 s                  | -15.7, -16.1, -14.8, -16.0 LUFS for each second                  |
-| Finale  | The pad and the remnants stay under the spoken lines | -39.5 LUFS and -40.0 LUFS                                        |
-| Finale  | The dissolution has no pitched grains                | The strongest line jumps in 0.26 of the frames                   |
-| All     | Several layers are heard at once                     | Median 4 to 6 layers in 12 sections, 2 to 3 in the 4 quiet ones  |
-| All     | True peak                                            | -2.00 dBTP                                                       |
+| Passage | Target                                                      | Measured                                                         |
+| ------- | ----------------------------------------------------------- | ---------------------------------------------------------------- |
+| Red     | The perspective changes with the cut                        | -19.7 LUFS in flight, -16.2 close, -24.1 far                     |
+| Red     | No periodic modulation                                      | Depth of the strongest line 6.9 % in the flight                  |
+| Red     | The hits, the fracture, the release and the ice are on time | 0.04 ms or less from each picture time                           |
+| Red     | The release and the ice are the loudest moments             | -11.4 LUFS and -11.5 LUFS over 0.1 s                             |
+| Red     | The ice speaks of a large body                              | Sharp parts centre at 232 Hz; `weight` +10.9 dB                  |
+| Force   | A level step of 20 dB or more over the bed                  | 29.6 dB (-12.3 LUFS over -41.9 LUFS)                             |
+| Force   | Half the peak within 10 ms of the anchor                    | 0.15 ms                                                          |
+| Force   | No cue in the 0.5 s before the force                        | 0.5 dB over the bed; the held tone of the stare is the one sound |
+| Force   | The force and the column contact are two events             | -25.3 LUFS between them, 12.7 dB or more below both              |
+| Force   | The column comes down and dies away                         | -15.5, -16.8, -20.3, -27.6, -33.3 LUFS each half second          |
+| Force   | The force and the column contact have no pitch              | Share of the energy in 3 lines 0.49 and 0.52                     |
+| Finale  | The flash is the loudest moment                             | -11.4 LUFS over 0.1 s; 22.3 dB over the gap before               |
+| Finale  | The beam holds its loudness for 4 s                         | -16.9, -18.6, -16.6, -18.1 LUFS for each second                  |
+| Finale  | The pad and the remnants stay under the spoken lines        | -41.4 LUFS and -41.4 LUFS                                        |
+| Finale  | The dissolution has no pitched grains                       | The strongest line jumps in 0.28 of the frames                   |
+| All     | Several layers are heard at once                            | Median 3 to 6 layers in 12 sections, 2 to 3 in the 4 quiet ones  |
+| All     | True peak                                                   | -2.00 dBTP                                                       |
 
-Integrated loudness: red -18.2 LUFS, force -19.1 LUFS, finale -16.7 LUFS.
-
-The step of the force fell from 36.4 dB in round 3 to 28.2 dB, because the bed before it is 9 dB louder.
+Integrated loudness: red -18.6 LUFS, force -18.6 LUFS, finale -18.1 LUFS.
 
 The share of energy in 3 lines does not fall below about 0.5 for a short low burst, because a window of
 0.12 s holds few lines below 300 Hz. The measure separates round 1 from the later rounds. It is no proof that
@@ -225,14 +285,17 @@ python3 docs/studies/frieren-perceptual/scripts/mux.py <video> <output directory
 ```
 
 Python 3.13.18 and numpy 2.5.3 gave the files above on 2026-11-10; the preview clips the owner received for
-round 4 hold those files as AAC at 256 kbit/s. `render.py` writes a 24-bit WAV, the samples and the layers of each passage. `spectro.py`
+round 5 hold those files as AAC at 256 kbit/s. `render.py` writes a 24-bit WAV, the samples and the layers of each passage. `spectro.py`
 writes a spectrogram picture of each. `sheet.sh` and `mux.py` need `ffmpeg` and the reference video.
 
 ## What is not verified
 
-- Nobody has listened to round 4. The receipt proves signal properties. It does not prove that the
+- Nobody has listened to round 5. The receipt proves signal properties. It does not prove that the
   stone sounds like stone or that the surprise works. Round 1 met every target of its receipt and still
   sounded like a helicopter, a drum and water. Round 3 met every target of its receipt and still sounded flat.
+  Round 4 met every target of its receipt and still sounded like glass marbles.
+- Round 5 can be too dull: the ice can be taken for stone, and a low boom can be taken for a drum. A boom under
+  100 Hz does not reach the ear from a small loudspeaker, so the weight then rests on the band from 150 to 600 Hz.
 - Round 4 adds tones. A tone that lasts can be taken for a machine hum or for music, and the falling tone of the
   dissolution can bring the water back. No measure of the receipt decides that.
 - The passages hold no speech, so the 8.5 s before the force and the places of the two other spoken lines stay
@@ -261,3 +324,5 @@ The study used these things, and the plan format of experiment 8 does not have t
 9. Analyzers of the mix as a whole, which the second listening review showed to be missing: how many layers
    are heard at once, how far the loudest layer leads, and what kinds of sound the energy is made of. Every
    layer of round 3 was audible alone against the rest, and the whole still sounded like one sound.
+10. The size of a thing as a parameter of its kind, and an analyzer of the size that a sound speaks of. The
+    third listening review heard bodies of 1 to 2 cm where the picture shows slabs of metres.

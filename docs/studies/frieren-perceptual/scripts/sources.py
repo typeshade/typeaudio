@@ -82,40 +82,7 @@ def aero(speed, seed, u0=10.0, k_fc=55.0, fmin=120.0, fmax=5000.0, cap=4.0):
     return dsp.stft_shape(w, g)
 
 
-# ---- a glassy resonant surface: inharmonic plate modes with a low loss factor
-SHIELD_RATIOS = np.array([1.0, 1.56, 2.31, 3.02, 3.89, 4.93, 6.1, 7.4])
-
-
-def shield(seed, f1=510.0, loss=0.0025, dur=1.8, hard=0.0004, tilt=1.0):
-    r = dsp.rng(seed)
-    fm = f1 * SHIELD_RATIOS * r.uniform(0.985, 1.015, len(SHIELD_RATIOS))
-    y = dsp.modal(fm, r.uniform(0.6, 1.0, len(fm)) / np.arange(1, len(fm) + 1) ** tilt, dsp.tau_of(fm, loss), dur)
-    return norm(dsp.contact(y, hard))
-
-
-# ---- sparse tonal grains whose rate decays: particles streaming away, or matter losing coherence
-def sparkle(dur, seed, rate0, tau, freqs, glen=(0.008, 0.02), spread=0.03, rise=0.0, noisy=0.0, bw=220.0):
-    r = dsp.rng(seed)
-    n = nsamp(dur)
-    count = r.poisson(rate0 * tau * (1 - np.exp(-dur / tau)))
-    times = -tau * np.log(1 - r.random(count) * (1 - np.exp(-dur / tau)))
-    y = np.zeros(n)
-    for t0 in times:
-        L = nsamp(r.uniform(*glen))
-        f = r.choice(freqs) * 2 ** (r.normal(0, spread + rise * t0 / dur))
-        tt = np.arange(L) / SR
-        car = np.sin(2 * np.pi * f * tt + r.uniform(0, 6.28))
-        if noisy > 0:
-            mw = max(2, int(SR / (2 * bw)))
-            nb = np.convolve(r.standard_normal(L + mw), np.ones(mw) / np.sqrt(mw))[mw: mw + L]
-            car = (1 - noisy) * car + noisy * nb * car * 1.4
-        k = car * dsp.hann(L) * r.exponential(1.0)
-        s = nsamp(t0); e = min(n, s + L)
-        y[s:e] += k[: e - s]
-    return y, times
-
-
-# ---- settling dust: thousands of tiny impacts whose rate decays
+# ---- fine dry grains: dust, sand, the last remnants
 def sand(dur, seed, rate0=2500.0, tau=0.8, f_lo=2500.0, f_hi=9000.0):
     r = dsp.rng(seed)
     n = nsamp(dur)
@@ -494,9 +461,96 @@ def slap(sig, cutoff=1800.0):
     return dsp.lp(np.concatenate([sig, np.zeros(nsamp(0.05))]), cutoff)
 
 
-def bell(seed, f1, loss=0.0012, dur=1.2, ratios=(1.0, 2.76, 5.4, 8.93), hard=0.0002):
-    """A small struck metal or crystal part: a few high modes with a long ring (above 500 Hz only)."""
+
+
+# ================================================================ round 5: the size of things
+# The owner heard round 4 as glass marbles: too light, the ice above all. Measured: the sharp and the
+# pitched parts of the ice lay near 1.1 to 1.7 kHz. A body speaks near ka = 1, which is 54.6 / a Hz for a
+# radius of a metres, so that is a body of 3 to 5 cm; the picture shows slabs of several metres. From here
+# every solid thing has a size in metres, and its sound starts near 54.6 / size Hz. Nothing rings: a large,
+# cracked or rough body is heavily damped.
+
+def tilted_burst(seed, lo, hi, tau, tilt=0.8, dur=None, rise=0.0005):
+    """A noise burst between lo and hi Hz whose spectrum falls toward the top (amplitude ~ f^-tilt)."""
+    dur = dur or tau * 8
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+    x = dsp.spectral(dsp.white(n + nsamp(0.05), seed), lambda f: dsp.band_gain(f, lo, hi, 2) * (lo / np.maximum(f, lo)) ** tilt)[:n]
+    e = np.exp(-t / tau)
+    k = max(2, nsamp(rise))
+    e[:k] *= 0.5 - 0.5 * np.cos(np.pi * (np.arange(k) + 0.5) / k)
+    return norm(x * e)
+
+
+def heavy_crack(seed, size=0.5, dur=0.5, k_rate=10.0, loss=0.03, bright=0.5):
+    """A crack through a thick solid of about `size` metres (a slab of ice, a block of stone): a low knock
+    of noise around ka = 1 whose band and length follow the size, a dense fracture above it whose modes are
+    damped so that nothing rings, and a short dry edge. The low part is noise, not modes: no drum."""
+    fk = 54.6 / size
+    top = min(700.0, max(250.0, 2.6 * fk))                 # the knock is noise up to here (three octaves, so no pitch); the modes start here
+    body = fracture(seed, top, 5000.0, loss, dur=dur, k_rate=k_rate, tilt=0.6, hard=0.0004)
+    knock = burst(seed + 1, max(28.0, 0.5 * fk), top, 0.04 + 0.1 * min(size, 2.0), rise=0.003)
+    edge = tilted_burst(seed + 2, 900.0, 7000.0, 0.012, tilt=0.5)      # the dry edge of the crack: noise, no pitch
+    y = np.zeros(max(len(body), len(knock)))
+    y[: len(body)] += body
+    y[: len(knock)] += 0.7 * knock
+    y[: len(edge)] += bright * edge
+    return norm(y)
+
+
+def stone_crack(r, size=0.3, bright=0.4):
+    """A small crack in stone: a noise burst from ka = 1 of the piece up to 4.5 kHz that falls toward the
+    top, a low knock under it, a short dry edge."""
+    fk = 54.6 / size
+    seed = int(r.integers(1, 2 ** 31 - 1))
+    top = tilted_burst(seed, max(80.0, fk), 4500.0, 0.008 + 0.03 * size)
+    knock = burst(seed + 1, max(35.0, 0.5 * fk), min(700.0, 2.6 * fk), 0.02 + 0.1 * size, rise=0.002)
+    edge = burst(seed + 2, 1500.0, 7000.0, 0.003, dur=0.02)
+    y = np.zeros(max(len(top), len(knock)))
+    y[: len(top)] += top
+    y[: len(knock)] += 1.2 * knock
+    y[: len(edge)] += bright * edge
+    return norm(y)
+
+
+def groan(dur, seed, r_lo=110.0, r_hi=240.0, res=(140.0, 260.0, 470.0), jitter=0.25, q=2.5):
+    """A large solid under stress: stick and slip. The slips come at a rate that wanders between r_lo and
+    r_hi a second, each interval is drawn (no period), and each slip excites wide low resonances."""
     r = dsp.rng(seed)
-    fm = f1 * np.array(ratios) * r.uniform(0.99, 1.01, len(ratios))
-    y = dsp.modal(fm, r.uniform(0.6, 1.0, len(fm)) / np.arange(1, len(fm) + 1) ** 0.8, dsp.tau_of(fm, loss), dur)
-    return norm(dsp.contact(y, hard))
+    n = nsamp(dur)
+    path = r_lo * (r_hi / r_lo) ** (0.5 + 0.5 * irregular(n, seed + 1, 0.7, 5.0))
+    y = np.zeros(n + nsamp(0.1))
+    t = r.uniform(0, 0.01)
+    while t < dur:
+        i = min(n - 1, nsamp(t))
+        y[i] += r.uniform(0.4, 1.0)
+        t += (1.0 / path[i]) * (1 + jitter * r.uniform(-1, 1))
+    out = sum(dsp.bp(y, f, q) / (k + 1) ** 0.5 for k, f in enumerate(res))
+    return norm(dsp.fade(out, 0.03, 0.08))
+
+
+def wood_snap(seed):
+    """A wooden staff that breaks: a dry crack and a short thock. Wood is damped, so nothing rings."""
+    top = tilted_burst(seed, 500.0, 6000.0, 0.006, tilt=0.5)
+    thock = burst(seed + 1, 180.0, 900.0, 0.018, rise=0.001)
+    y = np.zeros(max(len(top), len(thock)))
+    y[: len(top)] += top
+    y[: len(thock)] += 1.1 * thock
+    return norm(y)
+
+
+def wood_clack(seed, lo=180.0, hi=1100.0, tau=0.015):
+    """A piece of wood that lands on stone: one damped clack of noise."""
+    return burst(seed, lo, hi, tau, rise=0.0008)
+
+
+def crush(dur, seed, tau, lo=700.0, hi=6000.0):
+    """Ice or stone that is crushed: dense noise with a fast, irregular flutter and a decay. It gives a
+    crack its brightness with no pitch, so it speaks of no small ringing body."""
+    n = nsamp(dur)
+    x = dsp.spectral(dsp.white(n, seed), lambda f: dsp.band_gain(f, lo, hi, 2) * (lo / np.maximum(f, lo)) ** 0.4)
+    m = 0.5 + 0.5 * irregular(n, seed + 1, 15, 90)
+    e = np.exp(-np.arange(n) / (tau * SR))
+    k = nsamp(0.003)
+    e[:k] *= np.linspace(0, 1, k)
+    return norm(x * np.maximum(m, 0.05) * e)
