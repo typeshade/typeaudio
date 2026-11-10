@@ -313,3 +313,28 @@ def weight(x, a, b):
     lo = P[(f >= 30) & (f < 250)].sum()
     hi = P[(f >= 2000) & (f < 10000)].sum()
     return float(10 * np.log10(max(lo, 1e-30) / max(hi, 1e-30)))
+
+
+def third_octaves(x, a, b):
+    """Third-octave levels from 25 Hz to 12.7 kHz between a and b seconds, in dB against the strongest band."""
+    seg = x[max(0, nsamp(a)): nsamp(b)].mean(axis=1)
+    n = 16384
+    P = np.zeros(n // 2 + 1)
+    for i in range(0, max(1, len(seg) - n), 4096):
+        P += np.abs(np.fft.rfft(seg[i:i + n] * np.hanning(n))) ** 2
+    f = np.fft.rfftfreq(n, 1 / SR)
+    fc = 1000 * 2 ** (np.arange(-16, 12) / 3.0)
+    out = np.array([10 * np.log10(P[(f >= q / 2 ** (1 / 6)) & (f < q * 2 ** (1 / 6))].sum() + 1e-20) for q in fc])
+    return out - out.max()
+
+
+def flutter(x, a, b, bands=((30.0, 120.0), (200.0, 1000.0), (2000.0, 8000.0)), block=0.05):
+    """How much a steady sound moves: the standard deviation, in dB, of the level of `block`-second blocks
+    in each band. Steady noise of a band B Hz wide reads about 4.34 / sqrt(B * block) dB by itself."""
+    seg = x[max(0, nsamp(a)): nsamp(b)].mean(axis=1)
+    k = nsamp(block)
+    out = []
+    for lo, hi in bands:
+        y = dsp.spectral(seg, lambda f: dsp.band_gain(f, lo, hi, 4))
+        out.append(float(np.std([10 * np.log10((y[i:i + k] ** 2).mean() + 1e-20) for i in range(k, len(y) - 2 * k, k)])))
+    return tuple(out)

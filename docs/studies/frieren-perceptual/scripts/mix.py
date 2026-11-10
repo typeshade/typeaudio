@@ -23,6 +23,38 @@ def meter(st, kind):
     return float(l.max())
 
 
+def _min_forward(x, w):
+    """The minimum of x[i : i + w] for every i (ones beyond the end)."""
+    n = len(x)
+    m = (n // w + 2) * w
+    p = np.concatenate([x, np.ones(m - n)]).reshape(-1, w)
+    pre = np.minimum.accumulate(p, axis=1).ravel()
+    suf = np.minimum.accumulate(p[:, ::-1], axis=1)[:, ::-1].ravel()
+    i = np.arange(n)
+    return np.minimum(suf[i], pre[i + w - 1])
+
+
+def limiter(x, ceiling, lookahead=0.004, release=0.12):
+    """A look-ahead peak limiter for a (n, 2) signal. One gain for both channels. The gain falls over the
+    look-ahead time before a peak arrives, so that no sample passes the ceiling, and it recovers with the
+    release time. Returns the limited signal and the gain."""
+    pk = np.abs(x).max(axis=1)
+    need = np.minimum(1.0, ceiling / np.maximum(pk, 1e-12))
+    a = float(np.exp(-1.0 / (release * SR)))
+    env = np.empty(len(need))
+    g = 1.0
+    for i, t in enumerate(need.tolist()):          # the release: the gain rises slowly, and falls at once
+        g = 1.0 - (1.0 - g) * a
+        if t < g:
+            g = t
+        env[i] = g
+    k = max(2, nsamp(lookahead))
+    lo = _min_forward(env, k)                      # the lowest gain needed within the look-ahead
+    c = np.cumsum(np.concatenate([np.full(k, lo[0]), lo]))
+    gain = (c[k:] - c[:-k]) / k                    # a ramp of that length down to it
+    return x * gain[:, None], gain
+
+
 class Mix:
     def __init__(self, name, t0, t1, tail=2.5, room=None, rev_db=-5.0):
         self.name, self.t0, self.t1, self.tail = name, t0, t1, tail
@@ -85,11 +117,25 @@ class Mix:
         return l['dry'].astype(float) + l['wet'].astype(float)
 
     def render(self, peak_dbtp=-2.0):
+        """Sum the layers. The highest true peak goes to peak_dbtp. With `drive_db` set on the mix, the sum is then
+        raised by that much; a look-ahead limiter and a soft clip hold the peaks at the same ceiling. The peaks
+        of a roar lose a few dB and its level rises by as much: the sound is denser."""
         mix = np.zeros((self.n, 2))
         for name in self.order:
             mix += self.layer(name)
         mix = dsp.iir(mix, [dsp.rbj('hp', 27.0, 0.7071)], tail=0.5)
         tp = dsp.true_peak_db(mix)
-        self.master_gain_db = peak_dbtp - tp
-        self.out = dsp.fade(mix[:, 0] * lin(self.master_gain_db), 0.02, 0.3)[:, None] * np.array([1.0, 0.0]) + dsp.fade(mix[:, 1] * lin(self.master_gain_db), 0.02, 0.3)[:, None] * np.array([0.0, 1.0])
+        self.master_gain_db = peak_dbtp - tp           # the gain of every layer before the limiter
+        drive = float(getattr(self, 'drive_db', 0.0))
+        self.limit_db, self.limited_share = 0.0, 0.0
+        y = mix * lin(self.master_gain_db)
+        if drive > 0:
+            c = lin(peak_dbtp - 0.3)
+            y, gain = limiter(y * lin(drive), c * lin(4.0), release=0.06)     # the limiter leaves peaks up to 4 dB over
+            y = c * np.tanh(y / c)                                            # and a soft clip rounds them under the ceiling
+            y = y * lin(peak_dbtp - dsp.true_peak_db(y))
+            self.limit_db = float(-20 * np.log10(gain.min()))
+            self.limited_share = float((gain < 0.99).mean())
+        self.drive_db = drive
+        self.out = dsp.fade(y[:, 0], 0.02, 0.3)[:, None] * np.array([1.0, 0.0]) + dsp.fade(y[:, 1], 0.02, 0.3)[:, None] * np.array([0.0, 1.0])
         return self.out

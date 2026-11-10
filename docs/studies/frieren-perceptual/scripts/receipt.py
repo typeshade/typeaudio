@@ -21,9 +21,9 @@ CUES = {
     'force': dict(t0=136.5, cues=[('shield residue', 136.5, 136.9, 'i'), ('bed under the lines', 137.2, 138.3, 'm'), ('handling', 138.4, 138.9, 'i'),
                                   ('last two seconds before the force', 143.1, 145.1, 'm'), ('force', 145.18, 145.3, 'i'), ('ring and dust', 145.3, 145.75, 'i'),
                                   ('column', 145.93, 146.08, 'i'), ('collapse', 146.4, 147.6, 'm'), ('fog', 147.8, 148.4, 'm'), ('pinned in the wall', 148.5, 149.6, 'm'), ('tail end', 151.2, 152.2, 'm')]),
-    'finale': dict(t0=173.0, cues=[('bed', 173.1, 173.6, 'm'), ('staff swing', 173.72, 174.4, 'i'), ('circle under the line', 175.0, 176.7, 'm'), ('preparation', 176.9, 177.49, 'm'),
-                                   ('gap before the flash', 177.50, 177.55, 'i'), ('flash', 177.55, 177.8, 'i'), ('beam first second', 177.9, 178.9, 'm'), ('beam third second', 179.9, 180.9, 'm'),
-                                   ('beam last second', 180.8, 181.76, 'm'), ('whiteout middle', 182.5, 183.0, 'm'), ('dissolution start', 183.8, 184.4, 'm'), ('dissolution end', 185.0, 185.45, 'm'),
+    'finale': dict(t0=173.0, cues=[('bed', 173.1, 173.6, 'm'), ('staff swing', 173.72, 174.4, 'i'), ('circle under the line', 175.0, 176.1, 'm'), ('charge', 176.86, 177.45, 'i'),
+                                   ('gap before the eruption', 177.48, 177.62, 'i'), ('eruption', 177.636, 177.8, 'i'), ('torrent first second', 177.9, 178.9, 'm'), ('torrent third second', 179.9, 180.9, 'm'),
+                                   ('torrent last second', 180.8, 181.76, 'm'), ('whiteout middle', 182.5, 183.0, 'm'), ('dissolution start', 183.8, 184.4, 'm'), ('dissolution end', 185.0, 185.45, 'm'),
                                    ('last shot under the line', 186.5, 188.2, 'm'), ('fade', 188.8, 189.3, 'm')]),
 }
 for name in names:
@@ -31,6 +31,7 @@ for name in names:
     meta = json.load(open('%s/%s-meta.json' % (out, name)))
     c = CUES[name]; t0 = c['t0']
     print('=' * 20, name, 'master gain %+.2f dB' % meta['master_gain_db'], '| integrated %.1f LUFS | true peak %.2f dBTP' % (dsp.integrated_lufs(x), dsp.true_peak_db(x)))
+    print('  master: drive %.1f dB into a look-ahead limiter and a soft clip; the limiter goes %.1f dB deep and works %.1f %% of the time' % (meta['drive_db'], meta['limit_db'], 100 * meta['limited_share']))
     for label, a, b, k in c['cues']:
         w = 0.4 if k == 'm' else 0.1
         print('  %-36s %7.2f-%7.2f  %s %6.1f LUFS   peak %6.1f dBFS' % (label, a, b, 'L400' if k == 'm' else 'L100', A.lw(x, a - t0, b - t0, w), dsp.db(np.abs(x[nsamp(a - t0): nsamp(b - t0)]).max())))
@@ -61,13 +62,19 @@ for name in names:
         print('  release onset: %.1f dB below the peak after 1 ms, half the peak after %.2f ms; band shares (0.3 s) %s; phone band L100 %.1f' % (o[0], o[1], [round(v, 1) for v in A.bands_share(x, r0, r0 + 0.3)], A.lw(ph, r0, r0 + 0.3, 0.1)))
         print('  the three views of the orb: flight %.1f, close %.1f, far %.1f LUFS' % (A.lw(x, 0.2, 1.0, 0.4), A.lw(x, 2.33, 2.76, 0.4), A.lw(x, 3.1, 3.7, 0.4)))
     if name == 'finale':
-        fl = 177.552375 - t0
+        er = 177.635792 - t0
         ph = A.phone(x)
-        o = A.onset(x, fl)
-        print('  flash onset: %.1f dB below the peak after 1 ms, half the peak after %.2f ms; L100 %.1f; step over the 60 ms gap %.1f dB' % (o[0], o[1], A.lw(x, fl, fl + 0.25, 0.1), A.lw(x, fl, fl + 0.25, 0.1) - A.lw(x, fl - 0.055, fl - 0.002, 0.05)))
-        print('  beam short-term loudness each second:', [round(A.lavg(x, a - t0, a + 1 - t0), 1) for a in (177.85, 178.85, 179.85, 180.75)])
-        print('  beam tilt dB/octave %.2f, octave levels %s' % A.tilt(x, 178.5 - t0, 181.5 - t0))
-        print('  beam band shares:', [round(v, 1) for v in A.bands_share(x, 178.5 - t0, 181.5 - t0)], ' phone band beam %.1f, flash %.1f' % (A.lavg(ph, 178.5 - t0, 181.5 - t0), A.lw(ph, fl, fl + 0.25, 0.1)))
+        o = A.onset(x, er)
+        print('  eruption onset: %.1f dB below the peak after 1 ms, half the peak after %.2f ms; L100 %.1f; step over the gap before it %.1f dB' % (o[0], o[1], A.lw(x, er, er + 0.16, 0.1), A.lw(x, er, er + 0.16, 0.1) - A.lw(x, er - 0.15, er - 0.01, 0.1)))
+        print('  the first two white frames (177.552 to 177.636 s): %.1f LUFS over 50 ms at the most' % A.lw(x, 177.552375 - t0, er - 0.002, 0.05))
+        print('  torrent, loudness of each second from 177.8, then the whiteout:', [round(A.lavg(x, a - t0, a + 1 - t0), 1) for a in (177.8, 178.8, 179.8, 180.76)], round(A.lavg(x, 181.76 - t0, 183.6 - t0), 1))
+        print('  torrent, level each 0.25 s from 183.5 (dBFS):', [round(float(10 * np.log10((x[nsamp(a - t0): nsamp(a + 0.25 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(183.5, 185.5, 0.25)])
+        seg = x[nsamp(178.0 - t0): nsamp(181.5 - t0)]
+        print('  torrent 178.0 to 181.5 s: crest %.1f dB; correlation of left and right %.2f; tones %.0f %%, transients %.0f %%, noise %.0f %%; deepest periodic line %.1f %% at %.0f Hz' % (
+            (20 * np.log10(np.abs(seg).max() / np.sqrt((seg ** 2).mean())), float(np.corrcoef(seg[:, 0], seg[:, 1])[0, 1])) + tuple(100 * v for v in A.variety(x, 178.0 - t0, 181.5 - t0)) + (100 * A.mod_depth(x, 178.0 - t0, 181.5 - t0)[0], A.mod_depth(x, 178.0 - t0, 181.5 - t0)[1])))
+        print('  torrent, third-octave levels against the strongest band, 25 Hz to 12.7 kHz:', [round(float(v), 1) for v in A.third_octaves(x, 178.0 - t0, 181.5 - t0)])
+        print('  torrent, the level of 50 ms blocks varies by %.1f dB below 120 Hz, %.1f dB from 200 to 1000 Hz, %.1f dB from 2 to 8 kHz' % A.flutter(x, 178.0 - t0, 181.5 - t0))
+        print('  torrent band shares:', [round(v, 1) for v in A.bands_share(x, 178.5 - t0, 181.5 - t0)], ' phone band torrent %.1f, eruption %.1f' % (A.lavg(ph, 178.5 - t0, 181.5 - t0), A.lw(ph, er, er + 0.16, 0.1)))
     # --- is each detail audible against everything else? (ERB bands where it is at least as strong)
     L = np.load('%s/%s-layers.npz' % (out, name))
     g = dsp.lin(meta['master_gain_db'])
@@ -81,9 +88,10 @@ for name in names:
                         ('floor-crack', 145.2, 145.6), ('shock-ring', 145.3, 145.7), ('grit0', 145.27, 145.6), ('force-slap0', 145.34, 145.6), ('travel-air', 145.3, 145.75),
                         ('column-crack', 145.967, 146.02), ('staff-snap', 145.95, 146.1), ('column-cracks', 146.03, 146.7), ('staff-piece1', 146.61, 146.9), ('collapse1', 146.4, 147.6),
                         ('collapse-gravel', 146.5, 147.6), ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('wall-groan', 148.88, 149.3), ('splinters', 148.85, 149.7)],
-              'finale': [('staff-swing', 173.8, 174.3), ('circle', 175.0, 176.7), ('circle-low', 175.0, 176.7), ('preparation', 176.9, 177.49), ('gather-low', 177.1, 177.49),
-                         ('gather', 177.1, 177.49), ('flash-crack', 177.56, 177.8), ('beam-core', 178.2, 181.0), ('beam-body', 178.2, 181.0), ('beam-voice', 178.2, 181.0),
-                         ('beam-sparks0', 178.2, 181.0), ('blocks0', 178.2, 181.0), ('ring2', 179.25, 179.6), ('strain', 180.14, 180.3), ('sky-air', 181.0, 183.0),
+              'finale': [('staff-swing', 173.8, 174.3), ('circle', 175.0, 176.7), ('circle-low', 175.0, 176.7), ('tip-sparks', 176.2, 176.84), ('ignite', 176.84, 177.0), ('draw', 177.0, 177.45),
+                         ('gather-low', 177.1, 177.45), ('gather', 177.1, 177.45), ('blast', 177.64, 177.8), ('blast-wall', 177.64, 177.8), ('blast-crack', 177.64, 177.8),
+                         ('beam-rumble', 178.2, 181.0), ('beam-body', 178.2, 181.0), ('beam-tear', 178.2, 181.0), ('beam-sear', 178.2, 181.0), ('beam-howl', 178.2, 181.0),
+                         ('beam-crackle0', 178.2, 181.0), ('blocks0', 178.2, 181.0), ('ring2', 179.25, 179.6), ('strain', 180.14, 180.3),
                          ('dissolve-breath', 183.8, 185.0), ('dissolve-threads', 183.9, 185.0), ('dissolve-tone', 183.9, 185.0), ('remnants', 185.9, 187.5), ('rest', 186.6, 188.3)]}[name]
     for k, a, b in checks:
         lay = L[k].astype(float)
@@ -94,7 +102,7 @@ for name in names:
         print('  column crack, first 20 ms band shares:', [round(v, 1) for v in A.bands_share(x, c0, c0 + 0.02)])
     # --- sync: the first sample of each anchored layer against its anchor
     anchors = {'red': [('spark-hit1', 21.12), ('spark-hit2', 21.80), ('shell-fracture', 25.692333), ('release', 25.77575), ('ice-crack', 26.27625)], 'force': [('force', 145.186708), ('column-thud', 145.937458), ('column-crack', 145.967458)],
-               'finale': [('flash', 177.552375), ('beam-core', 177.802625), ('dissolve-breath', 183.766917), ('staff-swing', 173.72)]}[name]
+               'finale': [('ignite', 176.84), ('blast', 177.635792), ('beam-body', 177.635792), ('dissolve-breath', 183.766917), ('staff-swing', 173.72)]}[name]
     for k, ta in anchors:
         e = np.abs(L[k].astype(float)).max(axis=1)
         first = int(np.argmax(e > e.max() * 1e-3))
@@ -115,7 +123,7 @@ for name in names:
     # --- one sound or several (the second listening review: flat, one sound at a time)
     SPANS = {'red': [('flight', 20.0, 22.3), ('close, whip, far', 22.3, 23.8), ('cracks and shell', 23.8, 25.69), ('release and defence', 25.69, 27.0), ('aftermath', 27.0, 30.0), ('wind', 30.25, 32.3)],
              'force': [('before the force', 136.6, 145.1), ('force and flight', 145.19, 145.93), ('column and collapse', 145.94, 147.75), ('fog and wall', 147.75, 149.65)],
-             'finale': [('before the circle', 173.0, 174.46), ('circle and preparation', 174.46, 177.49), ('flash and beam', 177.55, 181.76), ('whiteout', 181.76, 183.76), ('dissolution', 183.77, 185.45), ('last shot', 185.5, 188.3)]}[name]
+             'finale': [('before the circle', 173.0, 174.46), ('circle and charge', 174.46, 177.46), ('eruption and torrent', 177.64, 181.76), ('whiteout', 181.76, 183.76), ('dissolution', 183.77, 185.45), ('last shot', 185.5, 188.3)]}[name]
     LL = {k: L[k] for k in L.files}
     ts, cnt, full, heard = A.streams(LL, g)
     for lab, a, b in SPANS:
@@ -127,7 +135,7 @@ for name in names:
     # --- the size of things (the third listening review: glass marbles, too light)
     SIZES = {'red': [('flight', 20.0, 22.3), ('cracks and shell', 23.8, 25.69), ('release', 25.77, 26.25), ('ice burst', 26.28, 26.7), ('ice stands', 26.7, 28.4)],
              'force': [('before the force', 136.6, 145.1), ('force', 145.19, 145.6), ('column', 145.94, 146.3), ('collapse', 146.3, 147.75), ('fog and wall', 147.75, 149.65)],
-             'finale': [('circle and preparation', 174.46, 177.49), ('flash', 177.55, 177.8), ('beam', 177.9, 181.7), ('dissolution', 183.77, 185.45)]}[name]
+             'finale': [('circle and charge', 174.46, 177.46), ('eruption', 177.64, 177.8), ('torrent', 177.9, 181.7), ('whiteout', 181.76, 183.6), ('dissolution', 183.77, 185.45)]}[name]
     for lab, a, b in SIZES:
         fc, rad, share = A.size_cue(x, a - t0, b - t0)
         print('  size  %-24s sharp and pitched parts centre at %5.0f Hz (ka = 1 of a body of %5.1f cm); %4.1f %% of the energy is sharp or pitched above 2 kHz; 30-250 Hz over 2-10 kHz %+5.1f dB; band shares %s' % (

@@ -1,4 +1,4 @@
-"""The three passages, round 5. Times are picture seconds (source presentation timestamps).
+"""The three passages, round 6. Times are picture seconds (source presentation timestamps).
 Every event follows the picture: the frames of the reference were inspected on 2026-11-10.
 Every level is a loudness target in LUFS before the master gain; every position is in metres
 (+x right, +y up, forward is -z, the listener is the camera).
@@ -7,15 +7,16 @@ import numpy as np
 import dsp
 import sources as S
 from dsp import SR, nsamp, lin
-from mix import Mix
+from mix import Mix, meter
 
 # anchors of the picture study (frame-accurate)
 RED_FRACTURE = 25.692333
 RED_RELEASE = 25.77575
 FORCE = 145.186708
 COLUMN = 145.937458
-FLASH = 177.552375
-BEAM = 177.802625
+FLASH = 177.552375          # the first white frame
+ERUPT = 177.635792          # the third white frame (frame 4259): the original's blast starts between 177.64 and 177.68 s
+BEAM = 177.802625           # the first frame that shows the pillar
 WHITEOUT = 181.765
 DISSOLVE = 183.766917
 REASSURE = 185.75
@@ -212,6 +213,7 @@ def red():
     for i, (t, a, pos) in enumerate(((28.7, 0.15, (-4.0, 0, -9.0)), (29.25, 0.12, (3.0, 0, -7.0)), (29.8, 0.2, (-1.0, 0, -11.0)))):
         m.add('settle%d' % i, S.rock_fall(a, 0.3, 415 + i), t, pos, target=-35, kind='i')
 
+    m.drive_db = 6.0
     wi = S.wind(2.25, 182, 300, 3500)
     wi *= curve([(30.25, 0), (30.45, 1), (32.1, 0.8), (32.5, 0)], 30.25, len(wi))[:, None]
     m.add_wide('hair-wind', wi, 30.25, target=-33, kind='m')
@@ -307,6 +309,7 @@ def force():
         m.add('staff-piece%d' % i, S.wood_clack(461 + i), t, (x, 0.2, -4.8), target=-25, kind='i', focus_db=5)
     m.add('column-slap', S.slap(S.saturate(S.norm(thud), 1.6), 1000), COLUMN + 0.21, (-8.5, 2.0, -8.0), target=-21, kind='i', send_db=-4)
 
+    m.drive_db = 6.0
     # 147.75 to 148.45: dust fills the frame: two dull knocks and a hiss
     kn = ticks([0.0, 0.26], lambda i: dsp.lp(np.concatenate([S.stone_impact(0.2, 3.0, rr), np.zeros(2400)]), 500), 0.9)
     m.add('fog-knocks', kn, 147.88, (0.8, 0.5, -5.0), target=-30, kind='i', focus_db=3)
@@ -327,7 +330,7 @@ def force():
 def finale():
     m = Mix('finale', 173.0, END)
     T0 = 173.0
-    full_bed(m, T0, END - T0 + 2.5, 301, -41.0, [(173, 0), (176.75, 0), (FLASH - 0.06, -6), (FLASH - 0.05, -40), (FLASH, -40), (FLASH + 0.3, 0), (DISSOLVE, -2),
+    full_bed(m, T0, END - T0 + 2.5, 301, -41.0, [(173, 0), (176.84, 0), (177.46, -6), (177.47, -40), (ERUPT, -40), (ERUPT + 0.3, 0), (DISSOLVE, -2),
                                                    (REASSURE, 0), (188.3, 0), (END, -60), (END + 2.5, -90)])
     rr = dsp.rng(305)
 
@@ -338,77 +341,81 @@ def finale():
     m.add('staff-swing', S.aero(sp, 311, u0=8.0) * dsp.fade(np.ones(ns), 0.02, 0.05), 173.72, P, target=-31, kind='m', send_db=-8)
     m.add('staff-cloth', S.cloth(0.6, 310, density=380), 173.76, P[: nsamp(0.6)], target=-31, kind='i', send_db=-8)
 
-    # 174.46 to the preparation: the circle on the floor is lit: a low, steady pad under the spoken line
-    pd = S.pad(177.49 - 174.46, 312) * curve([(174.46, 0), (174.9, 1), (176.75, 1), (177.48, 0.6), (177.49, 0)], 174.46, nsamp(177.49 - 174.46))
-    m.add('circle', pd, 174.46, (0.0, 0.2, -2.5), target=-38, kind='m', send_db=-4)
+    # 174.46: the circle on the floor is lit, under the spoken line. A breath with a faint pitch, as of wind in a
+    # wide pipe; thin air above and a very low rumble below. No pad of sines.
+    CH0, CH1 = 176.84, 177.46            # the staff's tip lights at 176.84; the two-shot ends at 177.46
+    dc = CH1 - 174.46
+    hum = S.howl(dc, 312, (98.0, 196.0, 294.0), q=10.0, wander=0.02) * curve([(174.46, 0), (174.9, 1), (175.8, 1), (CH0, 1.6), (CH1 - 0.02, 2.0), (CH1, 0)], 174.46, nsamp(dc))      # the light at the tip grows from 175.8
+    m.add('circle', hum, 174.46, (0.0, 0.2, -2.5), target=-38, kind='m', send_db=-4)
+    ca = S.wide_noise(dc, 451, 6000, 12000) * curve([(174.46, 0), (175.0, 1), (CH1 - 0.02, 1), (CH1, 0)], 174.46, nsamp(dc))[:, None]
+    m.add_wide('circle-air', ca, 174.46, target=-44, kind='m')
+    cl = S.wide_noise(dc, 457, 40, 110, order=3) * curve([(174.46, 0), (175.0, 1), (175.8, 1), (CH0, 1.8), (CH1 - 0.02, 1.8), (CH1, 0)], 174.46, nsamp(dc))[:, None]
+    m.add_wide('circle-low', cl, 174.46, target=-52, kind='r')
 
-    # preparation: small, rising, converging to a harmonic series; cut 60 ms before the flash (a wide shot)
-    pr = dsp.fade(S.prep(FLASH - 0.06 - 176.75, 320), 0.02, 0.01)
-    m.add('preparation', pr, 176.75, (-0.3, 1.5, -3.0), target=-24, kind='m', send_db=-4)
+    # 176.84 to 177.46, the charge: the tip lights with a soft low ignition; air is drawn in (its band rises with
+    # its level), the floor trembles more and more, the energy crackles faster and faster. No rising tone.
+    # At 177.46 everything is cut: the wide frame and the first two white frames have only what the hall returns.
+    dch = CH1 - CH0
+    tsp = ticks([0.05, 0.19, 0.27, 0.41, 0.52, 0.58], lambda i: S.tilted_burst(460 + i, 600.0, 4500.0, 0.003) * rr.uniform(0.5, 1.0), 0.66)       # small sparks at the tip, from 176.2
+    m.add('tip-sparks', tsp, 176.2, (-0.3, 1.5, -3.0), target=-36, kind='i', send_db=-6)
+    m.add('ignite', S.tilted_burst(320, 70.0, 700.0, 0.09, tilt=0.6, rise=0.03), CH0, (-0.3, 1.5, -3.0), target=-31, kind='i', send_db=-4)
+    dr = S.band_sweep(dch, 452, 150, 2500, width_oct=1.6, attack=0.97, wide=True)
+    m.add_wide('draw', dr * dsp.fade(np.ones(len(dr)), 0.02, 0.008)[:, None], CH0, target=-27, kind='m')
+    gl = S.wide_noise(dch, 472, 30, 140, order=3) * (curve([(CH0, 0), (CH1 - 0.008, 1), (CH1, 0)], CH0, nsamp(dch)) ** 1.5)[:, None]
+    m.add_wide('gather-low', gl, CH0, target=-34, kind='r')
+    c = 0.03
+    cnt = rr.poisson(7 * np.log((dch + c) / c))
+    tg_ = np.sort(dch + c - (dch + c) * (c / (dch + c)) ** rr.random(cnt))
+    ga = ticks(tg_, lambda i: S.tilted_burst(470 + i, 500.0, 4000.0, 0.004) * (0.3 + 0.7 * (tg_[i] / dch) ** 2), dch + 0.13)[: nsamp(dch)]
+    m.add('gather', dsp.fade(ga, 0.0, 0.008), CH0, (-0.3, 1.5, -3.0), target=-31, kind='i', send_db=-4)
 
-    # the flash: pressure with no pitch, a wide white burst, a crack as of thunder
-    front, low, slap = S.whump(332, tplus=0.004, dur=1.0)
-    lowlong = np.zeros(len(front)); k = S.burst(333, 32, 110, 0.16, rise=0.003); lowlong[: len(k)] = k[: len(lowlong)]
-    m.add('flash', S.saturate(0.55 * front + 0.7 * low + 0.6 * lowlong + 0.6 * slap), FLASH, (0.0, 1.5, -4.0), target=-9, kind='i', focus_db=3)
-    m.add_wide('flash-white', S.flash_noise(0.6, 330, tau=0.07), FLASH, target=-11, kind='i', send_db=-3)
-    m.add('flash-crack', S.heavy_crack(331, size=2.0, dur=0.9, k_rate=14, bright=1.0), FLASH, (0.0, 2.0, -4.0), target=-14, kind='i')
+    # 177.636, the eruption: a pressure front, a long low boom, a wall of noise and a crack as of thunder. The
+    # torrent starts with it at full level and lasts to the end of the whiteout: one event, not a flash and a beam.
+    front, low, slap = S.whump(332, tplus=0.006, dur=1.4)
+    boom = np.zeros(len(front)); k = S.burst(333, 28, 110, 0.32, rise=0.008); boom[: min(len(k), len(boom))] = k[: len(boom)]
+    m.add('blast', S.saturate(0.5 * front + 0.8 * low + 0.9 * boom + 0.6 * slap), ERUPT, (0.0, 1.5, -4.0), target=-8, kind='i', focus_db=3)
+    nw = nsamp(1.2)
+    wenv = np.exp(-np.arange(nw) / (0.28 * SR)); wenv[: nsamp(0.012)] *= np.linspace(0, 1, nsamp(0.012))
+    wall = np.stack([S.curve_noise(nw, 334 + c) for c in range(2)], axis=1) * wenv[:, None]
+    m.add_wide('blast-wall', wall, ERUPT, target=-9, kind='i', send_db=-3)
+    m.add('blast-crack', S.heavy_crack(331, size=2.0, dur=0.9, k_rate=14, bright=1.0), ERUPT, (0.0, 2.0, -4.0), target=-13, kind='i')
 
-    # the beam: one source from 177.80 to the whiteout; the world's answer grows, the beam does not
-    D = DISSOLVE - BEAM + 0.4
-    nb = nsamp(D)
-    tb = BEAM
+    # the torrent: turbulence in four bands, each with its own noise and its own wandering level. The level of
+    # each band over time follows what the original does: the top falls during the four seconds, the bottom grows,
+    # and the whiteout is the climax. It ends within a second when the picture returns.
+    R1 = 186.3
+    RD = R1 - ERUPT
+    nr = nsamp(RD)
+    end = [(183.60, 0.0), (183.75, -2.0), (184.0, -7.0), (184.25, -13.0), (184.5, -18.0), (184.75, -22.0), (185.0, -26.0), (185.5, -34.0), (R1, -70.0)]
+    arcs = {'beam-rumble': [(ERUPT, 0.0), (178.8, 0.0), (179.3, 2.0), (180.3, 0.5), (181.3, 0.5), (182.3, 6.0), (183.4, 6.5)],
+            'beam-body': [(ERUPT, 0.0), (178.8, 0.0), (179.8, -1.5), (180.8, -2.5), (181.5, -2.0), (182.3, 1.5), (183.4, 1.5)],
+            'beam-tear': [(ERUPT, 4.0), (178.5, 4.0), (179.3, 0.0), (180.3, -3.0), (181.3, -3.5), (182.3, 1.0), (183.4, 1.0)],
+            'beam-sear': [(ERUPT, -5.0), (178.6, -5.0), (179.3, -7.0), (180.3, -10.0), (181.3, -15.0), (182.3, -5.0), (183.4, -5.0)]}
+    rise = np.ones(nr); rise[: nsamp(0.03)] = np.linspace(0, 1, nsamp(0.03)) ** 2
+    parts = {}
+    for nm, st in zip(arcs, S.turbulence(RD, 340, corr=0.6)):
+        pts = arcs[nm] + [(t, arcs[nm][-1][1] + d) for t, d in end]
+        parts[nm] = st * (lin(curve(pts, ERUPT, nr)) * rise)[:, None]
+    comp = sum(parts.values())
+    g = -12.5 - meter(comp[: nsamp(2.5)], 's')              # the torrent as a whole: -12.5 LUFS over its first 2.5 s
+    for nm, st in parts.items():
+        m.add_wide(nm, st, ERUPT, gain_db=g, send_db=-10)
+    # a breath with a pitch inside the torrent, and sharp crackles at its edge
+    hw = S.howl(RD, 345, (165.0, 440.0, 1180.0), q=6.0, wander=0.06) * lin(curve(arcs['beam-body'] + [(t, arcs['beam-body'][-1][1] + d) for t, d in end], ERUPT, nr)) * rise
+    m.add('beam-howl', hw, ERUPT, (0.0, 6.0, -4.5), target=-22, kind='s', send_db=-3, er_db=-9)
+    for i, pos in enumerate(((-2.0, 3.0, -4.5), (2.0, 5.0, -4.5))):
+        ck = S.pops(183.6 - ERUPT, 454 + i, 30.0, 1500, 7000, tau=0.004) * lin(curve(arcs['beam-tear'], ERUPT, nsamp(183.6 - ERUPT)))
+        m.add('beam-crackle%d' % i, dsp.fade(ck, 0.02, 0.1), ERUPT, pos, target=-27, kind='m', send_db=-6)
 
-    def lows_out(x):
-        def g(tf, fr):
-            fcut = np.interp(tf + tb, [tb, WHITEOUT, DISSOLVE], [20, 20, 600])[:, None]
-            return 1 / np.sqrt(1 + (fcut / np.maximum(fr[None, :], 1)) ** 4)
-        return dsp.stft_shape(x, g)
-
-    core = lows_out(S.beam_core(D, 340, f0=49.0)) * curve([(tb, 0), (tb + 0.06, 1), (tb + 1.5, 1), (WHITEOUT, 0.88), (DISSOLVE, 0.03), (tb + D, 0)], tb, nb)
-    m.add('beam-core', core, tb, (0.0, 4.0, -4.5), target=-14.5, kind='s', send_db=-3, er_db=-9)
-    body = np.stack([lows_out(S.comb_sweep(S.beam_body(D, 341 + c))) for c in range(2)], axis=1)
-    body *= curve([(tb, 0), (tb + 0.08, 0.8), (WHITEOUT, 1.1), (DISSOLVE, 0.05), (tb + D, 0)], tb, nb)[:, None]
-    m.add_wide('beam-body', body, tb, target=-18, kind='s', send_db=-3)
-    edge = np.stack([S.beam_edge(D, 343 + c) for c in range(2)], axis=1)
-    edge *= curve([(tb, 0), (tb + 0.12, 0.5), (WHITEOUT, 1.0), (DISSOLVE, 0.07), (tb + D, 0)], tb, nb)[:, None]
-    m.add_wide('beam-edge', edge, tb, target=-21, kind='s', send_db=-6)
-    sky = S.wide_noise(D, 345, 7000, 15000, pinkish=False) * curve([(tb, 0), (179.5, 0.05), (WHITEOUT, 0.8), (182.6, 1.0), (DISSOLVE, 0.12), (tb + D, 0)], tb, nb)[:, None]
-    m.add_wide('sky-air', sky, tb, target=-28, kind='s', send_db=-6)
-    nk = nsamp(5.0)
-    shake = S.wide_noise(5.0, 347, 25, 70, order=3) * lin(3 * dsp.smooth(dsp.white(nk, 349), 0.4) / 0.1).clip(0.3, 3)[:, None]
-    shake *= curve([(177.9, 0), (178.6, 0.6), (WHITEOUT, 1.0), (182.9, 0)], 177.9, nk)[:, None]
-    m.add_wide('hall-shake', shake, 177.9, target=-36, kind='r')
-
-    # 177.9 to 181.3: floor blocks lift and tumble around the beam; rings of light pass; one crack high up
+    # 177.9 to 181.3: floor blocks lift and tumble around the pillar; rings of light rise; one crack high up
     for i, pos in enumerate(((-3.0, 1.0, -6.0), (2.5, 0.5, -5.5), (0.5, 2.0, -7.0))):
         tu = S.tumble(3.4, 360 + i, lambda t: 1.8, sizes=(0.2, 0.6), speed=(3.0, 7.0))
-        m.add('blocks%d' % i, tu, 177.9, pos, target=-19, kind='m', focus_db=4)
+        m.add('blocks%d' % i, tu, 177.9, pos, target=-18, kind='m', focus_db=4)
     for i, t in enumerate((178.0, 178.6, 179.25, 179.85, 180.5)):
-        m.add_wide('ring%d' % i, S.band_sweep(0.4, 365 + i, 1200, 5000, width_oct=0.8, attack=0.4, wide=True), t, target=-23, kind='i', send_db=-6)
-    m.add('strain', S.fracture(350, 300, 4000, 0.02, dur=0.6, k_rate=9), 180.14, (3.0, 6.0, -6.0), target=-16, kind='i', focus_db=6)
-
-    # ---- round 4: a bell, air and glints over the circle, an inhale, a voice over the beam, the walls' answer
-    ca = S.wide_noise(177.49 - 174.46, 451, 6000, 12000) * curve([(174.46, 0), (175.0, 1), (177.4, 1), (177.49, 0)], 174.46, nsamp(177.49 - 174.46))[:, None]
-    m.add_wide('circle-air', ca, 174.46, target=-44, kind='m')
-    cl = S.wide_noise(177.49 - 174.46, 457, 40, 110, order=3) * curve([(174.46, 0), (175.0, 1), (177.4, 1), (177.49, 0)], 174.46, nsamp(177.49 - 174.46))[:, None]
-    m.add_wide('circle-low', cl, 174.46, target=-52, kind='r')
-    m.add_wide('inhale', S.band_sweep(FLASH - 0.06 - 176.75, 452, 300, 4000, width_oct=1.0, attack=0.85, wide=True), 176.75, target=-26, kind='m')
-    span, c = FLASH - 0.06 - 176.75, 0.03
-    cnt = rr.poisson(6 * np.log((span + c) / c))
-    tg_ = np.sort(span + c - (span + c) * (c / (span + c)) ** rr.random(cnt))
-    m.add('gather', ticks(tg_, lambda i: S.tilted_burst(470 + i, 500.0, 4000.0, 0.004) * (0.3 + 0.7 * (tg_[i] / span) ** 2), span + 0.13)[: nsamp(span)], 176.75, (-0.3, 1.5, -3.0), target=-29, kind='i', send_db=-4)
-    gl = S.wide_noise(span, 472, 35, 140, order=3) * curve([(176.75, 0), (FLASH - 0.07, 1), (FLASH - 0.06, 0)], 176.75, nsamp(span))[:, None]
-    m.add_wide('gather-low', gl, 176.75, target=-36, kind='r')
-    bv = S.voice(D, 453, [196.0, 294.0, 392.0, 588.0, 784.0], wander=0.008, breath=0.4)       # harmonics 4, 6, 8, 12, 16 of the core
-    bv *= curve([(tb, 0), (tb + 0.15, 1), (WHITEOUT, 1.0), (DISSOLVE, 0.05), (tb + D, 0)], tb, nb)
-    m.add('beam-voice', bv, tb, (0.0, 6.0, -4.5), target=-20.5, kind='s', send_db=-3, er_db=-9)
-    for i, pos in enumerate(((-2.0, 3.0, -4.5), (2.0, 5.0, -4.5))):
-        bp = S.pops(WHITEOUT - tb, 454 + i, 18.0, 600, 5000, tau=0.005)
-        m.add('beam-sparks%d' % i, dsp.fade(bp, 0.05, 0.2), tb, pos, target=-27, kind='m', send_db=-6)
-    fz = S.saturate(0.55 * front + 0.7 * low + 0.6 * lowlong + 0.6 * slap)
-    m.add('flash-slap0', S.slap(fz, 900), FLASH + 0.20, (-8.5, 3.0, -8.0), target=-19, kind='i', send_db=-4)
-    m.add('flash-slap1', S.slap(fz, 700), FLASH + 0.31, (8.5, 4.0, -12.0), target=-22, kind='i', send_db=-4)
+        m.add_wide('ring%d' % i, S.band_sweep(0.4, 365 + i, 1200, 5000, width_oct=0.8, attack=0.4, wide=True), t, target=-21, kind='i', send_db=-6)
+    m.add('strain', S.fracture(350, 300, 4000, 0.02, dur=0.6, k_rate=9), 180.14, (3.0, 6.0, -6.0), target=-15, kind='i', focus_db=6)
     m.add('last-settle', S.rock_fall(0.15, 0.3, 456), 185.95, (3.5, 0, -9.0), target=-37, kind='i')
+    m.drive_db = 12.0
 
     # 183.767: the clone thins into strands and specks, dry; in the last shot the remnants keep thinning
     breath, threads, tk = S.dissolve_dry(185.45 - DISSOLVE + 0.25, 370)

@@ -99,77 +99,6 @@ def sand(dur, seed, rate0=2500.0, tau=0.8, f_lo=2500.0, f_hi=9000.0):
     return norm(y)
 
 
-# ---- the beam: a coherent harmonic core with slow beating, a turbulent body and a crackling edge
-def beam_core(dur, seed, f0=49.0, partials=24, tilt=0.7):
-    r = dsp.rng(seed)
-    n = nsamp(dur)
-    t = np.arange(n) / SR
-    z = dsp.smooth(dsp.white(n, seed + 3), 0.05)
-    jit = 1 + 0.004 * z / (z.std() + 1e-12)
-    ph = 2 * np.pi * np.cumsum(f0 * jit) / SR
-    y = np.zeros(n)
-    for k in range(1, partials + 1):
-        a = k ** (-tilt) * (0.5 if k == 1 else 1.0)
-        for det in (r.uniform(0.12, 0.5), -r.uniform(0.12, 0.5)):
-            y += 0.5 * a * np.sin(k * ph + 2 * np.pi * det * t + r.uniform(0, 6.28))
-    return norm(y)
-
-
-def beam_body(dur, seed, lo=150.0, hi=3500.0):
-    n = nsamp(dur)
-    x = dsp.spectral(dsp.pink(n, seed), lambda f: dsp.band_gain(f, lo, hi, 2))
-    m = dsp.smooth(dsp.pink(n, seed + 5), 0.12)
-    m = m / (np.abs(m).max() + 1e-9)
-    return x / np.sqrt((x ** 2).mean()) * lin(3.0 * m)
-
-
-def beam_edge(dur, seed, rate=(600.0, 2500.0), f_lo=3500.0, f_hi=11000.0):
-    r = dsp.rng(seed)
-    n = nsamp(dur)
-    t = np.arange(n) / SR
-    lam = (rate[0] + (rate[1] - rate[0]) * t / dur) / SR
-    hits = r.random(n) < lam
-    x = np.where(hits, r.uniform(0.4, 1.0, n) * r.choice([-1, 1], n), 0.0)
-    x = dsp.spectral(x, lambda f: dsp.band_gain(f, f_lo, f_hi, 2))
-    return x / (np.sqrt((x ** 2).mean()) + 1e-12)
-
-
-def comb_sweep(x, rate_hz=0.45, d_lo=0.0015, d_hi=0.004, mix=0.25):
-    """A slowly swept comb: motion of the rings without moving the image."""
-    n = len(x)
-    d = d_lo + (d_hi - d_lo) * (0.5 - 0.5 * np.cos(2 * np.pi * rate_hz * np.arange(n) / SR))
-    return x + mix * dsp.vdelay(x, d)
-
-
-# ---- preparation: inharmonic partials converge to a harmonic series while the pitch rises
-def prep(dur, seed, f_start=196.0, f_end=294.0):
-    n = nsamp(dur)
-    t = np.arange(n) / SR
-    u = t / dur
-    f0 = f_start * (f_end / f_start) ** u
-    inh = np.array([1.0, 1.37, 1.93, 2.54, 3.41, 4.2])
-    har = np.arange(1, 7, dtype=float)
-    r = dsp.rng(seed)
-    y = np.zeros(n)
-    for k in range(6):
-        ratio = inh[k] + (har[k] - inh[k]) * u ** 0.7
-        y += np.sin(2 * np.pi * np.cumsum(f0 * ratio) / SR + r.uniform(0, 6.28)) / (k + 1) ** 0.8
-    return norm(y * lin(-18 * (1 - u)))
-
-
-def flash_noise(dur, seed, tau=0.06, lo=200.0, hi=12000.0):
-    n = nsamp(dur)
-    t = np.arange(n) / SR
-    ch = []
-    for c in range(2):
-        x = dsp.spectral(dsp.white(n, seed + c), lambda f: dsp.band_gain(f, lo, hi, 2) / np.sqrt(np.maximum(f, 100.0)))
-        ch.append(x / np.sqrt((x ** 2).mean()))
-    env = np.exp(-t / tau)
-    k = nsamp(0.0015)
-    env[:k] *= 0.5 - 0.5 * np.cos(np.pi * (np.arange(k) + 0.5) / k)
-    return np.stack(ch, 1) * env[:, None]
-
-
 def wide_noise(dur, seed, lo, hi, order=2, pinkish=True):
     n = nsamp(dur)
     ch = []
@@ -379,18 +308,6 @@ def gravel(dur, seed, lo=300.0, hi=3500.0):
     return x / np.sqrt((x ** 2).mean()) * np.maximum(m, 0.05)
 
 
-def pad(dur, seed, f0=196.0, ratios=(1.0, 1.5, 2.0, 3.0)):
-    """A magic circle that is simply there: a few steady partials whose levels drift slowly."""
-    r = dsp.rng(seed)
-    n = nsamp(dur)
-    t = np.arange(n) / SR
-    y = np.zeros(n)
-    for i, q in enumerate(ratios):
-        drift = 0.6 + 0.4 * dsp.smooth(dsp.white(n, seed + 10 + i), 0.8) / 0.02
-        y += np.clip(drift, 0.1, 1.2) * (np.sin(2 * np.pi * f0 * q * t + r.uniform(0, 6.28)) + np.sin(2 * np.pi * f0 * q * 1.003 * t + r.uniform(0, 6.28))) / (i + 1)
-    return norm(y)
-
-
 def wind(dur, seed, lo=250.0, hi=3000.0):
     """Wind in hair and cloth after a blast: wide noise in slow, irregular gusts."""
     n = nsamp(dur)
@@ -459,8 +376,6 @@ def pops(dur, seed, rate, f_lo=2000.0, f_hi=8000.0, tau=0.0012):
 def slap(sig, cutoff=1800.0):
     """What comes back from a far wall: the same sound, duller."""
     return dsp.lp(np.concatenate([sig, np.zeros(nsamp(0.05))]), cutoff)
-
-
 
 
 # ================================================================ round 5: the size of things
@@ -554,3 +469,67 @@ def crush(dur, seed, tau, lo=700.0, hi=6000.0):
     k = nsamp(0.003)
     e[:k] *= np.linspace(0, 1, k)
     return norm(x * np.maximum(m, 0.05) * e)
+
+
+# ================================================================ round 6: the beam as turbulence
+# The owner heard the beam of round 5 as artificial and its firing as light. The original sound of the
+# reference was measured as a reference (no sample of it is used). Its beam is 88 to 91 % noise with no steady
+# line. Its third-octave levels are flat from 80 to 800 Hz and fall above 1 kHz. Its level in 50 ms blocks
+# varies by 2.3 dB below 120 Hz, 1.1 dB from 200 to 1000 Hz and 3.0 dB from 2 to 8 kHz. The beam of round 5
+# was a stack of the harmonics of 49 Hz with a steady hiss above.
+
+# the third-octave levels of a torrent of energy, dB against the strongest band (Hz, dB)
+BEAM_CURVE = ((25, -18), (31, -13), (39, -6), (50, -4.5), (62, -4), (79, -1), (125, -1), (250, -2), (500, -2), (800, -2.5), (1000, -4),
+              (2000, -6), (3175, -9), (4000, -12.5), (5040, -15.5), (6350, -20), (8000, -24.5), (10079, -27), (12699, -30))
+
+
+def curve_noise(n, seed, curve=BEAM_CURVE):
+    """Noise whose third-octave levels follow `curve` ((Hz, dB) points on a log axis)."""
+    lf = np.log([c[0] for c in curve])
+    lv = np.array([c[1] for c in curve], float)
+
+    def g(f):
+        f = np.maximum(f, 1.0)
+        t = np.interp(np.log(f), lf, lv, left=lv[0] - 30, right=lv[-1] - 12)
+        return 10 ** ((t - 10 * np.log10(f)) / 20)          # a third-octave band grows with f, so the density falls with it
+
+    return dsp.spectral(dsp.white(n, seed), g)
+
+
+def level_walk(n, seed, sd_db, lo, hi):
+    """A level that wanders with no period: noise between lo and hi Hz, as a gain with a deviation of sd_db."""
+    m = dsp.spectral(dsp.white(n, seed), lambda f: dsp.band_gain(f, lo, hi, 1))
+    m = m / (m.std() + 1e-12)
+    return 10 ** (sd_db * np.clip(m, -2.5, 2.5) / 20)
+
+
+TURBULENCE_BANDS = ((25.0, 110.0, 1.0, 0.4, 6.0), (110.0, 900.0, 1.3, 0.5, 8.0), (900.0, 4000.0, 5.5, 1.0, 11.0), (4000.0, 13000.0, 6.5, 1.0, 13.0))
+
+
+def turbulence(dur, seed, curve=BEAM_CURVE, bands=TURBULENCE_BANDS, corr=0.5):
+    """A torrent as turbulence: one spectrum, cut into bands (lo, hi, deviation dB, slowest and fastest rate Hz).
+    Each band has its own noise and its own wandering level, so the parts do not move together. Left and
+    right share a common part for a correlation of `corr`. Returns (n, 2) arrays at their true relative levels."""
+    n = nsamp(dur)
+    a, b = np.sqrt(corr), np.sqrt(1 - corr)
+    out = []
+    for i, (lo, hi, sd, r_lo, r_hi) in enumerate(bands):
+        p = [dsp.spectral(curve_noise(n, seed + 10 * i + c, curve), lambda f: dsp.band_gain(f, lo, hi, 4)) for c in range(3)]
+        walk = level_walk(n, seed + 10 * i + 5, sd, r_lo, r_hi)
+        out.append(np.stack([a * p[0] + b * p[1], a * p[0] + b * p[2]], axis=1) * walk[:, None])
+    return out
+
+
+def howl(dur, seed, centres, q=7.0, wander=0.05, rate=1.5):
+    """A breath with a pitch, as wind in a wide pipe: narrow bands of noise whose centres wander. Each band is
+    a carrier with a random envelope and a random phase, which is Gaussian noise of width centre / q. No sine."""
+    n = nsamp(dur)
+    y = np.zeros(n)
+    for i, fc in enumerate(centres):
+        bw = fc / q
+        ab = [dsp.spectral(dsp.white(n, seed + 7 * i + c), lambda f: dsp.band_gain(f, 0.01, bw / 2, 2)) for c in (1, 2)]
+        w = dsp.spectral(dsp.white(n, seed + 7 * i + 3), lambda f: dsp.band_gain(f, 0.1, rate, 1))
+        w = w / (w.std() + 1e-12)
+        ph = 2 * np.pi * np.cumsum(fc * 2 ** (wander * np.clip(w, -2.5, 2.5))) / SR
+        y += (ab[0] * np.cos(ph) - ab[1] * np.sin(ph)) / (ab[0].std() + 1e-12) / (i + 1) ** 0.5
+    return norm(y)
