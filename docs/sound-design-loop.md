@@ -259,6 +259,10 @@ Observed in experiment 9:
   thumps: a low band of noise with a long fall is a drum.
 - The fourth plan let four blocks knock, and small stone fall, while the picture held the blocks in
   the air in slow motion. The owner heard stones that had fallen already.
+- The fifth plan made a landing from an `impact`, a crack of a block under 1 m that crumbles, and
+  blocks of 0.2 m that settle. The owner heard a plastic container that falls, not stone with
+  weight. Of the energy of that landing from 60 to 400 Hz, 66 % lay in one band of 15 Hz, and 1 % of
+  the whole lay over 2 kHz.
 
 What follows for the one who writes a plan:
 
@@ -267,6 +271,8 @@ What follows for the one who writes a plan:
 3. Take the weight of a hit on stone from an `impact` under it. Keep the short fall of the stone.
 4. Write a strike on the frame on which the thing strikes. While the picture holds a thing in the
    air, write no strike.
+5. Make a block of stone that lands from three parts: a hard edge, a deep body with no tone, and
+   grit. Leave out a tone, and leave out blocks of 0.1 to 0.5 m that knock after it.
 
 The rule and the checklist: `layers` counts the sounds that make one hero event, and to the viewer
 they are one sound. The rule says which event leads; it does not lower that count. `dynamics` asks

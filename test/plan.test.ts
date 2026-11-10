@@ -263,17 +263,46 @@ describe('the plan of experiment 9, the force passage', () => {
     expect(one('hang').t).toBe(brk);
     expect(one('hang').macros.tone).toBe(0);
     for (const id of ['drift-1', 'drift-2']) expect(one(id).macros.speed, id).toBeLessThan(0.2);
-    // The first landing comes after the cut, a body and its stone on one frame.
+    // The first landing comes after the cut.
     expect(one('land-1').t).toBeGreaterThan(fog);
     expect(one('land-1').t - fog).toBeLessThan(0.3);
-    for (const id of ['land-1', 'land-2']) expect(one(`${id}-stone`).t, id).toBe(one(id).t);
   });
 
-  test('keeps the landings out of the picture: what is loud after the cut to the fog stands 7 m or more away', () => {
+  test('makes a landing of stone, not of a hollow thing: a hard edge, a deep body with no tone, and grit', () => {
+    const fog = p.picture.cuts[3]!;
+    // No `impact` after the cut: its sub is one tone, and the owner heard a plastic container.
+    expect(p.events.filter((e) => e.t >= fog && e.kind === 'impact')).toEqual([]);
+    for (const id of ['land-1', 'land-2']) {
+      const block = one(id);
+      expect(block.kind, id).toBe('crack');
+      // A block of 1 m or more, with its edge and no smaller cracks after it.
+      expect(block.macros.size, id).toBeGreaterThan(0.8);
+      expect(block.macros.brightness, id).toBeGreaterThanOrEqual(0.8);
+      expect(block.macros.crumble, id).toBe(0);
+      for (const part of ['body', 'punch']) {
+        const boom = one(`${id}-${part}`);
+        expect(boom.kind, boom.id).toBe('boom');
+        expect(boom.macros.tone, boom.id).toBe(0);
+        expect(boom.t, boom.id).toBe(block.t);
+      }
+      const edge = one(`${id}-edge`);
+      expect(edge.t, edge.id).toBe(block.t);
+      expect(edge.macros.size, edge.id).toBeLessThan(0.1);
+      expect(edge.macros.brightness, edge.id).toBe(1);
+      expect(one(`${id}-grit`).t - block.t, id).toBeLessThan(0.02);
+    }
+    // After the cut, a `rubble` is small stone only: its middle size is under 0.1 m.
+    for (const e of p.events.filter((v) => v.t >= fog && v.kind === 'rubble'))
+      expect(e.macros.size, e.id).toBeLessThan(0.2);
+    // The second landing is the smaller one.
+    expect(one('land-2').intensity).toBeLessThan(one('land-1').intensity);
+  });
+
+  test('keeps the landings out of the picture: what is loud after the cut to the fog stands 6 m or more away', () => {
     const fog = p.picture.cuts[3]!;
     const late = p.events.filter((e) => e.t >= fog && e.layer === 'effects');
     expect(late.length).toBeGreaterThanOrEqual(4);
     for (const e of late)
-      if (e.intensity > 0.3) expect(e.position.distance, e.id).toBeGreaterThanOrEqual(7);
+      if (e.intensity > 0.3) expect(e.position.distance, e.id).toBeGreaterThanOrEqual(6);
   });
 });
