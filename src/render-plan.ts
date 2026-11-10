@@ -15,21 +15,29 @@ import {
   type SoundPlan,
 } from './plan/index.ts';
 import {
+  booms,
   cloths,
+  cracks,
   drones,
   footsteps,
   gather,
   impacts,
   risers,
+  roars,
+  rubbles,
   shimmers,
   voices,
   whooshes,
   winds,
+  type BoomLane,
   type ClothLane,
+  type CrackLane,
   type DroneLane,
   type FootstepLane,
   type ImpactLane,
   type RiserLane,
+  type RoarLane,
+  type RubbleLane,
   type ShimmerLane,
   type VoiceLane,
   type WhooshLane,
@@ -89,6 +97,29 @@ export interface Rendered {
   tier: string;
   /** Where each event was placed, in frames: id, start and end. */
   placed: { id: string; start: number; end: number }[];
+}
+
+/** The fall of the mix into a silence, in seconds: it ends where the silence starts. */
+export const SILENCE_FALL = 0.004;
+
+/**
+ * The gain of each frame for the silences of a plan (`from` and `to` in frames): 0 inside each, a
+ * linear fall over `SILENCE_FALL` that ends at its start, and 1 from its end on, at once, so that a
+ * sound that starts at the end of a silence keeps its first frame.
+ */
+export function silenceGate(
+  frames: number,
+  cuts: readonly { from: number; to: number }[],
+  sr: number,
+): Float32Array {
+  const gate = new Float32Array(frames).fill(1);
+  const fall = Math.max(1, Math.round(SILENCE_FALL * sr));
+  for (const c of cuts) {
+    for (let i = Math.max(0, c.from - fall); i < Math.min(frames, c.from); i++)
+      gate[i] = Math.min(gate[i]!, (c.from - i) / fall);
+    for (let i = Math.max(0, c.from); i < Math.min(frames, c.to); i++) gate[i] = 0;
+  }
+  return gate;
 }
 
 /** The events of a moment run together when each starts within this many seconds of the one before. */
@@ -161,6 +192,11 @@ export async function renderPlan(
   const total = blocks * BLOCK;
   const events = plan.events;
   const lanes = events.length;
+  // The silences, in frames. An event that sounds when one starts ends there.
+  const cuts = plan.silences.map((s) => ({
+    from: Math.round(s.t * sr),
+    to: Math.round((s.t + s.duration) * sr),
+  }));
 
   // One lane of its kind's bank and one lane of the chain for each event. `kinds` and `slots` say,
   // for event `i`, which bank holds its lane and at which place; `gather` reads them.
@@ -180,14 +216,16 @@ export async function renderPlan(
     const t = guards ? snapped(plan, e.t) : e.t;
     const anchor = Math.round(t * sr);
     const start = Math.max(0, e.sync === 'arrive' ? anchor - made.length : anchor);
+    let end = start + made.length;
+    for (const c of cuts) if (start < c.from && end > c.from) end = c.from;
     made.lane.start = start;
-    made.lane.end = start + made.length;
+    made.lane.end = end;
     const k = KIND_INDEX[made.kind];
     kinds[i] = k;
     slots[i] = byKind[k]!.length;
     byKind[k]!.push(made.lane);
     places.push(spatialOf(e, plan.scene, { spatial, sr }));
-    placed.push({ id: e.id, start, end: start + made.length });
+    placed.push({ id: e.id, start, end });
     if (e.kind === 'voice' && stem !== undefined)
       stems.push({ slot: slots[i]!, start, data: stem });
   });
@@ -207,6 +245,10 @@ export async function renderPlan(
   const footstepBank = bankOf<FootstepLane>(KIND_INDEX.footstep);
   const clothBank = bankOf<ClothLane>(KIND_INDEX.cloth);
   const voiceBank = bankOf<VoiceLane>(KIND_INDEX.voice);
+  const crackBank = bankOf<CrackLane>(KIND_INDEX.crack);
+  const boomBank = bankOf<BoomLane>(KIND_INDEX.boom);
+  const rubbleBank = bankOf<RubbleLane>(KIND_INDEX.rubble);
+  const roarBank = bankOf<RoarLane>(KIND_INDEX.roar);
   const laneBank = bank(dev, places);
   const stripBank = bank(
     dev,
@@ -312,6 +354,10 @@ export async function renderPlan(
         if (footstepBank) footsteps(outs[KIND_INDEX.footstep]!, footstepBank.instances, BLOCK);
         if (clothBank) cloths(outs[KIND_INDEX.cloth]!, clothBank.instances, BLOCK);
         if (voiceBank) voices(outs[KIND_INDEX.voice]!, voiceBank.instances, inputs, BLOCK);
+        if (crackBank) cracks(outs[KIND_INDEX.crack]!, crackBank.instances, BLOCK);
+        if (boomBank) booms(outs[KIND_INDEX.boom]!, boomBank.instances, BLOCK);
+        if (rubbleBank) rubbles(outs[KIND_INDEX.rubble]!, rubbleBank.instances, BLOCK);
+        if (roarBank) roars(outs[KIND_INDEX.roar]!, roarBank.instances, BLOCK);
         for (const k of present) gather(raws, kindIdx, slotIdx, outs[k], k, BLOCK);
         history(hist, prev, raws);
         place(laneL, laneR, laneS, hist, laneBank.instances, binaural);
@@ -352,6 +398,14 @@ export async function renderPlan(
   for (let c = 0; c < 2; c++)
     for (let i = 0; i < length; i++) mix[c]![i] = dry[c]![i]! + wetT[c]![i]!;
 
+  // The silences: the mix, the dry render, the reverb's return and every stem are silent in them.
+  // The reverb goes on inside the device, so the silence is made here, before the master measures.
+  const all: Float32Array[] = [...mix, ...dry, ...wetT, ...LAYERS.flatMap((l) => trimmed[l])];
+  if (cuts.length > 0) {
+    const gate = silenceGate(length, cuts, sr);
+    for (const x of all) for (let i = 0; i < length; i++) x[i]! *= gate[i]!;
+  }
+
   let lufsBefore = NaN;
   let normalizeDb = 0;
   let limiterMinDb = 0;
@@ -359,7 +413,6 @@ export async function renderPlan(
     const gain = normalizationGain(mix, sr, plan.master.lufs);
     normalizeDb = 20 * Math.log10(gain);
     lufsBefore = plan.master.lufs - normalizeDb;
-    const all: Float32Array[] = [...mix, ...dry, ...wetT, ...LAYERS.flatMap((l) => trimmed[l])];
     for (const x of all) for (let i = 0; i < x.length; i++) x[i]! *= gain;
     const limit = limiterGain(mix, sr, plan.master.truePeak);
     let min = 1;

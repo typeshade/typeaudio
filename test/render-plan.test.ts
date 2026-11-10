@@ -1,6 +1,13 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { createDevice, type Device } from 'typeshade/runtime';
-import { onePlan, renderPlan, SAMPLE_RATE, SNAP_WINDOW } from '../src/render-plan.ts';
+import {
+  onePlan,
+  renderPlan,
+  SAMPLE_RATE,
+  SILENCE_FALL,
+  silenceGate,
+  SNAP_WINDOW,
+} from '../src/render-plan.ts';
 import { integratedLoudness, truePeak, checklist } from '../src/analyze/index.ts';
 import { validatePlan, type PlanEvent } from '../src/plan/index.ts';
 import {
@@ -70,6 +77,47 @@ const speech = (seconds: number): Float32Array =>
       (Math.sin(2 * Math.PI * 150 * t) + 0.5 * Math.sin(2 * Math.PI * 450 * t))
     );
   });
+
+describe('a silence of the plan', { timeout: 120000 }, () => {
+  test('the gate is 0 inside a silence, falls into it and opens at once at its end', () => {
+    const fall = Math.round(SILENCE_FALL * SR);
+    const g = silenceGate(1000, [{ from: 400, to: 600 }], SR);
+    expect(g[400 - fall - 1]).toBe(1);
+    expect(g[400 - 1]).toBeCloseTo(1 / fall, 6);
+    expect(Array.from(g.subarray(400, 600)).every((v) => v === 0)).toBe(true);
+    expect(g[600]).toBe(1);
+    // A silence that starts at the first frame or runs to the last one stays inside the array.
+    expect(silenceGate(10, [{ from: 0, to: 4 }], SR)[3]).toBe(0);
+    expect(silenceGate(10, [{ from: 8, to: 40 }], SR)[9]).toBe(0);
+  });
+
+  test('the mix, the stems and the reverb are silent in it, a sound that was on does not come back, and a sound at its end plays', async () => {
+    const long = ev('held', 0.1, {
+      kind: 'wind',
+      layer: 'ambience',
+      macros: { gust: 0.3, howl: 0.3 },
+      duration: 1.3,
+    });
+    const after = ev('after', 0.9, { macros: { weight: 0.5, decay: 0.1, crack: 0.8 } });
+    const plan = mini([long, after], { silences: [{ t: 0.7, duration: 0.2 }], picture: {} });
+    const r = await renderPlan(dev, plan);
+    const from = at(0.7);
+    const to = at(0.9);
+    for (const x of [...r.mix, ...r.dry, ...r.wet, ...r.stems.ambience, ...r.stems.effects])
+      expect(energy(x, from, to)).toBe(0);
+    // The held sound is there before the silence and gone after it: what is left of it in the
+    // filters of the chain is under 1e-12 of it.
+    const before = energy(r.stems.ambience[0], at(0.4), at(0.6));
+    expect(before).toBeGreaterThan(0);
+    expect(energy(r.stems.ambience[0], to, at(1.4))).toBeLessThan(1e-12 * before);
+    // The event at the end of the silence plays from its first frame.
+    expect(energy(r.stems.effects[0], to, to + 480)).toBeGreaterThan(0);
+    expect(r.placed.find((p) => p.id === 'held')!.end).toBe(from);
+    // Without the silence the held sound goes on.
+    const open = await renderPlan(dev, mini([long, after], { picture: {} }));
+    expect(energy(open.stems.ambience[0], to, at(1.2))).toBeGreaterThan(0);
+  });
+});
 
 describe('renderPlan on the CPU tier', { timeout: 120000 }, () => {
   test("refuses a plan the validator refuses, with the validator's sentence", async () => {

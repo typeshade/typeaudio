@@ -5,17 +5,22 @@ import { BLOCK } from '../src/spatial/room.ts';
 import { renderPlan } from '../src/render-plan.ts';
 import { validatePlan, type PlanEvent } from '../src/plan/index.ts';
 import {
+  booms,
   cloths,
+  cracks,
   drones,
   footsteps,
   gather,
   impacts,
   risers,
+  roars,
+  rubbles,
   shimmers,
   voices,
   whooshes,
   winds,
 } from '../src/kinds/lanes.shade.ts';
+import { KINDS as KIND_TABLE } from '../src/plan/kinds.ts';
 import { KIND_INDEX, eventKey, makeLane, type Made } from '../src/kinds/make.ts';
 import plan from '../experiments/08-sound-design/plan.json';
 
@@ -47,9 +52,20 @@ const laneOf = (e: PlanEvent, start: number, stem?: Float32Array): Made => {
 
 describe('the kernel of each kind', () => {
   // The first event of each kind in the fixture, started at frame 100 so that a block holds the
-  // silence before the start; a voice event gets a stem.
+  // silence before the start; a voice event gets a stem. A kind the fixture does not hold (the four
+  // of experiment 9) gets an event of its layer at its default macros.
   const events = KINDS.map(
-    (k) => p.events.find((e) => e.kind === k) ?? { ...p.events[0]!, kind: k },
+    (k): PlanEvent =>
+      p.events.find((e) => e.kind === k) ?? {
+        ...p.events[0]!,
+        id: `${k}-1`,
+        kind: k,
+        layer: KIND_TABLE[k]!.layer,
+        macros: Object.fromEntries(
+          Object.entries(KIND_TABLE[k]!.macros).map(([name, def]) => [name, def.default]),
+        ),
+        duration: 0.2,
+      },
   );
   const stem = Float32Array.from({ length: 4000 }, (_, i) => Math.sin(i * 0.05));
 
@@ -67,6 +83,10 @@ describe('the kernel of each kind', () => {
       drone: drones,
       footstep: footsteps,
       cloth: cloths,
+      crack: cracks,
+      boom: booms,
+      rubble: rubbles,
+      roar: roars,
     };
     for (const e of events) {
       const kind = e.kind;

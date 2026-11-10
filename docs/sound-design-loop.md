@@ -59,15 +59,16 @@ All times are in seconds from the start of the clip. All positions are in the li
 
 Plan fields:
 
-| Field     | Type   | Meaning                                                                                  |
-| --------- | ------ | ---------------------------------------------------------------------------------------- |
-| `version` | number | The plan format version. It is `1`.                                                      |
-| `clip`    | object | `duration` in seconds and `fps`.                                                         |
-| `scene`   | object | `room` and `listener`, as below.                                                         |
-| `master`  | object | Optional. `lufs` (default -23) and `truePeak` in dBTP (default -1).                      |
-| `picture` | object | Optional. `cuts` and `motion`: the cuts and the peaks of motion, each a list of seconds. |
-| `events`  | array  | The events, in any order. The engine sorts them by `t`, then by `id`.                    |
-| `seed`    | number | The seed of every random choice. The default is `0`.                                     |
+| Field      | Type   | Meaning                                                                                  |
+| ---------- | ------ | ---------------------------------------------------------------------------------------- |
+| `version`  | number | The plan format version. It is `1`.                                                      |
+| `clip`     | object | `duration` in seconds and `fps`.                                                         |
+| `scene`    | object | `room` and `listener`, as below.                                                         |
+| `master`   | object | Optional. `lufs` (default -23) and `truePeak` in dBTP (default -1).                      |
+| `picture`  | object | Optional. `cuts` and `motion`: the cuts and the peaks of motion, each a list of seconds. |
+| `silences` | array  | Optional. The silences, each a `t` and a `duration` in seconds. See "A silence".         |
+| `events`   | array  | The events, in any order. The engine sorts them by `t`, then by `id`.                    |
+| `seed`     | number | The seed of every random choice. The default is `0`.                                     |
 
 The plan has no sample rate. The sample rate is a fact of the renderer: it renders at 48 kHz and
 returns the rate with the render. The analyzers take the rate as an argument.
@@ -100,7 +101,21 @@ Event fields:
 
 The validator refuses a plan for each of these: an unknown kind, a layer that does not match the
 kind, a macro the kind does not define, a value out of range, an event past `clip.duration`, a
-repeated `id`.
+repeated `id`, a silence that overlaps another or runs past the clip, an event that starts inside a
+silence.
+
+### A silence
+
+A silence is a cut. From its `t`, for its `duration`, the mix is silent: the stems, the dry render
+and the reverb's return. An event that sounds when the silence starts ends there and does not come
+back after it. An event may start at the end of a silence, and it keeps its first frame. The mix
+falls into the silence over 4 ms.
+
+A silence before a hit is the held breath. The room's answer to a sound runs on after the sound
+stops, so a gap between two events is not a silence: the reverb fills it. The plan states the
+silence, and the renderer makes it after the reverb and before the master measures the mix.
+
+Experiment 9 added the field. A silence is 0.01 to 10 seconds long, and a plan holds at most 16.
 
 ### The kinds
 
@@ -111,17 +126,21 @@ the duration over which the swell rises, and the sound holds at its peak for the
 draws its take from the event's key within its macro ranges, so repeated events differ (the
 `variation` guard). The first kinds are:
 
-| Kind       | Sort       | Layer    | Macros                      |
-| ---------- | ---------- | -------- | --------------------------- |
-| `whoosh`   | procedural | effects  | `speed`, `brightness`       |
-| `impact`   | procedural | effects  | `weight`, `decay`, `crack`  |
-| `shimmer`  | procedural | effects  | `density`, `height`         |
-| `riser`    | procedural | effects  | `length`, `pitch`           |
-| `wind`     | procedural | ambience | `gust`, `howl`              |
-| `drone`    | procedural | music    | `pitch`, `darkness`         |
-| `footstep` | grain      | foley    | `surface`, `weight`, `pace` |
-| `cloth`    | grain      | foley    | `fabric`, `speed`           |
-| `voice`    | stem       | dialogue | none                        |
+| Kind       | Sort       | Layer    | Macros                                   |
+| ---------- | ---------- | -------- | ---------------------------------------- |
+| `whoosh`   | procedural | effects  | `speed`, `brightness`                    |
+| `impact`   | procedural | effects  | `weight`, `decay`, `crack`               |
+| `shimmer`  | procedural | effects  | `density`, `height`                      |
+| `riser`    | procedural | effects  | `length`, `pitch`                        |
+| `wind`     | procedural | ambience | `gust`, `howl`                           |
+| `drone`    | procedural | music    | `pitch`, `darkness`                      |
+| `footstep` | grain      | foley    | `surface`, `weight`, `pace`              |
+| `cloth`    | grain      | foley    | `fabric`, `speed`                        |
+| `voice`    | stem       | dialogue | none                                     |
+| `crack`    | procedural | effects  | `size`, `brightness`, `crumble`          |
+| `boom`     | procedural | effects  | `size`, `decay`, `tone`                  |
+| `rubble`   | procedural | effects  | `size`, `density`, `brightness`, `swell` |
+| `roar`     | procedural | effects  | `brightness`, `motion`, `swell`          |
 
 The grains of one event do not clump. In `footstep` and `cloth`, `drawGrains` lets no more than two
 grains of one cloud sound at the same time (N = 2). It skips a drawn start that would be a third.
@@ -135,6 +154,31 @@ whatever the key. The macros and the draw still shape the sound: the thud agains
 pitches, the lengths and the starts.
 
 The list is a starting set. Each experiment and each later change may add kinds.
+
+Experiment 9 added four kinds, for a scene of stone and force. Three of them carry a size, because
+the weight of a sound is the size of the thing that makes it: a block of radius `a` metres sounds
+near `54.6 / a` hertz, where its circumference is one wavelength.
+
+- `crack` is one crack of a solid. `size` runs from a block of 0.05 m to one of 2 m. `brightness` is
+  its dry edge. `crumble` is the smaller cracks that follow it, over the `duration`.
+- `boom` is the body of a heavy hit: a band of noise and two damped modes that sink a little.
+  `size` sets the pitch, from 140 Hz to 56 Hz. `decay` runs from 0.12 s to 1.2 s. `tone` is the
+  share of the modes. The weight of a hit is a body near 100 Hz that lasts.
+- `rubble` is stone that falls in a mass: impacts at random times, each the knock and the crack
+  of a block of its size. `size` is the middle size, from 0.05 m to 1.5 m. `density` runs from 2 to
+  80 impacts a second. `swell` at 0.5 holds the rate; under it the mass thins out over the
+  `duration`, over it the mass grows and its blocks grow with it.
+- `roar` is a blast that rolls through a hall: four bands of noise whose levels wander by
+  themselves. `brightness` is the level of the top bands, `motion` how far the levels wander,
+  `swell` how far under its full level it starts.
+
+`crack` and `rubble` share one unit, `Stones`. It holds no state for an impact: each impact raises
+the envelopes of five bands of noise, and the envelopes decay, the low ones slowly. So any number
+of impacts costs the same.
+
+The level of a `rubble` follows its `density` as well as its `intensity`: a denser mass has more
+impacts on one another. The peak of one take of the four kinds differs from the median of the
+kind, since they are noise under envelopes.
 
 ### An event
 

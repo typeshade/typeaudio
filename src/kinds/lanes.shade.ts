@@ -18,6 +18,9 @@ import { Drone } from './drone.shade.ts';
 import { Footstep } from './footstep.shade.ts';
 import { Cloth } from './cloth.shade.ts';
 import { Stem } from './voice.shade.ts';
+import { Stones } from './stones.shade.ts';
+import { Boom } from './boom.shade.ts';
+import { Roar } from './roar.shade.ts';
 
 /** The clock of a lane. Each kind's lane extends it with the unit of that kind. */
 export class Lane {
@@ -243,12 +246,104 @@ export function voices(out: array<f32>, lanes: array<VoiceLane>, inputs: array<f
   }
 }
 
+export class CrackLane extends Lane {
+  stones: Stones = new Stones();
+
+  /** One sample. */
+  tick(): f32 {
+    if (!this.live()) {
+      return 0;
+    }
+    return this.stones.tick();
+  }
+}
+
+/** Renders one block of every crack lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
+export function cracks(out: array<f32>, lanes: array<CrackLane>, block: u32) {
+  for (let v: u32 = 0; v < lanes.length; v++) {
+    let c = lanes[v];
+    for (let n: u32 = 0; n < block; n++) {
+      out[v * block + n] = c.tick();
+    }
+    lanes[v] = c;
+  }
+}
+
+export class BoomLane extends Lane {
+  boom: Boom = new Boom();
+
+  /** One sample. */
+  tick(): f32 {
+    if (!this.live()) {
+      return 0;
+    }
+    return this.boom.tick();
+  }
+}
+
+/** Renders one block of every boom lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
+export function booms(out: array<f32>, lanes: array<BoomLane>, block: u32) {
+  for (let v: u32 = 0; v < lanes.length; v++) {
+    let c = lanes[v];
+    for (let n: u32 = 0; n < block; n++) {
+      out[v * block + n] = c.tick();
+    }
+    lanes[v] = c;
+  }
+}
+
+export class RubbleLane extends Lane {
+  stones: Stones = new Stones();
+
+  /** One sample. */
+  tick(): f32 {
+    if (!this.live()) {
+      return 0;
+    }
+    return this.stones.tick();
+  }
+}
+
+/** Renders one block of every rubble lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
+export function rubbles(out: array<f32>, lanes: array<RubbleLane>, block: u32) {
+  for (let v: u32 = 0; v < lanes.length; v++) {
+    let c = lanes[v];
+    for (let n: u32 = 0; n < block; n++) {
+      out[v * block + n] = c.tick();
+    }
+    lanes[v] = c;
+  }
+}
+
+export class RoarLane extends Lane {
+  roar: Roar = new Roar();
+
+  /** One sample. */
+  tick(): f32 {
+    if (!this.live()) {
+      return 0;
+    }
+    return this.roar.tick();
+  }
+}
+
+/** Renders one block of every roar lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
+export function roars(out: array<f32>, lanes: array<RoarLane>, block: u32) {
+  for (let v: u32 = 0; v < lanes.length; v++) {
+    let c = lanes[v];
+    for (let n: u32 = 0; n < block; n++) {
+      out[v * block + n] = c.tick();
+    }
+    lanes[v] = c;
+  }
+}
+
 /**
  * Puts the blocks of one kind in their rows of `raws`: event `i` of kind `kind` reads the row
  * `slots[i]` of `src`, the `out` of that kind's kernel, and writes `raws[i * block + n]`. The events
  * of other kinds are left as they are, so the host calls it once for each kind that has an event.
- * It takes one source and not nine, because a kernel of twelve storage buffers is more than WebGPU's
- * eight for a compute stage.
+ * It takes one source and not one for each kind, because a kernel of that many storage buffers is more
+ * than WebGPU's eight for a compute stage.
  */
 export function gather(
   raws: array<f32>,

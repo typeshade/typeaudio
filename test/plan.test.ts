@@ -42,7 +42,7 @@ describe('the fixture plan', () => {
 
 describe('the validator', () => {
   test('refuses an unknown kind', () => {
-    expect(refused((p) => (p.events[0].kind = 'boom'))).toMatch(
+    expect(refused((p) => (p.events[0].kind = 'thunder'))).toMatch(
       /^Event "wind-bed": field "kind" must be one of/,
     );
   });
@@ -96,6 +96,67 @@ describe('the validator', () => {
         }));
       }),
     ).toBe(`Plan: field "events" holds at most ${MAX_EVENTS} events.`);
+  });
+  // The fixture with its first event only, so that no event starts inside a silence of these tests.
+  const withFirst = (edit: (q: any) => void) => (q: any) => {
+    q.events = [{ ...q.events[0], t: 0, duration: 1 }];
+    edit(q);
+  };
+  const accepted = (edit: (q: any) => void) => {
+    const q = clone();
+    withFirst(edit)(q);
+    return validatePlan(q);
+  };
+  test('takes silences, sorts them, and refuses one that overlaps another or runs past the clip', () => {
+    expect(
+      accepted(
+        (q) =>
+          (q.silences = [
+            { t: 20, duration: 0.5 },
+            { t: 4, duration: 0.2 },
+          ]),
+      ).silences,
+    ).toEqual([
+      { t: 4, duration: 0.2 },
+      { t: 20, duration: 0.5 },
+    ]);
+    expect(validatePlan(plan).silences).toEqual([]);
+    expect(
+      refused(
+        withFirst(
+          (q) =>
+            (q.silences = [
+              { t: 4, duration: 0.5 },
+              { t: 4.2, duration: 0.5 },
+            ]),
+        ),
+      ),
+    ).toBe('Silence at 4.2 s: field "t" lies inside the silence from 4 to 4.5 s.');
+    expect(refused(withFirst((q) => (q.silences = [{ t: 29.9, duration: 0.5 }])))).toBe(
+      'Silence 0: field "duration" ends the silence after the clip ends at 30 s.',
+    );
+    expect(refused(withFirst((q) => (q.silences = [{ t: 4, duration: 0.001 }])))).toBe(
+      'Silence 0: field "duration" must be a number from 0.01 to 10.',
+    );
+    expect(refused(withFirst((q) => (q.silences = { t: 4, duration: 1 })))).toBe(
+      'Plan: field "silences" must be a list of silences.',
+    );
+  });
+  test('refuses an event that starts inside a silence, and takes one that starts at its end', () => {
+    const at10 = (silences: unknown) =>
+      withFirst((q) => {
+        q.events[0].t = 10;
+        q.silences = silences;
+      });
+    // The first event of the fixture file.
+    const id = 'wind-bed';
+    expect(refused(at10([{ t: 9.5, duration: 0.5 }]))).toBeNull();
+    expect(refused(at10([{ t: 10, duration: 0.5 }]))).toBe(
+      `Event "${id}": field "t" starts the sound inside the silence from 10 to 10.5 s; a sound starts before a silence or at its end.`,
+    );
+    expect(refused(at10([{ t: 9.75, duration: 0.5 }]))).toBe(
+      `Event "${id}": field "t" starts the sound inside the silence from 9.75 to 10.25 s; a sound starts before a silence or at its end.`,
+    );
   });
   test('refuses a bad scene, version and material', () => {
     expect(refused((p) => (p.version = 2))).toMatch(/field "version"/);

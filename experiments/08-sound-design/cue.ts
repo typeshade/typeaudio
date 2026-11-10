@@ -45,6 +45,10 @@ export function makeCue(e: PlanEvent, o: MakeOptions): MadeCue {
     case 'voice':
       cue.stem = made.lane.stem;
       break;
+    default:
+      throw new Error(
+        `makeCue: the retired Cue holds the nine kinds of experiment 8, and "${made.kind}" is not one of them.`,
+      );
   }
   return { cue, length: made.length };
 }
