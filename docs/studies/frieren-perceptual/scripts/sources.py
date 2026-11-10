@@ -564,13 +564,15 @@ def slab_fall(seed, size=1.0, tail=1.0):
     """A slab of stone that lands: the floor answers with a deep thud of noise under 100 Hz that lasts, the
     slab cracks, and small pieces scatter after it. `tail` shortens the thud, for landings that follow one
     another and must each be heard alone."""
-    hc = heavy_crack(seed, size=size, dur=0.35, k_rate=6, bright=0.7)
+    hc = heavy_crack(seed, size=size, dur=0.35, k_rate=6, bright=0.3)
     thud = burst(seed + 5, 26.0, 95.0, tail * (0.18 + 0.1 * min(size, 2.0)), rise=0.006)
+    body = boom(seed + 9, f=110.0 / max(size, 0.3) ** 0.3, tau=tail * (0.28 + 0.12 * min(size, 2.0)))       # the larger the slab, the lower and longer
     sc = tumble(0.7, seed + 7, lambda t: 16.0 * np.exp(-t / 0.22), sizes=(0.05, 0.15), speed=(2.0, 5.0))
-    y = np.zeros(max(len(hc), len(thud), len(sc)))
-    y[: len(hc)] += hc
-    y[: len(thud)] += 1.1 * thud
-    y[: len(sc)] += 0.3 * norm(sc)
+    y = np.zeros(max(len(hc), len(thud), len(sc), len(body)))
+    y[: len(hc)] += 0.6 * hc
+    y[: len(thud)] += 0.5 * thud
+    y[: len(body)] += 1.3 * body
+    y[: len(sc)] += 0.2 * norm(sc)
     return norm(y)
 
 
@@ -578,10 +580,12 @@ def block_hit(seed, size=0.6, v=8.0):
     """A block of stone that strikes another: the clack and thud of its size, and the crack of both."""
     r = dsp.rng(seed)
     k = norm(stone_impact(size, v, r))
-    c = heavy_crack(seed + 3, size=size, dur=0.2, k_rate=3, bright=0.5)
-    y = np.zeros(max(len(k), len(c)))
-    y[: len(k)] += k
-    y[: len(c)] += 0.8 * c
+    c = heavy_crack(seed + 3, size=size, dur=0.2, k_rate=3, bright=0.4)
+    b = boom(seed + 5, f=125.0 / max(size, 0.3) ** 0.3, tau=0.12 + 0.14 * size)
+    y = np.zeros(max(len(k), len(c), len(b)))
+    y[: len(k)] += 0.8 * k
+    y[: len(c)] += 0.7 * c
+    y[: len(b)] += 0.9 * b
     return norm(y)
 
 
@@ -628,3 +632,31 @@ def shot(seed):
     y[: len(pop)] += 0.7 * pop
     y[: len(zap)] += 0.6 * norm(zap)
     return norm(y)
+
+
+# ================================================================ round 9: the weight of a hit is a body that lasts
+# The owner missed the deep, long sound of a heavy hit, heard noise in its place, and found the top harsh.
+# Measured on the reference: after the wall hit the band from 60 to 150 Hz stays within 3 dB for 0.8 s, and
+# one line near 120 Hz holds 39 % of the energy under 150 Hz. Round 8 had a burst under 90 Hz that was gone
+# in 0.2 s. The weight is not in the lowest octave and not in the first instant: it is a body near 100 Hz
+# that lasts.
+
+def boom(seed, f=110.0, tau=0.4, tone=0.3, dur=None):
+    """The body of a heavy hit: a band of noise around f Hz and two damped modes in it that sink by a
+    twelfth of their pitch, with a fast rise and a decay of tau seconds. One long sound, not a row of short
+    ones: nothing here bounces."""
+    dur = dur or min(2.5, tau * 7)
+    n = nsamp(dur)
+    t = np.arange(n) / SR
+    env = np.exp(-t / tau)
+    k = max(2, nsamp(0.006))
+    env[:k] *= 0.5 - 0.5 * np.cos(np.pi * (np.arange(k) + 0.5) / k)
+    nz = dsp.spectral(dsp.white(n + nsamp(0.05), seed), lambda q: dsp.band_gain(q, 0.55 * f, 1.5 * f, 3))[:n]
+    nz = nz / (np.abs(nz).max() + 1e-12)
+    r = dsp.rng(seed + 1)
+    glide = 1.0 - 0.08 * (1 - np.exp(-t / (0.6 * tau)))
+    md = np.zeros(n)
+    for fm, a in ((f, 1.0), (0.72 * f, 0.7)):
+        md += a * np.sin(2 * np.pi * np.cumsum(fm * glide) / SR + r.uniform(0, 6.28))
+    md = md / (np.abs(md).max() + 1e-12)
+    return norm(((1 - tone) * nz + tone * md) * env)

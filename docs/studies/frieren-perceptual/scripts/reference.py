@@ -41,6 +41,13 @@ def crest(x, a, b):
     return 20 * np.log10(np.abs(seg).max() / np.sqrt((seg ** 2).mean()))
 
 
+def band_levels(x, t0, lo, hi, a, b, step):
+    """The level of a band of a passage in steps, from a to b picture seconds (dBFS)."""
+    y = dsp.spectral(x.mean(axis=1)[int((a - t0 - 0.3) * SR): int((b - t0 + 0.3) * SR)], lambda f: dsp.band_gain(f, lo, hi, 4))
+    k, off = int(step * SR), int(0.3 * SR)
+    return [float(10 * np.log10((y[off + i * k: off + (i + 1) * k] ** 2).mean() + 1e-12)) for i in range(int(round((b - a) / step)))]
+
+
 def level(x, a, d):
     seg = x[int(a * SR): int((a + d) * SR)]
     return float(10 * np.log10((seg ** 2).mean() + 1e-12))
@@ -67,5 +74,11 @@ for name, (t0, spans) in SPANS.items():
                 (lab,) + A.flutter(x, 178.0 - t0, 181.5 - t0) + (float(np.corrcoef(x[int(5.0 * SR): int(8.5 * SR), 0], x[int(5.0 * SR): int(8.5 * SR), 1])[0, 1]),)))
             print('  %-8s level each 20 ms from 177.40 s (dBFS): %s' % (lab, ' '.join('%5.1f' % level(x, t - t0, 0.02) for t in np.arange(177.40, 177.90, 0.02))))
             print('  %-8s level each 0.25 s from 183.0 s (dBFS): %s' % (lab, ' '.join('%5.1f' % level(x, t - t0, 0.25) for t in np.arange(183.0, 186.0, 0.25))))
+            for nm, lo, hi in (('under 120 Hz', 30.0, 120.0), ('200 to 1500 Hz', 200.0, 1500.0), ('2 to 8 kHz', 2000.0, 8000.0)):
+                e = band_levels(x, t0, lo, hi, 183.0, 185.25, 0.25)
+                print('  %-8s the end of the torrent, %s, each 0.25 s from 183.0 s, against 183.25 s (dB): %s' % (lab, nm, ' '.join('%+5.1f' % (v - e[1]) for v in e)))
     if name == 'force':
         print('  original level each 20 ms from 145.08 s (dBFS): %s' % ' '.join('%5.1f' % level(ref, t - t0, 0.02) for t in np.arange(145.08, 145.44, 0.02)))
+        for lab, x in (('original', ref), ('render', mine)):
+            print('  %-8s the body of the wall hit, 60 to 150 Hz, each 0.1 s from 145.95 s (dBFS): %s' % (lab, ' '.join('%5.1f' % v for v in band_levels(x, t0, 60.0, 150.0, 145.95, 146.95, 0.1))))
+            print('  %-8s the top of the wall hit, 2 to 8 kHz, each 0.1 s from 145.95 s (dBFS): %s' % (lab, ' '.join('%5.1f' % v for v in band_levels(x, t0, 2000.0, 8000.0, 145.95, 146.95, 0.1))))

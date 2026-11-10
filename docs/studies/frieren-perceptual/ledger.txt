@@ -1,4 +1,4 @@
-==================== red | 129 layers | 17 events of the picture
+==================== red | 123 layers | 17 events of the picture
   flight       20.000 to   22.300  the camera flies with the orb                                             5 layers
   passes       20.100 to   22.200  rocks pass on both sides                                                  9 layers
   strike1      21.120 to   21.200  the orb strikes rock; sparks                                              2 layers
@@ -14,14 +14,14 @@
   rays         25.800 to   26.260  a star of 8 to 10 rays reaches the walls and the vault                   24 layers
   ice          26.276 to   26.550  slabs of ice shoot up around the standing figure                         11 layers
   icestands    26.600 to   28.450  the ice stands; mist at its feet; glints                                 10 layers
-  smoke        28.530 to   30.210  wide: a cloud of smoke rolls; debris flies out of it                     11 layers
+  smoke        28.530 to   30.210  wide: a cloud of smoke rolls slowly; thin trails arc out of it; nothing lands in the frame  5 layers
   face         30.250 to   32.300  close: her face; hair in the wind                                         3 layers
   @hall       3 layers: bed, bed-low, bed-high
   @echo       6 layers: ice-slap, hit1-slap0, hit1-slap1, hit2-slap0, hit2-slap1, release-slap
   @offscreen  4 layers: wall-debris0, wall-debris1, settle0, settle1
   @mood       0 layers: 
-  of 129 layers: 116 belong to an event that is seen, 3 to the hall, 6 are echoes, 4 are off the frame, 0 are tones with no source
-==================== force | 46 layers | 15 events of the picture
+  of 123 layers: 110 belong to an event that is seen, 3 to the hall, 6 are echoes, 4 are off the frame, 0 are tones with no source
+==================== force | 47 layers | 15 events of the picture
   residue     136.500 to  137.100  the last pieces of the shield fade                                        1 layers
   lines       136.750 to  142.250  close: Fern speaks three lines                                            2 layers
   stare       142.500 to  145.150  close: the face of the clone                                              0 layers   (makes no sound of its own)
@@ -29,7 +29,7 @@
   ring        145.300 to  145.760  a ring runs through the air; dust lifts where she stood                   4 layers
   flight      145.240 to  145.780  she flies to the far wall                                                 2 layers
   whip        145.780 to  145.900  the camera whips to the wall                                              1 layers
-  hit         145.937 to  146.000  her body strikes the wall; a first puff of dust                           2 layers
+  hit         145.937 to  146.000  her body strikes the wall; a first puff of dust                           3 layers
   jet         145.980 to  146.400  a jet of dust shoots out to the left and grows                            2 layers
   split       146.260 to  146.450  the wall splits along a vertical line                                     1 layers
   breakout    146.470 to  146.650  large blocks leave the wall                                               1 layers
@@ -41,7 +41,7 @@
   @echo       2 layers: force-slap0, force-slap1
   @offscreen  6 layers: far-thump0, far-thump1, far-trickle, settle0, settle1, settle2
   @mood       1 layers: stare
-  of 46 layers: 34 belong to an event that is seen, 3 to the hall, 2 are echoes, 6 are off the frame, 1 are tones with no source
+  of 47 layers: 35 belong to an event that is seen, 3 to the hall, 2 are echoes, 6 are off the frame, 1 are tones with no source
 ==================== finale | 56 layers | 16 events of the picture
   swing       173.720 to  174.400  the staff swings into the frame                                           2 layers
   circle      174.460 to  177.470  a lit circle on the floor, under the spoken line                          2 layers

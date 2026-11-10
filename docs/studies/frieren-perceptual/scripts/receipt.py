@@ -53,6 +53,10 @@ for name in names:
         print('  force: loudest 100 ms in the half second before it: %.1f LUFS (bed average %.1f)' % (A.lw(x, f0 - 0.5, f0 - 0.001, 0.1), A.lavg(x, f0 - 2.0, f0 - 0.5)))
         print('  gap: quietest 100 ms between the force and the column: %.1f LUFS' % min(A.lw(x, a, a + 0.1, 0.1) for a in np.arange(f0 + 0.3, 145.937458 - t0 - 0.1, 0.02)))
         print('  collapse: loudness each half second from 146.3:', [round(A.lavg(x, a - t0, a + 0.5 - t0), 1) for a in (146.3, 146.8, 147.3, 147.8, 148.3, 148.8)])
+        lowb = dsp.spectral(x.mean(axis=1), lambda f: dsp.band_gain(f, 60.0, 150.0, 4))
+        topb = dsp.spectral(x.mean(axis=1), lambda f: dsp.band_gain(f, 2000.0, 8000.0, 4))
+        print('  the body of the wall hit, 60 to 150 Hz, each 0.1 s from 145.95 (dBFS):', [round(float(10 * np.log10((lowb[nsamp(a - t0): nsamp(a + 0.1 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(145.95, 146.95, 0.1)])
+        print('  the top of the wall hit, 2 to 8 kHz, each 0.1 s from 145.95 (dBFS):', [round(float(10 * np.log10((topb[nsamp(a - t0): nsamp(a + 0.1 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(145.95, 146.95, 0.1)])
         print('  after the wall hit: level each 0.1 s from 145.9 (dBFS):', [round(float(10 * np.log10((x[nsamp(a - t0): nsamp(a + 0.1 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(145.9, 147.75, 0.1)])
         print('  landings in the dust: rise of the level at each landing (80 ms after against 80 ms before):', ['%.2f s %+.1f dB' % (a, 10 * np.log10(((x[nsamp(a - t0): nsamp(a + 0.08 - t0)] ** 2).mean() + 1e-12) / ((x[nsamp(a - 0.08 - t0): nsamp(a - t0)] ** 2).mean() + 1e-12))) for a in (147.84, 148.05, 148.34, 148.62, 148.93)])
         print('  phone band (350 Hz to 9 kHz): force L100 %.1f, column L100 %.1f, bed %.1f' % (A.lw(ph, f0, f0 + 0.25, 0.1), A.lw(ph, 145.937458 - t0, 146.3 - t0, 0.1), A.lavg(ph, f0 - 2.0, f0 - 0.01)))
@@ -77,6 +81,9 @@ for name in names:
         print('  the view moves in from 177.80 to 178.12: share of the energy above 1 kHz %.1f dB at 177.80 to 177.95, %.1f dB at 178.15 to 178.6' % (
             10 * np.log10(sum(10 ** (v / 10) for v in A.bands_share(x, 177.80 - t0, 177.95 - t0)[3:]) + 1e-12), 10 * np.log10(sum(10 ** (v / 10) for v in A.bands_share(x, 178.15 - t0, 178.6 - t0)[3:]) + 1e-12)))
         print('  torrent, loudness of each second from 177.8, then the whiteout:', [round(A.lavg(x, a - t0, a + 1 - t0), 1) for a in (177.8, 178.8, 179.8, 180.76)], round(A.lavg(x, 181.76 - t0, 183.6 - t0), 1))
+        for nm_, lo_, hi_ in (('under 120 Hz', 30.0, 120.0), ('200 to 1500 Hz', 200.0, 1500.0), ('2 to 8 kHz', 2000.0, 8000.0)):
+            yb = dsp.spectral(x.mean(axis=1), lambda f: dsp.band_gain(f, lo_, hi_, 4))
+            print('  the end of the torrent, %s, each 0.25 s from 183.0 (dBFS):' % nm_, [round(float(10 * np.log10((yb[nsamp(a - t0): nsamp(a + 0.25 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(183.0, 185.0, 0.25)])
         print('  torrent, level each 0.25 s from 183.5 (dBFS):', [round(float(10 * np.log10((x[nsamp(a - t0): nsamp(a + 0.25 - t0)] ** 2).mean() + 1e-12)), 1) for a in np.arange(183.5, 185.5, 0.25)])
         seg = x[nsamp(178.0 - t0): nsamp(181.5 - t0)]
         print('  torrent 178.0 to 181.5 s: crest %.1f dB; correlation of left and right %.2f; tones %.0f %%, transients %.0f %%, noise %.0f %%; deepest periodic line %.1f %% at %.0f Hz' % (
@@ -93,11 +100,11 @@ for name in names:
                       ('lock2', 24.09, 24.3), ('lock-grind', 23.85, 24.4), ('crack-spread', 23.85, 24.6), ('crack-tone', 23.85, 24.6),
                       ('shell', 24.8, 25.68), ('shell-tone', 24.8, 25.68), ('shell-strain', 25.2, 25.69), ('shell-fracture', 25.692, 25.76), ('release-fall', 25.8, 26.2), ('release-slap', 26.02, 26.2), ('ray-hit0', 25.82, 26.0), ('ray-hit4', 25.92, 26.1), ('ray-sear1', 25.84, 26.25), ('ray-debris0', 25.98, 26.4),
                       ('shell-groan1', 25.28, 25.64), ('ice-boom', 26.28, 26.6), ('ice-crack', 26.28, 26.5), ('ice-slab3', 26.445, 26.7), ('ice-crush0', 26.29, 26.6), ('ice-groan1', 26.78, 27.28), ('ice-tick0', 26.93, 27.15),
-                      ('ice-mist', 27.0, 28.3), ('wall-debris0', 26.9, 28.4), ('smoke', 28.6, 30.1), ('smoke-hiss', 28.6, 30.1), ('debris-rain0', 28.6, 30.1), ('chunk1', 29.17, 29.6), ('streak1', 28.95, 29.25),
+                      ('ice-mist', 27.0, 28.3), ('wall-debris0', 26.9, 28.4), ('smoke', 28.6, 30.1), ('smoke-hiss', 28.6, 30.1), ('smoke-swell', 28.9, 29.6), ('debris-rain0', 28.6, 30.1),
                       ('hair-cloth', 30.4, 32.0), ('wind-tone', 30.6, 32.0)],
               'force': [('shield-residue', 136.5, 136.9), ('settle0', 137.05, 137.4), ('handling', 138.4, 138.85), ('far-thump0', 138.95, 139.3), ('stare', 143.3, 145.1),
                         ('floor-crack', 145.2, 145.6), ('shock-ring', 145.3, 145.7), ('grit0', 145.27, 145.6), ('force-slap0', 145.34, 145.6), ('travel-air', 145.3, 145.75),
-                        ('wall-hit', 145.94, 146.0), ('wall-crater', 145.967, 146.02), ('dust-jet', 146.03, 146.5), ('wall-split', 146.26, 146.45), ('breakout', 146.47, 146.7), ('block-knock1', 146.97, 147.2),
+                        ('wall-hit', 145.94, 146.0), ('wall-boom', 145.94, 146.6), ('wall-crater', 145.967, 146.02), ('dust-jet', 146.03, 146.5), ('wall-split', 146.26, 146.45), ('breakout', 146.47, 146.7), ('block-knock1', 146.97, 147.2),
                         ('wall-rumble', 146.6, 147.3), ('dust-hiss', 146.4, 148.4), ('dust-billow', 146.4, 148.4), ('land0', 147.84, 148.04), ('land1', 148.05, 148.3), ('land2', 148.34, 148.6),
                         ('land3', 148.62, 148.9), ('land4', 148.93, 149.2), ('land-patter', 147.95, 148.9),
                         ('trickle', 148.6, 149.5), ('wall-ticks', 148.7, 149.5), ('wall-groan', 148.88, 149.3)],
