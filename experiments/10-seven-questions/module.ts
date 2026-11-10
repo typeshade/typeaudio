@@ -7,17 +7,21 @@ import {
   renderContact,
   roomOf,
   saturated,
+  highPassed,
   scaled,
   type Body,
   type ContactNumbers,
   type Failure,
   type Result,
+  type Support,
+  type Gesture,
 } from './definitions.ts';
 
 export interface BodyAnswer {
   readonly material: string;
   readonly form: 'block' | 'slab';
   readonly size: readonly [number, number, number];
+  readonly support?: Support;
 }
 
 /** One sound as seven answers. */
@@ -27,8 +31,8 @@ export interface Sound {
   readonly who: BodyAnswer;
   /** What: the thing that is met. */
   readonly what: BodyAnswer;
-  /** How: the gesture. This module has one, `hit`. */
-  readonly how: 'hit';
+  /** How: the gesture. */
+  readonly how: Gesture;
   /** How much: the speed, and the result that the drawing shows. */
   readonly howMuch: {
     readonly speed: number;
@@ -55,9 +59,17 @@ export interface Module {
   readonly style: {
     /** The bodies of the drawing over the bodies that are computed: 2 is twice as large. */
     readonly size: number;
+    /**
+     * The short events (the high points that are crushed, the pieces that break off) over what
+     * physics gives them, dB. Physics makes a heavy landing a low thump; a film makes its crunch
+     * loud. One value for the module: one material keeps one timbre.
+     */
+    readonly crunch: number;
     /** The drive into the soft limit before the ceiling. */
     readonly density: number;
   };
+  /** The form of the output: the lowest frequency it keeps, Hz. */
+  readonly output: { readonly lowest: number };
   readonly seed: number;
   readonly sounds: readonly Sound[];
 }
@@ -73,7 +85,7 @@ export interface ModuleRender {
 const bodyOf = (answer: BodyAnswer, size: number): Body => {
   const material = MATERIALS[answer.material];
   if (!material) throw new Error(`no material "${answer.material}"`);
-  return scaled({ material, form: answer.form, size: answer.size }, size);
+  return scaled({ material, form: answer.form, size: answer.size, support: answer.support }, size);
 };
 
 /** The clip of a module: every sound at its second, in its place, in the room, at -1 dBFS. */
@@ -92,6 +104,7 @@ export function renderModule(module: Module): ModuleRender {
     const seconds = module.clip.to - module.clip.from - start;
     const made = renderContact(
       {
+        gesture: sound.how,
         striker: bodyOf(sound.who, module.style.size),
         struck: bodyOf(sound.what, module.style.size),
         speed: sound.howMuch.speed,
@@ -102,6 +115,8 @@ export function renderModule(module: Module): ModuleRender {
       seconds,
       module.seed + 100 * index,
       lead,
+      'all',
+      10 ** (module.style.crunch / 20),
     );
     numbers[sound.id] = made.numbers;
     const [x, y, z] = sound.where;
@@ -131,6 +146,12 @@ export function renderModule(module: Module): ModuleRender {
   for (let i = 0; i < n; i++) {
     left[i]! += wl[i]!;
     right[i]! += wr[i]!;
+  }
+  const hl = highPassed(left, module.output.lowest);
+  const hr = highPassed(right, module.output.lowest);
+  for (let i = 0; i < n; i++) {
+    left[i] = hl[i]!;
+    right[i] = hr[i]!;
     peak = Math.max(peak, Math.abs(left[i]!), Math.abs(right[i]!));
   }
   const ceiling = 10 ** (-1 / 20);

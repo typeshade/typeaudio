@@ -47,13 +47,34 @@ export const MATERIALS: Readonly<Record<string, Material>> = {
 /** The speed of a wave along the material, m/s. */
 export const waveSpeed = (m: Material): number => Math.sqrt(m.modulus / m.density);
 
+/**
+ * What a body rests on. A free body keeps its rings. A built body (a wall in a building) and a body
+ * on the ground (a floor) lose their rings into what holds them, and what holds them answers too.
+ */
+export type Support = 'free' | 'built' | 'ground';
+
 /** A material with a size. A block is free; a slab is a wall or a floor, held at its edges. */
 export interface Body {
   readonly material: Material;
   readonly form: 'block' | 'slab';
   /** Metres on three axes. The smallest axis of a slab is its thickness. */
   readonly size: readonly [number, number, number];
+  /** What the body rests on. A block is free and a slab is built when this is not given. */
+  readonly support?: Support;
 }
+
+/**
+ * The loss that a support adds to every mode, and the share of the answer that the support gives.
+ * First values, not measured: a wall loses a fifth of a ring's energy in a radian into the building;
+ * a floor on the ground loses about half.
+ */
+const SUPPORT: Readonly<Record<Support, { readonly loss: number; readonly share: number }>> = {
+  free: { loss: 0, share: 0 },
+  built: { loss: 0.2, share: 0.6 },
+  ground: { loss: 0.5, share: 0.85 },
+};
+
+export const supportOf = (b: Body): Support => b.support ?? (b.form === 'slab' ? 'built' : 'free');
 
 export const volume = (b: Body): number => b.size[0] * b.size[1] * b.size[2];
 export const mass = (b: Body): number => volume(b) * b.material.density;
@@ -93,6 +114,8 @@ export interface ModeOptions {
   readonly fmax?: number;
   /** The most modes a body keeps. More are thinned at random, and the rest carry their power. */
   readonly max?: number;
+  /** A loss from what the body comes to rest on, added to every mode. */
+  readonly rests?: number;
 }
 
 /**
@@ -102,6 +125,12 @@ export interface ModeOptions {
  * A block is taken as a box of standing waves of two speeds, c and 0.6·c. Both are textbook first
  * forms, not a solution of the body. Stone is not even, so each mode moves by up to 6 %.
  * A mode dies in tau = 1 / (π·f·η), and the loss η grows with the frequency.
+ *
+ * A body that is built or on the ground loses its rings into its support, and the support answers
+ * with modes of its own. The support is large, uneven and lossy, so its modes are many, at no
+ * regular places, and broad. A large structure is a set of plates, and a plate has the same count
+ * of modes in each hertz, so the support's modes are spread evenly in hertz. The
+ * support gives `SUPPORT[support].share` of the power, and the body the rest.
  */
 export function modesOf(body: Body, seed: number, options: ModeOptions = {}): Mode[] {
   const fmin = options.fmin ?? 25;
@@ -135,8 +164,11 @@ export function modesOf(body: Body, seed: number, options: ModeOptions = {}): Mo
           }
     }
   }
+  const support = SUPPORT[supportOf(body)];
   const keep = Math.min(1, max / Math.max(1, found.length));
-  const power = Math.sqrt(1 / keep);
+  const power = Math.sqrt(
+    ((1 - support.share) * Math.max(1, found.length)) / Math.max(1, found.length * keep),
+  );
   // A small body moves little air at a low frequency: (k·a)², to 1.
   const radius = Math.cbrt(volume(body)) / 2;
   const area = surface(body);
@@ -147,10 +179,25 @@ export function modesOf(body: Body, seed: number, options: ModeOptions = {}): Mo
     const shape = 2 * rnd() - 1;
     if (rnd() >= keep) continue;
     const f = f0 * jitter;
-    const eta = body.material.loss * (1 + f / 3000);
+    const eta = body.material.loss * (1 + f / 3000) + support.loss + (options.rests ?? 0);
     const ka = (2 * Math.PI * f * radius) / 343;
     const air = body.form === 'slab' ? 1 : Math.min(1, ka * ka);
     modes.push({ f, tau: 1 / (Math.PI * f * eta), gain: (power * shape * air * area) / moved });
+  }
+  if (support.share > 0) {
+    // The support has as many modes as the body keeps, in the same band, and carries its share
+    // of the power of all the modes the body has.
+    const count = Math.min(max, Math.max(1, found.length));
+    const each = Math.sqrt((support.share * Math.max(1, found.length)) / count);
+    for (let k = 0; k < count; k++) {
+      const f = fmin + (fmax - fmin) * rnd();
+      const eta = support.loss + body.material.loss * (1 + f / 3000);
+      modes.push({
+        f,
+        tau: 1 / (Math.PI * f * eta),
+        gain: (each * (2 * rnd() - 1) * area) / moved,
+      });
+    }
   }
   return modes.sort((p, q) => p.f - q.f);
 }
@@ -173,7 +220,14 @@ export interface Failure {
   readonly force: number;
 }
 
+/**
+ * The gesture of a contact. A hit leaves the striker free after it. A landing leaves the striker
+ * resting on the struck body, and the striker's rings drain into the struck body's support.
+ */
+export type Gesture = 'hit' | 'land';
+
 export interface Contact {
+  readonly gesture?: Gesture;
   readonly striker: Body;
   readonly struck: Body;
   /** m/s, as the drawing shows it. */
@@ -212,6 +266,8 @@ export interface ContactNumbers {
 }
 
 const POISSON = 0.25;
+/** The share of the impulse of a stone on stone that passes smoothly, as the faces close. */
+const SMOOTH = 0.3;
 /** The mean of the cube of a piece's width over the smallest width, for the power law below. */
 const MEAN_VOLUME = 19;
 /** A piece is from 1 to 16 of the smallest width, and small pieces are many. */
@@ -325,6 +381,7 @@ export function renderContact(
   seed: number,
   lead = 0.01,
   parts: 'all' | 'pulse' | 'breaks' = 'all',
+  crunch = 1,
 ): Rendered {
   const numbers = contactNumbers(contact);
   const n = Math.round(seconds * SAMPLE_RATE);
@@ -332,28 +389,55 @@ export function renderContact(
   const breaks = new Float32Array(n);
   const rnd = random(seed);
   const at = Math.round(lead * SAMPLE_RATE);
-  const pulse = (start: number, length: number, top: number): void => {
+  const pulse = (start: number, length: number, top: number, into = force): void => {
     const len = Math.max(2, Math.round(length * SAMPLE_RATE));
     // A pulse shorter than two samples keeps its momentum.
     const scale = Math.max(1, 2 / SAMPLE_RATE / length);
     for (let i = 0; i < len && start + i < n; i++)
-      force[start + i]! += top * scale * Math.sin((Math.PI * (i + 0.5)) / len) ** 2;
+      into[start + i]! += top * scale * Math.sin((Math.PI * (i + 0.5)) / len) ** 2;
   };
-  pulse(at, numbers.time, numbers.force);
   const grain = contact.struck.material.grain;
   const strength = contact.struck.material.strength;
-  // A force that crushes is not smooth. The face holds the force piece by piece: when a piece
-  // fails, the force falls by what that piece held, and it comes back as the next piece takes the
-  // load, in the time the striker needs to cross the piece.
-  const span = Math.round(numbers.time * SAMPLE_RATE);
-  const fails = Math.min(2000, Math.round(numbers.crushed / (2 * grain) ** 3));
-  for (let k = 0; k < fails && span > 4; k++) {
-    const start = at + Math.floor(rnd() * span);
-    const size = Math.min(4, pieceWidth(rnd())) * 2 * grain;
-    const held = Math.min(force[start]!, strength * size * size);
-    const back = Math.max(2, (size / contact.speed) * SAMPLE_RATE);
-    for (let i = 0; i < 6 * back && start + i < at + span; i++)
-      force[start + i] = Math.max(0, force[start + i]! - held * Math.exp(-i / back));
+  if (numbers.crushed <= 0) {
+    pulse(at, numbers.time, numbers.force);
+  } else {
+    // Two rough faces of stone do not meet as one face. They meet at their high points, one after
+    // another, and each one is crushed in the time the striker needs to cross its height. So most
+    // of the impulse passes in short pulses: a fifth of a piece's width over the speed. A share of
+    // it passes smoothly, as the faces close.
+    // The style scales the roughness, not the impulse: the high points are drawn into their own
+    // force, the smooth force of the same impulse is taken away from it, and what is left is
+    // scaled by `crunch`. The impulse that the block delivers stays what physics gives.
+    pulse(at, numbers.time, numbers.force);
+    const rough = new Float32Array(n);
+    const [sx, sy, sz] = contact.striker.size;
+    const face = Math.min(sx * sy, sy * sz, sz * sx);
+    const count = Math.min(4000, Math.max(20, Math.round(face / (2 * grain) ** 2)));
+    const widths: number[] = [];
+    const starts: number[] = [];
+    let total = 0;
+    for (let k = 0; k < count; k++) {
+      // A high point is a few grains wide, and it carries a force as large as its face.
+      const width = Math.min(4, pieceWidth(rnd())) * 2 * grain;
+      // The high points meet most where the force is most: a time drawn from sin².
+      let u = rnd();
+      while (rnd() > Math.sin(Math.PI * u) ** 2) u = rnd();
+      widths.push(width);
+      starts.push(at + Math.floor(u * numbers.time * SAMPLE_RATE));
+      total += width ** 2;
+    }
+    for (let k = 0; k < count; k++) {
+      // Stone is brittle: the force on a high point rises while the striker presses it, and it
+      // falls when the point breaks, in the time a crack needs to cross it (800 m/s).
+      const share = ((1 - SMOOTH) * numbers.impulse * widths[k]! ** 2) / total;
+      const rise = Math.max(2, Math.round((widths[k]! / (5 * contact.speed)) * SAMPLE_RATE));
+      const fall = Math.max(1, Math.round((widths[k]! / 800) * SAMPLE_RATE));
+      const top = (2 * share * SAMPLE_RATE) / (rise + fall);
+      for (let i = 0; i < rise + fall && starts[k]! + i < n; i++)
+        rough[starts[k]! + i]! += top * (i < rise ? i / rise : 1 - (i - rise) / fall);
+    }
+    pulse(at, numbers.time, -numbers.force * (1 - SMOOTH), rough);
+    for (let i = 0; i < n; i++) force[i]! += crunch * rough[i]!;
   }
 
   const failures = contact.failures ?? [];
@@ -374,7 +458,7 @@ export function renderContact(
       // Small pieces are many: the size of a piece follows a power law.
       const size = pieceWidth(rnd()) * 2 * grain;
       const len = Math.max(2, Math.round((size / 800) * SAMPLE_RATE));
-      const top = (rnd() < 0.5 ? -1 : 1) * click * failure.force * size * size;
+      const top = (rnd() < 0.5 ? -1 : 1) * click * crunch * failure.force * size * size;
       for (let j = 0; j < len && i + j < n; j++)
         breaks[i + j]! += top * Math.sin((Math.PI * (j + 0.5)) / len) ** 2;
     }
@@ -382,9 +466,12 @@ export function renderContact(
 
   const sum = new Float64Array(n);
   const [strikerShare, struckShare] = numbers.rings;
+  const rests = contact.gesture === 'land' ? SUPPORT[supportOf(contact.struck)].loss : 0;
   const part = (body: Body, share: number, salt: number): void => {
     if (share <= 0) return;
-    const modes = modesOf(body, seed + salt).map((mode) => ({ ...mode, gain: mode.gain * share }));
+    const modes = modesOf(body, seed + salt, body === contact.striker ? { rests } : {}).map(
+      (mode) => ({ ...mode, gain: mode.gain * share }),
+    );
     if (parts !== 'breaks') ring(force, modes, sum);
     if (parts === 'pulse') return;
     const shear = 0.6 * waveSpeed(body.material);
@@ -427,6 +514,35 @@ export function saturated(samples: Float32Array, drive: number): Float32Array {
   return out;
 }
 
+/**
+ * A high-pass of two poles (Butterworth) at `hz`: the form of the output. A programme for
+ * television or a stream takes little under 40 Hz; a theatre takes it all.
+ */
+export function highPassed(samples: Float32Array, hz: number): Float32Array {
+  const out = new Float32Array(samples.length);
+  if (hz <= 0) return samples.slice();
+  const w = Math.tan((Math.PI * hz) / SAMPLE_RATE);
+  const q = Math.SQRT1_2;
+  const norm = 1 / (1 + w / q + w * w);
+  const b0 = norm;
+  const a1 = 2 * (w * w - 1) * norm;
+  const a2 = (1 - w / q + w * w) * norm;
+  let x1 = 0;
+  let x2 = 0;
+  let y1 = 0;
+  let y2 = 0;
+  for (let i = 0; i < samples.length; i++) {
+    const x = samples[i]!;
+    const y = b0 * (x - 2 * x1 + x2) - a1 * y1 - a2 * y2;
+    out[i] = y;
+    x2 = x1;
+    x1 = x;
+    y2 = y1;
+    y1 = y;
+  }
+  return out;
+}
+
 export interface Room {
   /** Seconds for the low part of the room to fall by 60 dB. */
   readonly decay: number;
@@ -440,34 +556,108 @@ export const ROOMS: Readonly<Record<string, Room>> = {
   hall: { decay: 2.4, damping: 0.35, level: -12 },
 };
 
-const LINES = [1447, 1789, 2083, 2399, 2731, 3089, 3433, 3767];
-
-/** The room: eight delay lines that feed one another. Returns the left and the right of the room. */
-export function roomOf(samples: Float32Array, room: Room): [Float32Array, Float32Array] {
-  const n = samples.length;
-  const left = new Float32Array(n);
-  const right = new Float32Array(n);
-  const lines = LINES.map((len) => new Float32Array(len));
-  const at = LINES.map(() => 0);
-  const low = LINES.map(() => 0);
-  const gain = LINES.map((len) => 10 ** ((-3 * len) / (room.decay * SAMPLE_RATE)));
-  const wet = 10 ** (room.level / 20) / 2;
-  const taps = new Float64Array(8);
-  for (let i = 0; i < n; i++) {
-    let total = 0;
-    for (let k = 0; k < 8; k++) {
-      const v = lines[k]![at[k]!]!;
-      low[k] = v + room.damping * (low[k]! - v);
-      taps[k] = low[k]! * gain[k]!;
-      total += taps[k]!;
+/** An FFT in place, radix 2: `re` and `im` of a length that is a power of two. */
+function fft(re: Float64Array, im: Float64Array, inverse: boolean): void {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      [re[i], re[j]] = [re[j]!, re[i]!];
+      [im[i], im[j]] = [im[j]!, im[i]!];
     }
-    const mixed = total / 4;
-    for (let k = 0; k < 8; k++) {
-      lines[k]![at[k]!] = samples[i]! + taps[k]! - mixed;
-      at[k] = (at[k]! + 1) % LINES[k]!;
-    }
-    left[i] = wet * (taps[0]! + taps[2]! + taps[4]! + taps[6]!);
-    right[i] = wet * (taps[1]! + taps[3]! + taps[5]! + taps[7]!);
   }
-  return [left, right];
+  for (let len = 2; len <= n; len <<= 1) {
+    const w = ((inverse ? 2 : -2) * Math.PI) / len;
+    const wr = Math.cos(w);
+    const wi = Math.sin(w);
+    for (let i = 0; i < n; i += len) {
+      let cr = 1;
+      let ci = 0;
+      for (let k = 0; k < len / 2; k++) {
+        const a = i + k;
+        const b = a + len / 2;
+        const xr = re[b]! * cr - im[b]! * ci;
+        const xi = re[b]! * ci + im[b]! * cr;
+        re[b] = re[a]! - xr;
+        im[b] = im[a]! - xi;
+        re[a]! += xr;
+        im[a]! += xi;
+        const t = cr * wr - ci * wi;
+        ci = cr * wi + ci * wr;
+        cr = t;
+      }
+    }
+  }
+  if (inverse) for (let i = 0; i < n; i++) ((re[i]! /= n), (im[i]! /= n));
+}
+
+/** `a` convolved with two answers at once: the left and the right. The length of `a` is kept. */
+function convolve2(
+  a: Float32Array,
+  left: Float32Array,
+  right: Float32Array,
+): [Float32Array, Float32Array] {
+  let size = 1;
+  while (size < a.length + left.length) size <<= 1;
+  const ar = new Float64Array(size);
+  const ai = new Float64Array(size);
+  ar.set(a);
+  fft(ar, ai, false);
+  // One complex transform carries both answers: the left as the real part, the right as the
+  // imaginary part. The product with a real signal keeps them apart.
+  const br = new Float64Array(size);
+  const bi = new Float64Array(size);
+  br.set(left);
+  bi.set(right);
+  fft(br, bi, false);
+  for (let i = 0; i < size; i++) {
+    const r = ar[i]! * br[i]! - ai[i]! * bi[i]!;
+    const m = ar[i]! * bi[i]! + ai[i]! * br[i]!;
+    br[i] = r;
+    bi[i] = m;
+  }
+  fft(br, bi, true);
+  return [Float32Array.from(br.subarray(0, a.length)), Float32Array.from(bi.subarray(0, a.length))];
+}
+
+/**
+ * The answer of the room to a click: noise that dies, a different noise in each ear. A room has
+ * no pitch of its own when it is large, so its answer is noise. The low part dies in `decay`; the
+ * top dies sooner by `damping`. The direct sound and the first reflections are 15 ms apart.
+ */
+export function roomAnswer(room: Room, seed: number): [Float32Array, Float32Array] {
+  const n = Math.round(room.decay * SAMPLE_RATE);
+  const gap = Math.round(0.015 * SAMPLE_RATE);
+  const make = (salt: number): Float32Array => {
+    const rnd = random(seed + salt);
+    const out = new Float32Array(n);
+    let low = 0;
+    let energy = 0;
+    for (let i = gap; i < n; i++) {
+      const t = (i - gap) / SAMPLE_RATE;
+      const white = 2 * rnd() - 1;
+      // A one-pole split at about 1.5 kHz: the low part and the rest die at their own rates.
+      low += 0.18 * (white - low);
+      const high = white - low;
+      const lowDie = 10 ** ((-3 * t) / room.decay);
+      const highDie = 10 ** ((-3 * t) / (room.decay * (1 - room.damping)));
+      // The first 80 ms build up: a room's reflections grow dense before they fade.
+      const build = Math.min(1, t / 0.08);
+      const v = build * (low * lowDie + high * highDie);
+      out[i] = v;
+      energy += v * v;
+    }
+    const scale = 10 ** (room.level / 20) / Math.sqrt(energy || 1);
+    for (let i = 0; i < n; i++) out[i]! *= scale;
+    return out;
+  };
+  return [make(1), make(2)];
+}
+
+/** The room: the sound convolved with the answer of the room. Returns its left and its right. */
+export function roomOf(samples: Float32Array, room: Room, seed = 1): [Float32Array, Float32Array] {
+  const [l, r] = roomAnswer(room, seed);
+  return convolve2(samples, l, r);
 }

@@ -576,8 +576,25 @@ What the first form does, as the code states it:
 - Physics gives the timbre. The answer "why" gives the level, in decibels under the sound that leads.
 - `style.size` makes every body of the drawing larger by one ratio. Two clips were made: 1 and 2.
 
+**Review 1, 2026-11-10.** The owner heard both clips (commit `2f10c79`) and said: neither is good; it
+is like listening from inside a bamboo tube. The agent measured why.
+
+| Cause                                                                                       | Measure                                                                 | Change                                                                                                        |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| The wall and the floor were free plates: a few low modes rang for long                      | 99 % of a landing's energy in 12 spectral peaks; the reference has 32 % | A body has a support: `built` or `ground` drains its rings and answers with many broad modes, evenly in hertz |
+| The room was eight delay lines that feed one another                                        | The room alone held 91 % of its energy in 12 peaks                      | The room is noise that dies, a different noise in each ear, by FFT convolution                                |
+| A stone on stone was one smooth force: only the lowest modes answered                       | Above 400 Hz the landing was 30 to 50 dB under its 25 Hz band           | The force passes through crushed high points, each with a slow rise and a brittle fall                        |
+| The block that landed rang on as if free                                                    | Peaks at 1295 Hz and 2775 Hz, the block's own modes                     | The gesture `land`: the striker rests, and its rings drain into the support                                   |
+| Physics makes a heavy landing a low thump with a faint crunch; a film makes the crunch loud | The random high points add up only below 1 / contact time               | `style.crunch` (dB) scales the roughness only, not the impulse: one value for the module, 26 dB               |
+| A programme for television keeps little under 40 Hz                                         | The landing had its most energy at 25 Hz; the reference at 50 to 100 Hz | `output.lowest`, a high-pass node at the end                                                                  |
+
+After these changes, the narrow peaks stand as far above the spectrum as in the reference (8 to 10 dB
+against 8 to 10 dB). With `--size 2`, the bands of each sound lie within about 6 dB of the reference.
+A number did not tell stone from a bin in experiment 9, so these measures say only that the gross
+faults are gone. The owner's ear decides.
+
 **What it lacks.** Dust, the air that is pushed out, the fall before the landing, and every sound that
-is not stone. Nothing of it was heard by its writer. The run takes under a second on the CPU of the
+is not stone. Nothing of it was heard by its writer. The run takes about a second on the CPU of the
 container.
 
-**Status.** First form of the first module, built. The owner's review of the two clips is the next step.
+**Status.** Second render of the first module. The owner's review of it is the next step.

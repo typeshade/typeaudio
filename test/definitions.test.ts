@@ -6,6 +6,7 @@ import {
   contactNumbers,
   mass,
   modesOf,
+  highPassed,
   pitched,
   renderContact,
   scaled,
@@ -93,6 +94,37 @@ describe('a contact', () => {
   });
 });
 
+describe('a support and a gesture', () => {
+  it('a wall in a building rings shorter than the same slab when it is free', () => {
+    const free = modesOf({ ...wall, support: 'free' }, 3);
+    const built = modesOf({ ...wall, support: 'built' }, 3);
+    const longest = (modes: readonly { tau: number }[]): number =>
+      Math.max(...modes.map((m) => m.tau));
+    expect(longest(built)).toBeLessThan(longest(free) / 5);
+    // The support answers too: the built slab has more modes than the free one.
+    expect(built.length).toBeGreaterThan(free.length);
+  });
+
+  it('a block that lands rings shorter than a block that hits and is free', () => {
+    const free = modesOf(block, 3);
+    const resting = modesOf(block, 3, { rests: 0.2 });
+    resting.forEach((mode, i) => expect(mode.tau).toBeLessThan(free[i]!.tau / 2));
+    const hit = renderContact({ ...landing, gesture: 'hit' }, 0.3, 7, 0.01).samples;
+    const land = renderContact({ ...landing, gesture: 'land' }, 0.3, 7, 0.01).samples;
+    expect(energy(land)).not.toBe(energy(hit));
+  });
+
+  it('crunch scales the roughness of a stone on stone, and a soft striker has none', () => {
+    const plain = renderContact(landing, 0.5, 7, 0.01, 'pulse', 1).samples;
+    const rough = renderContact(landing, 0.5, 7, 0.01, 'pulse', 20).samples;
+    expect(energy(rough)).toBeGreaterThan(4 * energy(plain));
+    const soft: Contact = { striker: person, struck: wall, speed: 40, result: 'mark' };
+    const a = renderContact(soft, 0.3, 7, 0.01, 'pulse', 1).samples;
+    const b = renderContact(soft, 0.3, 7, 0.01, 'pulse', 20).samples;
+    expect(b).toEqual(a);
+  });
+});
+
 describe('an effect', () => {
   it('pitch lowers and lengthens by one ratio', () => {
     const tone = Float32Array.from({ length: 4800 }, (_, i) =>
@@ -105,5 +137,16 @@ describe('an effect', () => {
     // 480 Hz for 0.1 s is 48 periods; at half the pitch they take 0.2 s.
     expect(crossings).toBeGreaterThanOrEqual(47);
     expect(crossings).toBeLessThanOrEqual(48);
+  });
+
+  it('the output high-pass takes away what lies under its frequency', () => {
+    const tone = (hz: number): Float32Array =>
+      Float32Array.from({ length: 48000 }, (_, i) => Math.sin((2 * Math.PI * hz * i) / 48000));
+    expect(energy(highPassed(tone(20), 40).subarray(24000))).toBeLessThan(
+      0.25 * energy(tone(20).subarray(24000)),
+    );
+    expect(energy(highPassed(tone(400), 40).subarray(24000))).toBeGreaterThan(
+      0.95 * energy(tone(400).subarray(24000)),
+    );
   });
 });
