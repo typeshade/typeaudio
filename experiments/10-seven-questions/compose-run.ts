@@ -2,7 +2,8 @@
 //
 //   bun experiments/10-seven-questions/compose-run.ts [--module module-2.json] [--out dir]
 //
-// A variant with `front: false` leaves out every `front` node: it is prototype 3b of experiment 9.
+// A variant names the effect nodes it keeps. The variant `3b` keeps only `pitch`: it is prototype 3b
+// of experiment 9.
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -16,14 +17,17 @@ const arg = (name: string): string | undefined => {
   const at = process.argv.indexOf(`--${name}`);
   return at < 0 ? undefined : process.argv[at + 1];
 };
-type File = Composition & { readonly variants: Record<string, { readonly front: boolean }> };
+type Variant = { readonly effects: readonly string[]; readonly part?: 'dry' | 'mix' };
+type File = Composition & { readonly variants: Record<string, Variant> };
 const c = JSON.parse(await readFile(join(here, arg('module') ?? 'module-2.json'), 'utf8')) as File;
 const out = arg('out') ?? join(here, 'out');
 await mkdir(out, { recursive: true });
 for (const [name, variant] of Object.entries(c.variants)) {
+  // A variant keeps the effect nodes it names, in the order of the sound, and the part it names.
   const sounds = c.sounds.map((s) => ({
     ...s,
-    effects: s.effects.filter((e) => variant.front || !('front' in e)),
+    from: { ...s.from, part: variant.part ?? s.from.part },
+    effects: s.effects.filter((e) => variant.effects.includes(Object.keys(e)[0]!)),
   }));
   const [l, r] = await compose({ ...c, sounds });
   await writeFile(join(out, `${c.module}-${name}.wav`), wavBytes([l, r], SAMPLE_RATE));

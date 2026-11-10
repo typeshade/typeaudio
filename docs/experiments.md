@@ -621,4 +621,17 @@ The variant `3b` of `module-2.json` is prototype 3b made with these tools. Again
 level in each part of the landing is within 0.5 dB, and the difference of the two signals is 13.8 dB
 under the signal.
 
-**Status.** The first module, from the store. The owner's review of the variant `front` is the next step.
+**Review 3, 2026-11-10.** The owner said the variant `front` is good. The landing went from a bin to a
+shipping container, but its weight is still in the wrong direction: it must be lower, a thud, and it is
+hollow inside. The agent measured two causes in the stored hit:
+
+| Cause                                                                       | Measure                                                                          | Node                                            |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------- |
+| The engine's room was lowered with the hit: a room four times as large, low | The room holds 25 % of the hit's energy, 45 % after 0.5 s; lowered, 2 to 8.8 s   | `from.part: "dry"`, and a `room` node after     |
+| The low body rings four times as long when lowered                          | After 0.3 s the dry hit is mostly 50 to 100 Hz; lowered, 12 to 25 Hz for seconds | `damp`: the body dies in 0.35 s after its front |
+
+The variant `solid` has both. Against `front`, its landing keeps the first 60 ms within 0.2 dB, and the
+seconds 1 to 3 after it are 18 dB lower. The store now keeps each render in its two parts, without the
+room and the room.
+
+**Status.** The first module, from the store. The owner's review of the variant `solid` is the next step.

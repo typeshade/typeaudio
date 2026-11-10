@@ -27,6 +27,12 @@ export interface StoreEntry {
 /** A stereo sound: the left and the right. */
 export type Stereo = readonly [Float32Array, Float32Array];
 
+/** The render of an entry in its two parts: without the room, and the room. */
+export interface Parts {
+  readonly dry: Stereo;
+  readonly wet: Stereo;
+}
+
 export const readEntry = (name: string): StoreEntry =>
   JSON.parse(readFileSync(join(HERE, 'store', `${name}.json`), 'utf8')) as StoreEntry;
 
@@ -53,7 +59,7 @@ function planned(name: string, seconds: number, lead: number): { file: string; t
   const plan = entry.plan ?? planOfGroup(entry, seconds, lead);
   const text = JSON.stringify(plan);
   const key = createHash('sha256').update(text).digest('hex').slice(0, 16);
-  return { file: join(OUT, `${name}-${key}.f32`), text };
+  return { file: join(OUT, `${name}-${key}`), text };
 }
 
 /**
@@ -65,30 +71,48 @@ export async function prepare(names: readonly string[], seconds = 3, lead = 0.05
   mkdirSync(OUT, { recursive: true });
   const todo = [...new Set(names)]
     .map((name) => ({ name, ...planned(name, seconds, lead) }))
-    .filter((t) => !existsSync(t.file));
+    .filter((t) => !existsSync(`${t.file}.wet.f32`));
   if (todo.length === 0) return;
   page ??= await bundle({
     entry: 'experiments/10-seven-questions/engine-page.ts',
     outDir: 'experiments/10-seven-questions/out/web',
     target: 'web',
   });
-  type Page = { renderPlans(plans: unknown[]): Promise<{ mix: string; ms: number }[]> };
+  type Page = {
+    renderPlans(plans: unknown[]): Promise<{ dry: string; wet: string; ms: number }[]>;
+  };
   const plans = todo.map((t) => JSON.parse(t.text) as unknown);
   const done = await inPage(dirname(page), (p) =>
     p.evaluate((all) => (globalThis as unknown as Page).renderPlans(all), plans),
   );
   done.forEach((r, i) => {
-    const bytes = fromBase64(r.mix);
-    writeFileSync(todo[i]!.file, new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength));
+    for (const part of ['dry', 'wet'] as const) {
+      const bytes = fromBase64(r[part]);
+      writeFileSync(
+        `${todo[i]!.file}.${part}.f32`,
+        new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength),
+      );
+    }
     console.error(`store: ${todo[i]!.name} rendered on WebGPU in ${(r.ms / 1000).toFixed(1)} s`);
   });
 }
 
-/** The render of an entry through the engine. `prepare` renders it if it has none yet. */
-export async function renderEntry(name: string, seconds = 3, lead = 0.05): Promise<Stereo> {
-  await prepare([name], seconds, lead);
-  const bytes = readFileSync(planned(name, seconds, lead).file);
+const read = (file: string): Stereo => {
+  const bytes = readFileSync(file);
   const both = new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
   const n = both.length / 2;
   return [both.slice(0, n), both.slice(n)];
+};
+
+/** The render of an entry through the engine, in its two parts. `prepare` renders it if needed. */
+export async function renderParts(name: string, seconds = 3, lead = 0.05): Promise<Parts> {
+  await prepare([name], seconds, lead);
+  const file = planned(name, seconds, lead).file;
+  return { dry: read(`${file}.dry.f32`), wet: read(`${file}.wet.f32`) };
+}
+
+/** The render of an entry through the engine: the two parts summed, as the engine's mix. */
+export async function renderEntry(name: string, seconds = 3, lead = 0.05): Promise<Stereo> {
+  const { dry, wet } = await renderParts(name, seconds, lead);
+  return [dry[0].map((v, i) => v + wet[0][i]!), dry[1].map((v, i) => v + wet[1][i]!)];
 }

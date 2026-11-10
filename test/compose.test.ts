@@ -57,4 +57,23 @@ describe('a stored sound through its effects', () => {
       3,
     );
   });
+
+  it('damp ends a lowered body sooner and keeps its front', () => {
+    const low = shaped(source(), sound([{ pitch: 0.25 }])).sound;
+    const damped = shaped(source(), sound([{ pitch: 0.25 }, { damp: { seconds: 0.1 } }])).sound;
+    const front = Math.round(0.04 * SR);
+    expect(energy(damped[0], 0, front)).toBeCloseTo(energy(low[0], 0, front), 9);
+    const tail = Math.round(0.5 * SR);
+    expect(energy(damped[0], tail)).toBeLessThan(0.01 * energy(low[0], tail));
+  });
+
+  it('a room after the pitch makes the sound longer by the room, and is not lowered', () => {
+    const low = shaped(source(), sound([{ pitch: 0.25 }])).sound;
+    const roomed = shaped(
+      source(),
+      sound([{ pitch: 0.25 }, { room: { name: 'hall', level: -8 } }]),
+    ).sound;
+    expect(roomed[0].length).toBe(low[0].length + Math.round(2.4 * SR));
+    expect(energy(roomed[0], low[0].length)).toBeGreaterThan(0);
+  });
 });

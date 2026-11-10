@@ -1,26 +1,102 @@
 {
   "module": "stone-hit-from-store",
-  "note": "The stone module made from the store. The bed is the passage without its landings. Each landing is the accepted hit on the wall, through effect nodes: two octaves lower (prototype 3b of experiment 9), and the front of the hit kept one octave higher than the body, because the front says the material and the body says the size (docs/sound-design-theory.md, section 3).",
-  "bed": { "store": "passage-without-landings", "from": 136.5 },
-  "reference": { "at": 145.9375, "length": 0.1625 },
+  "note": "The stone module made from the store. The bed is the passage without its landings. Each landing is the accepted hit on the wall, through effect nodes: two octaves lower (prototype 3b of experiment 9), and the front of the hit kept one octave higher than the body, because the front says the material and the body says the size (docs/sound-design-theory.md, section 3). The variant solid lowers the hit without the engine's room, lets the lowered body die in 0.35 s after its front, and puts the room after: a lowered room is a large hollow box, and a long low ring is heard as hollow (review 3).",
+  "bed": {
+    "store": "passage-without-landings",
+    "from": 136.5
+  },
+  "reference": {
+    "at": 145.9375,
+    "length": 0.1625
+  },
   "variants": {
-    "3b": { "front": false },
-    "front": { "front": true }
+    "3b": {
+      "effects": ["pitch"]
+    },
+    "front": {
+      "effects": ["pitch", "front"]
+    },
+    "solid": {
+      "effects": ["pitch", "front", "damp", "room"],
+      "part": "dry"
+    }
   },
   "sounds": [
     {
       "id": "land-1",
-      "from": { "store": "wall-hit", "start": 0.046, "length": 2.2, "fade": 0.5 },
-      "effects": [{ "pitch": 0.25 }, { "front": { "seconds": 0.015, "ratio": 0.5 } }],
-      "when": { "at": 147.9 },
-      "why": { "part": "leads", "under": 0 }
+      "from": {
+        "store": "wall-hit",
+        "start": 0.046,
+        "length": 2.2,
+        "fade": 0.5
+      },
+      "effects": [
+        {
+          "pitch": 0.25
+        },
+        {
+          "front": {
+            "seconds": 0.015,
+            "ratio": 0.5
+          }
+        },
+        {
+          "damp": {
+            "seconds": 0.35
+          }
+        },
+        {
+          "room": {
+            "name": "hall",
+            "level": -8
+          }
+        }
+      ],
+      "when": {
+        "at": 147.9
+      },
+      "why": {
+        "part": "leads",
+        "under": 0
+      }
     },
     {
       "id": "land-2",
-      "from": { "store": "wall-hit", "start": 0.046, "length": 2.2, "fade": 0.5 },
-      "effects": [{ "pitch": 0.25 }, { "front": { "seconds": 0.015, "ratio": 0.5 } }],
-      "when": { "at": 148.34 },
-      "why": { "part": "explains", "under": 6.9 }
+      "from": {
+        "store": "wall-hit",
+        "start": 0.046,
+        "length": 2.2,
+        "fade": 0.5
+      },
+      "effects": [
+        {
+          "pitch": 0.25
+        },
+        {
+          "front": {
+            "seconds": 0.015,
+            "ratio": 0.5
+          }
+        },
+        {
+          "damp": {
+            "seconds": 0.35
+          }
+        },
+        {
+          "room": {
+            "name": "hall",
+            "level": -8
+          }
+        }
+      ],
+      "when": {
+        "at": 148.34
+      },
+      "why": {
+        "part": "explains",
+        "under": 6.9
+      }
     }
   ]
 }

@@ -5,8 +5,8 @@
 // wall, two octaves lower, as the landing. This file makes that prototype a tool: a sound takes an
 // accepted definition from the store by its name, and effects lie on it as nodes.
 
-import { SAMPLE_RATE, pitched } from './definitions.ts';
-import { renderEntry, type Stereo } from './store.ts';
+import { ROOMS, SAMPLE_RATE, pitched, roomOf } from './definitions.ts';
+import { renderEntry, renderParts, type Stereo } from './store.ts';
 
 /** An effect node on a stored sound. */
 export type Effect =
@@ -16,7 +16,15 @@ export type Effect =
    * The front of a hit (its first seconds) says the material; the body says the size. The front
    * keeps the pitch `ratio` and the rest takes the pitch of the node before it.
    */
-  | { readonly front: { readonly seconds: number; readonly ratio: number } };
+  | { readonly front: { readonly seconds: number; readonly ratio: number } }
+  /**
+   * A solid mass does not ring on: after the front, the sound dies with the time constant
+   * `seconds`. A lowered sound rings as long as it is lowered, and a long low ring is heard as a
+   * hollow box.
+   */
+  | { readonly damp: { readonly seconds: number } }
+  /** The room, after the steps before it: a room is not lowered with the sound in it. */
+  | { readonly room: { readonly name: string; readonly level: number } };
 
 /** A sound taken from the store. Its seven answers are the store entry's, moved by its effects. */
 export interface StoredSound {
@@ -28,6 +36,8 @@ export interface StoredSound {
     readonly length: number;
     /** The fade at the end, seconds. */
     readonly fade: number;
+    /** `dry`: the entry without the engine's room. `mix` (the default): with it. */
+    readonly part?: 'dry' | 'mix';
   };
   readonly effects: readonly Effect[];
   /** When: the second of the picture where the front lands. */
@@ -79,6 +89,24 @@ export function shaped(source: Stereo, sound: StoredSound): { sound: Stereo; fro
       const after = rms(out, 0, out[0].length);
       out = out.map((c) => c.map((v) => (v * before) / (after || 1))) as unknown as Stereo;
       ratio *= effect.pitch;
+    } else if ('damp' in effect) {
+      const start = Math.round((lead / ratio + 0.03) * SAMPLE_RATE);
+      const k = 1 / (effect.damp.seconds * SAMPLE_RATE);
+      out = out.map((c) =>
+        c.map((v, i) => (i < start ? v : v * Math.exp(-(i - start) * k))),
+      ) as unknown as Stereo;
+    } else if ('room' in effect) {
+      const room = ROOMS[effect.room.name];
+      if (!room) throw new Error(`no room "${effect.room.name}"`);
+      // The sound goes on for the length of the room after it ends.
+      const tail = Math.round(room.decay * SAMPLE_RATE);
+      const mono = new Float32Array(out[0].length + tail);
+      for (let i = 0; i < out[0].length; i++) mono[i] = (out[0][i]! + out[1][i]!) / 2;
+      const [wl, wr] = roomOf(mono, { ...room, level: effect.room.level });
+      out = [
+        wl.map((v, i) => v + (out[0][i] ?? 0)),
+        wr.map((v, i) => v + (out[1][i] ?? 0)),
+      ] as unknown as Stereo;
     } else {
       // The front at its own pitch, laid over the lowered body, which fades in under it.
       const keep =
@@ -115,7 +143,14 @@ export async function compose(c: Composition): Promise<Stereo> {
     Math.round((c.reference.at + c.reference.length - c.bed.from) * SAMPLE_RATE),
   );
   for (const sound of c.sounds) {
-    const source = await renderEntry(sound.from.store);
+    const parts = await renderParts(sound.from.store);
+    const source: Stereo =
+      sound.from.part === 'dry'
+        ? parts.dry
+        : [
+            parts.dry[0].map((v, i) => v + parts.wet[0][i]!),
+            parts.dry[1].map((v, i) => v + parts.wet[1][i]!),
+          ];
     const plain = shaped(source, { ...sound, effects: [] }).sound;
     const own = rms(plain, 0, Math.round(c.reference.length * SAMPLE_RATE));
     const { sound: made, front } = shaped(source, sound);
