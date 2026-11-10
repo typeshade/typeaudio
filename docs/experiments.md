@@ -719,5 +719,10 @@ variants over a bed without the landings and the break, with the accepted `stone
   and the hall after. It holds about 0 dB to 147.2 s and falls to -6.3 dB at 147.6 s; the reference
   is at -5.2 and -6.1 dB there.
 
+**Review 8, 2026-11-10.** The owner said the sounds on the floor are limited, and that leaving them out
+might not be bad: in the next shot, the fog, they matter less. The two landings are the same stored
+sound twice. Two more variants of `module-4.json`, on `slow`: `slow-one-landing` leaves out the second
+landing, and `slow-no-landing` leaves out both. A variant can now leave sounds out by id (`drop`).
+
 **Status.** Two modules are accepted, and their sounds are in the store: `wall-hit`, `stone-landing`,
 `blast`. The third, the hang, waits for the owner's review of its two variants.

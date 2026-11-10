@@ -1,6 +1,6 @@
 {
   "module": "hang",
-  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed).",
+  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed). Review 8: the two landings are the same stored sound twice, and the fog of the next shot matters less; the variants slow-one-landing and slow-no-landing leave out the second landing, and both.",
   "bed": {
     "store": "passage-without-break",
     "from": 136.5
@@ -24,7 +24,13 @@
       "effects": [],
       "part": "mix"
     },
-    "slow": {}
+    "slow": {},
+    "slow-one-landing": {
+      "drop": ["land-2"]
+    },
+    "slow-no-landing": {
+      "drop": ["land-1", "land-2"]
+    }
   },
   "sounds": [
     {

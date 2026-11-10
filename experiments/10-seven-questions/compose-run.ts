@@ -23,6 +23,8 @@ type Variant = {
   readonly part?: 'dry' | 'mix';
   /** Store entries it takes in place of others, by name. */
   readonly use?: Readonly<Record<string, string>>;
+  /** The sounds it leaves out, by id. */
+  readonly drop?: readonly string[];
 };
 type File = Composition & { readonly variants: Record<string, Variant> };
 const c = JSON.parse(await readFile(join(here, arg('module') ?? 'module-2.json'), 'utf8')) as File;
@@ -30,17 +32,19 @@ const out = arg('out') ?? join(here, 'out');
 await mkdir(out, { recursive: true });
 for (const [name, variant] of Object.entries(c.variants)) {
   // A variant keeps the effect nodes it names, in the order of the sound, and the part it names.
-  const sounds = c.sounds.map((s) => ({
-    ...s,
-    from: {
-      ...s.from,
-      store: variant.use?.[s.from.store] ?? s.from.store,
-      part: variant.part ?? s.from.part,
-    },
-    effects: variant.effects
-      ? s.effects.filter((e) => variant.effects!.includes(Object.keys(e)[0]!))
-      : s.effects,
-  }));
+  const sounds = c.sounds
+    .filter((s) => !variant.drop?.includes(s.id))
+    .map((s) => ({
+      ...s,
+      from: {
+        ...s.from,
+        store: variant.use?.[s.from.store] ?? s.from.store,
+        part: variant.part ?? s.from.part,
+      },
+      effects: variant.effects
+        ? s.effects.filter((e) => variant.effects!.includes(Object.keys(e)[0]!))
+        : s.effects,
+    }));
   const [l, r] = await compose({ ...c, sounds });
   await writeFile(join(out, `${c.module}-${name}.wav`), wavBytes([l, r], SAMPLE_RATE));
   console.log(`${c.module}-${name}: ${(l.length / SAMPLE_RATE).toFixed(2)} s`);
