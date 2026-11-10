@@ -1,0 +1,100 @@
+{
+  "module": "hang",
+  "note": "The third module of experiment 10: the break and the hang, as the picture turns slow and the blocks hang and turn in the air (146.48 to 147.77 s). The bed is the passage without its landings and its break; the landings are the accepted stone-landing. The variant plan is the break of the sixteenth plan at its plan level. The variant slow plays the break as the picture plays it, slow: one octave lower and twice as long, its front kept at its own pitch, without the engine's room and with the hall after (docs/sound-design-theory.md, section 4: a slow picture has its sounds slowed).",
+  "bed": {
+    "store": "passage-without-break",
+    "from": 136.5
+  },
+  "reference": {
+    "at": 145.9375,
+    "length": 0.1625
+  },
+  "silences": [
+    {
+      "at": 145.02,
+      "duration": 0.166708
+    },
+    {
+      "at": 145.89575,
+      "duration": 0.041708
+    }
+  ],
+  "variants": {
+    "plan": {
+      "effects": [],
+      "part": "mix"
+    },
+    "slow": {}
+  },
+  "sounds": [
+    {
+      "id": "break",
+      "from": {
+        "store": "break",
+        "start": 0.046,
+        "length": 2.6,
+        "fade": 0.6,
+        "part": "dry"
+      },
+      "effects": [
+        {
+          "pitch": 0.5
+        },
+        {
+          "front": {
+            "seconds": 0.015,
+            "ratio": 1
+          }
+        },
+        {
+          "room": {
+            "name": "hall",
+            "level": -8
+          }
+        }
+      ],
+      "when": {
+        "at": 146.479667
+      },
+      "why": {
+        "part": "leads",
+        "under": 0
+      },
+      "level": "plan"
+    },
+    {
+      "id": "land-1",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 147.9
+      },
+      "why": {
+        "part": "leads",
+        "under": -9
+      }
+    },
+    {
+      "id": "land-2",
+      "from": {
+        "store": "stone-landing",
+        "start": 0,
+        "length": 0,
+        "fade": 0
+      },
+      "effects": [],
+      "when": {
+        "at": 148.34
+      },
+      "why": {
+        "part": "explains",
+        "under": -2.1
+      }
+    }
+  ]
+}

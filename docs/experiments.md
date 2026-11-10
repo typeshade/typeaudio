@@ -702,6 +702,22 @@ is better, and the hit is larger when the moment before it is smaller (`docs/sou
 section 4). A gap of 7 dB to the reference, held for a quarter of a second, did not change the scene
 for the ear: finding 3 of experiment 9 again.
 
-**Status.** The first module is accepted; its sounds are in the store: `wall-hit`, `stone-landing`.
-The blast keeps the sixteenth plan's form (`plan`); `blast-held` stays in the store as the variant
-that was not heard apart.
+**Review 7, 2026-11-10.** The owner heard the blast as right ("it does not look bad; it looks
+right"). The second module is accepted in the form `plan`, from the store entry `blast`.
+
+**The third module: the hang.** As the wall breaks (146.48 s) the picture turns slow, and the blocks
+hang and turn in the air until the cut to the fog (147.77 s). Measured in dB against each one's hit on
+the wall, the reference holds -5 to -7 dB through the hang; the sixteenth plan falls to -11 dB.
+
+The owner heard the hit on the wall and the break as alike but fitting (record 09-5), so the break is
+an accepted sound: `store/break.json`, eight events of the sixteenth plan. `module-4.json` has two
+variants over a bed without the landings and the break, with the accepted `stone-landing`:
+
+- `plan`: the break as the sixteenth plan has it.
+- `slow`: the break as the picture plays it, slow (`docs/sound-design-theory.md`, section 4): one
+  octave lower and twice as long, its first 15 ms at its own pitch, lowered without the engine's room,
+  and the hall after. It holds about 0 dB to 147.2 s and falls to -6.3 dB at 147.6 s; the reference
+  is at -5.2 and -6.1 dB there.
+
+**Status.** Two modules are accepted, and their sounds are in the store: `wall-hit`, `stone-landing`,
+`blast`. The third, the hang, waits for the owner's review of its two variants.
