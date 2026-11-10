@@ -745,5 +745,12 @@ copies from 147.86 s and the small ones from 148.25 s, each from the largest to 
 falls in each quarter second from -8.1 dB to -22.9 dB between 147.9 s and 149.65 s; the unordered form
 of review 10 (commit `45023d8`) stays between -7.2 and -12.1 dB.
 
-**Status.** Two modules are accepted, and their sounds are in the store: `wall-hit`, `stone-landing`,
-`blast`. The third, the hang, waits for the owner's review of its two variants.
+**Review 12, 2026-11-10.** The owner accepted `slow-many-ordered` ("it is fine"). The third module is
+accepted in that form: the break played as the slow picture plays it, the first landing, then 24 large
+and 30 small copies of `stone-landing`, from the largest to the smallest. The choice between `plan`
+and `slow` was not asked again; the accepted variant is built on `slow`.
+
+**Status.** Three modules of the force passage are accepted: the hit on the wall and the landing, the
+blast, and the break with the hang and the fall. Their sounds are in the store: `wall-hit`,
+`stone-landing`, `blast`, `break`. `module-4.json`, variant `slow-many-ordered`, is the whole force
+passage as accepted.
