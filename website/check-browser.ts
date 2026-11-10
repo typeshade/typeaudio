@@ -65,7 +65,7 @@ try {
   const study = await browser.newPage();
   const studyErrors: string[] = [];
   study.on('pageerror', error => studyErrors.push(error.message));
-  assert.equal((await study.goto('http://127.0.0.1:4178/study.html'))?.status(), 200);
+  assert.equal((await study.goto('http://127.0.0.1:4178/study/'))?.status(), 200);
   await study.locator('#render').click();
   await study.waitForFunction(() => document.querySelector('#report')!.textContent!.includes('Whole render') || document.querySelector('#status')!.classList.contains('error'), undefined, { timeout: 300000 });
   const report = await study.locator('#report').textContent() ?? '';
