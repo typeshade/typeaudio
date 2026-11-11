@@ -44,7 +44,7 @@ import {
 } from '../../src/study/dsp.ts';
 import { Mix, type Layer } from '../../src/study/mix.ts';
 import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
-import { concat, line } from '../../src/study/passage.ts';
+import { concat, line, steady } from '../../src/study/passage.ts';
 import * as S from '../../src/study/sources.ts';
 import {
   MAIN2,
@@ -254,8 +254,11 @@ function crawl(m: Mix): void {
     const t1 = 49.45;
     const n = nsamp(t1 - t0);
     const dw = S.levelWalk(n, 3410, 5.0, 1.0, 8.0);
-    const d = new Float64Array(n).map((_, i) => Math.min(1, 0.05 * dw[i]!));
-    m.add('arc-ticks', fade(arcCrackle(t1 - t0, 3400, d), 0.05, 0.05), t0, GIANT, {
+    // the owner's rule (2026-11-11): sparse ticks read as pebbles; the charged stone is a faint,
+    // smooth corona (2 to 7 kHz) at a level that wanders
+    const cor = S.wideNoise(t1 - t0, 3400, 2000, 7000, 2, false)[0];
+    const d = new Float64Array(n).map((_, i) => cor[i]! * Math.min(1.5, dw[i]!));
+    m.add('arc-ticks', fade(d, 0.05, 0.05), t0, GIANT, {
       target: -27,
       kind: 'm',
       sendDb: -8,
@@ -750,18 +753,18 @@ function blast(m: Mix): void {
 function after(m: Mix): void {
   m.part('after', () => {
     const rn = nsamp(0.6);
-    const rd = new Float64Array(rn).map((_, i) => 0.25 * Math.exp(-i / SR / 0.18));
-    m.add(
-      'residue-crackle',
-      fade(lp2(arcCrackle(0.6, 3900, rd), 6000), 0.01, 0.15),
-      57.25,
-      [-1.0, 0.0, -4.0],
-      {
-        target: -27,
-        kind: 'm',
-        sendDb: -6,
-      },
+    // the dark arcs die on the floor as a fizz (no isolated ticks, which read as pebbles): noise of
+    // 1.5 to 6 kHz with a fast level that has no period
+    const fz = S.wideNoise(0.6, 3900, 1500, 6000, 2, false)[0];
+    const fm = S.irregular(rn, 3901, 20, 90);
+    const rd = new Float64Array(rn).map(
+      (_, i) => fz[i]! * (0.6 + 0.4 * fm[i]!) * Math.exp(-i / SR / 0.18),
     );
+    m.add('residue-crackle', fade(lp2(rd, 6000), 0.01, 0.15), 57.25, [-1.0, 0.0, -4.0], {
+      target: -27,
+      kind: 'm',
+      sendDb: -6,
+    });
     const t0 = 57.8;
     const dur = SCENE3_END + 1.0 - t0;
     const ds = S.dust(dur, 4000, { lo: 800.0, hi: 6500.0, sd: 2.0, grain: 0.3 });
@@ -831,11 +834,24 @@ function after(m: Mix): void {
         kind: 'm',
       },
     );
-    m.add('hair-cloth', fade(S.cloth(1.9, 4021, 260), 0.3, 0.4), 60.35, [0.3, 1.5, -0.8], {
-      target: -33,
-      kind: 'm',
-      sendDb: -10,
-    });
+    // the owner's rule (2026-11-11): the cloth model's flutter reads as pebbles; her hair is air
+    const hair = steady(1.9, 4021, 700, 5000);
+    const hi = S.irregular(hair.length, 4022, 2, 9);
+    m.add(
+      'hair-cloth',
+      fade(
+        hair.map((v, i) => v * (0.6 + 0.4 * hi[i]!)),
+        0.3,
+        0.4,
+      ),
+      60.35,
+      [0.3, 1.5, -0.8],
+      {
+        target: -33,
+        kind: 'm',
+        sendDb: -10,
+      },
+    );
   });
 }
 
