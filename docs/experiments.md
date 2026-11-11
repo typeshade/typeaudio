@@ -22,7 +22,7 @@ devices yet.
 | 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
 | 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
 | 12  | Scene 1, the red seal, from the study's models             | Whether the study's models, ported, make a scene in practical time            | first render (container, host CPU in Bun); waits for the owner's review                                                                                                                                                                                |
-| 13  | Scene 2, the stone giant, from the study's models          | The second scene in the same scale; the join with the first                   | first render (container, host CPU in Bun); waits for the owner's review                                                                                                                                                                                |
+| 13  | Scene 2, the stone giant, from the study's models          | The second scene in the same scale; the join with the first                   | accepted 2026-11-11 (render r11, `261a41c`)                                                                                                                                                                                                            |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -787,22 +787,22 @@ function-graph profile.
 
 **What it holds.**
 
-| File                                        | What it holds                                                                                                                            |
-| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/study/fft.ts`                          | A transform of any length in f64: mixed radix for lengths of factors up to 13, Bluestein for the others (numpy's lengths)                |
-| `src/study/rng.ts`                          | The shared generator: a counter hash, two 32-bit hashes a draw, as numpy's `random()` makes a double                                     |
-| `src/study/dsp.ts`                          | `dsp.py`: filters, zero-phase and time-varying shaping of noise, modes, placement with reflections and Doppler, the late field, loudness |
-| `src/study/sources.ts`                      | `sources.py`: every model, with its parameters, its defaults and the order of its draws                                                  |
-| `src/study/mix.ts`, `src/study/passage.ts`  | `mix.py` (layers by loudness target, drive, look-ahead limiter, soft clip) and the helpers of `passages.py`                              |
-| `src/study/build.ts`, `src/study/part-keys.ts` | A mix built from its parts (`Mix.part`): a cache of parts keyed by the code each part reaches, worker threads for the others, the same samples |
-| `src/kinds/functions/study.ts`              | `studyBurst`, `studyBoom`, `studySlip` (groan and grind), `redRumble`, `redRoar`, `redCrackle`, `redMaterial` as typed functions         |
-| `experiments/12-scene1-red-seal/red.ts`     | The study's `red()`, statement by statement in the study's order                                                                         |
-| `experiments/12-scene1-red-seal/scene.ts`   | Scene 1: the black hole (0.0 to 20.0 s) and the red passage, in one mix                                                                  |
-| `experiments/12-scene1-red-seal/run.ts`     | `bun experiments/12-scene1-red-seal/run.ts red\|scene [--out dir] [--against r11.wav] [--parity study.f64] [--workers n] [--no-cache] [--plain]` |
-| `experiments/12-scene1-red-seal/measure.ts` | The level each two frames, five bands in each section, the lag of the energy at each anchor                                              |
-| `experiments/12-scene1-red-seal/parity/`    | The shared generator in numpy, the study's red passage rendered with it, and the writers of the two test fixtures                        |
-| `test/study.test.ts`                        | Each model and each step of the mix against the study's script: 53 signatures, each sample within 1e-9 of its peak                       |
-| `test/study-functions.test.ts`              | The typed functions against the study's models: octave shares, envelope and level, averaged over 24 seeds                                |
+| File                                           | What it holds                                                                                                                                    |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/study/fft.ts`                             | A transform of any length in f64: mixed radix for lengths of factors up to 13, Bluestein for the others (numpy's lengths)                        |
+| `src/study/rng.ts`                             | The shared generator: a counter hash, two 32-bit hashes a draw, as numpy's `random()` makes a double                                             |
+| `src/study/dsp.ts`                             | `dsp.py`: filters, zero-phase and time-varying shaping of noise, modes, placement with reflections and Doppler, the late field, loudness         |
+| `src/study/sources.ts`                         | `sources.py`: every model, with its parameters, its defaults and the order of its draws                                                          |
+| `src/study/mix.ts`, `src/study/passage.ts`     | `mix.py` (layers by loudness target, drive, look-ahead limiter, soft clip) and the helpers of `passages.py`                                      |
+| `src/study/build.ts`, `src/study/part-keys.ts` | A mix built from its parts (`Mix.part`): a cache of parts keyed by the code each part reaches, worker threads for the others, the same samples   |
+| `src/kinds/functions/study.ts`                 | `studyBurst`, `studyBoom`, `studySlip` (groan and grind), `redRumble`, `redRoar`, `redCrackle`, `redMaterial` as typed functions                 |
+| `experiments/12-scene1-red-seal/red.ts`        | The study's `red()`, statement by statement in the study's order                                                                                 |
+| `experiments/12-scene1-red-seal/scene.ts`      | Scene 1: the black hole (0.0 to 20.0 s) and the red passage, in one mix                                                                          |
+| `experiments/12-scene1-red-seal/run.ts`        | `bun experiments/12-scene1-red-seal/run.ts red\|scene [--out dir] [--against r11.wav] [--parity study.f64] [--workers n] [--no-cache] [--plain]` |
+| `experiments/12-scene1-red-seal/measure.ts`    | The level each two frames, five bands in each section, the lag of the energy at each anchor                                                      |
+| `experiments/12-scene1-red-seal/parity/`       | The shared generator in numpy, the study's red passage rendered with it, and the writers of the two test fixtures                                |
+| `test/study.test.ts`                           | Each model and each step of the mix against the study's script: 53 signatures, each sample within 1e-9 of its peak                               |
+| `test/study-functions.test.ts`                 | The typed functions against the study's models: octave shares, envelope and level, averaged over 24 seeds                                        |
 
 Where each model went:
 
@@ -1274,5 +1274,54 @@ The render takes 82 s (197 layers).
 
 True peak -1.33 dBTP. The render takes 89 s (206 layers).
 
-**Status.** The ninth render waits for the owner's review. The previews went to the owner privately;
-the picture, its frames and its audio are not in this repository.
+**Review 9, 2026-11-11.** The owner: "it feels like there is a lot of junk noise; a tearing; high
+frequency noise, like wind coming into a microphone with no windscreen". `clean.ts` measured where.
+The master adds little: the soft clip at most 1.3 dB above 8 kHz; the limiter worked 23 % of the time
+in the bolt and 13 % in the dust, and nothing clipped before it. The noise layers carried it: the
+bolt's crack, its saturated plasma and the strike on the barrier held 64 % of the energy above 8 kHz,
+and the hair's fast flutter (8 to 60 Hz) in the face shot sounded as wind on a microphone. The noise
+layers now pass a low pass at 9 kHz and the cracks one at 12 kHz (24 dB an octave); the hair is a slow
+flutter of band noise; the bolt is less saturated, its crackle ends at 9 kHz, and it goes 2 dB less
+into the limiter (now 15 % of the time). Above 8 kHz, before and after: the face -17.4 and -26.0 dB,
+the blocks -21.4 and -32.8, the giant -21.9 and -31.6, the bolt -15.5 and -21.7. Scene 1's tail
+(26.6 to 29.5 s) measures -27.4 dB above 8 kHz.
+
+**Parts, 2026-11-11.** After `main` took pull requests #77 and #78, scene 2 was cut into 18 parts
+(`Mix.part`), with the crossfade of the beds and the layers left out as a `finish` step (`tidy`) and
+the low pass as a layer step. The hall's thin high air of scene 2 ends at 8 kHz where it is made,
+since the layer step may not change what `tidy` reads. Plain, cold and warm renders are byte-identical:
+101 s plain, 45 s cold on workers, 8 s warm (the layers 0.9 s, the master 6.6 s); a change to one part
+renders in 10 to 13 s.
+
+**Review 10, 2026-11-11.** The owner: "I don't feel the wind pressure when the golem comes down to the
+ground". The frames at 24 a second: it goes down from 40.84 s, fastest from 41.05 to 41.18 s, and
+touches at 41.20 s. A new part, `descent-air`: the air the mass pushes, a low body (30 to 200 Hz) and
+broad air to 8 kHz that grow with the descent to the contact; a short gust out at the contact; a low
+push and a rush of air when the dust wall reaches the camera (41.43 s). The dust burst is 3 dB lower,
+so that the air is heard. Just before the contact the level rises by 3.0 dB, and from 200 Hz to 8 kHz
+by about 10 dB; the master's limiter holds the contact and the arrival at the ceiling, so they rise
+by 0.3 and 0.5 dB.
+
+**Accepted, 2026-11-11.** The owner accepted render r11 ("Good"), at commit `261a41c`, and said of
+the rule of review 1 that it applies to scene 1 too: "this matters especially in animation".
+
+| Section    | Seconds        | RMS (dB) | Above 8 kHz (dB) | Above 12 kHz (dB) |
+| ---------- | -------------- | -------- | ---------------- | ----------------- |
+| Face       | 29.50 to 33.58 | -21.3    | -26.0            | -39.6             |
+| Floor      | 33.58 to 36.45 | -27.1    | -31.1            | -38.6             |
+| Blocks     | 36.45 to 38.60 | -20.1    | -32.8            | -43.0             |
+| Giant      | 38.60 to 40.33 | -14.5    | -31.6            | -40.0             |
+| Fist       | 40.33 to 41.42 | -11.8    | -25.3            | -30.9             |
+| Dust       | 41.42 to 43.21 | -12.7    | -31.0            | -37.8             |
+| Silhouette | 43.21 to 43.96 | -23.1    | -27.8            | -32.8             |
+| Charge     | 43.96 to 45.70 | -19.5    | -30.4            | -36.1             |
+| Bolt       | 45.70 to 47.46 | -12.7    | -21.7            | -33.6             |
+
+The join with scene 1: over 28.6 to 29.45 s the two renders lie 0.004 dB apart. Across the cuts (50 ms
+windows over 0.5 s on each side) the level steps by 2.3 dB or less, except at 40.33 s (-4.0 dB, from
+the giant's back to the wide hall). Integrated loudness -14.9 LUFS from 28.5 s, true peak -2.04 dBTP,
+the limiter 6.1 dB deep for 4.5 % of the time. The release and the bolt (45.70 to 47.6 s, the `s3-`
+layers) are the head of scene 3 and stay in this experiment until scene 3 is made.
+
+**Status.** Accepted. The previews went to the owner privately; the picture, its frames and its audio
+are not in this repository.
