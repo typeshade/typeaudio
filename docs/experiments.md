@@ -884,5 +884,41 @@ frames and the owner's description; no study round had it. The render runs on th
 not on WebGPU; it takes under two minutes for the whole scene. The typed functions are not used by
 the render; their agreement with the study is in measures, not in samples.
 
-**Status.** The first render waits for the owner's review. The preview went to the owner privately;
+**Review 1, 2026-11-11.** The owner kept the landings: the sound of the stones that hit the floor
+after they hit the wall is at a good level, and it is the reference for every other landing in the
+scene. The owner found the black hole missing: where it is on screen and close, even when the
+camera is right under it, there is no sound of it. It must be a black hole that violently sucks in
+the mana around it.
+
+The agent measured the cause with `orb.ts`. The orb's layers held most of the energy of three of the
+four windows, but in the band from 500 Hz to 6 kHz: the red material's roar and its tones. Under
+120 Hz they lay only 3 to 6 dB over the rest where the orb is overhead, and 2 dB under it over the
+rock field. The orb had no body: no low weight, no pressure, nothing that grows as it nears.
+
+| Change                                                                                                                         | Model of the study                    |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- |
+| A proximity curve read from the frames: 1 where the orb is overhead or beside the camera                                       | -                                     |
+| `hole-roar`: a torrent on a deep spectrum (most of its weight from 30 to 150 Hz); upper bands only near                        | `turbulence`, `level_walk`            |
+| `hole-core0` to `hole-core5`: the same deep noise as one source on the orb's path in each shot                                 | `curve_noise`, `place` (Doppler, pan) |
+| `hole-inrush`: air drawn in, its band climbing as the orb nears                                                                | the gathering of the finale           |
+| `hole-pressure`: noise from 25 to 70 Hz, only near                                                                             | `wide_noise`                          |
+| The layers that cover it (flying stones, wind, passing rocks) lose up to 6 dB under 500 Hz and 2 dB in all, with the proximity | -                                     |
+
+The landings and the strikes are not touched. Measured before (commit `5c46294`) and after, the orb's
+share of the energy of the mix before the master, and the orb against the rest in five bands (dB,
+30-120, 120-500, 500-2k, 2k-6k and 6k-16k Hz):
+
+| Window                 | Seconds      | Share before | Share after | Orb - rest after         | Orb - rest before        |
+| ---------------------- | ------------ | ------------ | ----------- | ------------------------ | ------------------------ |
+| Close overhead         | 5.0 to 7.0   | 76.0 %       | 94.5 %      | 12.0 20.9 30.7 29.0 23.5 | 3.1 16.2 27.3 24.1 22.3  |
+| Streak over the camera | 9.5 to 11.0  | 75.7 %       | 93.5 %      | 16.3 8.7 11.3 9.0 8.7    | 5.7 1.6 6.7 2.5 7.2      |
+| Over the rock field    | 11.5 to 15.0 | 33.2 %       | 76.6 %      | 10.7 6.8 2.0 -2.7 0.9    | -2.2 -3.9 -2.6 -9.4 -1.4 |
+| Low pass overhead      | 18.5 to 21.0 | 80.8 %       | 96.3 %      | 27.8 17.6 10.8 7.9 10.5  | 15.2 10.0 6.2 0.7 7.8    |
+
+The mix in those windows rose by 4 to 6 dB (RMS each second). The master gain stayed at -8.45 dB,
+and the landings lie within 0.3 dB of the first render (the block at 15.55 s, the four leaps, the
+three slabs after the rays). The deepest periodic line of the level in the four windows is 6 to 12 %
+(before: 5 to 8 %), at a different rate in each: no rotor. The render takes 140 s.
+
+**Status.** The second render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.

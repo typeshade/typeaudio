@@ -31,6 +31,8 @@ import {
   addAt,
   fade,
   interp,
+  lin,
+  lp,
   nsamp,
   rng,
   stftShape,
@@ -852,6 +854,216 @@ export function blackHole(m: Mix): void {
   });
 }
 
+// ---- The black hole's own body (review 1, 2026-11-11). The owner heard no black hole where it is on
+// screen and close. The orb above had only the red material (a roar from 480 Hz to 1.1 kHz) and
+// tones, and stones and wind covered it. The body below is a deep torrent that draws in, felt
+// under the camera: the study's turbulence on a low spectrum, a core that moves with the orb, air
+// that rushes in, and a pressure under 70 Hz. One proximity curve, read from the frames, sets its
+// level, its low weight, its width and its brightness. Every level wanders with no period.
+
+/** How near the orb is, 0 (gone) to 1 (overhead or beside the camera), reference seconds. */
+export const PROXIMITY: Points = [
+  [3.87, 0.0],
+  [4.4, 0.25],
+  [4.69, 0.5],
+  [4.712, 0.2],
+  [4.86, 0.75],
+  [5.3, 1.0],
+  [7.2, 1.0],
+  [7.25, 0.5],
+  [8.05, 0.3],
+  [9.47, 0.35],
+  [10.0, 0.85],
+  [10.25, 1.0],
+  [10.6, 0.9],
+  [11.0, 0.65],
+  [11.55, 0.6],
+  [12.5, 0.75],
+  [13.5, 0.85],
+  [14.3, 0.8],
+  [14.81, 0.65],
+  [14.85, 0.12],
+  [18.6, 0.2],
+  [19.2, 0.5],
+  [19.9, 1.0],
+  [20.4, 1.0],
+  [21.0, 0.75],
+  [22.28, 0.55],
+  [22.31, 0.0],
+];
+const HOLE_FROM = 3.87;
+const HOLE_TO = 22.31;
+
+/** The spectrum of the hole: its weight from 30 to 150 Hz, falling above (Hz, dB). */
+const HOLE_CURVE: readonly (readonly [number, number])[] = [
+  [20, -14],
+  [30, -6],
+  [45, -1],
+  [60, 0],
+  [90, 0],
+  [150, -2],
+  [300, -5],
+  [600, -8],
+  [1200, -12],
+  [2500, -17],
+  [5000, -24],
+  [10000, -32],
+  [14000, -38],
+];
+const HOLE_BANDS: readonly (readonly [number, number, number, number, number])[] = [
+  [22.0, 110.0, 2.0, 0.3, 4.0],
+  [110.0, 600.0, 2.5, 0.5, 7.0],
+  [600.0, 3000.0, 4.0, 1.0, 11.0],
+  [3000.0, 12000.0, 5.0, 1.0, 13.0],
+];
+
+/** Where the orb is in each shot: (reference seconds, position) keys. A cut starts a new shot. */
+const HOLE_SHOTS: readonly (readonly (readonly [number, Vec3])[])[] = [
+  [
+    [3.87, [0.2, 1.3, -1.2]],
+    [4.86, [0.0, 2.6, -1.6]],
+    [7.22, [0.3, 2.8, -1.4]],
+  ],
+  [
+    [7.21, [1.5, 2.0, -6.0]],
+    [9.48, [-1.0, 2.5, -9.0]],
+  ],
+  [
+    [9.47, [-1.5, 3.0, -12.0]],
+    [10.25, [0.0, 3.2, -0.8]],
+    [11.0, [1.5, 2.8, 8.0]],
+    [11.56, [2.0, 2.8, 14.0]],
+  ],
+  [
+    [11.55, [-7.0, 6.0, -8.0]],
+    [14.82, [7.0, 5.5, -6.0]],
+  ],
+  [
+    [14.81, [0.0, 4.0, -16.0]],
+    [18.61, [-3.0, 3.0, -20.0]],
+  ],
+  [
+    [18.6, [-6.0, 2.5, -24.0]],
+    [20.0, [0.0, 2.4, -1.5]],
+    [21.0, [0.3, 2.0, -2.5]],
+    [22.31, [0.6, 1.5, -3.0]],
+  ],
+];
+
+const proximityAt = (t: number): number =>
+  interp(
+    t,
+    PROXIMITY.map((p) => p[0]),
+    PROXIMITY.map((p) => p[1]),
+  );
+
+function holeBody(m: Mix): void {
+  const dur = HOLE_TO - HOLE_FROM;
+  const n = nsamp(dur);
+  const prox = curve(PROXIMITY, HOLE_FROM, n);
+  const pw = (e: number) => prox.map((p) => p ** e);
+  // the torrent: four bands of one deep spectrum, each with its own wandering level; the nearer the
+  // orb, the more of the upper bands (the inrush is heard only near it) and the louder the whole
+  const bands = S.turbulence(dur, 1200, HOLE_CURVE, HOLE_BANDS, 0.25);
+  const weights = [pw(0.8), pw(1.0), pw(1.7), pw(2.6)];
+  const roar: Stereo = [new Float64Array(n), new Float64Array(n)];
+  bands.forEach((b, k) => {
+    for (let c = 0; c < 2; c++)
+      for (let i = 0; i < n; i++) roar[c]![i] = roar[c]![i]! + b[c]![i]! * weights[k]![i]!;
+  });
+  m.addWide('hole-roar', [fade(roar[0], 0.05, 0.02), fade(roar[1], 0.05, 0.02)], HOLE_FROM, {
+    target: -14.5,
+    kind: 'm',
+    sendDb: -6,
+  });
+  // the core: the same deep noise as one source that moves with the orb, shot by shot, so its
+  // distance, its side and its Doppler shift come from the path
+  const core0 = S.curveNoise(n, 1210, HOLE_CURVE);
+  const walk = S.levelWalk(n, 1211, 2.0, 0.3, 4.0);
+  const core = core0.map((v, i) => v * walk[i]! * prox[i]! ** 0.7);
+  HOLE_SHOTS.forEach((keys, k) => {
+    const a = Math.max(0, nsamp(keys[0]![0] - HOLE_FROM));
+    const b = Math.min(n, nsamp(keys[keys.length - 1]![0] - HOLE_FROM));
+    m.add(`hole-core${k}`, fade(core.slice(a, b), 0.01, 0.01), HOLE_FROM + a / SR, keys, {
+      target: null,
+      gainDb: 0,
+      focusDb: 0,
+      sendDb: -8,
+    });
+  });
+  // the inrush: air drawn into the core, its band climbing as the orb nears
+  m.addWide('hole-inrush', drawnAir(dur, 1220, pw(1.4), 150, 1400, 1.3), HOLE_FROM, {
+    target: -19,
+    kind: 'm',
+    sendDb: -6,
+  });
+  // the pressure under the camera: noise from 25 to 70 Hz, only when the orb is near
+  const pr = S.wideNoise(dur, 1230, 25, 70, 3, false);
+  const pe = pw(2.0);
+  m.addWide(
+    'hole-pressure',
+    [
+      fade(
+        pr[0].map((v, i) => v * pe[i]!),
+        0.05,
+        0.02,
+      ),
+      fade(
+        pr[1].map((v, i) => v * pe[i]!),
+        0.05,
+        0.02,
+      ),
+    ],
+    HOLE_FROM,
+    {
+      target: -22,
+      kind: 'm',
+    },
+  );
+}
+
+/** The core's level, set against the roar once both are in the mix: 3 dB under it at the closest. */
+function levelCore(m: Mix): void {
+  const roar = m.layers.get('hole-roar')!;
+  let er = 0;
+  for (const ch of roar.dry) for (const v of ch) er = Math.max(er, Math.abs(v));
+  let ec = 0;
+  for (let k = 0; k < HOLE_SHOTS.length; k++)
+    for (const ch of m.layers.get(`hole-core${k}`)!.dry)
+      for (const v of ch) ec = Math.max(ec, Math.abs(v));
+  const g = (er / ec) * lin(-3);
+  for (let k = 0; k < HOLE_SHOTS.length; k++) {
+    const l = m.layers.get(`hole-core${k}`)!;
+    for (const part of [l.dry, l.wet])
+      for (const ch of part) for (let i = 0; i < ch.length; i++) ch[i] = ch[i]! * g;
+  }
+}
+
+/** The layers that cover the hole while it is near: stones that fly, wind, passing rocks. */
+const COVERS =
+  /^(face-wind|fly-air|fly-whoosh|pebbles|tear-pass|gather-clump|gather-grind|gather-rubble|orbit|gather-low|approach-pass|approach-air|flight-air|rock-pass|slab-pass|dark-draw)/;
+
+/**
+ * Carve the covering layers while the orb is near: up to 6 dB under 500 Hz and 2 dB in all, with
+ * the proximity. The landings and the strikes are not touched.
+ */
+function carve(m: Mix): void {
+  for (const name of m.order) {
+    if (!COVERS.test(name)) continue;
+    const l = m.layers.get(name)!;
+    for (const part of [l.dry, l.wet])
+      for (const ch of part) {
+        const x = Float64Array.from(ch);
+        const low = lp(x, 500);
+        for (let i = 0; i < ch.length; i++) {
+          const p = proximityAt(m.t0 + (l.start + i) / SR);
+          if (p <= 0) continue;
+          ch[i] = lin(-2 * p) * (x[i]! - low[i]! + lin(-6 * p) * low[i]!);
+        }
+      }
+  }
+}
+
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
 export function scene(): Mix {
   const m = new Mix('scene1', 0.0, SCENE_END, 1.5);
@@ -867,6 +1079,9 @@ export function scene(): Mix {
   ]);
   blackHole(m);
   redLayers(m, { bed: false });
+  holeBody(m);
+  levelCore(m);
+  carve(m);
   m.driveDb = 8.8;
   // the end of the scene: the sound fades over the first second of the next shot
   m.afterDb = [
