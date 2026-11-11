@@ -920,5 +920,40 @@ and the landings lie within 0.3 dB of the first render (the block at 15.55 s, th
 three slabs after the rays). The deepest periodic line of the level in the four windows is 6 to 12 %
 (before: 5 to 8 %), at a different rate in each: no rotor. The render takes 140 s.
 
-**Status.** The second render waits for the owner's review. The previews went to the owner privately;
+**Review 2, 2026-11-11.** The owner found the second render good, not yet full marks, and chose
+three faults from a list: the black hole sounds like noise, nearer to wind than to sucking in; it
+has no character, nothing magical or uncanny; the stones that are pulled in are weak, and they are
+not heard to gather into it. The landings, the orb's lead and its proximity curve stay, and so does
+the rule against a period and a hollow tube.
+
+| Fault        | Change in `scene.ts`                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wind         | 38 swallows (`hole-swallow`): air that converges from 3 to 6 m into the orb on a path that speeds up; its band falls from about 2 kHz to 120 Hz and narrows; its level grows into the core and stops in 4 ms; grains of dust drawn in (reversed bursts) crowd toward its end. The torrent 4 dB lower, the inrush 3 dB lower                                                                               |
+| No character | `hole-mana`: inharmonic partials (1, 1.41, 1.87, 2.63, 3.31) that sink from 233 to 147 Hz in two clusters 1.3 % apart, which drift with no period; `hole-growl`: 38, 53 and 71 Hz with a breathing level, with the square of the proximity; `hole-glint`: glassy grains that glide down by a factor of 4 to 6 and are cut where they are swallowed; `hole-ring`: formants of noise on the inrush (`howl`) |
+| Weak stones  | 15 stones dragged to the core on paths that speed up, louder until they strike it (`grind`), each arrival a block and a crunch at the level of the accepted landing for the largest; 8 stones that fly past the camera into the core; a pile at the core that crunches (`rubble`) and groans (`groan`) more as they arrive                                                                                |
+
+Measured before (commit `6c06760`) and after, the share of each part in the mix before the master:
+
+| Window                 | Torrent       | Swallows   | Tonal        | Stones        |
+| ---------------------- | ------------- | ---------- | ------------ | ------------- |
+| Close overhead         | 78.3 → 37.4 % | 0 → 22.3 % | 3.7 → 25.6 % | 0 → 0 %       |
+| Streak over the camera | 76.0 → 29.3 % | 0 → 5.7 %  | 6.0 → 22.1 % | 7.2 → 36.5 %  |
+| Over the rock field    | 62.6 → 11.3 % | 0 → 16.2 % | 3.8 → 8.2 %  | 21.5 → 59.8 % |
+| Low pass overhead      | 76.9 → 30.4 % | 0 → 23.1 % | 8.6 → 26.7 % | 0 → 8.9 %     |
+
+- The swallows: the last third of each is 20.6 dB over its first (median); with the hall, the level
+  falls by 7.1 dB from the 10 ms before the stop to 10 to 20 ms after it.
+- The stones from 11.5 to 15 s: 11 arrivals, 5 in the first half and 6 in the second; before the
+  master each holds a median 26 % of the mix in its first 100 ms. Onsets of 3 dB in the stones' sum:
+  2.6 a second (before: 0.3). In the mastered mix an arrival rises by a median 0.5 dB only, because
+  the drag swells into it and the limiter works 9.6 % of the time.
+- The orb's lead: 94.4 %, 65.1 %, 39.7 % and 89.5 % of the mix in the four windows (before: 94.5,
+  93.5, 76.6 and 96.3 %). Over the rock field the stones are now the larger part, as the owner asked.
+- No period: the deepest periodic line of the level is 8.2 to 9.2 % in the four windows, at a
+  different rate in each.
+- The landings: 0.3 to 0.7 dB under the first render. The master gain is the same (-8.45 dB); the
+  soft clip's final trim of the true peak lowers the whole scene by that much. Deviation, open.
+- The render takes 212 s (304 layers).
+
+**Status.** The third render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.

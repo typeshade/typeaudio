@@ -972,7 +972,7 @@ function holeBody(m: Mix): void {
       for (let i = 0; i < n; i++) roar[c]![i] = roar[c]![i]! + b[c]![i]! * weights[k]![i]!;
   });
   m.addWide('hole-roar', [fade(roar[0], 0.05, 0.02), fade(roar[1], 0.05, 0.02)], HOLE_FROM, {
-    target: -14.5,
+    target: -18.5,
     kind: 'm',
     sendDb: -6,
   });
@@ -993,7 +993,7 @@ function holeBody(m: Mix): void {
   });
   // the inrush: air drawn into the core, its band climbing as the orb nears
   m.addWide('hole-inrush', drawnAir(dur, 1220, pw(1.4), 150, 1400, 1.3), HOLE_FROM, {
-    target: -19,
+    target: -22,
     kind: 'm',
     sendDb: -6,
   });
@@ -1064,6 +1064,330 @@ function carve(m: Mix): void {
   }
 }
 
+// ---- Review 2, 2026-11-11. The owner: good, not yet 100 points. The hole sounds like wind, not
+// like something that sucks in; it has no character, nothing uncanny; the stones that are pulled in
+// are weak. Three answers, each from the study's models:
+//
+// - Suction: gestures that swallow. Each is air that converges from the side into the orb: a band
+//   that falls and narrows as the matter is consumed, a level that grows into the core and stops
+//   dead (4 ms), and grains of dust drawn in (reversed bursts) that crowd toward its end. The
+//   torrent goes 4 dB down under them.
+// - Character: the mana as a dark tone that is not music: inharmonic partials that sink slowly and
+//   drift against each other with no period (`glide`), a growl under 75 Hz with the proximity
+//   (`voice`), glassy grains that glide down and are swallowed, and formants on the inrush (`howl`,
+//   bands of noise, not a comb, so no tube).
+// - The stones: single stones dragged to the core, louder and faster until they strike it (`grind`,
+//   `blockHit`, `crush`), stones that fly past the camera into it, and a pile at the core that grinds,
+//   crunches and groans more as they arrive (`rubble`, `groan`).
+
+/** Where the orb is at a reference second, from the shot that holds it. */
+function orbAt(t: number): Vec3 {
+  const shot =
+    HOLE_SHOTS.find((k) => t >= k[0]![0] && t <= k[k.length - 1]![0]) ??
+    HOLE_SHOTS[HOLE_SHOTS.length - 1]!;
+  const ts = shot.map((k) => k[0]);
+  return [0, 1, 2].map((c) =>
+    interp(
+      t,
+      ts,
+      shot.map((k) => k[1][c]!),
+    ),
+  ) as unknown as Vec3;
+}
+const shotOf = (t: number) => HOLE_SHOTS.find((k) => t >= k[0]![0] && t < k[k.length - 1]![0]);
+
+/** A path from `a` to `b` over n samples whose speed grows toward the end (drawn in). */
+function drawnPath(a: Vec3, b: Vec3, n: number, power = 2.2) {
+  const axis = (c: 0 | 1 | 2) =>
+    new Float64Array(n).map((_, i) => a[c] + (b[c] - a[c]) * (i / Math.max(1, n - 1)) ** power);
+  return { x: axis(0), y: axis(1), z: axis(2) };
+}
+
+/** One swallow: air drawn in, its band falling and narrowing, a growing level that stops dead. */
+function swallow(dur: number, seed: number, f0: number, f1: number): Float64Array {
+  const n = nsamp(dur);
+  const x = stftShape(white(n, seed), (tf, fr, g) => {
+    const u = Math.min(1, Math.max(0, tf / dur));
+    const fc = f0 * (f1 / f0) ** u;
+    const w = 1.5 * (1 - u) + 0.35;
+    for (let k = 0; k < fr.length; k++)
+      g[k] = Math.exp(-0.5 * (Math.log2(Math.max(fr[k]!, 1) / fc) / w) ** 2);
+  });
+  const walk = S.levelWalk(n, seed + 1, 1.5, 2.0, 12.0);
+  const r = rng(seed + 2);
+  const y = new Float64Array(n);
+  const grow = 4.5;
+  for (let i = 0; i < n; i++) {
+    const u = i / n;
+    y[i] = x[i]! * walk[i]! * ((Math.exp(grow * u) - 1) / (Math.exp(grow) - 1));
+  }
+  const ry = Math.sqrt(y.reduce((p, q) => p + q * q, 0) / n) + 1e-12;
+  // grains of dust drawn in: reversed bursts that end where they are swallowed, crowding to the end
+  const grains = zeros(n);
+  const count = Math.round(10 + 30 * dur);
+  for (let k = 0; k < count; k++) {
+    const end = Math.floor(n * Math.sqrt(r.random()));
+    const g = S.burst(r.integers(1, 2 ** 31 - 1), 1800, 9000, r.uniform(0.002, 0.008), {
+      rise: 0.0002,
+    }).reverse();
+    addAt(grains, g, end - g.length, r.uniform(0.2, 1.0) * (end / n) ** 2);
+  }
+  const rg = Math.sqrt(grains.reduce((p, q) => p + q * q, 0) / n) + 1e-12;
+  for (let i = 0; i < n; i++) y[i] = y[i]! / ry + (0.35 * grains[i]!) / rg;
+  // the dead stop: 4 ms
+  const k = nsamp(0.004);
+  for (let i = 0; i < k; i++)
+    y[n - k + i] = y[n - k + i]! * (0.5 + 0.5 * Math.cos((Math.PI * (i + 1)) / k));
+  return y;
+}
+
+function suction(m: Mix): void {
+  const r = rng(1300);
+  let t = HOLE_FROM + 0.2;
+  let i = 0;
+  while (t < HOLE_TO - 0.3) {
+    t += r.exponential(1 / 4.0);
+    const p = proximityAt(t);
+    if (r.random() > p || p < 0.3) continue;
+    const dur = r.uniform(0.35, 1.1);
+    const shot = shotOf(t);
+    if (!shot) continue;
+    const start = Math.max(t - dur, shot[0]![0] + 0.02);
+    const d = t - start;
+    if (d < 0.25) continue;
+    const az = r.uniform(0, 2 * Math.PI);
+    const rad = r.uniform(3.0, 6.0);
+    const core = orbAt(t);
+    const from: Vec3 = [
+      core[0] + rad * Math.cos(az),
+      Math.max(0.3, core[1] + r.uniform(-1.5, 1.5)),
+      core[2] + rad * Math.sin(az),
+    ];
+    const sig = swallow(d, 1310 + 7 * i, r.uniform(1400, 2600), r.uniform(90, 160));
+    m.add(`hole-swallow${i}`, sig, start, drawnPath(from, core, sig.length), {
+      target: -17 + 9 * (p - 1),
+      kind: 'm',
+      // the walls' first answers would carry the gesture past its stop; the hall's late field stays
+      erDb: -12,
+      sendDb: -8,
+    });
+    i++;
+  }
+}
+
+function character(m: Mix): void {
+  const dur = HOLE_TO - HOLE_FROM;
+  const n = nsamp(dur);
+  const prox = curve(PROXIMITY, HOLE_FROM, n);
+  // the mana: inharmonic partials that sink slowly, two clusters that drift against each other
+  const ratios = [1.0, 1.41, 1.87, 2.63, 3.31];
+  const a = S.glide(dur, 1400, 233, 147, { ratios, wander: 0.012, shape: 1.0, tilt: 0.6 });
+  const b = S.glide(dur, 1401, 236, 149, {
+    ratios: ratios.map((q) => q * 1.013),
+    wander: 0.012,
+    shape: 1.0,
+    tilt: 0.6,
+  });
+  const pm = prox.map((p) => p ** 1.2);
+  m.addWide(
+    'hole-mana',
+    [
+      fade(
+        a.map((v, i) => v * pm[i]!),
+        0.1,
+        0.03,
+      ),
+      fade(
+        b.map((v, i) => v * pm[i]!),
+        0.1,
+        0.03,
+      ),
+    ],
+    HOLE_FROM,
+    {
+      target: -21,
+      kind: 'm',
+      sendDb: -4,
+    },
+  );
+  // the growl under the camera: three low partials, a level that breathes, only near
+  const growl = S.voice(dur, 1410, [38.0, 53.0, 71.0], {
+    wander: 0.04,
+    rate: 3.0,
+    tilt: 0.4,
+    breath: 0.9,
+  });
+  const pg = prox.map((p) => p ** 2);
+  const gr = fade(
+    growl.map((v, i) => v * pg[i]!),
+    0.1,
+    0.03,
+  );
+  m.addWide('hole-growl', [gr, gr.slice()], HOLE_FROM, { target: -20, kind: 'm' });
+  // formants on the inrush: narrow bands of noise whose centres wander
+  const ring = S.howl(dur, 1420, [233.0, 349.0, 523.0, 741.0], 9.0, 0.06, 1.0);
+  const pr = prox.map((p) => p ** 1.5);
+  m.add(
+    'hole-ring',
+    fade(
+      ring.map((v, i) => v * pr[i]!),
+      0.1,
+      0.03,
+    ),
+    HOLE_FROM,
+    [0.0, 2.5, -2.5],
+    {
+      target: -25,
+      kind: 'm',
+      sendDb: -4,
+    },
+  );
+  // glassy grains of mana that glide down and are swallowed, one layer for each shot at the orb
+  const rg = rng(1430);
+  HOLE_SHOTS.forEach((keys, s) => {
+    const t0 = keys[0]![0];
+    const t1 = keys[keys.length - 1]![0];
+    const times: number[] = [];
+    let t = t0;
+    for (;;) {
+      t += rg.exponential(1 / 7.0);
+      if (t >= t1 - 0.3) break;
+      if (rg.random() < proximityAt(t)) times.push(t - t0);
+    }
+    if (!times.length) return;
+    const glints = ticks(
+      times,
+      () => {
+        const d = rg.uniform(0.25, 0.7);
+        const f0 = rg.uniform(2500, 6000);
+        const gl = S.glide(d, rg.integers(1, 2 ** 31 - 1), f0, f0 / rg.uniform(4, 6), {
+          ratios: [1.0, 2.76],
+          wander: 0.004,
+          shape: 0.5,
+        });
+        const L = gl.length;
+        const cut = nsamp(0.008);
+        return gl.map(
+          (v, i) =>
+            v *
+            Math.min(1, i / nsamp(0.015)) *
+            (0.4 + 0.6 * (i / L)) *
+            Math.min(1, (L - i) / cut) *
+            rg.uniform(0.3, 1),
+        );
+      },
+      t1 - t0 + 0.8,
+    );
+    m.add(`hole-glint${s}`, glints, t0, orbAt((t0 + t1) / 2), {
+      target: -27,
+      kind: 'm',
+      sendDb: -6,
+    });
+  });
+}
+
+function gathering(m: Mix): void {
+  const r = rng(1500);
+  // stones dragged to the core: louder and faster until they strike it
+  const arrivals: number[] = [];
+  for (const [a, b, r0, r1] of [
+    [9.8, 11.0, 2.0, 3.0],
+    [11.75, 14.75, 2.0, 6.0],
+    [19.0, 19.95, 2.0, 3.0],
+  ] as const) {
+    let t = a;
+    for (;;) {
+      t += r.exponential(1 / (r0 + ((r1 - r0) * (t - a)) / (b - a)));
+      if (t >= b) break;
+      arrivals.push(t);
+    }
+  }
+  arrivals.forEach((ta, i) => {
+    const shot = shotOf(ta);
+    if (!shot) return;
+    const d = Math.min(r.uniform(0.7, 1.6), ta - shot[0]![0] - 0.02);
+    if (d < 0.3) return;
+    const core = orbAt(ta);
+    const az = r.uniform(0, 2 * Math.PI);
+    const rad = r.uniform(5.0, 8.0);
+    const from: Vec3 = [
+      core[0] + rad * Math.cos(az),
+      r.uniform(0.5, 4.0),
+      core[2] + rad * Math.sin(az),
+    ];
+    const size = r.uniform(0.4, 1.2);
+    const g = S.grind(d, 1510 + 11 * i, { rLo: 50, rHi: 260, scrape: 1.6 });
+    const drag = g.map((v, k) => v * (k / g.length) ** 1.5);
+    const cut = nsamp(0.006);
+    for (let k = 0; k < cut; k++)
+      drag[drag.length - cut + k] = drag[drag.length - cut + k]! * (1 - k / cut);
+    m.add(`drag-${i}`, drag, ta - d, drawnPath(from, core, drag.length), {
+      target: -25 + 3 * size,
+      kind: 'm',
+      sendDb: -6,
+    });
+    const hit = S.blockHit(1520 + 11 * i, size, 9.0);
+    addAt(hit, S.crush(0.3, 1521 + 11 * i, 0.06).subarray(0, hit.length), 0, 0.5);
+    m.add(`drag-${i}-arrive`, hit, ta, core, {
+      // the arrival lands as the accepted landings do: the largest at the level of the block at
+      // 15.56 s (-11), a smaller one lower by its size
+      target: -11 + 10 * Math.log10(size / 1.2),
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -5,
+    });
+  });
+  // stones that fly past the camera into the core
+  (
+    [
+      [10.1, -1],
+      [10.6, 1],
+      [11.9, 1],
+      [12.6, -1],
+      [13.2, 1],
+      [13.7, -1],
+      [14.2, 1],
+      [19.5, -1],
+    ] as const
+  ).forEach(([t, side], i) => {
+    const src = steady(0.6, 1560 + i, 90, 1800);
+    const core = orbAt(t + 0.3);
+    const P = concat(
+      line([side * 2.5, 1.2, 6.0], [side * 1.0, 1.4, 0.0], Math.floor(src.length / 2)),
+      line([side * 1.0, 1.4, 0.0], core, src.length - Math.floor(src.length / 2)),
+    );
+    m.add(`fly-past${i}`, src, t - 0.3, P, { target: -21, kind: 'i', sendDb: -8 });
+  });
+  // the pile at the core: crunching and grinding more as they arrive, and the groan of large masses
+  const CORE: Vec3 = [0.0, 3.0, -10.0];
+  m.add(
+    'pile-crunch',
+    S.rubble(3.2, 1580, (t) => 6.0 + 9.0 * t, { sizes: [0.2, 0.8], bright: 0.2, body: 0.8 }),
+    11.6,
+    CORE,
+    { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
+  );
+  const groan = S.groan(3.2, 1581, { rLo: 40, rHi: 90, res: [60.0, 110.0, 190.0], q: 3.0 });
+  m.add(
+    'pile-groan',
+    times(
+      groan,
+      curve(
+        [
+          [11.6, 0.3],
+          [14.7, 1.0],
+          [14.8, 0.0],
+        ],
+        11.6,
+        groan.length,
+      ),
+    ),
+    11.6,
+    CORE,
+    { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
+  );
+}
+
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
 export function scene(): Mix {
   const m = new Mix('scene1', 0.0, SCENE_END, 1.5);
@@ -1081,6 +1405,9 @@ export function scene(): Mix {
   redLayers(m, { bed: false });
   holeBody(m);
   levelCore(m);
+  suction(m);
+  character(m);
+  gathering(m);
   carve(m);
   m.driveDb = 8.8;
   // the end of the scene: the sound fades over the first second of the next shot
