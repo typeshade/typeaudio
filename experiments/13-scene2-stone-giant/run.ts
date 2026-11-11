@@ -1,6 +1,11 @@
 // Renders scene 2, the stone giant, with the study's models in the engine.
 //
-//   bun experiments/13-scene2-stone-giant/run.ts [--out dir] [--join scene1.wav]
+//   bun experiments/13-scene2-stone-giant/run.ts [--out dir] [--join scene1.wav] [--workers N]
+//        [--cache dir | --no-cache | --plain]
+//
+// The layers are built from their parts (`src/study/build.ts`): a part whose code and settings did
+// not change is read from the cache (`.cache/scene-parts/`), the others are made on worker threads.
+// `--plain` runs the scene's code as written, with no builder; the samples are the same.
 //
 // It writes `scene2.wav` (24-bit, 48 kHz, from 28.5 s) and `scene2.json`. With `--join` and scene
 // 1's render (experiment 12, from 0 s), it compares the two over 28.6 to 29.45 s, where they hold the
@@ -10,6 +15,8 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SR, integratedLufs, truePeakDb, wav24, type Stereo } from '../../src/study/dsp.ts';
+import { build, renderMaster, type BuildReport } from '../../src/study/build.ts';
+import type { Mix } from '../../src/study/mix.ts';
 import { readWav } from '../12-scene1-red-seal/measure.ts';
 import { SCENE2_FROM, SCENE2_JOIN, scene2 } from './scene2.ts';
 
@@ -21,10 +28,23 @@ const arg = (name: string): string | undefined => {
 const out = arg('out') ?? join(here, 'out');
 mkdirSync(out, { recursive: true });
 
+const workers = arg('workers');
 const t0 = performance.now();
-const m = scene2();
+let m: Mix;
+let built: BuildReport | undefined;
+if (process.argv.includes('--plain')) m = scene2();
+else {
+  const r = await build(join(here, 'scene2.ts'), {
+    exportName: 'scene2',
+    cacheDir: process.argv.includes('--no-cache') ? null : arg('cache'),
+    workers: workers === undefined ? undefined : Number(workers),
+  });
+  m = r.mix;
+  built = r.report;
+}
 const t1 = performance.now();
-const y = m.render();
+const master = built ? await renderMaster(m) : null;
+const y: Stereo = master ? master.y : m.render();
 const t2 = performance.now();
 writeFileSync(join(out, 'scene2.wav'), wav24(y));
 writeFileSync(
@@ -38,6 +58,7 @@ writeFileSync(
       limitDb: m.limitDb,
       limitedShare: m.limitedShare,
       seconds: { build: (t1 - t0) / 1000, master: (t2 - t1) / 1000 },
+      build: built,
       layers: Object.fromEntries(
         m.order.map((k) => {
           const l = m.layers.get(k)!;
@@ -50,7 +71,7 @@ writeFileSync(
   ),
 );
 console.log(
-  `scene2: ${m.order.length} layers, master ${m.masterGainDb.toFixed(2)} dB (scene 1's), trim ${m.trimDb.toFixed(2)} dB, limiter ${m.limitDb.toFixed(1)} dB deep, ${(100 * m.limitedShare).toFixed(1)} % of the time, integrated ${integratedLufs(y).toFixed(1)} LUFS, true peak ${truePeakDb(y).toFixed(2)} dBTP; layers ${((t1 - t0) / 1000).toFixed(1)} s, master ${((t2 - t1) / 1000).toFixed(1)} s`,
+  `scene2: ${m.order.length} layers, master ${m.masterGainDb.toFixed(2)} dB (scene 1's), trim ${m.trimDb.toFixed(2)} dB, limiter ${m.limitDb.toFixed(1)} dB deep, ${(100 * m.limitedShare).toFixed(1)} % of the time, integrated ${integratedLufs(y).toFixed(1)} LUFS, true peak ${(master ? master.peakDb : truePeakDb(y)).toFixed(2)} dBTP; layers ${((t1 - t0) / 1000).toFixed(1)} s, master ${((t2 - t1) / 1000).toFixed(1)} s`,
 );
 
 const s1path = arg('join');
