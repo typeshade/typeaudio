@@ -337,7 +337,9 @@ describe('the kinds as functions', () => {
       };
       const frames = Math.min(made.length, sr);
       const fn = run(doc, frames);
-      const fresh = makeLane(e, { sr, key }) as { lane: Record<string, { tick(): number }> };
+      const fresh = makeLane(e, { sr, key }) as unknown as {
+        lane: Record<string, { tick(): number }>;
+      };
       const unit = Object.values(fresh.lane).find(
         (v) =>
           typeof v === 'object' &&
