@@ -233,7 +233,7 @@ function namedControls(nodes: FunctionInstance[]): FunctionParameter[] {
   return [...parameters.values()];
 }
 
-/** Columns for the editor's canvas: sources on the left, the node that sounds on the right. */
+/** Columns for the editor's canvas: sources on the left, the node that sounds on the right, all below the canvas toolbar. */
 function layoutOf(nodes: FunctionInstance[], output: string): Record<string, { x: number; y: number }> {
   const depth = new Map<string, number>();
   const feeds = (id: string): string[] =>
@@ -252,7 +252,7 @@ function layoutOf(nodes: FunctionInstance[], output: string): Record<string, { x
       const column = most - (depth.get(n.id) ?? 0);
       const row = rows.get(column) ?? 0;
       rows.set(column, row + 1);
-      return [n.id, { x: 40 + column * 360, y: 40 + row * 220 }];
+      return [n.id, { x: 40 + column * 340, y: 100 + row * 220 }];
     }),
   );
 }
