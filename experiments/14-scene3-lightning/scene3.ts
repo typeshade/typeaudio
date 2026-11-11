@@ -33,8 +33,10 @@ import {
   addAt,
   bandGain,
   fade,
+  iir,
   lp,
   nsamp,
+  rbj,
   rng,
   spectral,
   type Stereo,
@@ -396,7 +398,10 @@ function bolt2(m: Mix): void {
       [T1, 0.0],
     ];
     // the two beams: the upper a brighter roar with more crackle, the lower a dark heavy roar
-    const dnA = S.norm(plasma(B2, T1, 3510, lv, 5500));
+    // review 4: the upper beam brighter, 7 dB more above 2.5 kHz (still under 10 kHz)
+    const dnA = S.norm(
+      lp2(iir(plasma(B2, T1, 3510, lv, 5500), [rbj('hs', 2500, 0.7071, 7)]), 10000),
+    );
     const rawB = plasma(B2, T1, 3515, lv, 2000);
     const bodyB = S.norm(S.billow(dur, 3516, 28.0, 110.0, 2.0)[0]);
     const lowB = S.norm(lp2(rawB, 3000));
@@ -921,6 +926,129 @@ function enormity(
   );
 }
 
+/**
+ * Review 4, 2026-11-11: the owner on the doubled attack, "when they overlap, the wave grows - it
+ * should go toward the high frequencies". Where the two beams overlap (from the second, 40 ms after
+ * the first) a searing sizzle of 2 to 8 kHz, dense and irregular, laid shot by shot; two harsh
+ * transients at the two onsets; a bright crack of thunder in the wide shot. Under 11 kHz.
+ */
+function overlap2(m: Mix): void {
+  m.part('overlap2', () => {
+    const t0 = B2 + 0.04;
+    const dur = 3.6;
+    const n = nsamp(dur);
+    const dw = S.levelWalk(n, 3961, 4.0, 3.0, 14.0);
+    const lv = env(
+      [
+        [t0, 0.0],
+        [t0 + 0.01, 1.0],
+        [50.9, 0.9],
+        [52.9, 0.4],
+        [t0 + dur, 0.0],
+      ],
+      t0,
+      n,
+    );
+    const ck = arcCrackle(
+      dur,
+      3960,
+      new Float64Array(n).map((_, i) => Math.min(1, 0.8 * dw[i]! * lv[i]!)),
+    );
+    const hiss = S.burst(3962, 2500.0, 8000.0, 1.6, { dur, rise: 0.003 });
+    const sz = lp2(
+      new Float64Array(n).map((_, i) => (0.8 * ck[i]! + 0.5 * hiss[i]!) * lv[i]!),
+      9000,
+    );
+    shots(m, 'b2x-sizzle', t0, [
+      { from: t0, to: 49.93, sig: sz, pos: [0.0, 1.6, -2.5], target: -11, sendDb: -10 },
+      { from: 49.93, to: t0 + dur - 0.2, sig: sz, pos: [1.0, 4.5, -9.0], target: -15, sendDb: -4 },
+    ]);
+    (
+      [
+        [B2, -1],
+        [B2 + 0.04, 1],
+      ] as const
+    ).forEach(([t, side], j) => {
+      const o = new Float64Array(nsamp(0.2));
+      addAt(
+        o,
+        S.tiltedBurst(3965 + j, 1200.0, 11000.0, 0.006, { tilt: 0.1, rise: 0.0002 }),
+        0,
+        1.0,
+      );
+      addAt(o, S.sizzle(0.12, 3967 + j, 0.03, 6000.0, 2500.0, 10000.0), 0, 0.6);
+      m.add(
+        `b2x-onset${j}`,
+        lp2(cut(S.saturate(o, 2.5), 0.06), 11000),
+        t,
+        [side * 3.0, 2.0, -2.5],
+        {
+          target: -10,
+          kind: 'i',
+          sendDb: -12,
+        },
+      );
+    });
+    const tc = new Float64Array(nsamp(0.8));
+    addAt(tc, S.tiltedBurst(3970, 800.0, 9000.0, 0.02, { tilt: 0.4, rise: 0.0005 }), 0, 1.0);
+    addAt(
+      tc,
+      S.heavyCrack(3971, { size: 2.0, dur: 0.5, kRate: 10, bright: 0.9 }).subarray(0, tc.length),
+      0,
+      0.8,
+    );
+    m.add('b2x-thunder', lp2(S.saturate(tc, 1.8), 10000), 50.05, [2.0, 6.0, -12.0], {
+      target: -12,
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -2,
+    });
+  });
+}
+
+/**
+ * Review 4: the climax as bright as the doubled attack at least, so the arc holds: where the beams
+ * from both sides converge (55.85 to 56.90 s), a sizzle of 2 to 8 kHz on each side that grows
+ * denser toward the blast and is sucked in with the rest. Under 9 kHz.
+ */
+function overlap3(m: Mix): void {
+  m.part('overlap3', () => {
+    const t0 = 55.85;
+    const t1 = 56.92;
+    const dur = t1 - t0;
+    const n = nsamp(dur);
+    const lv = env(
+      [
+        [t0, 0.0],
+        [t0 + 0.01, 0.7],
+        [56.88, 1.0],
+        [56.9, 0.05],
+        [t1, 0.0],
+      ],
+      t0,
+      n,
+    );
+    ([-1, 1] as const).forEach((side, j) => {
+      const dw = S.levelWalk(n, 3981 + j, 4.0, 3.0, 14.0);
+      const ck = arcCrackle(
+        dur,
+        3983 + j,
+        new Float64Array(n).map((_, i) => Math.min(1, dw[i]! * lv[i]!)),
+      );
+      const hiss = S.burst(3985 + j, 2500.0, 8000.0, 3.0, { dur, rise: 0.003 });
+      const sz = lp2(
+        new Float64Array(n).map((_, i) => (0.8 * ck[i]! + 0.5 * hiss[i]!) * lv[i]!),
+        9000,
+      );
+      m.add(`b3x-sizzle${j}`, fade(sz, 0.002, 0.003), t0, [side * 3.0, 1.8, -2.5], {
+        target: -13,
+        kind: 'm',
+        sendDb: -8,
+      });
+    });
+  });
+}
+
 /** The doubled attack's weight class, and a core between the two beams for its first two seconds. */
 function size2(m: Mix): void {
   m.part('size2', () => {
@@ -986,10 +1114,12 @@ export function scene3(): Mix {
   crawl(m);
   bolt2(m);
   size2(m);
+  overlap2(m);
   gather2(m);
   bolt3(m);
   blast(m);
   size3(m);
+  overlap3(m);
   after(m);
   m.finish(tidy3);
   // scene 2's review 9: its noise layers and cracks lose their harsh top
