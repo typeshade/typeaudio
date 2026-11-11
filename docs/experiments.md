@@ -21,6 +21,7 @@ devices yet.
 | 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
 | 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
 | 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
+| 11  | The whole video, a first draft of effects and ambience     | The cue sheet of a whole video; which kinds a whole video needs               | in progress: the cue sheet and the first draft render                                                                                                                                                                                                  |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -754,3 +755,12 @@ and `slow` was not asked again; the accepted variant is built on `slow`.
 blast, and the break with the hang and the fall. Their sounds are in the store: `wall-hit`,
 `stone-landing`, `blast`, `break`. `module-4.json`, variant `slow-many-ordered`, is the whole force
 passage as accepted.
+
+## 11. The whole video, a first draft of effects and ambience
+
+The owner asked on 2026-11-11 for the sound of the whole reference video (212.6 s) in TypeAudio code:
+every sound effect and every ambience bed. Dialogue and music are out of scope. The order the owner
+chose: a rough draft of the whole video first, for the owner's review, then each scene refined, then
+the scenes published on the site as function nodes.
+
+**Status.** In progress.
