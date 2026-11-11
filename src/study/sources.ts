@@ -822,8 +822,12 @@ export function billow(dur: number, seed: number, lo = 70.0, hi = 700.0, sd = 3.
   }) as Stereo;
 }
 
-/** A slab of stone that lands: a deep thud that lasts, the slab cracks, small pieces scatter. */
-export function slabFall(seed: number, size = 1.0, tail = 1.0): Float64Array {
+/**
+ * A slab of stone that lands: a deep thud that lasts, the slab cracks, small pieces scatter
+ * (`scatter`, their weight; the study's 0.2). The scenes pass 0: the owner's rule cuts small
+ * stones that roll (2026-11-11), so a landing keeps its body, its crack and its thud only.
+ */
+export function slabFall(seed: number, size = 1.0, tail = 1.0, scatter = 0.2): Float64Array {
   const hc = heavyCrack(seed, { size, dur: 0.35, kRate: 6, bright: 0.3 });
   const thud = burst(seed + 5, 26.0, 95.0, tail * (0.18 + 0.1 * Math.min(size, 2.0)), {
     rise: 0.006,
@@ -837,7 +841,7 @@ export function slabFall(seed: number, size = 1.0, tail = 1.0): Float64Array {
   addAt(y, hc, 0, 0.6);
   addAt(y, thud, 0, 0.5);
   addAt(y, body, 0, 1.3);
-  addAt(y, norm(sc), 0, 0.2);
+  if (scatter > 0) addAt(y, norm(sc), 0, scatter);
   return norm(y);
 }
 
