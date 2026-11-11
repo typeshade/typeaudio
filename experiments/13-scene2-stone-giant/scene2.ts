@@ -29,6 +29,7 @@ import {
   linspace,
   lp,
   spectral,
+  white,
   nsamp,
   rng,
   type Stereo,
@@ -664,7 +665,9 @@ function charge(m: Mix): void {
   const stop = nsamp(0.004);
   for (let i = 0; i < stop; i++) crackle[n - stop + i] = crackle[n - stop + i]! * (1 - i / stop);
   m.add('charge-crackle', crackle, T0, TIP, { target: -12.5, kind: 'i', sendDb: -5 });
-  // the hum of the voltage: 48 Hz and its low harmonics, steady in pitch, growing in level and grit
+  // the hum of the voltage (review 4: deeper, bigger, a "wooo-woong"): 36 Hz with a strong body from
+  // 72 to 144 Hz, steady in pitch; its level and its grit swell in a few slow, irregular surges, as
+  // a line of extra-high voltage throbs; a faint corona buzz rides on its waveform
   const B = env(
     [
       [T0, 0.0],
@@ -677,19 +680,41 @@ function charge(m: Mix): void {
     T0,
     n,
   );
-  const walk = S.levelWalk(n, 2520, 1.0, 0.3, 3.0);
-  const amps = [1.0, 0.7, 0.5, 0.35, 0.25, 0.15];
+  const surge = env(
+    [
+      [T0, 0.0],
+      [44.18, 0.0],
+      [44.42, 0.8],
+      [44.62, 0.15],
+      [44.78, 0.2],
+      [45.0, 1.0],
+      [45.16, 0.3],
+      [45.24, 0.35],
+      [45.42, 1.0],
+      [45.5, 0.7],
+      [45.62, 1.0],
+      [45.67, 1.0],
+    ],
+    T0,
+    n,
+  );
+  const walk = S.levelWalk(n, 2520, 1.5, 0.4, 2.0);
+  const amps = [1.0, 0.95, 0.8, 0.6, 0.4, 0.25, 0.15];
   const ph = amps.map((_, k) => 0.7 * k);
   const hum = new Float64Array(n);
   for (let i = 0; i < n; i++) {
     const t = i / SR;
     let x = 0;
-    amps.forEach((a, k) => (x += a * Math.sin(2 * Math.PI * 48.0 * (k + 1) * t + ph[k]!)));
-    const g = 1 + 3 * B[i]!;
-    hum[i] = (Math.tanh((g * x) / 2) / Math.tanh(g)) * B[i]! * walk[i]!;
+    amps.forEach((a, k) => (x += a * Math.sin(2 * Math.PI * 36.0 * (k + 1) * t + ph[k]!)));
+    const sw = 0.55 + 0.45 * surge[i]!;
+    const g = 1 + 3.5 * B[i]! * sw;
+    hum[i] = (Math.tanh((g * x) / 2.5) / Math.tanh(g)) * B[i]! * sw * walk[i]!;
   }
-  m.addWide('charge-hum', [fade(hum, 0.05, 0.004), fade(hum, 0.05, 0.004)], T0, {
-    target: -20,
+  const corona = S.norm(spectral(white(n, 2521), (f) => bandGain(f, 2000, 7000, 2)));
+  const hp = Math.max(...hum.map(Math.abs)) + 1e-12;
+  const body = hum.map((v, i) => v + 0.06 * corona[i]! * Math.abs(v / hp) * B[i]!);
+  m.addWide('charge-hum', [fade(body, 0.05, 0.004), fade(body, 0.05, 0.004)], T0, {
+    target: -16,
     kind: 'm',
     sendDb: -6,
   });

@@ -1150,5 +1150,15 @@ Measured each 0.25 s from 44.0 s: -26.8, -24.1, -22.6, -18.4, -17.5, -16.3, -15.
 violent crack with a short low thump, no long tail, no glide. The bolt at 45.70 s lies in scene 3,
 which follows this rule.
 
-**Status.** The fourth render waits for the owner's review. The previews went to the owner privately;
+**Review 4, 2026-11-11.** The owner found the fourth render good and asked for a lower hum with the
+"wooo-woong" of extra-high voltage. Only the hum changed: 36 Hz and six harmonics (its body from 72 to
+144 Hz), steady in pitch; four slow surges at irregular intervals (0.58, 0.42 and 0.20 s apart) raise
+its level and its grit together, under a slow wander of the level with no period; a faint corona
+buzz from 2 to 7 kHz rides on its waveform; its level is 4 dB higher (-16 LUFS over 0.4 s). Over the
+shot, 25 to 60 Hz rose by 2.2 dB and 60 to 150 Hz by 5.8 dB; 1 to 12 kHz (the crackle) stayed within
+0.1 dB. Each 0.25 s from 44.0 s: -26.8, -23.7, -22.4, -17.9, -16.4, -14.3, -12.6 dB. The crest
+measures -12.8 dB over 0.15 s, under the fist (-7.9 dB); the true peak stays at -2.04 dBTP. The
+render takes 85 s.
+
+**Status.** The fifth render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.
