@@ -311,75 +311,146 @@ function floor(m: Mix): void {
   );
 }
 
-// ---- Review 1, 2026-11-11: the giant's assembly. The owner found the forming of the giant strange:
-// it was one wash of roll, groan and grind. Now it is built as huge stone is built: blocks that
-// slide and slam into place one after another (a scrape, then the seat in the timbre of the accepted
-// landing, then a deep clunk), some overlapping; deep groans of the body; a low rumble that grows
-// as the body completes, one source across the cuts; and its first shift of weight when it stands.
+// ---- The giant's assembly (review 1, refined in review 5, 2026-11-11). The owner: refine the part
+// where the stones gather and become the golem. The frames at 12 a second give every contact:
+//
+//   36.57, 36.98, 37.15, 37.40, 37.73, 37.95  blocks pass close to the camera
+//   37.15 to 37.68                            blocks crowd round her and touch
+//   38.10                                     they slam shut over the camera (the frame is covered)
+//   38.52                                     the covering blocks shift
+//   38.72, 38.82                              blocks slide into the body on the right
+//   39.10 to 39.45                            the head block slides up and seats: the body is complete
+//   39.5 to 40.33                             the camera draws back; nothing moves; the body takes the weight
+//   40.42                                     in the hall, the giant shifts its weight as it stands
+//
+// One body grows: few, near, distinct contacts first; then deeper and heavier ones; the head, the
+// largest and deepest seat, completes it; then the weight shift, the largest low moment before the
+// fist. Every seat has its own size, ring, body pitch, scrape and place. The groans of the body run
+// across the cut at 38.60 s, so the moment does not sag where one seat dies before the next.
+
+/** 36.45 to 37.95: blocks fly at her and pass; a few touch where they crowd round her. */
+function blocks(m: Mix): void {
+  (
+    [
+      [36.57, -1, 1.2],
+      [36.98, 1, 1.8],
+      [37.15, -1, 1.4],
+      [37.4, 1, 2.2],
+      [37.73, -1, 1.1],
+      [37.95, 1, 1.5],
+    ] as const
+  ).forEach(([t, side, near], i) =>
+    pass(m, `block-pass${i}`, t, side, near, 2030 + i, -22 - (near > 1.5 ? 2 : 0)),
+  );
+  (
+    [
+      [37.15, 0.7, [2.5, 2.0, -5.0]],
+      [37.4, 0.8, [-2.0, 1.0, -4.5]],
+      [37.57, 0.9, [1.5, 2.5, -4.0]],
+      [37.68, 1.0, [-1.0, 1.5, -3.5]],
+    ] as [number, number, Vec3][]
+  ).forEach(([t, size, pos], i) =>
+    m.add(`block-hit${i}`, S.blockHit(2041 + 7 * i, size, 7.0 + i), t, pos, {
+      target: landing(size) - 2,
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -6,
+    }),
+  );
+}
+
+interface Seat {
+  readonly t: number;
+  readonly size: number;
+  readonly pos: Vec3;
+  /** How long it slides before it seats, seconds. */
+  readonly slide: number;
+  /** The pitch of its body against the size's own, and its ring (0 dull to 1 bright). */
+  readonly pitch: number;
+  readonly ring: number;
+  /** dB against the accepted landing's level for its size. */
+  readonly level: number;
+}
+
+const SEATS: readonly Seat[] = [
+  { t: 38.1, size: 1.6, pos: [0.0, 1.0, -1.5], slide: 0.15, pitch: 1.0, ring: 0.5, level: 0 },
+  { t: 38.52, size: 1.1, pos: [-1.2, 1.5, -1.8], slide: 0.12, pitch: 1.12, ring: 0.3, level: -4 },
+  { t: 38.72, size: 1.4, pos: [3.0, -0.5, -3.5], slide: 0.1, pitch: 0.93, ring: 0.45, level: -2 },
+  { t: 38.82, size: 1.7, pos: [2.2, -1.5, -3.0], slide: 0.1, pitch: 0.88, ring: 0.25, level: -1 },
+  { t: 39.45, size: 2.3, pos: [0.0, 1.5, -6.0], slide: 0.35, pitch: 0.8, ring: 0.6, level: -1 },
+];
 
 function assembly(m: Mix): void {
-  const seats: [number, number, Vec3][] = [
-    [37.9, 1.6, [-1.0, 1.0, -2.0]],
-    [38.16, 1.4, [1.2, 1.5, -2.5]],
-    [38.42, 1.8, [0.0, 0.5, -2.0]],
-    [38.72, 1.5, [-2.5, -1.2, -3.0]],
-    [38.93, 1.2, [2.0, -1.5, -4.0]],
-    [39.1, 1.7, [-1.5, -1.5, -5.0]],
-    [39.34, 1.3, [3.0, -1.0, -3.5]],
-    [39.52, 1.9, [0.0, -2.0, -2.5]],
-    [39.78, 1.4, [-3.0, -1.2, -4.5]],
-    [39.97, 1.6, [2.5, -1.8, -3.0]],
-    [40.2, 2.0, [0.0, -2.0, -4.0]],
-  ];
-  const r = rng(2300);
-  seats.forEach(([t, size, pos], k) => {
-    // the scrape as it slides in, louder until it seats
-    const d = r.uniform(0.3, 0.6);
-    const g = S.grind(d, 2310 + 7 * k, { rLo: 30, rHi: 120, scrape: 0.6 });
+  SEATS.forEach((s, k) => {
+    // the slide into place: a scrape that grows and stops on the seat
+    const g = S.grind(s.slide + 0.05, 2310 + 7 * k, {
+      rLo: 25 + 5 * k,
+      rHi: 90 + 15 * k,
+      scrape: 0.4 + 0.15 * k,
+    });
     const sc = g.map((v, i) => v * (i / g.length) ** 1.5);
     const cut = nsamp(0.006);
     for (let i = 0; i < cut; i++)
       sc[sc.length - cut + i] = sc[sc.length - cut + i]! * (1 - i / cut);
-    const from: Vec3 = [pos[0] * 1.8, pos[1] + 1.5, pos[2] - 2.0];
-    m.add(`seat${k}-scrape`, sc, t - d, line(from, pos, sc.length), {
-      target: -26 + 2 * size,
+    const from: Vec3 = [s.pos[0] * 1.6 + (k % 2 ? 1.5 : -1.5), s.pos[1] - 1.5, s.pos[2] - 1.5];
+    m.add(`seat${k}-scrape`, sc, s.t - s.slide - 0.05, line(from, s.pos, sc.length), {
+      target: -27 + 2 * s.size,
       kind: 'm',
       sendDb: -6,
     });
-    // the seat: the accepted landing's timbre, with a deep clunk
-    const seat = S.slabFall(2320 + 7 * k, size, 0.35);
+    // the seat: the accepted landing's timbre, its own body pitch and length, its own ring
+    const seat = S.slabFall(2320 + 7 * k, s.size, 0.3 + 0.08 * k);
     addAt(
       seat,
-      S.boom(2321 + 7 * k, { f: 60.0 / size ** 0.3, tau: 0.2 }).subarray(0, seat.length),
+      S.boom(2321 + 7 * k, { f: (60.0 / s.size ** 0.3) * s.pitch, tau: 0.16 + 0.06 * k }).subarray(
+        0,
+        seat.length,
+      ),
       0,
       0.8,
     );
-    m.add(`seat${k}`, S.norm(seat), t, pos, {
-      target: landing(size),
+    addAt(
+      seat,
+      S.heavyCrack(2323 + 7 * k, { size: s.size, dur: 0.3, kRate: 4 + k, bright: s.ring }).subarray(
+        0,
+        seat.length,
+      ),
+      0,
+      0.3 + 0.3 * s.ring,
+    );
+    m.add(`seat${k}`, S.norm(seat), s.t, s.pos, {
+      target: landing(s.size) + s.level,
       kind: 'i',
       focusDb: 2,
       sendDb: -5,
     });
   });
-  // the body groans as it takes the weight
+  // stone under stress: groans of the body from before the cut at 38.60 s, and creaks as the
+  // completed body takes the weight
   (
     [
-      [38.7, 1.5],
-      [39.55, 1.4],
+      [38.4, 1.5, 30, 65, [45.0, 80.0, 140.0], -22],
+      [39.45, 1.0, 24, 55, [38.0, 70.0, 125.0], -21],
     ] as const
-  ).forEach(([t, d], k) =>
+  ).forEach(([t, d, lo, hi, res, tg], k) =>
     m.add(
       `body-groan${k}`,
-      S.groan(d, 2400 + k, { rLo: 28, rHi: 60, res: [45.0, 80.0, 140.0], q: 3.5 }),
+      S.groan(d, 2400 + k, { rLo: lo, rHi: hi, res, q: 3.5 }),
       t,
       [0.0, -2.0, -3.0],
       {
-        target: -22,
+        target: tg,
         kind: 'm',
         sendDb: -4,
       },
     ),
   );
+  const creak = S.grind(0.85, 2405, { rLo: 15, rHi: 60, res: [60.0, 130.0, 260.0], scrape: 0.3 });
+  m.add('body-creak', fade(creak, 0.15, 0.1), 39.5, [1.5, -1.5, -4.0], {
+    target: -26,
+    kind: 'm',
+    sendDb: -4,
+  });
   // a low rumble that grows as the body completes: one source from the floor shot, across the cuts
   const T0 = 33.58;
   const T1 = 41.4;
@@ -388,7 +459,8 @@ function assembly(m: Mix): void {
     [
       [T0, 0.1],
       [37.85, 0.25],
-      [40.2, 1.0],
+      [38.5, 0.55],
+      [39.45, 1.0],
       [41.18, 1.0],
       [41.4, 0.4],
     ],
@@ -403,15 +475,21 @@ function assembly(m: Mix): void {
     [
       {
         from: T0,
+        to: 36.45,
+        pos: [0.0, 0.0, -9.0] as Vec3,
+        opts: { target: -30, kind: 'm', sendDb: -4 },
+      },
+      {
+        from: 36.45,
         to: 38.6,
         pos: [0.0, 1.0, -3.0] as Vec3,
-        opts: { target: -27, kind: 'm', sendDb: -4 },
+        opts: { target: -26, kind: 'm', sendDb: -4 },
       },
       {
         from: 38.6,
         to: 40.33,
         pos: [0.0, -1.5, -3.0] as Vec3,
-        opts: { target: -24, kind: 'm', sendDb: -4 },
+        opts: { target: -25, kind: 'm', sendDb: -4 },
       },
       {
         from: 40.33,
@@ -423,7 +501,7 @@ function assembly(m: Mix): void {
   );
   // its first shift of weight as it stands in the hall: slow, low, huge
   const shift = new Float64Array(nsamp(1.4));
-  addAt(shift, S.boom(2420, { f: 36.0, tau: 1.0, dur: 1.4 }), 0, 1.0);
+  addAt(shift, S.boom(2420, { f: 46.0, tau: 1.0, dur: 1.4 }), 0, 1.0);
   const rise = nsamp(0.08);
   for (let i = 0; i < rise; i++) shift[i] = shift[i]! * (i / rise);
   addAt(
@@ -433,46 +511,11 @@ function assembly(m: Mix): void {
     0.5,
   );
   m.add('giant-stands', S.norm(shift), 40.42, [3.0, 0.0, -14.0], {
-    target: -13,
+    target: -11,
     kind: 'i',
     focusDb: 3,
     sendDb: -3,
   });
-}
-
-/** 36.45 to 38.6: blocks fly at her from all sides and strike one another; at 37.9 they close. */
-function blocks(m: Mix): void {
-  (
-    [
-      [36.5, -1, 1.6],
-      [36.68, 1, 1.2],
-      [36.85, -1, 2.2],
-      [37.05, 1, 1.0],
-      [37.22, -1, 1.4],
-      [37.45, 1, 1.8],
-      [37.62, -1, 1.1],
-      [37.8, 1, 1.5],
-    ] as const
-  ).forEach(([t, side, near], i) =>
-    pass(m, `block-pass${i}`, t, side, near, 2030 + i, -22 - (near > 1.5 ? 2 : 0)),
-  );
-  const r = rng(2040);
-  let t = 36.55;
-  let i = 0;
-  while (t < 37.85) {
-    t += r.exponential(1 / 4.0);
-    if (t >= 37.85) break;
-    const size = r.uniform(0.6, 1.2);
-    const pos: Vec3 = [r.uniform(-4, 4), r.uniform(0.5, 3.5), r.uniform(-7, -3)];
-    m.add(`block-hit${i}`, S.blockHit(2041 + 7 * i, size, r.uniform(6, 10)), t, pos, {
-      target: landing(size),
-      kind: 'i',
-      focusDb: 2,
-      sendDb: -6,
-    });
-    i++;
-  }
-  // as they close on the camera (37.9 s) the assembly begins: see `assembly`
 }
 
 /** 40.33 to 41.18: the fist comes down: its air rises with its speed. 41.18: it strikes. */
