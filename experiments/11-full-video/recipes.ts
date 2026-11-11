@@ -108,18 +108,18 @@ export function eventsOf(cue: Cue): EngineEvent[] {
   switch (cue.recipe) {
     // Ambience beds.
     case 'hall-air':
-      add('wind', 0, 0.1, { gust: 0.15, howl: 0 }, d, { distance: 6 });
+      add('wind', 0, 0.3, { gust: 0.15, howl: 0 }, d, { distance: 6 });
       break;
     case 'wind':
-      add('wind', 0, 0.22, { gust: 0.5 + 0.4 * b, howl: 0.25 * b }, d, { distance: 3 });
+      add('wind', 0, 0.45, { gust: 0.5 + 0.4 * b, howl: 0.25 * b }, d, { distance: 3 });
       break;
     case 'dust-bed':
-      add('wind', 0, 0.12, { gust: 0.35, howl: 0 }, d, { distance: 5 });
-      add('roar', 0, 0.12, { brightness: 0.1, motion: 0.2, swell: 0.6 }, d, { distance: 8 });
+      add('wind', 0, 0.3, { gust: 0.35, howl: 0 }, d, { distance: 5 });
+      add('roar', 0, 0.3, { brightness: 0.1, motion: 0.2, swell: 0.6 }, d, { distance: 8 });
       break;
     case 'magic-air':
-      add('wind', 0, 0.08, { gust: 0.2, howl: 0.1 }, d, { distance: 6 });
-      add('shimmer', 0, 0.08, { density: 0.3, height: 0.3 + 0.4 * b }, d, { distance: 8 });
+      add('wind', 0, 0.25, { gust: 0.2, howl: 0.1 }, d, { distance: 6 });
+      add('shimmer', 0, 0.2, { density: 0.3, height: 0.3 + 0.4 * b }, d, { distance: 8 });
       break;
 
     // Stone.
@@ -130,8 +130,8 @@ export function eventsOf(cue: Cue): EngineEvent[] {
       add('rubble', 0.03, 0.4, { size: 0.6 * s, density: 0.7, brightness: 0.4 + 0.4 * b, swell: 0 }, 0.4 + 0.8 * s);
       break;
     case 'rock-shatter':
-      add('crack', 0, 0.7, { size: 0.2 + 0.5 * s, brightness: 0.7 + 0.3 * b, crumble: 0.6 }, 0.25);
-      add('impact', 0, 0.4, { weight: 0.3 + 0.5 * s, decay: 0.15, crack: 0.9 });
+      add('crack', 0, 1, { size: 0.2 + 0.5 * s, brightness: 0.7 + 0.3 * b, crumble: 0.6 }, 0.25);
+      add('impact', 0, 0.55, { weight: 0.3 + 0.5 * s, decay: 0.15, crack: 0.9 });
       add('rubble', 0.02, 0.35, { size: 0.3 * s, density: 0.8, brightness: 0.7, swell: 0 }, 0.5);
       break;
     case 'debris': {
@@ -152,8 +152,8 @@ export function eventsOf(cue: Cue): EngineEvent[] {
       add('roar', 0, 0.35, { brightness: 0.1, motion: 0.3, swell: 0.5 }, d, { distance: 10 });
       break;
     case 'dust':
-      add('roar', 0, 0.4, { brightness: 0.2 + 0.3 * b, motion: 0.3, swell: 0.7 }, d);
-      add('wind', 0.1, 0.18, { gust: 0.6, howl: 0 }, d);
+      add('roar', 0, 0.6, { brightness: 0.2 + 0.3 * b, motion: 0.3, swell: 0.7 }, d);
+      add('wind', 0.1, 0.3, { gust: 0.6, howl: 0 }, d);
       break;
 
     // Energy.
@@ -175,9 +175,9 @@ export function eventsOf(cue: Cue): EngineEvent[] {
       add('roar', 0, 0.5, { brightness: 0.5 + 0.4 * b, motion: 0.5, swell: 0.4 }, d);
       break;
     case 'zap':
-      add('crack', 0, 0.6, { size: 0.08, brightness: 1, crumble: 0.9 }, 0.12);
-      add('whoosh', 0, 0.35, { speed: 1, brightness: 0.9 }, 0.1);
-      add('shimmer', 0, 0.2, { density: 0.9, height: 0.8 + 0.2 * b }, 0.35);
+      add('crack', 0, 0.95, { size: 0.08, brightness: 1, crumble: 0.9 }, 0.12);
+      add('whoosh', 0, 0.55, { speed: 1, brightness: 0.9 }, 0.1);
+      add('shimmer', 0, 0.35, { density: 0.9, height: 0.8 + 0.2 * b }, 0.35);
       break;
     case 'lightning': {
       // An arc that crawls for `duration`: a bright roar and `count` short cracks across it.
@@ -190,12 +190,12 @@ export function eventsOf(cue: Cue): EngineEvent[] {
       break;
     }
     case 'charge':
-      add('riser', 0, 0.3, { length: 0.9, pitch: 0.4 + 0.5 * b }, d);
-      add('shimmer', 0, 0.2, { density: 0.5, height: 0.5 + 0.4 * b }, d);
+      add('riser', 0, 0.75, { length: 0.9, pitch: 0.4 + 0.5 * b }, d);
+      add('shimmer', 0, 0.5, { density: 0.5, height: 0.5 + 0.4 * b }, d);
       break;
     case 'shield':
-      add('shimmer', 0, 0.25, { density: 0.4, height: 0.35 + 0.3 * b }, d);
-      add('roar', 0, 0.15, { brightness: 0.3, motion: 0.2, swell: 0.4 }, d);
+      add('shimmer', 0, 0.4, { density: 0.4, height: 0.35 + 0.3 * b }, d);
+      add('roar', 0, 0.25, { brightness: 0.3, motion: 0.2, swell: 0.4 }, d);
       break;
     case 'shield-hit':
       add('impact', 0, 0.55, { weight: 0.3 + 0.5 * s, decay: 0.35, crack: 0.3 });
@@ -203,12 +203,12 @@ export function eventsOf(cue: Cue): EngineEvent[] {
       add('crack', 0, 0.3, { size: 0.3 * s + 0.1, brightness: 0.6, crumble: 0.3 }, 0.12);
       break;
     case 'shatter':
-      add('crack', 0, 0.7, { size: 0.12, brightness: 1, crumble: 1 }, 0.3);
-      add('shimmer', 0, 0.45, { density: 1, height: 0.9 }, 0.5 + 0.8 * s);
+      add('crack', 0, 1, { size: 0.12, brightness: 1, crumble: 1 }, 0.3);
+      add('shimmer', 0, 0.7, { density: 1, height: 0.9 }, 0.5 + 0.8 * s);
       add('rubble', 0.02, 0.4, { size: 0, density: 1, brightness: 1, swell: 0 }, 0.4 + 0.8 * s);
       break;
     case 'sparkle':
-      add('shimmer', 0, 0.25, { density: 0.3 + 0.6 * s, height: 0.6 + 0.4 * b }, d);
+      add('shimmer', 0, 0.4, { density: 0.3 + 0.6 * s, height: 0.6 + 0.4 * b }, d);
       break;
 
     // Movement and the body.

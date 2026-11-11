@@ -105,7 +105,7 @@ A red beam with a black core fires; a face close up; a figure leaps. Space: the 
 | 0:05.62 | s02-c03 | the beam sweeps past the camera | red mana beam | air | sweeps | large | right, 4 m | explains | `whoosh` | -4 | B |
 | 0:06.11 | s02-c04 | the beam passes again, the other way | red mana beam | air | sweeps | large | left, 4 m | explains | `beam` | -3 | A |
 | 0:07.20 | s02-c05 | hair and cloak snap in the beam's wind | hair, cloak | air | flutter | medium | centre, 4 m | hints | `cloth` | -10 | C |
-| 0:08.05 | s02-c06 | the figure leaps away | a body | air | leaps | fast | right, 4 m | explains | `whoosh` | -6 | B |
+| 0:07.95 | s02-c06 | the figure leaps away | a body | air | leaps | fast | right, 4 m | explains | `whoosh` | -6 | B |
 
 ### s03, 0:08.05 to 0:11.55
 

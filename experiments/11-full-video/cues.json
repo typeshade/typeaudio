@@ -709,14 +709,14 @@
   {
    "id": "s02-c06",
    "scene": "s02",
-   "t": 8.05,
+   "t": 7.95,
    "what": "the figure leaps away",
    "seven": {
     "who": "a body",
     "what": "air",
     "how": "leaps",
     "howMuch": "fast",
-    "when": "8.05 s for 0.4 s",
+    "when": "7.95 s for 0.4 s",
     "where": "right, 4 m",
     "why": "explains"
    },
