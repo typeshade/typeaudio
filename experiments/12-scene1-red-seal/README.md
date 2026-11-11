@@ -12,6 +12,27 @@ record.
 2. Render the study's red passage: `bun experiments/12-scene1-red-seal/run.ts red --out <dir>`.
 3. Measure it against round 11: add `--against <frieren-red-r11.wav>` to step 2.
 
+## Parts, the cache and the workers
+
+The layers are built from parts (`Mix.part`, `src/study/build.ts`). A part is a group of statements
+that adds layers and reads only its own code, the module's constants and functions, and the mix's
+settings. Each part has a key: the hash of its code, of the module-level code it reaches, of
+`src/study/`, of the runtime and of the mix's settings (`src/study/part-keys.ts`).
+
+- A part whose key is in `.cache/scene-parts/` is read from it. The others are made on one worker
+  thread for each core, the longest first.
+- The layers go in the order the scene adds them, so the samples are those of the plain code, bit
+  for bit, with any number of workers.
+- `carve` is a layer step (`Mix.eachLayer`) and `levelCore` a finish step (`Mix.finish`). They run
+  after the parts and touch disjoint layers.
+- The build refuses a part that reads a binding of the function around it, changes a module binding
+  or reads the mix's layers. Put shared signals and random streams inside one part.
+- A change to `src/study/` changes every key. A change to a helper changes the keys of the parts
+  that reach it.
+
+`--workers N` sets the threads, `--no-cache` reads and writes no cache, and `--plain` runs the code
+as written, with no builder.
+
 ## Parity with the study
 
 The study's scripts are on pull request #67 at commit `07670c9`. Extract `scripts/` of

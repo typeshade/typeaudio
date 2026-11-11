@@ -579,19 +579,35 @@ export function reverbIr(room: Room, seconds?: number, seed = 11, predelay = 0.0
   return [out[0]!, out[1]!];
 }
 
-/** x mono, ir stereo, to a stereo signal of len(x) + len(ir) - 1. */
+// The spectra of the impulse responses in use, for each transform length. A mix convolves every
+// layer with the same late field, so its spectrum is made once for each length, not once a layer.
+const irSpectra = new WeakMap<Float64Array, Map<number, [Float64Array, Float64Array]>>();
+
+function irSpectrum(h: Float64Array, nfft: number): [Float64Array, Float64Array] {
+  let byLength = irSpectra.get(h);
+  if (!byLength) irSpectra.set(h, (byLength = new Map()));
+  let s = byLength.get(nfft);
+  if (!s) byLength.set(nfft, (s = rfft(h, nfft)));
+  return s;
+}
+
+/**
+ * x mono, ir stereo, to a stereo signal of len(x) + len(ir) - 1. The impulse response is not
+ * changed afterwards: its spectrum is kept for the next call (`irSpectrum`).
+ */
 export function convolve(x: Float64Array, ir: Stereo): Stereo {
   const n = x.length + ir[0].length - 1;
   const nfft = 2 ** Math.ceil(Math.log2(n));
   const [xr, xi] = rfft(x, nfft);
   return ir.map((h) => {
-    const [hr, hi] = rfft(h, nfft);
+    const [hr, hi] = irSpectrum(h, nfft);
+    const pr = new Float64Array(hr.length);
+    const pi = new Float64Array(hr.length);
     for (let k = 0; k < hr.length; k++) {
-      const r = xr[k]! * hr[k]! - xi[k]! * hi[k]!;
-      hi[k] = xr[k]! * hi[k]! + xi[k]! * hr[k]!;
-      hr[k] = r;
+      pr[k] = xr[k]! * hr[k]! - xi[k]! * hi[k]!;
+      pi[k] = xr[k]! * hi[k]! + xi[k]! * hr[k]!;
     }
-    return irfft(hr, hi, nfft).slice(0, n);
+    return irfft(pr, pi, nfft).slice(0, n);
   }) as Stereo;
 }
 
