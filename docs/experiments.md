@@ -21,6 +21,7 @@ devices yet.
 | 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
 | 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
 | 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
+| 12  | Scene 1, the red seal, from the study's models             | Whether the study's models, ported, make a scene in practical time            | first render (container, host CPU in Bun); waits for the owner's review                                                                                                                                                                                |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -754,3 +755,240 @@ and `slow` was not asked again; the accepted variant is built on `slow`.
 blast, and the break with the hang and the fall. Their sounds are in the store: `wall-hit`,
 `stone-landing`, `blast`, `break`. `module-4.json`, variant `slow-many-ordered`, is the whole force
 passage as accepted.
+
+## 12. Scene 1, the red seal, with the study's models in the engine
+
+The owner decided on 2026-11-11 to work scene by scene on the whole reference video. Scene 1 is the
+red seal, 0:00 to about 0:29. The owner's description: the red seal is like a black hole that rapidly
+sucks in the mana around it, so the wind and heavy things like stones are pulled and gather around
+it. The owner heard the study's version of this scene as much more natural and unremarkable, in a
+good way, than the engine's draft. The owner's instruction: what the study used must be implemented
+in TypeAudio, as the study's models and processing in the engine, not as a Python render.
+
+**Question.** Do the study's models and its mix, ported into the engine, give the study's sound? Can a
+scene of 29.5 s be made with them in practical time?
+
+**Decides.** Where the study's models live in the engine. Which of them fit a typed function of the
+function-graph profile.
+
+**Method.**
+
+1. Port the study's `dsp.py`, `sources.py` and `mix.py` (`docs/studies/frieren-perceptual/scripts/`
+   at commit `07670c9`, on pull request #67) line by line.
+2. Give the port a generator that numpy can compute too, and hold each model to the study's script
+   sample by sample with it.
+3. Write the models that fit a typed function as streams, and hold them to the study's models in
+   the measures that do not depend on the random numbers.
+4. Render the study's red passage (20.0 to 30.0 s) with the port and measure it against the study's
+   round 11 (`frieren-red-r11.wav`).
+5. Design 0.0 to 20.0 s, the black hole, with the same models, and join the red passage to it.
+6. Put the scene on the picture for the owner. The clip is private.
+
+**What it holds.**
+
+| File                                        | What it holds                                                                                                                            |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/study/fft.ts`                          | A transform of any length in f64: mixed radix for lengths of factors up to 13, Bluestein for the others (numpy's lengths)                |
+| `src/study/rng.ts`                          | The shared generator: a counter hash, two 32-bit hashes a draw, as numpy's `random()` makes a double                                     |
+| `src/study/dsp.ts`                          | `dsp.py`: filters, zero-phase and time-varying shaping of noise, modes, placement with reflections and Doppler, the late field, loudness |
+| `src/study/sources.ts`                      | `sources.py`: every model, with its parameters, its defaults and the order of its draws                                                  |
+| `src/study/mix.ts`, `src/study/passage.ts`  | `mix.py` (layers by loudness target, drive, look-ahead limiter, soft clip) and the helpers of `passages.py`                              |
+| `src/kinds/functions/study.ts`              | `studyBurst`, `studyBoom`, `studySlip` (groan and grind), `redRumble`, `redRoar`, `redCrackle`, `redMaterial` as typed functions         |
+| `experiments/12-scene1-red-seal/red.ts`     | The study's `red()`, statement by statement in the study's order                                                                         |
+| `experiments/12-scene1-red-seal/scene.ts`   | Scene 1: the black hole (0.0 to 20.0 s) and the red passage, in one mix                                                                  |
+| `experiments/12-scene1-red-seal/run.ts`     | `bun experiments/12-scene1-red-seal/run.ts red\|scene [--out dir] [--against r11.wav] [--parity study.f64]`                              |
+| `experiments/12-scene1-red-seal/measure.ts` | The level each two frames, five bands in each section, the lag of the energy at each anchor                                              |
+| `experiments/12-scene1-red-seal/parity/`    | The shared generator in numpy, the study's red passage rendered with it, and the writers of the two test fixtures                        |
+| `test/study.test.ts`                        | Each model and each step of the mix against the study's script: 53 signatures, each sample within 1e-9 of its peak                       |
+| `test/study-functions.test.ts`              | The typed functions against the study's models: octave shares, envelope and level, averaged over 24 seeds                                |
+
+Where each model went:
+
+- Every model and every step of the processing is in `src/study/`, as host code. The study shapes
+  whole signals at once (zero-phase filters on the FFT grid, a level that divides by the peak of the
+  whole sound), so its exact form is a host form, as the effects of experiment 10 are.
+- Seven models fit a typed function (one output, at most 16 inputs, flat state of at most 32
+  fields, no `typeshade` imports) when they are written as streams: a band of `band_gain` becomes
+  Butterworth state-variable filters of the same order, white noise the hash noise of the profile, and
+  a level from the peak an input. Those are in `src/kinds/functions/study.ts`. The render of the scene
+  uses the host form; the typed functions are for the site's editor.
+- The models that stay host only: the fracture and everything built on it (`heavy_crack`, `block_hit`,
+  `slab_fall`; 90 modes and an avalanche do not fit 32 fields), the shaping in time and frequency
+  (`stft_shape`: the band sweep, the lance, the late field), the placement and the hall, the loudness
+  targets and the master.
+
+**Run 1, 2026-11-11.** In the container of an agent session: Bun 1.4.4, the host CPU (no WebGPU and
+no device), compiler pin `415b276a`, commit `b53c5c8`. The study's scripts with Python 3.13.18 and
+numpy 2.5.3 reproduce round 11's SHA-256 (`1d22788c…`).
+
+| Measure                                                                                 | Result                                                                                              |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| The red passage, port against the study, both with the shared generator                 | Largest difference 1.8e-9 of a peak of 0.79; the difference 215 dB under the signal                 |
+| The models, port against the study's script, shared generator (`test/study.test.ts`)    | 53 signatures, every sample within 1e-9 of its peak                                                 |
+| The typed functions against the study's models (`test/study-functions.test.ts`)         | Octave shares within 0.3 to 3.5 dB, envelopes within 1.7 dB, levels of the red parts within 0.11 dB |
+| The red passage, port with its generator against round 11 with numpy's, each two frames | Mean -0.72 dB, median of the difference 0.76 dB, 90 % within 2.70 dB, largest 4.62 dB               |
+| The red passage, integrated loudness                                                    | -12.8 LUFS (round 11: -12.6 LUFS); master -8.49 dB, limiter 5.1 dB deep                             |
+| The time of a render                                                                    | The red passage 40 s; the scene (208 layers, 31 s with its tail) 98 s to 104 s                      |
+
+The five bands in each section of the red passage, port against round 11 (dB, 30-120, 120-500,
+500-2k, 2k-6k and 6k-16k Hz):
+
+| Section    | RMS port / round 11 | Bands, port - round 11   |
+| ---------- | ------------------- | ------------------------ |
+| flight     | -17.1 / -16.9       | -0.4 -0.7 -0.3 -0.7 0.0  |
+| flame      | -14.5 / -14.5       | 1.1 -0.4 -0.2 -0.1 0.7   |
+| gather     | -16.9 / -16.4       | 2.0 -0.7 0.7 1.5 1.6     |
+| cracks     | -15.0 / -14.9       | -1.7 0.9 -0.7 -0.3 -0.3  |
+| shell      | -21.4 / -21.4       | 0.0 -1.1 0.4 0.3 0.3     |
+| rays       | -9.8 / -9.3         | -1.1 -0.5 -0.3 -0.9 -0.7 |
+| ice        | -9.1 / -9.1         | -0.5 1.9 1.1 0.2 -0.6    |
+| ice stands | -14.1 / -12.8       | -4.2 -1.3 -0.3 -0.4 -0.2 |
+| smoke      | -20.1 / -19.3       | -0.3 -0.5 0.1 -0.2 -0.5  |
+
+With the shared generator the port is the study, so every difference in these two tables comes from
+the random numbers alone: other noise, other times of the random impacts, other sizes. The largest,
+-4.2 dB under 120 Hz while the ice stands, is the stones that fall behind the ice (`tumble`) and the
+slabs (`slab_fall`), whose counts and sizes are drawn. The anchored events lie at the study's times by
+construction. Measured as the lag of the energy envelope of round 11 against the port: 0 to 7 ms for
+the events that rise by more than 5 dB (the two strikes, the burst toward the camera, the release,
+the ice); the onsets that rise by 2 to 4 dB in a dense mix (the target strike, the white frame) give
+no clear lag (up to 20 ms).
+
+**The black hole, 0.0 to 20.0 s.** The frames were read at 2 and 6 frames a second with a cut
+detector; `scene.ts` gives the shots. The design, with the study's models only:
+
+- The draw: air that is pulled to the core, the study's model of mana that gathers (noise whose band
+  climbs) made continuous from 3.87 s to 20.05 s. It swells each time the orb is near (4.9 to 7.2 s,
+  10.6 s, 14.7 s, 19.9 s) and hands over to the red passage's flight. A low part of the red material
+  follows it.
+- The orb: the red material and its cluster of partials, as the study's orb, at a tension that rises
+  as it forms (3.87 to 4.71 s) and while it is close. The white frame at 4.71 s is a pressure pulse, a
+  deep body and a falling tear.
+- The wind drawn round it: three steady noise sources on spiral paths round the camera (5.75 to
+  7.21 s), so the pan and the Doppler shift come from the paths; then wind and hair on her face.
+- The stones: they pass the camera on paths (9.6 to 11.3 s, 17.9 to 18.4 s, 18.8 to 19.8 s), the orb
+  strikes two (10.17 s, 10.86 s), and from 11.55 s to 14.81 s a mass turns round the core: blocks that
+  strike blocks at a rate from 4 to 15 a second, sizes 0.45 to 1.3 m, on paths to the core; two
+  grinds that grow; a falling mass (`rubble`); four stones on spirals; a low billow under it.
+- The block that lands at 15.56 s: a slab of 1.6 m, a body at 62 Hz, a run of cracks across the face,
+  dust and the far wall's answer. Then seven landings and two leaps in the quick cuts.
+
+Measured on the scene, RMS each half second: 0 to 3.5 s from -42 to -26 dB (the picture fades in
+from black), the orb's close shots -14 to -17 dB, the flight through the hall -22 to -24 dB, the
+gathering rising from -17 to -14 dB, the block that lands -11.5 dB, then the red passage as round 11
+has it (each two frames, scene against round 11 from 20.0 s: median of the difference 0.76 dB). The
+reference's audio holds music, so its level (-4 to -8 dB from 4 s) is no target.
+
+**What is not verified.** Nobody has listened to the scene. The black hole is designed from the
+frames and the owner's description; no study round had it. The render runs on the host CPU in Bun,
+not on WebGPU; it takes under two minutes for the whole scene. The typed functions are not used by
+the render; their agreement with the study is in measures, not in samples.
+
+**Review 1, 2026-11-11.** The owner kept the landings: the sound of the stones that hit the floor
+after they hit the wall is at a good level, and it is the reference for every other landing in the
+scene. The owner found the black hole missing: where it is on screen and close, even when the
+camera is right under it, there is no sound of it. It must be a black hole that violently sucks in
+the mana around it.
+
+The agent measured the cause with `orb.ts`. The orb's layers held most of the energy of three of the
+four windows, but in the band from 500 Hz to 6 kHz: the red material's roar and its tones. Under
+120 Hz they lay only 3 to 6 dB over the rest where the orb is overhead, and 2 dB under it over the
+rock field. The orb had no body: no low weight, no pressure, nothing that grows as it nears.
+
+| Change                                                                                                                         | Model of the study                    |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- |
+| A proximity curve read from the frames: 1 where the orb is overhead or beside the camera                                       | -                                     |
+| `hole-roar`: a torrent on a deep spectrum (most of its weight from 30 to 150 Hz); upper bands only near                        | `turbulence`, `level_walk`            |
+| `hole-core0` to `hole-core5`: the same deep noise as one source on the orb's path in each shot                                 | `curve_noise`, `place` (Doppler, pan) |
+| `hole-inrush`: air drawn in, its band climbing as the orb nears                                                                | the gathering of the finale           |
+| `hole-pressure`: noise from 25 to 70 Hz, only near                                                                             | `wide_noise`                          |
+| The layers that cover it (flying stones, wind, passing rocks) lose up to 6 dB under 500 Hz and 2 dB in all, with the proximity | -                                     |
+
+The landings and the strikes are not touched. Measured before (commit `5c46294`) and after, the orb's
+share of the energy of the mix before the master, and the orb against the rest in five bands (dB,
+30-120, 120-500, 500-2k, 2k-6k and 6k-16k Hz):
+
+| Window                 | Seconds      | Share before | Share after | Orb - rest after         | Orb - rest before        |
+| ---------------------- | ------------ | ------------ | ----------- | ------------------------ | ------------------------ |
+| Close overhead         | 5.0 to 7.0   | 76.0 %       | 94.5 %      | 12.0 20.9 30.7 29.0 23.5 | 3.1 16.2 27.3 24.1 22.3  |
+| Streak over the camera | 9.5 to 11.0  | 75.7 %       | 93.5 %      | 16.3 8.7 11.3 9.0 8.7    | 5.7 1.6 6.7 2.5 7.2      |
+| Over the rock field    | 11.5 to 15.0 | 33.2 %       | 76.6 %      | 10.7 6.8 2.0 -2.7 0.9    | -2.2 -3.9 -2.6 -9.4 -1.4 |
+| Low pass overhead      | 18.5 to 21.0 | 80.8 %       | 96.3 %      | 27.8 17.6 10.8 7.9 10.5  | 15.2 10.0 6.2 0.7 7.8    |
+
+The mix in those windows rose by 4 to 6 dB (RMS each second). The master gain stayed at -8.45 dB,
+and the landings lie within 0.3 dB of the first render (the block at 15.55 s, the four leaps, the
+three slabs after the rays). The deepest periodic line of the level in the four windows is 6 to 12 %
+(before: 5 to 8 %), at a different rate in each: no rotor. The render takes 140 s.
+
+**Review 2, 2026-11-11.** The owner found the second render good, not yet full marks, and chose
+three faults from a list: the black hole sounds like noise, nearer to wind than to sucking in; it
+has no character, nothing magical or uncanny; the stones that are pulled in are weak, and they are
+not heard to gather into it. The landings, the orb's lead and its proximity curve stay, and so does
+the rule against a period and a hollow tube.
+
+| Fault        | Change in `scene.ts`                                                                                                                                                                                                                                                                                                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wind         | 38 swallows (`hole-swallow`): air that converges from 3 to 6 m into the orb on a path that speeds up; its band falls from about 2 kHz to 120 Hz and narrows; its level grows into the core and stops in 4 ms; grains of dust drawn in (reversed bursts) crowd toward its end. The torrent 4 dB lower, the inrush 3 dB lower                                                                               |
+| No character | `hole-mana`: inharmonic partials (1, 1.41, 1.87, 2.63, 3.31) that sink from 233 to 147 Hz in two clusters 1.3 % apart, which drift with no period; `hole-growl`: 38, 53 and 71 Hz with a breathing level, with the square of the proximity; `hole-glint`: glassy grains that glide down by a factor of 4 to 6 and are cut where they are swallowed; `hole-ring`: formants of noise on the inrush (`howl`) |
+| Weak stones  | 15 stones dragged to the core on paths that speed up, louder until they strike it (`grind`), each arrival a block and a crunch at the level of the accepted landing for the largest; 8 stones that fly past the camera into the core; a pile at the core that crunches (`rubble`) and groans (`groan`) more as they arrive                                                                                |
+
+Measured before (commit `6c06760`) and after, the share of each part in the mix before the master:
+
+| Window                 | Torrent       | Swallows   | Tonal        | Stones        |
+| ---------------------- | ------------- | ---------- | ------------ | ------------- |
+| Close overhead         | 78.3 → 37.4 % | 0 → 22.3 % | 3.7 → 25.6 % | 0 → 0 %       |
+| Streak over the camera | 76.0 → 29.3 % | 0 → 5.7 %  | 6.0 → 22.1 % | 7.2 → 36.5 %  |
+| Over the rock field    | 62.6 → 11.3 % | 0 → 16.2 % | 3.8 → 8.2 %  | 21.5 → 59.8 % |
+| Low pass overhead      | 76.9 → 30.4 % | 0 → 23.1 % | 8.6 → 26.7 % | 0 → 8.9 %     |
+
+- The swallows: the last third of each is 20.6 dB over its first (median); with the hall, the level
+  falls by 7.1 dB from the 10 ms before the stop to 10 to 20 ms after it.
+- The stones from 11.5 to 15 s: 11 arrivals, 5 in the first half and 6 in the second; before the
+  master each holds a median 26 % of the mix in its first 100 ms. Onsets of 3 dB in the stones' sum:
+  2.6 a second (before: 0.3). In the mastered mix an arrival rises by a median 0.5 dB only, because
+  the drag swells into it and the limiter works 9.6 % of the time.
+- The orb's lead: 94.4 %, 65.1 %, 39.7 % and 89.5 % of the mix in the four windows (before: 94.5,
+  93.5, 76.6 and 96.3 %). Over the rock field the stones are now the larger part, as the owner asked.
+- No period: the deepest periodic line of the level is 8.2 to 9.2 % in the four windows, at a
+  different rate in each.
+- The landings: 0.3 to 0.7 dB under the first render. The master gain is the same (-8.45 dB); the
+  soft clip's final trim of the true peak lowers the whole scene by that much. Deviation, open.
+- The render takes 212 s (304 layers).
+
+**Review 3, 2026-11-11.** The owner found the sound like a laser shot that the third render added not
+good. It was the glassy grains (`hole-glint`): pitched, gliding down by a factor of 4 to 6 in 0.25 to
+0.7 s, and cut off. They are gone. The tonal layers that stay glide slowly or not at all: `hole-mana`
+sinks from 233 to 147 Hz over 18.4 s, `hole-growl` and the formants of `hole-ring` wander by 4 to 6 %
+with no glide. The study's own `release-fall` (900 to 180 Hz in 0.7 s at 25.78 s) is in every render
+since the first.
+
+The landings are back at their level: `Mix.beforeDb` (an envelope on the sum before the master, not
+the study's) lowers the black hole's windows by 1 dB, so the soft clip's final trim no longer lowers
+the whole scene. The landings lie within 0.16 dB of the first render (before: 0.37 to 0.55 dB under
+it); a trim of 2 to 5 dB gives the same. The render takes 210 s: 195 s for the layers, 15 s for the
+master.
+
+**Review 4, 2026-11-11.** The owner found the fourth render not bad, and heard the sound stop at the
+cut near 11 s (11.55 s). The orb's red material, its voice and its core were made shot by shot,
+each with its own noise and place, so at each cut they stopped in 10 to 15 ms and began again; the
+grinds, the low billow and the first impacts of the gathering began on the cut. Now:
+
+- The orb's red material and its voice are one source each from 4.86 s to 15.05 s (`orb-body`,
+  `orb-body-voice`), laid shot by shot with an equal-power crossfade of 120 ms at each cut: only the
+  place, the distance and the level change. The core of review 1 is laid the same way.
+- The proximity and the draw change over 150 to 200 ms at 7.21 s and 14.81 s, not 40 to 70 ms.
+- The wind on her face and the air of her flight cross over 0.2 s at 8.05 s.
+- At 11.55 s the grinds, the billow and the groan of the pile rise over 0.25 s, and the first impact
+  of the gathering comes 0.2 s after the cut.
+
+Measured in 50 ms windows over 0.5 s on each side of each cut, the step across the cut, before and
+after (dB): 3.29 s -1.8 / -1.8; 4.71 s (the white frame, a launch) +7.4 / +7.4; 4.88 s -0.9 / -0.8;
+7.21 s -3.2 / -1.5; 8.05 s -1.7 / -2.1; 9.47 s +0.4 / +0.3; 11.55 s -1.6 / -0.2; 12.22 s -0.6 /
+-0.2; 14.81 s -0.2 / -0.4; 15.47 s +0.6 / -0.2; 17.73 s +0.2 / +0.2; 18.60 s +0.6 / +0.7. At 11.55
+s the largest step of a band from 500 Hz up fell from 7.9, 9.9 and 12.3 dB to 3.2, 4.6 and 4.6 dB;
+under 120 Hz a window of 50 ms holds a few cycles, and its steps of 7 to 11 dB are the same at
+every cut and between them. The landings lie within 0.16 dB of the first render; the glassy grains
+stay out. The render takes 208 s.
+
+**Status.** The fifth render waits for the owner's review. The previews went to the owner privately;
+the picture, its frames and its audio are not in this repository.
