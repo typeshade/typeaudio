@@ -10,6 +10,11 @@ mastered at scene 1's gain. `docs/experiments.md`, section 13, is the record.
 A sound earns its place by its part in the moment (the answer "why"). Small detail of little weight
 that nobody would miss is cut: settling stones, settling ticks, small pebbles that trickle.
 
+## The owner's rule for lightning (review 3, 2026-11-11)
+
+An attack of lightning is short and intense: one sharp, violent crack with a short low thump, no
+long tail, no glide. Scene 3 opens with such a bolt (45.70 s).
+
 ## Run
 
 1. Render scene 1 with experiment 12: `bun experiments/12-scene1-red-seal/run.ts scene --out <dir>`.

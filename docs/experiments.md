@@ -1126,5 +1126,29 @@ Measured each 0.25 s from 44.0 s: -29.7, -25.0, -20.9, -19.2, -16.6, -14.0 and -
 sample is -2.6 dBFS against the fist's -2.1 dBFS. From 2 to 8 kHz no transient stands 6 dB out of
 the 50 ms before it: the crackle is dense, not a row of plinks. The render takes 87 s.
 
-**Status.** The third render waits for the owner's review. The previews went to the owner privately;
+**Review 3, 2026-11-11.** The spell is lightning. The frames at 12 a second show purple electricity
+at her staff tip: small sparks at 44.03 and 44.20 s, a ball of crackle from 44.37 to 44.62 s, arcs
+that reach the floor from 44.70 to 45.12 s, large arcs at 45.28, 45.37 and 45.53 s, and none at
+45.20, 45.45 and 45.62 s. The bolt fires on the first frame of scene 3 (45.70 s), after the cut at
+45.67 s. The owner: "a fast, powerful crackle for the preparation; the low hum, lower than you would
+expect, that ultra-high voltage gives; an occasional high tone; but the attack only short and
+intense". The swallows, the intake, the drone and the circle's tone of review 2 are gone. Now:
+
+- bursts of crackle on the frames of the arcs: a snap, then a train of impulses (4,000 to 8,000 a
+  second) gated on and off at random, from 1 to 12 kHz, saturated; stronger toward the release;
+- the hum of the voltage: 48 Hz and five harmonics, steady in pitch, its level and its grit (a soft
+  clip from 1 to 4) growing to the last arc;
+- three faint whines of a coil at fixed pitches (7.2, 8.6 and 9.4 kHz, 0.15 to 0.22 s);
+- a crest on the last arc, a hold, and a stop on the cut.
+
+Measured each 0.25 s from 44.0 s: -26.8, -24.1, -22.6, -18.4, -17.5, -16.3, -15.1 dB. Each arc rises
+0.6 to 6.3 dB over the 0.1 s before it. Under 120 Hz lies 40 % of the energy of the shot, from 1 to
+12 kHz 46 %. The last arc measures -15.0 dB over 0.15 s and the fist -7.9 dB; the true peak of scene
+2 stays at -2.04 dBTP. The render takes 79 s.
+
+**The owner's rule for lightning (review 3).** An attack of lightning is short and intense: one sharp,
+violent crack with a short low thump, no long tail, no glide. The bolt at 45.70 s lies in scene 3,
+which follows this rule.
+
+**Status.** The fourth render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.
