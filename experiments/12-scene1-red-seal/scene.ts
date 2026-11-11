@@ -279,7 +279,8 @@ export function blackHole(m: Mix): void {
   m.part('orb-form-sparks', () => {
     m.add(
       'orb-form-sparks',
-      fade(S.pops(0.85, 1022, 22.0, 800, 6000, 0.004), 0.2, 0.01),
+      // the owner's rule (2026-11-11): sparks, bright and short, not ticks that read as pebbles
+      fade(S.pops(0.85, 1022, 22.0, 2500, 9000, 0.002), 0.2, 0.01),
       3.86,
       [0.3, 1.2, -1.2],
       {
@@ -366,7 +367,9 @@ export function blackHole(m: Mix): void {
     const irr = S.irregular(nsamp(0.85), 1052, 2, 9);
     m.add(
       'face-hair',
-      S.cloth(0.85, 1051, 300).map((v, i) => v * (0.6 + 0.4 * irr[i]!)),
+      // the owner's rule (2026-11-11): the cloth model's flutter is a run of clicks that reads as
+      // pebbles; the wind in her hair is smooth air
+      steady(0.85, 1051, 700, 5000).map((v, i) => v * (0.6 + 0.4 * irr[i]!)),
       7.22,
       [0.2, 1.5, -0.8],
       { target: -29, kind: 'm', sendDb: -10 },
@@ -404,7 +407,8 @@ export function blackHole(m: Mix): void {
   m.part('orb-tear-sparks', () => {
     m.add(
       'orb-tear-sparks',
-      fade(S.pops(2.08, 1072, 16.0, 500, 4000, 0.005), 0.02, 0.15),
+      // the owner's rule (2026-11-11): sparks, bright and short, not ticks that read as pebbles
+      fade(S.pops(2.08, 1072, 16.0, 2500, 9000, 0.002), 0.02, 0.15),
       9.47,
       [1.0, 1.5, -3.0],
       {
@@ -1138,7 +1142,6 @@ function swallow(dur: number, seed: number, f0: number, f1: number): Float64Arra
       g[k] = Math.exp(-0.5 * (Math.log2(Math.max(fr[k]!, 1) / fc) / w) ** 2);
   });
   const walk = S.levelWalk(n, seed + 1, 1.5, 2.0, 12.0);
-  const r = rng(seed + 2);
   const y = new Float64Array(n);
   const grow = 4.5;
   for (let i = 0; i < n; i++) {
@@ -1146,18 +1149,9 @@ function swallow(dur: number, seed: number, f0: number, f1: number): Float64Arra
     y[i] = x[i]! * walk[i]! * ((Math.exp(grow * u) - 1) / (Math.exp(grow) - 1));
   }
   const ry = Math.sqrt(y.reduce((p, q) => p + q * q, 0) / n) + 1e-12;
-  // grains of dust drawn in: reversed bursts that end where they are swallowed, crowding to the end
-  const grains = zeros(n);
-  const count = Math.round(10 + 30 * dur);
-  for (let k = 0; k < count; k++) {
-    const end = Math.floor(n * Math.sqrt(r.random()));
-    const g = S.burst(r.integers(1, 2 ** 31 - 1), 1800, 9000, r.uniform(0.002, 0.008), {
-      rise: 0.0002,
-    }).reverse();
-    addAt(grains, g, end - g.length, r.uniform(0.2, 1.0) * (end / n) ** 2);
-  }
-  const rg = Math.sqrt(grains.reduce((p, q) => p + q * q, 0) / n) + 1e-12;
-  for (let i = 0; i < n; i++) y[i] = y[i]! / ry + (0.35 * grains[i]!) / rg;
+  // the owner's rule (2026-11-11): the grains of dust drawn in (reversed bursts) read as pebbles;
+  // the swallow is the air alone
+  for (let i = 0; i < n; i++) y[i] = y[i]! / ry;
   // the dead stop: 4 ms
   const k = nsamp(0.004);
   for (let i = 0; i < k; i++)
