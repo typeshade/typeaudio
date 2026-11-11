@@ -22,6 +22,8 @@
 
 import {
   SR,
+  iir,
+  rbj,
   addAt,
   fade,
   interp,
@@ -208,13 +210,15 @@ function face(m: Mix): void {
   m.add(
     'hair-flutter',
     fade(
-      S.gravel(3.1, 2002, 1000, 6000).map((v, i) => v * (0.6 + 0.4 * irr[i]!)),
+      spectral(white(nsamp(3.1), 2002), (f) => bandGain(f, 1000, 5000, 2)).map(
+        (v, i) => v * (0.6 + 0.4 * irr[i]!),
+      ),
       0.2,
       0.25,
     ),
     30.4,
     [0.2, 1.5, -0.8],
-    { target: -28, kind: 'm', sendDb: -10 },
+    { target: -31, kind: 'm', sendDb: -10 },
   );
   barrier(m);
 }
@@ -870,7 +874,7 @@ function scene3Head(m: Mix): void {
     0,
     0.8,
   );
-  const snap = S.saturate(crack, 3.0);
+  const snap = S.saturate(crack, 2.0);
   const [front, low] = S.whump(2702, 0.008, 0.45);
   const thump = new Float64Array(n);
   addAt(thump, front, 0, 0.8);
@@ -938,7 +942,7 @@ function bolt(m: Mix): void {
   const sg = rc.signN(n);
   const imp = new Float64Array(n);
   for (let i = 0; i < n; i++) imp[i] = u[i]! < 4500 / SR ? amp[i]! * sg[i]! : 0;
-  const crack = spectral(imp, (f) => bandGain(f, 1500, 12000, 2));
+  const crack = spectral(imp, (f) => bandGain(f, 1500, 9000, 2));
   const body = S.billow(dur, 2811, 35.0, 160.0, 2.5)[0];
   const walk = S.levelWalk(n, 2812, 2.0, 0.5, 6.0);
   const tn = S.norm(torrent);
@@ -947,7 +951,7 @@ function bolt(m: Mix): void {
   const mixed = new Float64Array(n);
   for (let i = 0; i < n; i++) mixed[i] = (0.8 * tn[i]! + 0.45 * cn[i]! + 0.9 * bn[i]!) * walk[i]!;
   const pk = Math.max(...mixed.map(Math.abs)) + 1e-12;
-  const plasma = mixed.map((v, i) => (Math.tanh((2.0 * v) / pk) / Math.tanh(2.0)) * level[i]!);
+  const plasma = mixed.map((v, i) => (Math.tanh((1.2 * v) / pk) / Math.tanh(1.2)) * level[i]!);
   across(
     m,
     's3-bolt-plasma',
@@ -958,7 +962,7 @@ function bolt(m: Mix): void {
         from: T0,
         to: 46.05,
         pos: [0.5, 1.8, -5.0] as Vec3,
-        opts: { target: -12, kind: 'm', sendDb: -8 },
+        opts: { target: -14, kind: 'm', sendDb: -8 },
       },
       {
         from: 46.05,
@@ -970,7 +974,7 @@ function bolt(m: Mix): void {
         from: 46.35,
         to: 47.46,
         pos: [0.0, 1.5, -3.5] as Vec3,
-        opts: { target: -12, kind: 'm', sendDb: -6 },
+        opts: { target: -14, kind: 'm', sendDb: -6 },
       },
       {
         from: 47.46,
@@ -1030,6 +1034,24 @@ function bolt(m: Mix): void {
   });
 }
 
+/**
+ * Review 9, 2026-11-11: the owner heard junk noise, a tearing, like wind on a microphone with no
+ * windscreen. Measured: the master adds little (the soft clip at most 1.2 dB above 8 kHz); the noise
+ * layers carried it, the bolt above all. Each layer named here passes two low-pass sections at `fc`
+ * (24 dB an octave), its dry part and its hall together.
+ */
+function lowPass(m: Mix, pattern: RegExp, fc: number): void {
+  for (const name of m.order) {
+    if (!pattern.test(name)) continue;
+    const l = m.layers.get(name)!;
+    for (const part of [l.dry, l.wet])
+      for (const ch of part) {
+        const y = iir(Float64Array.from(ch), [rbj('lp', fc, 0.7071), rbj('lp', fc, 0.7071)]);
+        for (let i = 0; i < ch.length; i++) ch[i] = y[i]!;
+      }
+  }
+}
+
 /** Leave layers out of a mix. */
 function drop(m: Mix, names: readonly string[]): void {
   for (const name of names) {
@@ -1065,6 +1087,17 @@ export function scene2(): Mix {
   charge(m);
   scene3Head(m);
   bolt(m);
+  // review 9: the noise layers lose their harsh top; the cracks keep their snap below 12 kHz
+  lowPass(
+    m,
+    /^(hair-|gust2|face-wind|stir|pack|seat\d+-scrape|dust-|wave-arrive|charge-corona|barrier-bloom|barrier-block|s3-bolt-plasma|s3-bolt-air|s3-barrier-strain|block-pass|debris-pass|bed2-high)/,
+    9000,
+  );
+  lowPass(
+    m,
+    /^(s3-bolt-crack|s3-barrier-strike|s3-barrier-shatter|fist-hit|seat\d+$|block-hit)/,
+    12000,
+  );
   m.driveDb = 8.8;
   m.fixedMaster = SCENE1_MASTER;
   m.afterDb = [
