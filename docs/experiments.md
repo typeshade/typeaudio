@@ -955,5 +955,18 @@ Measured before (commit `6c06760`) and after, the share of each part in the mix 
   soft clip's final trim of the true peak lowers the whole scene by that much. Deviation, open.
 - The render takes 212 s (304 layers).
 
-**Status.** The third render waits for the owner's review. The previews went to the owner privately;
+**Review 3, 2026-11-11.** The owner found the sound like a laser shot that the third render added not
+good. It was the glassy grains (`hole-glint`): pitched, gliding down by a factor of 4 to 6 in 0.25 to
+0.7 s, and cut off. They are gone. The tonal layers that stay glide slowly or not at all: `hole-mana`
+sinks from 233 to 147 Hz over 18.4 s, `hole-growl` and the formants of `hole-ring` wander by 4 to 6 %
+with no glide. The study's own `release-fall` (900 to 180 Hz in 0.7 s at 25.78 s) is in every render
+since the first.
+
+The landings are back at their level: `Mix.beforeDb` (an envelope on the sum before the master, not
+the study's) lowers the black hole's windows by 1 dB, so the soft clip's final trim no longer lowers
+the whole scene. The landings lie within 0.16 dB of the first render (before: 0.37 to 0.55 dB under
+it); a trim of 2 to 5 dB gives the same. The render takes 210 s: 195 s for the layers, 15 s for the
+master.
+
+**Status.** The fourth render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.

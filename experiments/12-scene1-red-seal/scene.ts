@@ -1242,48 +1242,7 @@ function character(m: Mix): void {
       sendDb: -4,
     },
   );
-  // glassy grains of mana that glide down and are swallowed, one layer for each shot at the orb
-  const rg = rng(1430);
-  HOLE_SHOTS.forEach((keys, s) => {
-    const t0 = keys[0]![0];
-    const t1 = keys[keys.length - 1]![0];
-    const times: number[] = [];
-    let t = t0;
-    for (;;) {
-      t += rg.exponential(1 / 7.0);
-      if (t >= t1 - 0.3) break;
-      if (rg.random() < proximityAt(t)) times.push(t - t0);
-    }
-    if (!times.length) return;
-    const glints = ticks(
-      times,
-      () => {
-        const d = rg.uniform(0.25, 0.7);
-        const f0 = rg.uniform(2500, 6000);
-        const gl = S.glide(d, rg.integers(1, 2 ** 31 - 1), f0, f0 / rg.uniform(4, 6), {
-          ratios: [1.0, 2.76],
-          wander: 0.004,
-          shape: 0.5,
-        });
-        const L = gl.length;
-        const cut = nsamp(0.008);
-        return gl.map(
-          (v, i) =>
-            v *
-            Math.min(1, i / nsamp(0.015)) *
-            (0.4 + 0.6 * (i / L)) *
-            Math.min(1, (L - i) / cut) *
-            rg.uniform(0.3, 1),
-        );
-      },
-      t1 - t0 + 0.8,
-    );
-    m.add(`hole-glint${s}`, glints, t0, orbAt((t0 + t1) / 2), {
-      target: -27,
-      kind: 'm',
-      sendDb: -6,
-    });
-  });
+  // review 3: the glassy grains that glided down and were cut off (heard as a laser) are gone
 }
 
 function gathering(m: Mix): void {
@@ -1410,6 +1369,22 @@ export function scene(): Mix {
   gathering(m);
   carve(m);
   m.driveDb = 8.8;
+  // review 3: 1 dB less into the master where the black hole is near, so the soft clip's final trim
+  // of the true peak no longer lowers the whole scene; the landings lie within 0.2 dB of review 0
+  m.beforeDb = [
+    [4.7, 0],
+    [4.86, -1],
+    [7.21, -1],
+    [7.3, 0],
+    [9.4, 0],
+    [9.6, -1],
+    [14.82, -1],
+    [14.9, 0],
+    [18.6, 0],
+    [19.2, -1],
+    [22.3, -1],
+    [22.4, 0],
+  ];
   // the end of the scene: the sound fades over the first second of the next shot
   m.afterDb = [
     [0, 0],

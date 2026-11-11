@@ -153,6 +153,11 @@ export class Mix {
   /** A layer that starts at or after this picture second is left out (the end of a scene). */
   until = Infinity;
   afterDb: readonly (readonly [number, number])[] | undefined;
+  /**
+   * A level set on the sum before the master: (picture seconds, dB) points, never above 0 dB. Not
+   * the study's: experiment 12 uses it to keep the soft clip from trimming the whole mix.
+   */
+  beforeDb: readonly (readonly [number, number])[] | undefined;
   masterGainDb = 0;
   limitDb = 0;
   limitedShare = 0;
@@ -293,6 +298,15 @@ export class Mix {
   render(peakDbtp = -2.0): Stereo {
     let mix = stereo(this.n);
     for (const name of this.order) this.addLayer(mix, this.layers.get(name)!);
+    if (this.beforeDb && this.beforeDb.length > 0) {
+      const ts = this.beforeDb.map((p) => p[0] - this.t0);
+      const vs = this.beforeDb.map((p) => Math.min(p[1], 0));
+      for (let i = 0; i < this.n; i++) {
+        const g = lin(interp(i / SR, ts, vs));
+        mix[0][i] = mix[0][i]! * g;
+        mix[1][i] = mix[1][i]! * g;
+      }
+    }
     mix = [
       iir(mix[0], [rbj('hp', 27.0, 0.7071)], 0.5),
       iir(mix[1], [rbj('hp', 27.0, 0.7071)], 0.5),
