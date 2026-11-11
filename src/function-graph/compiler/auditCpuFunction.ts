@@ -1,24 +1,22 @@
-import ts from "typescript";
-import { calledFunction } from "./compiledFunctions.ts";
+import ts from 'typescript';
+import { calledFunction } from './compiledFunctions.ts';
 
 /** Refuse allocations and unverified runtime helpers in the reachable audio path. */
 export function auditCpuFunction(name: string, text: string) {
   const parsed = ts.createSourceFile(
-    "processing.js",
+    'processing.js',
     `const f={${text}};`,
     ts.ScriptTarget.Latest,
     true,
     ts.ScriptKind.JS,
   );
   const f = (
-    (parsed.statements[0] as ts.VariableStatement).declarationList
-      .declarations[0]!.initializer as ts.ObjectLiteralExpression
+    (parsed.statements[0] as ts.VariableStatement).declarationList.declarations[0]!
+      .initializer as ts.ObjectLiteralExpression
   ).properties[0] as ts.PropertyAssignment;
   const scan = (n: ts.Node) => {
     if (ts.isForOfStatement(n) || ts.isForInStatement(n))
-      throw new Error(
-        `${name}: unrecognized loop lowering; review the bounded-execution adapter.`,
-      );
+      throw new Error(`${name}: unrecognized loop lowering; review the bounded-execution adapter.`);
     if (
       ts.isNewExpression(n) ||
       ts.isArrayLiteralExpression(n) ||
@@ -35,11 +33,14 @@ export function auditCpuFunction(name: string, text: string) {
         !calledFunction(n) &&
         !/^\$(?:fr|h\d+)$/.test(callee) &&
         ![
-          "__audioStep",
-          "$.u32Sat",
-          "$.i32Sat",
-          "$.intDiv",
-          "$.intRem",
+          '__audioStep',
+          '$.u32Sat',
+          '$.i32Sat',
+          '$.intDiv',
+          '$.intRem',
+          // The 32-bit integer product that u32 and i32 multiplication lowers to: a pure,
+          // deterministic builtin that allocates nothing (the kinds' hash noise needs it).
+          'Math.imul',
         ].includes(callee)
       )
         throw new Error(`${name}: unverified CPU helper ${callee}.`);

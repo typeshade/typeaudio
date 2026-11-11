@@ -22,6 +22,7 @@
     "exp:06": "bun experiments/06-granular/run.ts",
     "exp:07": "bun experiments/07-sound-match/run.ts",
     "exp:08": "bun experiments/08-sound-design/run.ts",
+    "exp:10:web": "bun experiments/10-seven-questions/to-web-run.ts",
     "feedback": "bun scripts/feedback.ts",
     "test:feedback": "vitest run test/graph-feedback.test.ts",
     "test:spatial-worklet": "bun scripts/check-spatial-worklet.ts",
