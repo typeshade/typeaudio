@@ -26,6 +26,7 @@ import {
   type Stereo,
   type Vec3,
 } from './dsp.ts';
+import { liftQuiet, type Lift } from './presence.ts';
 
 export type Meter = 'm' | 'i' | 's' | 'a' | 'r';
 
@@ -182,6 +183,10 @@ export class Mix {
    * the study's: experiment 12 uses it to keep the soft clip from trimming the whole mix.
    */
   beforeDb: readonly (readonly [number, number])[] | undefined;
+  /** The presence pass (`presence.ts`): the lift of the quiet stretches, before the drive. */
+  lift: Lift | undefined;
+  /** The presence pass: the ceiling of the true peak, in place of the one the caller gives. */
+  ceilingDb: number | undefined;
   masterGainDb = 0;
   limitDb = 0;
   limitedShare = 0;
@@ -374,6 +379,7 @@ export class Mix {
 
   /** The master's steps: it yields each signal whose true peak it needs and takes the peak back. */
   private *master(peakDbtp: number): Generator<Stereo, Stereo, number> {
+    peakDbtp = this.ceilingDb ?? peakDbtp;
     let mix = stereo(this.n);
     for (const name of this.order) this.addLayer(mix, this.layers.get(name)!);
     if (this.beforeDb && this.beforeDb.length > 0) {
@@ -399,6 +405,8 @@ export class Mix {
     if (drive > 0) {
       const c = lin(peakDbtp - 0.3);
       const dg = lin(drive);
+      // the presence pass: the quiet stretches lifted, never into the limiter
+      if (this.lift) y = liftQuiet(y, this.lift, (c * lin(4.0)) / dg);
       const driven: Stereo = [y[0].map((v) => v * dg), y[1].map((v) => v * dg)];
       const gain = limiter(driven, c * lin(4.0), 0.004, 0.06);
       y = driven.map((ch) => ch.map((v, i) => c * Math.tanh((v * gain[i]!) / c))) as Stereo;
