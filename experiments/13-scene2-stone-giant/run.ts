@@ -8,8 +8,8 @@
 // `--plain` runs the scene's code as written, with no builder; the samples are the same.
 //
 // It writes `scene2.wav` (24-bit, 48 kHz, from 28.5 s) and `scene2.json`. With `--join` and scene
-// 1's render (experiment 12, from 0 s), it compares the two over 28.6 to 29.45 s, where they hold the
-// same sounds, and writes `scene1-2-join.wav`: scene 1 to 29.5 s, then scene 2.
+// 1's render (experiment 12, from 0 s), it compares the two over 29.2 to 29.45 s, where they hold the
+// same sounds (the master's lift reads 0.7 s around each moment, so the first 0.7 s differ), and writes `scene1-2-join.wav`: scene 1 to 29.5 s, then scene 2.
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -83,7 +83,7 @@ if (s1path) {
   let ed = 0;
   let x12 = 0;
   for (let c = 0; c < 2; c++)
-    for (let i = Math.round(28.6 * SR); i < Math.round(29.45 * SR); i++) {
+    for (let i = Math.round(29.2 * SR); i < Math.round(29.45 * SR); i++) {
       const a = s1[c]![i]!;
       const b = y[c]![i - Math.round(SCENE2_FROM * SR)]!;
       e1 += a * a;
@@ -92,12 +92,12 @@ if (s1path) {
     }
   const g = x12 / e2;
   for (let c = 0; c < 2; c++)
-    for (let i = Math.round(28.6 * SR); i < Math.round(29.45 * SR); i++) {
+    for (let i = Math.round(29.2 * SR); i < Math.round(29.45 * SR); i++) {
       const d = s1[c]![i]! - g * y[c]![i - Math.round(SCENE2_FROM * SR)]!;
       ed += d * d;
     }
   console.log(
-    `overlap 28.6-29.45 s: scene 1 against scene 2, best gain ${(20 * Math.log10(g)).toFixed(3)} dB, levels ${(10 * Math.log10(e1 / e2)).toFixed(3)} dB apart, the difference ${(10 * Math.log10(ed / e1)).toFixed(1)} dB under scene 1`,
+    `overlap 29.2-29.45 s: scene 1 against scene 2, best gain ${(20 * Math.log10(g)).toFixed(3)} dB, levels ${(10 * Math.log10(e1 / e2)).toFixed(3)} dB apart, the difference ${(10 * Math.log10(ed / e1)).toFixed(1)} dB under scene 1`,
   );
   // the join: scene 1 to 29.5 s, scene 2 after, with a crossfade of 20 ms
   const j = Math.round(SCENE2_JOIN * SR);
