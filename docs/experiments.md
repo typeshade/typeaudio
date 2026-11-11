@@ -968,5 +968,27 @@ the whole scene. The landings lie within 0.16 dB of the first render (before: 0.
 it); a trim of 2 to 5 dB gives the same. The render takes 210 s: 195 s for the layers, 15 s for the
 master.
 
-**Status.** The fourth render waits for the owner's review. The previews went to the owner privately;
+**Review 4, 2026-11-11.** The owner found the fourth render not bad, and heard the sound stop at the
+cut near 11 s (11.55 s). The orb's red material, its voice and its core were made shot by shot,
+each with its own noise and place, so at each cut they stopped in 10 to 15 ms and began again; the
+grinds, the low billow and the first impacts of the gathering began on the cut. Now:
+
+- The orb's red material and its voice are one source each from 4.86 s to 15.05 s (`orb-body`,
+  `orb-body-voice`), laid shot by shot with an equal-power crossfade of 120 ms at each cut: only the
+  place, the distance and the level change. The core of review 1 is laid the same way.
+- The proximity and the draw change over 150 to 200 ms at 7.21 s and 14.81 s, not 40 to 70 ms.
+- The wind on her face and the air of her flight cross over 0.2 s at 8.05 s.
+- At 11.55 s the grinds, the billow and the groan of the pile rise over 0.25 s, and the first impact
+  of the gathering comes 0.2 s after the cut.
+
+Measured in 50 ms windows over 0.5 s on each side of each cut, the step across the cut, before and
+after (dB): 3.29 s -1.8 / -1.8; 4.71 s (the white frame, a launch) +7.4 / +7.4; 4.88 s -0.9 / -0.8;
+7.21 s -3.2 / -1.5; 8.05 s -1.7 / -2.1; 9.47 s +0.4 / +0.3; 11.55 s -1.6 / -0.2; 12.22 s -0.6 /
+-0.2; 14.81 s -0.2 / -0.4; 15.47 s +0.6 / -0.2; 17.73 s +0.2 / +0.2; 18.60 s +0.6 / +0.7. At 11.55
+s the largest step of a band from 500 Hz up fell from 7.9, 9.9 and 12.3 dB to 3.2, 4.6 and 4.6 dB;
+under 120 Hz a window of 50 ms holds a few cycles, and its steps of 7 to 11 dB are the same at
+every cut and between them. The landings lie within 0.16 dB of the first render; the glassy grains
+stay out. The render takes 208 s.
+
+**Status.** The fifth render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.
