@@ -181,7 +181,7 @@ function bed3(m: Mix): void {
   m.part('bed3', () => {
     const t0 = 45.9;
     const dur = SCENE3_END + 2.0 - t0;
-    m.addWide('bed3', S.hallAir(dur, 301), t0, { target: -41.0, kind: 'a' });
+    m.addWide('bed3', S.hallAir(dur, 301), t0, { target: -43.0, kind: 'a' });
     m.addWide('bed3-low', S.wideNoise(dur, 304, 28, 90, 3), t0, {
       target: -47.0,
       kind: 'r',
@@ -196,255 +196,371 @@ function tidy3(m: Mix): void {
   for (const name of ['bed3', 'bed3-low']) shapeLayer(m, name, xfade(46.1, 47.0, false));
 }
 
-// ---- 47.50 to 49.42: the giant's stone stays charged after the barrier shatters: it crackles low,
-// a small arc at 47.65; from 48.40 arcs crawl over it. Each arc lands with a snap and crackles as
-// it crawls; under them the hum of the voltage that stays in the stone.
+// ---- Review 1, 2026-11-11 (render r1). The owner: "I can tell it's attacking, but it feels too
+// repetitive, and it's boring." Each attack now has its own colour and the three climb: the first
+// bolt is the whip (scene 2's head); the second is a pillar from above with rolling, cracking
+// thunder that changes with each shot; the third and the blast are the climax. Between them the
+// level drops into valleys, and before the climax it holds its breath. What repeated with no new
+// picture event is cut: two of five strikes from the vault, two of five snaps, one of three zips.
+
+interface Shot {
+  readonly from: number;
+  readonly to: number;
+  readonly sig: Float64Array;
+  readonly pos: Vec3;
+  readonly target: number;
+  readonly sendDb: number;
+}
+
+/**
+ * One event laid shot by shot, as `across` does, but each shot hears its own version of the same
+ * signal (all start at `t0` and run together): the perspective changes, the source does not.
+ */
+function shots(m: Mix, name: string, t0: number, parts: readonly Shot[], xf = 0.12): void {
+  parts.forEach((p, k) => {
+    const first = k === 0;
+    const last = k === parts.length - 1;
+    const a = Math.max(t0, p.from - (first ? 0 : xf / 2));
+    const b = p.to + (last ? 0.15 : xf / 2);
+    const ia = nsamp(a - t0);
+    const ib = Math.min(p.sig.length, nsamp(b - t0));
+    if (ib - ia < 2) return;
+    const x = p.sig.slice(ia, ib);
+    const fin = first ? nsamp(0.01) : nsamp(xf);
+    const fout = last ? nsamp(0.15) : nsamp(xf);
+    for (let i = 0; i < Math.min(fin, x.length); i++)
+      x[i] = x[i]! * Math.sin((0.5 * Math.PI * (i + 0.5)) / fin);
+    for (let i = 0; i < Math.min(fout, x.length); i++) {
+      const j = x.length - fout + i;
+      if (j >= 0) x[j] = x[j]! * Math.cos((0.5 * Math.PI * (i + 0.5)) / fout);
+    }
+    m.add(`${name}${k}`, x, a, p.pos, { target: p.target, kind: 'm', sendDb: p.sendDb });
+  });
+}
+
+// ---- 47.50 to 49.42: the valley after the first bolt. The giant's stone stays charged: a sparse
+// tick of crackle and a low hum that rises a little toward the second bolt. One charged fragment
+// streaks past (48.07); one arc snaps dry from below (48.40); one arc crawls down from above,
+// bright and longer (48.98).
 const GIANT: Vec3 = [1.0, 1.6, -4.0];
 function crawl(m: Mix): void {
   m.part('crawl', () => {
     const t0 = 47.5;
-    const t1 = 49.5;
+    const t1 = 49.45;
     const n = nsamp(t1 - t0);
-    const snaps = [47.65, 48.4, 48.72, 48.98, 49.22];
-    const d = new Float64Array(n);
-    const dw = S.levelWalk(n, 3410, 4.0, 2.0, 12.0);
-    for (let i = 0; i < n; i++) {
-      const t = t0 + i / SR;
-      let e = 0;
-      for (const s of snaps) if (t >= s) e = Math.max(e, Math.exp(-(t - s) / 0.12));
-      d[i] = Math.min(1, (0.15 + 0.85 * e) * dw[i]!);
-    }
-    const ck = arcCrackle(t1 - t0, 3400, d);
-    m.add('arc-crackle', fade(ck, 0.01, 0.06), t0, GIANT, {
-      target: -17,
+    const dw = S.levelWalk(n, 3410, 5.0, 1.0, 8.0);
+    const d = new Float64Array(n).map((_, i) => Math.min(1, 0.05 * dw[i]!));
+    m.add('arc-ticks', fade(arcCrackle(t1 - t0, 3400, d), 0.05, 0.05), t0, GIANT, {
+      target: -27,
       kind: 'm',
-      sendDb: -10,
+      sendDb: -8,
     });
-    snaps.forEach((t, k) => {
-      const [c, th] = strike(3420 + 10 * k, 0.5, 0.06);
-      m.add(`arc-snap${k}`, c, t, [GIANT[0] + (k % 2 ? -0.8 : 0.6), 1.8, -4.0], {
-        target: k === 3 ? -11 : k === 0 ? -17 : -14,
-        kind: 'i',
-        sendDb: -10,
-      });
-      m.add(`arc-snap${k}-thump`, th, t, GIANT, {
-        target: k === 3 ? -15 : k === 0 ? -21 : -18,
-        kind: 'i',
-      });
+    // 48.40: a dry snap from below, small and to the right
+    const [snap] = strike(3420, 0.4, 0.04);
+    m.add('arc-snap', snap, 48.4, [2.0, 0.6, -4.5], { target: -17, kind: 'i', sendDb: -10 });
+    // 48.98: an arc crawls down the stone from above: a crackle that runs for 0.35 s, a soft knock
+    const cn = nsamp(0.38);
+    const ce = new Float64Array(cn).map((_, i) => {
+      const t = i / SR;
+      return t < 0.01 ? t / 0.01 : Math.exp(-(t - 0.01) / 0.14);
     });
-    // charged fragments of the field streak past the camera (47.98, 48.07, 48.15): a zip of
-    // crackle on a short path (about 19 m/s, so its Doppler stays small)
-    (
-      [
-        [47.98, -1],
-        [48.07, 1],
-        [48.15, -1],
-      ] as const
-    ).forEach(([t, side], k) => {
-      const zn = nsamp(0.16);
-      const bell = new Float64Array(zn).map((_, i) => Math.sin((Math.PI * i) / zn) ** 2);
-      const z = arcCrackle(0.16, 3440 + k, bell);
-      const h = Math.floor(zn / 2);
-      const P = concat(
-        line([side * 1.5, 1.8, -1.8], [0.0, 1.7, -1.5], h),
-        line([0.0, 1.7, -1.5], [-side * 1.5, 1.6, -1.8], zn - h),
-      );
-      m.add(`arc-zip${k}`, z, t - 0.08, P, { target: -15, kind: 'i', sendDb: -12 });
+    const crawlArc = arcCrackle(0.38, 3425, ce).map((v, i) => v * Math.sqrt(ce[i]!));
+    m.add('arc-crawl', crawlArc, 48.98, line([0.2, 2.6, -4.0], [0.8, 0.8, -4.0], cn), {
+      target: -15,
+      kind: 'i',
+      sendDb: -8,
     });
+    m.add('arc-crawl-knock', S.boom(3426, { f: 55.0, tau: 0.08, dur: 0.3 }), 48.98, GIANT, {
+      target: -21,
+      kind: 'i',
+    });
+    // 48.07: the largest charged fragment streaks past, at about 19 m/s
+    const zn = nsamp(0.16);
+    const bell = new Float64Array(zn).map((_, i) => Math.sin((Math.PI * i) / zn) ** 2);
+    const h = Math.floor(zn / 2);
+    m.add(
+      'arc-zip',
+      arcCrackle(0.16, 3441, bell),
+      48.07 - 0.08,
+      concat(
+        line([1.5, 1.8, -1.8], [0.0, 1.7, -1.5], h),
+        line([0.0, 1.7, -1.5], [-1.5, 1.6, -1.8], zn - h),
+      ),
+      { target: -20, kind: 'i', sendDb: -12 },
+    );
     m.add(
       'arc-hum',
       hum(t0, t1, 3430, [
         [t0, 0.0],
-        [47.6, 0.3],
-        [48.3, 0.3],
-        [48.45, 0.5],
-        [49.3, 0.7],
+        [47.8, 0.25],
+        [49.0, 0.35],
+        [49.35, 0.5],
         [t1, 0.0],
       ]),
       t0,
       GIANT,
-      { target: -21, kind: 'm', sendDb: -8 },
+      { target: -27, kind: 'm', sendDb: -8 },
     );
   });
 }
 
-// ---- 49.42 to 55.81: the second bolt. One discharge, laid shot by shot: close on the giant, wide
-// from the side, from above, behind the pillar, from above again as it thins. Branches strike
-// from the vault while it streams.
+// ---- 49.42 to 55.30: the second bolt, a pillar from above, and its rolling thunder. One discharge
+// and one roll of thunder; each shot hears its own version of them:
+//   close (to 49.93)    the pillar itself, its crackle in front
+//   wide (to 52.93)     big and roomy: the thunder rolls and cracks through the hall
+//   above (to 53.60)    heavy weight downward: the low body, the top dulled
+//   pillar (to 54.20)   behind the stone: occluded, lower, muffled
+//   thinning (to 55.3)  it frays: the torrent falls away and the crackle breaks up and stops
+// Two strikes from the vault, each its own: far left and roomy (50.59); near right, sharp (52.72).
 const B2 = 49.42;
 const B3 = 55.81;
 function bolt2(m: Mix): void {
   m.part('bolt2', () => {
-    const [c, th] = strike(3500, 1.0);
-    m.add('b2-crack', c, B2, [0.4, 1.8, -3.5], {
-      target: -6,
-      kind: 'i',
-      focusDb: 3,
-      sendDb: -14,
-    });
-    m.add('b2-thump', th, B2, [0.0, 0.5, -3.5], {
-      target: -10,
-      kind: 'i',
-      focusDb: 3,
-      sendDb: -16,
-    });
-    const T1 = B3 + 0.05;
-    const p = plasma(B2, T1, 3510, [
-      [B2, 1.0],
-      [49.9, 0.9],
-      [52.9, 0.85],
-      [54.6, 0.8],
-      [55.4, 0.35],
-      [55.75, 0.3],
-      [T1, 0.0],
-    ]);
-    across(
-      m,
-      'b2-plasma',
-      p,
-      B2,
-      [
-        {
-          from: B2,
-          to: 49.93,
-          pos: [0.3, 1.6, -3.5],
-          opts: { target: -13, kind: 'm', sendDb: -8 },
-        },
-        {
-          from: 49.93,
-          to: 52.93,
-          pos: [1.5, 1.5, -9.0],
-          opts: { target: -16, kind: 'm', sendDb: -4 },
-        },
-        {
-          from: 52.93,
-          to: 53.6,
-          pos: [0.5, -2.0, -8.0],
-          opts: { target: -16, kind: 'm', sendDb: -4 },
-        },
-        {
-          from: 53.6,
-          to: 54.2,
-          pos: [0.5, -2.0, -14.0],
-          opts: { target: -24, kind: 'm', sendDb: 0 },
-        },
-        {
-          from: 54.2,
-          to: B3,
-          pos: [0.5, -2.0, -9.0],
-          opts: { target: -18, kind: 'm', sendDb: -4 },
-        },
-      ],
-      0.12,
-      0.08,
+    // the pillar lands: a deep crack from above and a long low weight
+    const pc = new Float64Array(nsamp(0.6));
+    addAt(pc, S.tiltedBurst(3500, 150.0, 9000.0, 0.06, { tilt: 0.6, rise: 0.001 }), 0, 1.0);
+    addAt(
+      pc,
+      S.heavyCrack(3501, { size: 3.0, dur: 0.4, kRate: 9, bright: 0.6 }).subarray(0, pc.length),
+      0,
+      0.9,
     );
-    // the branches from the vault, in the wide shot, and the streak that passes close at 53.48
-    (
-      [
-        [50.59, [2.5, 6.0, -10.0], -10],
-        [51.18, [3.5, 6.0, -11.0], -11],
-        [51.51, [-1.0, 6.0, -10.0], -12],
-        [52.39, [2.0, 6.0, -9.0], -10],
-        [52.72, [4.0, 6.0, -11.0], -9],
-        [53.48, [2.0, 2.0, -2.5], -8],
-      ] as [number, Vec3, number][]
-    ).forEach(([t, pos, tg], k) => {
-      const [bc, bt] = strike(3530 + 10 * k, 0.8);
-      m.add(`b2-branch${k}`, bc, t, pos, {
-        target: tg,
-        kind: 'i',
-        focusDb: 2,
-        sendDb: -6,
-      });
-      m.add(`b2-branch${k}-thump`, bt, t, pos, {
-        target: tg - 4,
-        kind: 'i',
-        sendDb: -6,
-      });
-    });
-  });
-}
-
-// ---- 54.80 to 55.78: the voltage gathers again (scene 2's "wooo-woong"), held 30 ms before the
-// third release, as the first release was held.
-function gather2(m: Mix): void {
-  m.part('gather2', () => {
-    const t0 = 54.6;
-    m.addWide(
-      'g2-hum',
-      (() => {
-        const h = hum(t0, B3, 3600, [
-          [t0, 0.0],
-          [54.9, 0.3],
-          [55.5, 0.7],
-          [55.74, 1.0],
-          [55.76, 0.1],
-          [B3 - 0.002, 0.1],
-          [B3, 0.0],
-        ]);
-        return [h, h] as Stereo;
-      })(),
-      t0,
-      { target: -15, kind: 'm', sendDb: -6 },
-    );
-  });
-}
-
-// ---- 55.81 to 56.95: the third bolt, close, on the small barrier in the cloud; jagged strikes;
-// the barrier strains under it.
-const BLAST = 56.95;
-function bolt3(m: Mix): void {
-  m.part('bolt3', () => {
-    const [c, th] = strike(3700, 1.2);
-    m.add('b3-crack', c, B3, [0.0, 1.8, -3.0], {
-      target: -5,
+    m.add('b2-pillar', lp2(cut(S.saturate(pc, 1.8), 0.3), 10000), B2, [0.3, 3.0, -4.0], {
+      target: -7,
       kind: 'i',
       focusDb: 3,
-      sendDb: -14,
+      sendDb: -8,
     });
-    m.add('b3-thump', th, B3, [0.0, 0.5, -3.0], {
+    const [front, low] = S.whump(3502, 0.012, 0.9);
+    const weight = new Float64Array(nsamp(0.9));
+    addAt(weight, front, 0, 0.8);
+    addAt(weight, low, 0, 0.8);
+    addAt(weight, S.boom(3503, { f: 32.0, tau: 0.35, dur: 0.9 }), 0, 1.0);
+    m.add('b2-weight', S.saturate(weight, 1.8), B2, [0.0, 0.5, -4.0], {
       target: -9,
       kind: 'i',
       focusDb: 3,
-      sendDb: -16,
+      sendDb: -10,
     });
-    const T1 = BLAST + 0.03;
-    const p = plasma(
-      B3,
-      T1,
-      3710,
+
+    const T1 = 55.4;
+    const dur = T1 - B2;
+    const n = nsamp(dur);
+    const dis = plasma(B2, T1, 3510, [
+      [B2, 1.0],
+      [49.9, 0.9],
+      [52.9, 0.8],
+      [54.2, 0.7],
+      [54.7, 0.35],
+      [55.1, 0.1],
+      [T1, 0.0],
+    ]);
+    // the thunder: a low roll with no period, and cracks at irregular times that grow fewer
+    const roll = S.billow(dur, 3520, 25.0, 180.0, 4.0)[0];
+    const r = rng(3521);
+    const thunder = S.norm(roll).map((v) => 0.8 * v);
+    let t = 0.25;
+    let k = 0;
+    while (t < dur - 0.6) {
+      const c = S.heavyCrack(3530 + k, { size: 2.0, dur: 0.5, kRate: 7, bright: 0.25 });
+      addAt(
+        thunder,
+        lp2(c, 2500).subarray(0, Math.min(c.length, n - nsamp(t))),
+        nsamp(t),
+        0.9 * Math.exp(-t / 4.0),
+      );
+      t += r.uniform(0.35, 0.9) * (1 + t / 3.0);
+      k++;
+    }
+    const tn = S.norm(thunder);
+    const dn = S.norm(dis);
+    const level = env(
       [
-        [B3, 1.0],
-        [56.5, 0.9],
-        [56.9, 1.0],
+        [B2, 1.0],
+        [54.2, 0.8],
+        [54.8, 0.3],
         [T1, 0.0],
       ],
-      6500,
+      B2,
+      n,
     );
-    m.add('b3-plasma', fade(p, 0.004, 0.02), B3, [0.0, 1.5, -3.0], {
+    const wide = new Float64Array(n).map((_, i) => (0.55 * dn[i]! + 1.0 * tn[i]!) * level[i]!);
+    // the frayed end: the crackle breaks into bursts that thin out
+    const fd = S.levelWalk(n, 3540, 8.0, 2.0, 9.0);
+    const fray = arcCrackle(
+      dur,
+      3541,
+      new Float64Array(n).map((_, i) => {
+        const tt = B2 + i / SR;
+        const e = tt < 54.2 ? 0 : tt < 55.25 ? 0.5 * (1 - (tt - 54.2) / 1.05) : 0;
+        return Math.min(1, e * fd[i]! ** 2);
+      }),
+    );
+    const thin = new Float64Array(n).map((_, i) => 0.5 * dn[i]! + 0.8 * fray[i]!);
+    shots(m, 'b2', B2, [
+      { from: B2, to: 49.93, sig: dn, pos: [0.3, 1.8, -3.5], target: -15, sendDb: -10 },
+      { from: 49.93, to: 52.93, sig: wide, pos: [1.0, 5.0, -12.0], target: -17, sendDb: 0 },
+      {
+        from: 52.93,
+        to: 53.6,
+        sig: lp2(wide, 700),
+        pos: [0.0, -3.0, -5.0],
+        target: -17,
+        sendDb: -6,
+      },
+      {
+        from: 53.6,
+        to: 54.2,
+        sig: lp2(wide, 300),
+        pos: [0.0, -3.0, -9.0],
+        target: -27,
+        sendDb: -3,
+      },
+      { from: 54.2, to: T1, sig: thin, pos: [0.0, -3.0, -8.0], target: -21, sendDb: -4 },
+    ]);
+    // the two strikes from the vault
+    const far = new Float64Array(nsamp(1.4));
+    addAt(far, S.tiltedBurst(3550, 200.0, 8000.0, 0.05, { tilt: 0.7 }), 0, 1.0);
+    addAt(far, S.heavyCrack(3551, { size: 2.5, dur: 0.5, kRate: 6, bright: 0.3 }), 0.0, 0.8);
+    addAt(
+      far,
+      S.billow(1.2, 3552, 30.0, 150.0, 2.0)[0].map((v, i) => v * Math.exp(-i / SR / 0.35)),
+      nsamp(0.06),
+      0.25,
+    );
+    m.add('b2-vault-far', lp2(S.norm(far), 8000), 50.59, [-5.0, 7.0, -15.0], {
       target: -12,
+      kind: 'i',
+      focusDb: 2,
+      sendDb: 0,
+    });
+    const near = new Float64Array(nsamp(0.4));
+    addAt(near, S.tiltedBurst(3560, 600.0, 12000.0, 0.012, { tilt: 0.2, rise: 0.0002 }), 0, 1.0);
+    addAt(near, S.sizzle(0.25, 3561, 0.05, 5000.0, 2500.0, 10000.0), 0, 0.5);
+    m.add('b2-vault-near', lp2(cut(S.saturate(near, 2.2), 0.08), 12000), 52.72, [3.0, 4.0, -6.0], {
+      target: -9,
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -10,
+    });
+  });
+}
+
+// ---- 55.30 to 55.81: near silence. Only the voltage gathers, low and close, and is held for the
+// last 60 ms before the third release.
+function gather2(m: Mix): void {
+  m.part('gather2', () => {
+    const t0 = 55.0;
+    const h = hum(t0, B3, 3600, [
+      [t0, 0.0],
+      [55.3, 0.25],
+      [55.62, 0.6],
+      [55.74, 0.9],
+      [55.75, 0.05],
+      [B3 - 0.002, 0.05],
+      [B3, 0.0],
+    ]);
+    m.addWide('g2-hum', [h, h] as Stereo, t0, { target: -22, kind: 'm', sendDb: -10 });
+  });
+}
+
+// ---- 55.81 to 57.22: the climax. The third release is the widest crack yet, two tears apart left
+// and right over a very low thump; the bolts converge, their crackle and a low pressure climbing
+// together for a second; one jagged strike (56.62); 50 ms of suction; then the white blast.
+const BLAST = 56.95;
+function bolt3(m: Mix): void {
+  m.part('bolt3', () => {
+    ([-1, 1] as const).forEach((side, j) => {
+      const c = new Float64Array(nsamp(0.5));
+      addAt(c, S.tiltedBurst(3700 + j, 200.0, 12000.0, 0.04, { tilt: 0.35, rise: 0.0003 }), 0, 1.0);
+      addAt(
+        c,
+        S.heavyCrack(3702 + j, { size: 3.0, dur: 0.3, kRate: 12, bright: 0.8 }).subarray(
+          0,
+          c.length,
+        ),
+        0,
+        0.9,
+      );
+      m.add(
+        `b3-release${j}`,
+        lp2(cut(S.saturate(c, 2.0), 0.18), 12000),
+        B3 + 0.018 * j,
+        [side * 2.5, 2.0, -3.0],
+        {
+          target: -9,
+          kind: 'i',
+          focusDb: 3,
+          sendDb: -10,
+        },
+      );
+    });
+    m.add('b3-thump', S.boom(3705, { f: 26.0, tau: 0.3, dur: 0.8 }), B3, [0.0, 0.0, -3.0], {
+      target: -10,
+      kind: 'i',
+      focusDb: 3,
+    });
+    // the convergence: denser and louder toward the blast, then sucked in 50 ms before it
+    const T1 = BLAST;
+    const dur = T1 - B3;
+    const n = nsamp(dur);
+    const climb = env(
+      [
+        [B3, 0.55],
+        [56.3, 0.6],
+        [56.88, 1.0],
+        [56.9, 0.08],
+        [T1, 0.0],
+      ],
+      B3,
+      n,
+    );
+    const ck = arcCrackle(
+      dur,
+      3710,
+      new Float64Array(n).map((_, i) => 0.3 + 0.7 * (i / n) ** 1.5),
+    );
+    const press = S.norm(S.billow(dur, 3711, 28.0, 120.0, 1.5)[0]);
+    const dis = S.norm(
+      plasma(
+        B3,
+        T1,
+        3712,
+        [
+          [B3, 1.0],
+          [T1, 1.0],
+        ],
+        6500,
+      ),
+    );
+    const conv = new Float64Array(n).map(
+      (_, i) => (0.6 * dis[i]! + 0.6 * ck[i]! + (0.3 + 0.9 * (i / n)) * press[i]!) * climb[i]!,
+    );
+    m.add('b3-converge', fade(conv, 0.004, 0.003), B3, [0.0, 1.5, -3.0], {
+      target: -16,
       kind: 'm',
       sendDb: -8,
     });
-    [56.53, 56.62, 56.78].forEach((t, k) => {
-      const [jc, jt] = strike(3720 + 10 * k, 0.9, 0.08);
-      m.add(`b3-jag${k}`, jc, t, [k === 1 ? -1.5 : 1.5, 1.8, -3.0], {
-        target: -9,
-        kind: 'i',
-        sendDb: -10,
-      });
-      m.add(`b3-jag${k}-thump`, jt, t, [0.0, 0.5, -3.0], {
-        target: -14,
-        kind: 'i',
-      });
+    const jag = new Float64Array(nsamp(0.4));
+    addAt(jag, S.tiltedBurst(3720, 400.0, 12000.0, 0.02, { tilt: 0.25, rise: 0.0002 }), 0, 1.0);
+    addAt(
+      jag,
+      S.heavyCrack(3721, { size: 1.0, dur: 0.2, kRate: 16, bright: 1.0 }).subarray(0, jag.length),
+      0,
+      0.7,
+    );
+    m.add('b3-jag', lp2(cut(S.saturate(jag, 2.0), 0.1), 12000), 56.62, [-2.0, 2.5, -2.5], {
+      target: -12,
+      kind: 'i',
+      sendDb: -10,
     });
-    const strain = S.gravel(BLAST - 55.95, 3750, 150, 500);
+    const strain = S.gravel(0.95, 3750, 150, 500);
     const se = env(
       [
         [55.95, 0],
-        [56.1, 1],
-        [56.9, 1],
-        [BLAST, 0],
+        [56.1, 0.7],
+        [56.88, 1],
+        [56.9, 0],
       ],
       55.95,
       strain.length,
@@ -454,45 +570,52 @@ function bolt3(m: Mix): void {
       strain.map((v, i) => v * se[i]!),
       55.95,
       [0.0, 1.5, -3.5],
-      { target: -20, kind: 'm', sendDb: -6 },
+      {
+        target: -22,
+        kind: 'm',
+        sendDb: -6,
+      },
     );
   });
 }
 
-// ---- 56.95: the blast. The climax, low and heavy: a full-band crack, the overpressure, a deep
-// boom that lasts, a roll of low rumble through the hall, the blast of air; the giant's stone
-// breaks in it.
+// ---- 56.95: the white blast, the largest sound of the scene: a crack on both sides, the
+// overpressure, a boom at 26 Hz that lasts, the giant's stone that breaks, the blast of air; then
+// its roll goes away through the hall for four seconds.
 function blast(m: Mix): void {
   m.part('blast', () => {
-    const [c] = strike(3800, 2.0, 0.15);
-    m.add('blast-crack', c, BLAST, [0.0, 1.5, -4.0], {
-      target: -5,
-      kind: 'i',
-      focusDb: 3,
-      sendDb: -10,
+    ([-1, 1] as const).forEach((side, j) => {
+      const [c] = strike(3800 + 10 * j, 2.5, 0.2);
+      m.add(`blast-crack${j}`, c, BLAST + 0.006 * j, [side * 1.8, 1.5, -4.0], {
+        target: -9,
+        kind: 'i',
+        focusDb: 3,
+        sendDb: -8,
+      });
     });
-    const [front, low] = S.whump(3801, 0.02, 1.2);
-    const press = new Float64Array(nsamp(1.2));
+    const [front, low] = S.whump(3801, 0.025, 1.5);
+    const press = new Float64Array(nsamp(1.5));
     addAt(press, front, 0, 1.0);
     addAt(press, low, 0, 0.8);
     m.add('blast-pressure', S.saturate(press, 2.0), BLAST, [0.0, 0.5, -4.0], {
-      target: -8,
+      target: -10,
       kind: 'i',
       focusDb: 3,
       sendDb: -10,
     });
-    m.add('blast-boom', S.boom(3802, { f: 34.0, tau: 0.9, dur: 3.0 }), BLAST, [0.0, 0.0, -5.0], {
-      target: -9,
+    m.add('blast-boom', S.boom(3802, { f: 26.0, tau: 1.4, dur: 4.5 }), BLAST, [0.0, 0.0, -5.0], {
+      target: -12,
       kind: 'i',
-      sendDb: -6,
+      sendDb: -4,
     });
-    const roll = S.billow(3.2, 3803, 30.0, 140.0, 3.0);
+    const roll = S.billow(4.6, 3803, 25.0, 160.0, 3.0);
     const re = env(
       [
         [BLAST, 0.0],
-        [BLAST + 0.08, 1.0],
-        [BLAST + 0.8, 0.6],
-        [BLAST + 3.2, 0.0],
+        [BLAST + 0.1, 1.0],
+        [BLAST + 1.0, 0.55],
+        [BLAST + 2.5, 0.2],
+        [BLAST + 4.6, 0.0],
       ],
       BLAST,
       roll[0].length,
@@ -502,9 +625,9 @@ function blast(m: Mix): void {
       [roll[0].map((v, i) => v * re[i]!), roll[1].map((v, i) => v * re[i]!)],
       BLAST,
       {
-        target: -16,
+        target: -15,
         kind: 'm',
-        sendDb: -4,
+        sendDb: 0,
       },
     );
     const air = S.puff(1.6, 3804, 150.0, 6000.0, 0.01, 0.45);
@@ -522,44 +645,34 @@ function blast(m: Mix): void {
   });
 }
 
-// ---- 57.22 to 57.95: dark arcs crawl over the floor as the blast clears, and die.
-function residue(m: Mix): void {
-  m.part('residue', () => {
-    const t0 = 57.2;
-    const dur = 0.85;
-    const n = nsamp(dur);
-    const dw = S.levelWalk(n, 3901, 4.0, 2.0, 10.0);
-    const d = new Float64Array(n).map((_, i) =>
-      Math.min(1, 0.7 * Math.exp(-i / SR / 0.3) * dw[i]!),
-    );
-    const ck = arcCrackle(dur, 3900, d);
-    m.add('residue-crackle', fade(lp2(ck, 6000), 0.01, 0.15), t0, [-1.0, 0.0, -4.0], {
-      target: -22,
-      kind: 'm',
-      sendDb: -6,
-    });
-  });
-}
-
-// ---- 57.72 to 62.27: the dust settles round her; white streaks of wind whirl round her (59.0 to
-// 60.2), and in the close shot her hair blows.
+// ---- 57.22 to 62.27: the relief. The blast's roll goes away; a few dark arcs die on the floor;
+// the dust settles, quiet; three streaks of wind sweep round her; in the close shot the wind in
+// her hair.
 function after(m: Mix): void {
   m.part('after', () => {
-    const t0 = 57.6;
+    const rn = nsamp(0.6);
+    const rd = new Float64Array(rn).map((_, i) => 0.25 * Math.exp(-i / SR / 0.18));
+    m.add(
+      'residue-crackle',
+      fade(lp2(arcCrackle(0.6, 3900, rd), 6000), 0.01, 0.15),
+      57.25,
+      [-1.0, 0.0, -4.0],
+      {
+        target: -27,
+        kind: 'm',
+        sendDb: -6,
+      },
+    );
+    const t0 = 57.8;
     const dur = SCENE3_END + 1.0 - t0;
-    const ds = S.dust(dur, 4000, {
-      lo: 800.0,
-      hi: 7000.0,
-      sd: 2.0,
-      grain: 0.3,
-    });
+    const ds = S.dust(dur, 4000, { lo: 800.0, hi: 6500.0, sd: 2.0, grain: 0.3 });
     const de = env(
       [
         [t0, 0.0],
-        [57.9, 1.0],
-        [59.0, 0.6],
-        [60.3, 0.35],
-        [SCENE3_END + 1.0, 0.25],
+        [58.4, 1.0],
+        [59.5, 0.6],
+        [60.3, 0.3],
+        [SCENE3_END + 1.0, 0.2],
       ],
       t0,
       ds[0].length,
@@ -569,22 +682,19 @@ function after(m: Mix): void {
       [ds[0].map((v, i) => v * de[i]!), ds[1].map((v, i) => v * de[i]!)],
       t0,
       {
-        target: -31,
+        target: -36,
         kind: 'm',
         sendDb: -4,
       },
     );
-    // the whirl: gusts that sweep round her at irregular times, each on its own path
     (
       [
-        [59.02, -1, 0.45],
-        [59.3, 1, 0.4],
-        [59.57, -1, 0.5],
-        [59.86, 1, 0.42],
-        [60.12, -1, 0.5],
+        [59.05, -1, 0.5],
+        [59.57, 1, 0.45],
+        [60.12, -1, 0.55],
       ] as const
     ).forEach(([t, side, d], k) => {
-      const g = S.wind(d, 4010 + k, 300, 3500);
+      const g = S.wind(d, 4010 + 2 * k, 300, 3500);
       const sh = env(
         [
           [0, 0],
@@ -600,13 +710,8 @@ function after(m: Mix): void {
         line([side * 3.0, 1.5, -3.0], [0.0, 1.6, -1.2], h),
         line([0.0, 1.6, -1.2], [-side * 3.0, 1.7, -2.5], x.length - h),
       );
-      m.add(`whirl${k}`, x, t - 0.45 * d, P, {
-        target: -24,
-        kind: 'i',
-        sendDb: -8,
-      });
+      m.add(`whirl${k}`, x, t - 0.45 * d, P, { target: -27 + 2 * k, kind: 'i', sendDb: -8 });
     });
-    // her face: the wind in her hair, from the end of the whirl through the close shot
     const hw = S.wind(SCENE3_END + 1.0 - 59.9, 4020, 400, 4000);
     const he = env(
       [
@@ -623,7 +728,7 @@ function after(m: Mix): void {
       [hw[0].map((v, i) => v * he[i]!), hw[1].map((v, i) => v * he[i]!)],
       59.9,
       {
-        target: -25,
+        target: -26,
         kind: 'm',
       },
     );
@@ -649,7 +754,6 @@ export function scene3(): Mix {
   gather2(m);
   bolt3(m);
   blast(m);
-  residue(m);
   after(m);
   m.finish(tidy3);
   // scene 2's review 9: its noise layers and cracks lose their harsh top
