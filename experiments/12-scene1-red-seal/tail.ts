@@ -259,11 +259,40 @@ function rayStones(m: Mix): void {
   });
 }
 
-/** Leaves out the red passage's layers that `rockHuuk` and `rayStones` replace. */
+/**
+ * 20.0 to 22.3 s: the sparks round the orb, bright and short (2.5 to 9 kHz), in place of the
+ * study's `orb-sparks` (500 Hz to 4 kHz), whose low ticks read as pebbles (the owner, 2026-11-11).
+ */
+function orbSparks(m: Mix): void {
+  m.part('orb-sparks-bright', () =>
+    (
+      [
+        [-1.2, 1.6, -3.2],
+        [1.2, 1.4, -3.2],
+      ] as Vec3[]
+    ).forEach((pos, i) =>
+      m.add(
+        `orb-sparks-bright${i}`,
+        fade(S.pops(2.3, 404 + i, 16.0, 2500, 9000, 0.002), 0.02, 0.01),
+        20.0,
+        pos,
+        {
+          target: -28,
+          kind: 'm',
+          sendDb: -10,
+        },
+      ),
+    ),
+  );
+}
+
+/** Leaves out the red passage's layers that `rockHuuk`, `rayStones` and `orbSparks` replace. */
 function replaceRed(m: Mix): void {
   for (const name of [
     ...Array.from({ length: 9 }, (_, i) => `rock-pass${i}`),
     ...Array.from({ length: 5 }, (_, i) => `ray-debris${i}`),
+    'orb-sparks0',
+    'orb-sparks1',
   ]) {
     m.layers.delete(name);
     for (let i = m.order.length - 1; i >= 0; i--) if (m.order[i] === name) m.order.splice(i, 1);
@@ -289,5 +318,6 @@ export function redTail(m: Mix): void {
   rockHuuk(m);
   sparkSpray(m);
   rayStones(m);
+  orbSparks(m);
   m.finish(replaceRed);
 }
