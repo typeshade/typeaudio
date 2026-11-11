@@ -29,6 +29,15 @@ function uniform(word: u32): f32 {
 export function noise(key: u32, age: u32): f32 {
   return 2 * uniform(hash32(key ^ hash32(age))) - 1;
 }
+/** A smooth walk in [-1, 1) from \`key\` only: the noise of the whole frames on both sides of \`x\`, joined by a smoothstep. */
+export function smooth(key: u32, x: f32): f32 {
+  const i: u32 = u32(x);
+  const fr: f32 = x - f32(i);
+  const s: f32 = fr * fr * (3 - 2 * fr);
+  const n0: f32 = noise(key, i);
+  const n1: f32 = noise(key, i + 1);
+  return n0 + (n1 - n0) * s;
+}
 `;
 
 /** The kind `impact`, one sample a call. Its shape arrives as inputs, as `Impact.shape` takes it. */

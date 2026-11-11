@@ -14,7 +14,13 @@ import {
   NOISE_SOURCE,
 } from '../src/kinds/functions/impact.ts';
 import { BOOM_DEFINITION, BOOM_MODULE, BOOM_SOURCE } from '../src/kinds/functions/boom.ts';
-import { RefBoom, RefImpact } from './reference-kinds.ts';
+import {
+  ROAR_BAND_DEFINITION,
+  ROAR_MIX_DEFINITION,
+  ROAR_MODULE,
+  ROAR_SOURCE,
+} from '../src/kinds/functions/roar.ts';
+import { RefBoom, RefImpact, RefRoar } from './reference-kinds.ts';
 
 function run(doc: FunctionGraphDocument, frames: number): Float32Array {
   const program = compileFunctionGraph(doc);
@@ -155,6 +161,62 @@ describe('the kinds as functions', () => {
       shape.aNoise,
       shape.aTone,
     );
+    expectSame(fn, () => ref.tick());
+  });
+
+  it('roar, as four band nodes and a mix, sounds as the kind does', () => {
+    const sr = 48000;
+    const key = 0xabcdef1;
+    const bands = [55, 300, 1100, 3000].map((fc, i) => ({
+      coef: Math.min(2 * Math.sin((Math.PI * fc) / sr), 1.2),
+      damp: 0.6 + 0.1 * i,
+      gain: [1, 0.8, 0.6, 0.5][i]!,
+      depth: 0.3 + 0.2 * i,
+      rate: (3 + i) / sr,
+    }));
+    const mix = { len: 0.8 * sr, att: 1200, low: 0.6, hold: 0.65, gain: 0.9 };
+    const constant = (value: number) => ({ kind: 'constant' as const, value });
+    const doc: FunctionGraphDocument = {
+      schema: 'typeaudio.function-graph',
+      version: 1,
+      modules: { [NOISE_MODULE]: NOISE_SOURCE, [ROAR_MODULE]: ROAR_SOURCE },
+      definitions: [ROAR_BAND_DEFINITION, ROAR_MIX_DEFINITION],
+      nodes: [
+        ...bands.map((b, i) => ({
+          id: `band${i}`,
+          definition: 'roarBand',
+          inputs: {
+            key: constant((key ^ (201 + i)) >>> 0),
+            coef: constant(b.coef),
+            damp: constant(b.damp),
+            gain: constant(b.gain),
+            depth: constant(b.depth),
+            rate: constant(b.rate),
+          },
+        })),
+        {
+          id: 'mix',
+          definition: 'roarMix',
+          inputs: {
+            ...Object.fromEntries(
+              [0, 1, 2, 3].map((i) => [
+                `b${i}`,
+                { kind: 'connection' as const, node: `band${i}`, port: 'out' },
+              ]),
+            ),
+            ...Object.fromEntries(Object.entries(mix).map(([k, v]) => [k, constant(v)])),
+          },
+        },
+      ],
+      parameters: [],
+      output: { node: 'mix', port: 'out' },
+    };
+    const fn = run(doc, sr);
+    const ref = new RefRoar().shape(key, mix.len, mix.att, mix.low, mix.hold, mix.gain);
+    [ref.b0, ref.b1, ref.b2, ref.b3].forEach((band, i) => {
+      const b = bands[i]!;
+      band.set(b.coef, b.damp, b.gain, b.depth, b.rate);
+    });
     expectSame(fn, () => ref.tick());
   });
 });
