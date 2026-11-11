@@ -1241,5 +1241,37 @@ gathering is the "wooo-woong" of extra-high voltage; the firing is spat out at e
 
 The render takes 82 s (197 layers).
 
-**Status.** The eighth render waits for the owner's review. The previews went to the owner privately;
+**Review 8, 2026-11-11.** Three changes.
+
+- The gathering: the low part is good; a little of the lightning beside it, here and there. The hum
+  is unchanged. Soft, short fizzes (20 to 50 ms, 1.5 to 6 kHz, a 5 ms attack) lie on ten frames of the
+  arcs between 44.03 and 45.53 s, 14.9 to 18.7 dB under the hum (measured on the layers, 50 ms from
+  each fizz); the last, inside the swell, 22.9 dB under it. The held breath stays.
+- The firing does not continue. The frames at 12 a second: the bolt streams from the staff from 45.70
+  s; at 46.05 s the picture cuts to the giant's side, where a barrier of blue hexagons forms (46.18
+  s); at 46.35 s the bolt strikes it in a white flash (46.40 s) and presses on it until 47.43 s; at
+  47.46 s (a cut) the barrier shatters. After the instant of the release, the bolt is now one
+  discharge to the shattering, laid shot by shot with crossfades: a torrent on the spectrum of the
+  study's beam (`turbulence`), a dense saturated crackle and a heavy low body (35 to 160 Hz), at a
+  level that wanders with no period (1.7 dB of deviation in 20 ms frames, no strong rate). The strike
+  on the barrier at 46.40 s is the field's resonance (120 to 420 Hz), a harsh splash of electricity
+  and a crack; the field strains while the bolt presses; at 47.46 s it shatters (crushed brightness,
+  a crack and the field's shimmer). Each 0.1 s: -8.0 dB at the release, -11 to -15 dB while it
+  streams and on the giant's side, -9.3 dB at the strike, -10 to -14 dB while it presses, then the
+  shatter and the fall. The render runs to 48.3 s and the preview to 47.6 s.
+- The shockwave does not arrive with the picture. The frames at 24 a second: the giant is lowest at
+  41.18 s and the first dust shows at 41.22 s, so the contact is at 41.20 s; the dust wall reaches
+  the camera at 41.43 s (it fills the frame to 41.51 s); a ring of shock lines crosses the foreground
+  at 41.72 s; stones fly at the camera at 42.26 and 42.65 s. Before, the loudest 20 ms lay at 41.34
+  s and 41.43 s and the ring at 41.62 s. Now the strike is at 41.20 s (2 dB smaller, its pressure 3 dB
+  smaller: it is 12 m away); the dust builds from 41.23 s and arrives with a pressure pulse at 41.43
+  s (+4 dB); the ring sweeps to 41.72 s; the stones pass at 42.26, 42.55 and 42.65 s. Measured: the
+  loudest 20 ms at 41.24 s (-6.4 dB), a fall to -9.6 dB at 41.30 s, a second rise to -7.9 dB from
+  41.40 to 41.46 s (30 to 150 Hz up by 3.4 dB), the ring at 41.67 s. The debris after the strike is
+  now the stones the wave throws (0.3 to 0.9 m for 1 s): review 1 recorded that change, but it had
+  not reached the code.
+
+True peak -1.33 dBTP. The render takes 89 s (206 layers).
+
+**Status.** The ninth render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.

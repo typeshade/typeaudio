@@ -608,7 +608,8 @@ function assembly(m: Mix): void {
 
 /** 40.33 to 41.18: the fist comes down: its air rises with its speed. 41.18: it strikes. */
 function fist(m: Mix): void {
-  const HIT = 41.18;
+  // the contact: the giant is lowest at 41.18 s and the first dust shows at 41.22 s (24 a second)
+  const HIT = 41.2;
   const d = HIT - 40.33;
   const speed = linspace(2.0, 40.0, nsamp(d)).map((v, i, a) => v * (i / a.length) ** 0.5 + 2.0);
   const air = fade(S.aero(speed, 2090, 10.0, 40.0, 100.0, 2500.0, 6.0), 0.1, 0.01);
@@ -627,7 +628,7 @@ function fist(m: Mix): void {
   );
   const hn = S.norm(hit);
   m.add('fist-hit', hn, HIT, [3.0, 0.0, -12.0], {
-    target: -8.5,
+    target: -10,
     kind: 'i',
     focusDb: 4,
     sendDb: -3,
@@ -639,7 +640,7 @@ function fist(m: Mix): void {
     HIT,
     [3.0, 0.5, -12.0],
     {
-      target: -12,
+      target: -15,
       kind: 'i',
       focusDb: 4,
     },
@@ -658,10 +659,22 @@ function fist(m: Mix): void {
 
 /** 41.2 to 44.4: the wave of dust and stones, across the cuts at 41.42 and 43.21; then it settles. */
 function dustWave(m: Mix): void {
-  m.addWide('dust-burst', S.puff(2.5, 2100, 150.0, 4000.0, 0.06, 0.9), 41.2, {
+  // review 8: the wave arrives with the picture. Its dust wall fills the frame at 41.43 s: the burst
+  // builds from the contact and peaks there, with a pressure that arrives with it. The ring of shock
+  // lines crosses the foreground at 41.72 s. Stones fly at the camera at 42.26 and 42.65 s.
+  m.addWide('dust-burst', S.puff(2.5, 2100, 150.0, 4000.0, 0.2, 0.9), 41.23, {
     target: -15,
     kind: 'i',
     sendDb: -4,
+  });
+  const [wf, wl] = S.whump(2106, 0.012, 0.6);
+  const wave = new Float64Array(nsamp(0.6));
+  addAt(wave, wf, 0, 0.7);
+  addAt(wave, wl, 0, 1.0);
+  m.add('wave-arrive', S.saturate(wave, 2.0), 41.43, [0.0, 1.0, -1.5], {
+    target: -9,
+    kind: 'i',
+    sendDb: -6,
   });
   const roll = S.billow(3.4, 2101, 50.0, 500.0);
   m.addWide(
@@ -705,17 +718,17 @@ function dustWave(m: Mix): void {
     41.25,
     { target: -23, kind: 'm' },
   );
-  m.addWide('dust-ring', S.bandSweepWide(0.4, 2103, 300.0, 1800.0, 1.0, 0.3), 41.5, {
+  m.addWide('dust-ring', S.bandSweepWide(0.4, 2103, 300.0, 1800.0, 1.0, 0.3), 41.6, {
     target: -21,
     kind: 'i',
     sendDb: -6,
   });
   m.add(
     'dust-debris',
-    S.rubble(2.0, 2104, (t) => 14.0 * Math.exp(-t / 0.6) + 2.0, {
-      sizes: [0.1, 0.5],
+    S.rubble(1.0, 2104, (t) => 10.0 * Math.exp(-t / 0.5), {
+      sizes: [0.3, 0.9],
       bright: 0.25,
-      body: 0.3,
+      body: 0.6,
     }),
     41.35,
     [0.0, 0.0, -8.0],
@@ -723,9 +736,9 @@ function dustWave(m: Mix): void {
   );
   (
     [
-      [42.15, 1, 1.8],
-      [42.3, -1, 2.4],
-      [42.5, 1, 2.0],
+      [42.26, -1, 1.0],
+      [42.55, 1, 2.4],
+      [42.65, -1, 1.4],
     ] as const
   ).forEach(([t, side, near], i) => pass(m, `debris-pass${i}`, t, side, near, 2105 + i, -25, 0.36));
   m.add('staff-cloth', fade(S.cloth(0.5, 2111, 220), 0.05, 0.1), 43.6, [0.4, 1.4, -1.0], {
@@ -821,7 +834,24 @@ function charge(m: Mix): void {
       kind: 'm',
     },
   );
-  void TIP;
+  // review 8: a little of the lightning beside the hum, here and there: soft, short fizzes on the
+  // frames of the arcs, from 1.5 to 6 kHz, a 5 ms attack, 12 to 18 dB under the hum; no first crackle
+  const fz = rng(2530);
+  const fizzT = [44.03, 44.2, 44.4, 44.53, 44.72, 44.87, 45.02, 45.28, 45.37, 45.53];
+  const fizz = ticks(
+    fizzT.map((t) => t - H0),
+    (k) => {
+      const d = fz.uniform(0.02, 0.05);
+      const b = S.burst(2540 + k, 1500, 6000, d / 3, { dur: d, rise: 0.005 });
+      // two fall in troughs of the hum's surges (44.87 and 45.02 s): lower, so each stays 12 to 18 dB under it
+      const trough = k === 5 ? 0.5 : k === 6 ? 0.6 : 1.0;
+      return b.map(
+        (v) => v * (0.5 + (0.5 * k) / (fizzT.length - 1)) * trough * fz.uniform(0.7, 1.0),
+      );
+    },
+    H1 - H0,
+  );
+  m.add('charge-fizz', fizz, H0, TIP, { target: -30, kind: 'i', sendDb: -8 });
 }
 
 /**
@@ -868,6 +898,138 @@ function scene3Head(m: Mix): void {
   m.addWide('s3-bolt-air', [cut(air[0], 0.1), cut(air[1], 0.1)], at, { target: -14, kind: 'i' });
 }
 
+/**
+ * Review 8: the bolt sounds for as long as it is seen. The frames at 12 a second: it streams from
+ * the staff from 45.70 s; at 46.05 s the picture cuts to the giant's side, where a barrier of blue
+ * hexagons forms (46.18 s); at 46.35 s the bolt strikes the barrier in a white flash (46.40 s) and
+ * presses on it until 47.43 s; at 47.46 s the barrier shatters. One discharge from the release to
+ * the shattering, laid shot by shot: a torrent of noise on a deep spectrum (the study's turbulence),
+ * a dense saturated crackle and a heavy low body, all at levels that wander with no period; the
+ * strike on the barrier (the field's resonance and a harsh splash of electricity); the strain of the
+ * field while the bolt presses; the barrier that shatters.
+ */
+function bolt(m: Mix): void {
+  const T0 = RELEASE;
+  const T1 = 47.6;
+  const dur = T1 - T0;
+  const n = nsamp(dur);
+  const level = env(
+    [
+      [T0, 1.0],
+      [45.95, 0.9],
+      [46.05, 0.6],
+      [46.35, 0.75],
+      [46.4, 1.0],
+      [46.6, 0.85],
+      [47.4, 0.85],
+      [47.46, 0.5],
+      [T1, 0.0],
+    ],
+    T0,
+    n,
+  );
+  const bands = S.turbulence(dur, 2800, S.BEAM_CURVE, S.TURBULENCE_BANDS, 0.4);
+  const torrent = new Float64Array(n);
+  for (const b of bands)
+    for (let i = 0; i < n; i++) torrent[i] = torrent[i]! + 0.5 * (b[0][i]! + b[1][i]!);
+  const rc = rng(2810);
+  const u = rc.randomN(n);
+  const amp = rc.uniformN(0.3, 1.0, n);
+  const sg = rc.signN(n);
+  const imp = new Float64Array(n);
+  for (let i = 0; i < n; i++) imp[i] = u[i]! < 4500 / SR ? amp[i]! * sg[i]! : 0;
+  const crack = spectral(imp, (f) => bandGain(f, 1500, 12000, 2));
+  const body = S.billow(dur, 2811, 35.0, 160.0, 2.5)[0];
+  const walk = S.levelWalk(n, 2812, 2.0, 0.5, 6.0);
+  const tn = S.norm(torrent);
+  const cn = S.norm(crack);
+  const bn = S.norm(body);
+  const mixed = new Float64Array(n);
+  for (let i = 0; i < n; i++) mixed[i] = (0.8 * tn[i]! + 0.45 * cn[i]! + 0.9 * bn[i]!) * walk[i]!;
+  const pk = Math.max(...mixed.map(Math.abs)) + 1e-12;
+  const plasma = mixed.map((v, i) => (Math.tanh((2.0 * v) / pk) / Math.tanh(2.0)) * level[i]!);
+  across(
+    m,
+    's3-bolt-plasma',
+    plasma,
+    T0,
+    [
+      {
+        from: T0,
+        to: 46.05,
+        pos: [0.5, 1.8, -5.0] as Vec3,
+        opts: { target: -12, kind: 'm', sendDb: -8 },
+      },
+      {
+        from: 46.05,
+        to: 46.35,
+        pos: [-2.0, 2.0, -7.0] as Vec3,
+        opts: { target: -15, kind: 'm', sendDb: -6 },
+      },
+      {
+        from: 46.35,
+        to: 47.46,
+        pos: [0.0, 1.5, -3.5] as Vec3,
+        opts: { target: -12, kind: 'm', sendDb: -6 },
+      },
+      {
+        from: 47.46,
+        to: 47.6,
+        pos: [0.0, 1.5, -3.5] as Vec3,
+        opts: { target: -18, kind: 'm', sendDb: -6 },
+      },
+    ],
+    0.12,
+    0.15,
+  );
+  // the strike on the barrier: the field's resonance, a harsh splash of electricity, a crack
+  const hit = new Float64Array(nsamp(0.6));
+  addAt(hit, S.burst(2820, 120, 420, 0.22, { rise: 0.004 }), 0, 1.0);
+  addAt(hit, S.sizzle(0.4, 2821, 0.12, 6000, 2000, 12000), 0, 0.6);
+  addAt(hit, S.tiltedBurst(2822, 800.0, 12000.0, 0.02, { tilt: 0.3 }), 0, 0.8);
+  m.add('s3-barrier-strike', S.saturate(hit, 2.0), 46.4, [0.0, 1.8, -3.0], {
+    target: -9,
+    kind: 'i',
+    focusDb: 2,
+    sendDb: -6,
+  });
+  // the strain of the field while the bolt presses on it: low-mid noise with a fast flutter
+  const strain = S.gravel(1.1, 2830, 150, 500);
+  const se = env(
+    [
+      [46.4, 0],
+      [46.5, 1],
+      [47.4, 1],
+      [47.46, 0],
+    ],
+    46.4,
+    strain.length,
+  );
+  m.add(
+    's3-barrier-strain',
+    strain.map((v, i) => v * se[i]!),
+    46.4,
+    [0.0, 1.8, -3.0],
+    { target: -19, kind: 'm', sendDb: -6 },
+  );
+  // the barrier shatters: crushed brightness, a crack, the glassy shimmer of the field
+  const brk = new Float64Array(nsamp(0.6));
+  addAt(brk, S.crush(0.6, 2840, 0.12, 900, 9000), 0, 1.0);
+  addAt(
+    brk,
+    S.heavyCrack(2841, { size: 1.0, dur: 0.3, kRate: 12, bright: 1.0 }).subarray(0, brk.length),
+    0,
+    0.8,
+  );
+  addAt(brk, shimmer(0.5, 2842), 0, 0.4);
+  m.add('s3-barrier-shatter', S.norm(brk), 47.46, [0.0, 2.0, -3.0], {
+    target: -10,
+    kind: 'i',
+    focusDb: 2,
+    sendDb: -6,
+  });
+}
+
 /** Leave layers out of a mix. */
 function drop(m: Mix, names: readonly string[]): void {
   for (const name of names) {
@@ -878,9 +1040,9 @@ function drop(m: Mix, names: readonly string[]): void {
 
 /** Scene 2, the stone giant: from scene 1's tail to the cut before scene 3. */
 export function scene2(): Mix {
-  const m = new Mix('scene2', SCENE2_FROM, SCENE2_END, 1.5);
-  // the release (the head of scene 3) starts 30 ms after the cut
-  m.until = RELEASE + 0.01;
+  const m = new Mix('scene2', SCENE2_FROM, SCENE2_END, 2.6);
+  // the head of scene 3 (the release at 45.70 s and the bolt to the barrier that shatters at 47.46 s)
+  m.until = 47.47;
   beds(m);
   redLayers(m, { bed: false });
   // review 1: the two settling stones of the study's coda (a trickle of 1 to 3 cm pieces) and its
@@ -902,12 +1064,13 @@ export function scene2(): Mix {
   dustWave(m);
   charge(m);
   scene3Head(m);
+  bolt(m);
   m.driveDb = 8.8;
   m.fixedMaster = SCENE1_MASTER;
   m.afterDb = [
     [SCENE2_FROM, 0],
-    [RELEASE + 0.35, 0],
-    [SCENE2_END + 1.3, -60],
+    [47.6, 0],
+    [48.2, -60],
   ];
   return m;
 }
