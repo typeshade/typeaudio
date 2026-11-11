@@ -25,7 +25,7 @@ interface Bluestein {
 // (the chirp and the kernel of Bluestein's transform), so the oldest plans go once the plans hold
 // more than PLAN_BYTES. A plan made again is the same plan: its numbers depend only on n.
 const plans = new Map<number, Plan>();
-const PLAN_BYTES = 512 * 2 ** 20;
+const PLAN_BYTES = 1280 * 2 ** 20;
 let planBytes = 0;
 
 function bytesOf(plan: Plan): number {

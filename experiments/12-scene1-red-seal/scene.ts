@@ -41,7 +41,7 @@ import {
   type Stereo,
   type Vec3,
 } from '../../src/study/dsp.ts';
-import { Mix, type AddOptions, type Where } from '../../src/study/mix.ts';
+import { Mix, type AddOptions, type Layer, type Where } from '../../src/study/mix.ts';
 import {
   concat,
   curve,
@@ -147,630 +147,704 @@ function risingTimes(
 /** The black hole: 0.0 to 20.0 s. */
 export function blackHole(m: Mix): void {
   // ---- 0.00 to 3.29: the dark hall behind a curtain of dust. Something far draws the air.
-  const dustEnv = curve(
-    [
-      [0, 0],
-      [0.9, 0.55],
-      [2.6, 1],
-      [3.29, 0.9],
-      [3.4, 0.35],
-      [3.9, 0],
-    ],
-    0,
-    nsamp(3.9),
-  );
-  m.addWide('dust-roll', shapeSt(S.billow(3.9, 1001, 50.0, 500.0), dustEnv), 0.0, {
-    target: -24,
-    kind: 'm',
-    sendDb: -6,
+  m.part('dust-roll', () => {
+    const dustEnv = curve(
+      [
+        [0, 0],
+        [0.9, 0.55],
+        [2.6, 1],
+        [3.29, 0.9],
+        [3.4, 0.35],
+        [3.9, 0],
+      ],
+      0,
+      nsamp(3.9),
+    );
+    m.addWide('dust-roll', shapeSt(S.billow(3.9, 1001, 50.0, 500.0), dustEnv), 0.0, {
+      target: -24,
+      kind: 'm',
+      sendDb: -6,
+    });
+    m.addWide(
+      'dust-hiss',
+      shapeSt(S.dust(3.9, 1003, { lo: 600.0, hi: 5000.0, grain: 0.2, tilt: 0.6 }), dustEnv),
+      0.0,
+      { target: -33, kind: 'm' },
+    );
   });
-  m.addWide(
-    'dust-hiss',
-    shapeSt(S.dust(3.9, 1003, { lo: 600.0, hi: 5000.0, grain: 0.2, tilt: 0.6 }), dustEnv),
-    0.0,
-    { target: -33, kind: 'm' },
-  );
-  const farDraw = material(
-    0.4,
-    3.5,
-    1005,
-    [
-      [0.4, 0.05],
-      [3.9, 0.25],
-    ],
-    [1.0, 0.5, 0.0],
-  );
-  m.add(
-    'far-draw',
-    times(
-      fade(farDraw, 0.3, 0.2),
-      curve(
-        [
-          [0.4, 0],
-          [1.5, 0.4],
-          [3.29, 1],
-          [3.9, 1],
-        ],
-        0.4,
-        farDraw.length,
+  m.part('far-draw', () => {
+    const farDraw = material(
+      0.4,
+      3.5,
+      1005,
+      [
+        [0.4, 0.05],
+        [3.9, 0.25],
+      ],
+      [1.0, 0.5, 0.0],
+    );
+    m.add(
+      'far-draw',
+      times(
+        fade(farDraw, 0.3, 0.2),
+        curve(
+          [
+            [0.4, 0],
+            [1.5, 0.4],
+            [3.29, 1],
+            [3.9, 1],
+          ],
+          0.4,
+          farDraw.length,
+        ),
       ),
-    ),
-    0.4,
-    [0.0, 3.0, -14.0],
-    { target: -27, kind: 'm', sendDb: -2 },
-  );
-  m.add(
-    'far-debris',
-    S.tumble(3.2, 1007, (t) => 1.2 + 0.8 * t, [0.05, 0.2], [2.0, 5.0]),
-    0.3,
-    [-6.0, 0.0, -13.0],
-    { target: -36, kind: 'm' },
-  );
+      0.4,
+      [0.0, 3.0, -14.0],
+      { target: -27, kind: 'm', sendDb: -2 },
+    );
+  });
+  m.part('far-debris', () => {
+    m.add(
+      'far-debris',
+      S.tumble(3.2, 1007, (t) => 1.2 + 0.8 * t, [0.05, 0.2], [2.0, 5.0]),
+      0.3,
+      [-6.0, 0.0, -13.0],
+      { target: -36, kind: 'm' },
+    );
+  });
 
   // ---- 3.29 to 4.71: close on the figure; a red glow in its hand grows into the orb.
-  const breath = S.howl(1.5, 1010, [180.0, 270.0, 410.0], 8.0, 0.08, 1.2);
-  m.add(
-    'draw-breath',
-    times(
-      breath,
-      curve(
-        [
-          [3.29, 0],
-          [3.87, 0.5],
-          [4.6, 1],
-          [4.71, 0.4],
-          [4.79, 0],
-        ],
-        3.29,
-        breath.length,
+  m.part('draw-breath', () => {
+    const breath = S.howl(1.5, 1010, [180.0, 270.0, 410.0], 8.0, 0.08, 1.2);
+    m.add(
+      'draw-breath',
+      times(
+        breath,
+        curve(
+          [
+            [3.29, 0],
+            [3.87, 0.5],
+            [4.6, 1],
+            [4.71, 0.4],
+            [4.79, 0],
+          ],
+          3.29,
+          breath.length,
+        ),
       ),
-    ),
-    3.29,
-    [0.0, 1.5, -2.0],
-    { target: -30, kind: 'm', sendDb: -6 },
-  );
-  const form = material(
-    3.85,
-    0.88,
-    1020,
-    [
-      [3.85, 0.0],
-      [4.7, 0.65],
-    ],
-    [0.8, 1.0, 0.5],
-  );
-  m.add(
-    'orb-form',
-    times(
-      form,
-      curve(
-        [
-          [3.85, 0],
-          [4.0, 0.25],
-          [4.69, 1],
-          [4.712, 0],
-        ],
-        3.85,
-        form.length,
-      ),
-    ),
-    3.85,
-    [0.2, 1.3, -1.2],
-    { target: -21, kind: 'm', sendDb: -10 },
-  );
-  const formDraw = curve(
-    [
-      [3.85, 0.0],
-      [4.69, 1.0],
-      [4.712, 0.0],
-    ],
-    3.85,
-    nsamp(0.88),
-  );
-  m.addWide('orb-gather', drawnAir(0.88, 1023, formDraw), 3.85, {
-    target: -24,
-    kind: 'm',
-    sendDb: -6,
+      3.29,
+      [0.0, 1.5, -2.0],
+      { target: -30, kind: 'm', sendDb: -6 },
+    );
   });
-  m.add(
-    'orb-form-sparks',
-    fade(S.pops(0.85, 1022, 22.0, 800, 6000, 0.004), 0.2, 0.01),
-    3.86,
-    [0.3, 1.2, -1.2],
-    {
-      target: -31,
+  m.part('orb-form', () => {
+    const form = material(
+      3.85,
+      0.88,
+      1020,
+      [
+        [3.85, 0.0],
+        [4.7, 0.65],
+      ],
+      [0.8, 1.0, 0.5],
+    );
+    m.add(
+      'orb-form',
+      times(
+        form,
+        curve(
+          [
+            [3.85, 0],
+            [4.0, 0.25],
+            [4.69, 1],
+            [4.712, 0],
+          ],
+          3.85,
+          form.length,
+        ),
+      ),
+      3.85,
+      [0.2, 1.3, -1.2],
+      { target: -21, kind: 'm', sendDb: -10 },
+    );
+  });
+  m.part('orb-gather', () => {
+    const formDraw = curve(
+      [
+        [3.85, 0.0],
+        [4.69, 1.0],
+        [4.712, 0.0],
+      ],
+      3.85,
+      nsamp(0.88),
+    );
+    m.addWide('orb-gather', drawnAir(0.88, 1023, formDraw), 3.85, {
+      target: -24,
       kind: 'm',
-      sendDb: -10,
-    },
-  );
+      sendDb: -6,
+    });
+  });
+  m.part('orb-form-sparks', () => {
+    m.add(
+      'orb-form-sparks',
+      fade(S.pops(0.85, 1022, 22.0, 800, 6000, 0.004), 0.2, 0.01),
+      3.86,
+      [0.3, 1.2, -1.2],
+      {
+        target: -31,
+        kind: 'm',
+        sendDb: -10,
+      },
+    );
+  });
 
   // ---- 4.71: white frames: the orb is let go. A pressure, a deep body, a tear that falls.
-  const [front, low, slp] = S.whump(1030, 0.004, 0.6);
-  m.add('launch', S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])), 4.713, [0.0, 1.4, -2.5], {
-    target: -13,
-    kind: 'i',
-    focusDb: 4,
+  m.part('launch', () => {
+    const [front, low, slp] = S.whump(1030, 0.004, 0.6);
+    m.add('launch', S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])), 4.713, [0.0, 1.4, -2.5], {
+      target: -13,
+      kind: 'i',
+      focusDb: 4,
+    });
   });
-  m.add('launch-boom', S.boom(1031, { f: 70.0, tau: 0.6 }), 4.713, [0.0, 0.5, -3.0], {
-    target: -15,
-    kind: 'i',
-    sendDb: -6,
+  m.part('launch-boom', () => {
+    m.add('launch-boom', S.boom(1031, { f: 70.0, tau: 0.6 }), 4.713, [0.0, 0.5, -3.0], {
+      target: -15,
+      kind: 'i',
+      sendDb: -6,
+    });
   });
-  m.addWide('launch-tear', S.lance(1032, 0.16, 3500.0, 400.0), 4.705, {
-    target: -20,
-    kind: 'i',
-    sendDb: -6,
-  });
-
-  // ---- 4.88 to 7.21: close on the orb. The black core draws the air round it.
-  const ORB_CLOSE: Vec3 = [0.0, 1.4, -2.2];
-  // the blue lines of wind turn round the camera toward the core, faster as they close in
-  [0, 1, 2].forEach((i) => {
-    const t = 5.75 + 0.22 * i;
-    const src = steady(7.21 - t, 1043 + i, 300, 4000);
-    const P = spiral(
-      src.length,
-      [0.0, 1.5, -1.5],
-      3.2,
-      1.2,
-      1.2 + 0.3 * i,
-      (2 * Math.PI * i) / 3,
-      0.5,
-    );
-    m.add(`swirl${i}`, src, t, P, { target: -24, kind: 'm', sendDb: -8 });
-  });
-
-  // ---- 7.21 to 8.05: her face. The wind streams past her toward the orb.
-  const fw = S.wind(1.0, 1050, 300, 3500);
-  m.addWide(
-    'face-wind',
-    shapeSt(
-      fw,
-      curve(
-        [
-          [7.2, 0.6],
-          [7.5, 1],
-          [8.0, 0.8],
-          [8.2, 0],
-        ],
-        7.2,
-        fw[0].length,
-      ),
-    ),
-    7.2,
-    { target: -24, kind: 'm' },
-  );
-  const irr = S.irregular(nsamp(0.85), 1052, 2, 9);
-  m.add(
-    'face-hair',
-    S.cloth(0.85, 1051, 300).map((v, i) => v * (0.6 + 0.4 * irr[i]!)),
-    7.22,
-    [0.2, 1.5, -0.8],
-    { target: -29, kind: 'm', sendDb: -10 },
-  );
-
-  // ---- 8.05 to 9.47: she flies through the white hall; the first small stones drift in the draw.
-  const fa = S.wind(1.67, 1060, 150, 1500);
-  m.addWide(
-    'fly-air',
-    shapeSt(fa, fade(new Float64Array(fa[0].length).fill(1), 0.15, 0.15)),
-    7.95,
-    {
-      target: -22,
-      kind: 'm',
-    },
-  );
-  m.add(
-    'fly-whoosh',
-    S.bandSweep(0.6, 1061, 300.0, 2000.0),
-    8.1,
-    line([-4.0, 1.5, -2.0], [4.0, 1.5, -1.0], nsamp(0.6)),
-    {
-      target: -26,
-      kind: 'm',
-      sendDb: -8,
-    },
-  );
-  m.add(
-    'pebbles',
-    S.tumble(1.4, 1062, (t) => 3.0 + 6.0 * t, [0.03, 0.1], [2.0, 5.0]),
-    8.1,
-    [2.0, 1.0, -5.0],
-    { target: -31, kind: 'm', sendDb: -6 },
-  );
-
-  // ---- 9.47 to 11.55: the orb tears through the hall; stones fly past and at it.
-  m.add(
-    'orb-tear-sparks',
-    fade(S.pops(2.08, 1072, 16.0, 500, 4000, 0.005), 0.02, 0.15),
-    9.47,
-    [1.0, 1.5, -3.0],
-    {
-      target: -28,
-      kind: 'm',
-      sendDb: -10,
-    },
-  );
-  const tearPasses: [number, number, number, number][] = [
-    [9.62, 1, 2.4, -26],
-    [9.86, -1, 1.9, -25],
-    [10.05, 1, 1.5, -24],
-    [10.38, -1, 2.2, -26],
-    [10.66, 1, 1.3, -23],
-    [10.98, -1, 1.6, -24],
-    [11.3, 1, 2.0, -25],
-  ];
-  tearPasses.forEach(([t, side, near, tg], i) => {
-    const src = steady(0.4, 1074 + i, 120, 2600);
-    const k = src.length;
-    const h = Math.floor(k / 2);
-    const P = concat(
-      line([side * 0.8, 1.6, -10.0], [side * near, 1.5, 0.0], h),
-      line([side * near, 1.5, 0.0], [side * (near + 1.0), 1.4, 9.0], k - h),
-    );
-    m.add(`tear-pass${i}`, src, t - 0.2, P, { target: tg, kind: 'i', sendDb: -10 });
-  });
-  const rt = rng(1085);
-  (
-    [
-      [10.17, 0.45, [0.6, 1.5, -3.2]],
-      [10.86, 0.6, [-0.4, 1.6, -3.4]],
-    ] as [number, number, Vec3][]
-  ).forEach(([t, size, pos], i) => {
-    const hit = zeros(nsamp(0.7));
-    addAt(hit, S.norm(S.stoneImpact(size, 14.0, rt)), 0);
-    addAt(
-      hit,
-      S.heavyCrack(1086 + i, { size, dur: 0.3, kRate: 8 }).subarray(0, hit.length),
-      0,
-      0.6,
-    );
-    addAt(hit, S.sizzle(0.7, 1088 + i, 0.14), 0, 0.3);
-    m.add(`tear-hit${i}`, hit, t, pos, { target: -18 + i, kind: 'i', sendDb: -6 });
-    m.add(`tear-hit${i}-slap`, S.slap(hit, 1200), t + 0.21, [8.5 * (i ? -1 : 1), 2.0, -8.0], {
-      target: -27 + i,
+  m.part('launch-tear', () => {
+    m.addWide('launch-tear', S.lance(1032, 0.16, 3500.0, 400.0), 4.705, {
+      target: -20,
       kind: 'i',
       sendDb: -6,
     });
   });
 
-  // ---- 11.55 to 14.81: wide. A mass of stones turns round the orb and packs in.
-  const CORE: Vec3 = [0.0, 3.0, -10.0];
-  const grindEnv = (n: number) =>
-    curve(
-      [
-        [11.55, 0.0],
-        [11.8, 0.35],
-        [13.2, 0.7],
-        [14.75, 1.0],
-        [14.82, 0.0],
-      ],
-      11.55,
-      n,
-    );
-  (
-    [
-      [-3.0, 3.0, -10.0],
-      [3.0, 3.5, -11.0],
-    ] as Vec3[]
-  ).forEach((pos, i) => {
-    const g = S.grind(3.27, 1092 + i, { rLo: 50, rHi: 160 });
-    m.add(`gather-grind${i}`, times(g, grindEnv(g.length)), 11.55, pos, {
-      target: -21,
-      kind: 'm',
-      focusDb: 3,
-      sendDb: -4,
+  // ---- 4.88 to 7.21: close on the orb. The black core draws the air round it.
+  const ORB_CLOSE: Vec3 = [0.0, 1.4, -2.2];
+  // the blue lines of wind turn round the camera toward the core, faster as they close in
+  m.part('swirl', () => {
+    [0, 1, 2].forEach((i) => {
+      const t = 5.75 + 0.22 * i;
+      const src = steady(7.21 - t, 1043 + i, 300, 4000);
+      const P = spiral(
+        src.length,
+        [0.0, 1.5, -1.5],
+        3.2,
+        1.2,
+        1.2 + 0.3 * i,
+        (2 * Math.PI * i) / 3,
+        0.5,
+      );
+      m.add(`swirl${i}`, src, t, P, { target: -24, kind: 'm', sendDb: -8 });
     });
   });
-  // blocks strike blocks, faster and faster, as they are pulled in from all sides
-  const rg = rng(1095);
-  const gt = risingTimes(rg, 3.2, 4.0, 15.0, 0.2);
-  (
-    [
-      ['l', -6.0],
-      ['c', 0.0],
-      ['r', 6.0],
-    ] as const
-  ).forEach(([side, x0], idx) => {
-    const mine = gt.filter((_, k) => k % 3 === idx);
-    const cl = ticks(
-      mine,
-      (i) => {
-        const size = rg.uniform(0.45, 1.3);
-        const v = rg.uniform(5.0, 10.0);
-        return times(S.blockHit(1100 + 7 * i + idx, size, v), 0.55 + (0.45 * mine[i]!) / 3.2);
-      },
-      3.6,
+
+  // ---- 7.21 to 8.05: her face. The wind streams past her toward the orb.
+  m.part('face-wind', () => {
+    const fw = S.wind(1.0, 1050, 300, 3500);
+    m.addWide(
+      'face-wind',
+      shapeSt(
+        fw,
+        curve(
+          [
+            [7.2, 0.6],
+            [7.5, 1],
+            [8.0, 0.8],
+            [8.2, 0],
+          ],
+          7.2,
+          fw[0].length,
+        ),
+      ),
+      7.2,
+      { target: -24, kind: 'm' },
     );
-    const P = line([x0, 1.0 + Math.abs(x0) * 0.4, -7.0], CORE, cl.length);
-    m.add(`gather-clump-${side}`, cl, 11.55, P, { target: -19, kind: 'i', focusDb: 3, sendDb: -4 });
   });
-  m.add(
-    'gather-rubble',
-    S.rubble(3.2, 1097, (t) => 8.0 + 6.0 * t, { sizes: [0.15, 0.6], bright: 0.2, body: 0.6 }),
-    11.6,
-    [0.5, 2.5, -9.0],
-    { target: -25, kind: 'm', focusDb: 2, sendDb: -4 },
-  );
-  [0, 1, 2, 3].forEach((i) => {
-    const t = 11.6 + 0.35 * i;
-    const src = steady(14.78 - t, 1098 + 13 * i, 100, 1800);
-    const P = spiral(src.length, CORE, 6.0 - 0.5 * i, 2.0, 0.8 + 0.25 * i, (Math.PI * i) / 2, 1.5);
-    m.add(`orbit${i}`, src, t, P, { target: -27, kind: 'm', sendDb: -6 });
+  m.part('face-hair', () => {
+    const irr = S.irregular(nsamp(0.85), 1052, 2, 9);
+    m.add(
+      'face-hair',
+      S.cloth(0.85, 1051, 300).map((v, i) => v * (0.6 + 0.4 * irr[i]!)),
+      7.22,
+      [0.2, 1.5, -0.8],
+      { target: -29, kind: 'm', sendDb: -10 },
+    );
   });
-  const gl = S.billow(3.27, 1099, 35.0, 180.0, 2.0);
-  m.addWide(
-    'gather-low',
-    shapeSt(
-      gl,
+
+  // ---- 8.05 to 9.47: she flies through the white hall; the first small stones drift in the draw.
+  m.part('fly-air', () => {
+    const fa = S.wind(1.67, 1060, 150, 1500);
+    m.addWide(
+      'fly-air',
+      shapeSt(fa, fade(new Float64Array(fa[0].length).fill(1), 0.15, 0.15)),
+      7.95,
+      {
+        target: -22,
+        kind: 'm',
+      },
+    );
+  });
+  m.part('fly-whoosh', () => {
+    m.add(
+      'fly-whoosh',
+      S.bandSweep(0.6, 1061, 300.0, 2000.0),
+      8.1,
+      line([-4.0, 1.5, -2.0], [4.0, 1.5, -1.0], nsamp(0.6)),
+      {
+        target: -26,
+        kind: 'm',
+        sendDb: -8,
+      },
+    );
+  });
+  m.part('pebbles', () => {
+    m.add(
+      'pebbles',
+      S.tumble(1.4, 1062, (t) => 3.0 + 6.0 * t, [0.03, 0.1], [2.0, 5.0]),
+      8.1,
+      [2.0, 1.0, -5.0],
+      { target: -31, kind: 'm', sendDb: -6 },
+    );
+  });
+
+  // ---- 9.47 to 11.55: the orb tears through the hall; stones fly past and at it.
+  m.part('orb-tear-sparks', () => {
+    m.add(
+      'orb-tear-sparks',
+      fade(S.pops(2.08, 1072, 16.0, 500, 4000, 0.005), 0.02, 0.15),
+      9.47,
+      [1.0, 1.5, -3.0],
+      {
+        target: -28,
+        kind: 'm',
+        sendDb: -10,
+      },
+    );
+  });
+  m.part('tear-pass', () => {
+    const tearPasses: [number, number, number, number][] = [
+      [9.62, 1, 2.4, -26],
+      [9.86, -1, 1.9, -25],
+      [10.05, 1, 1.5, -24],
+      [10.38, -1, 2.2, -26],
+      [10.66, 1, 1.3, -23],
+      [10.98, -1, 1.6, -24],
+      [11.3, 1, 2.0, -25],
+    ];
+    tearPasses.forEach(([t, side, near, tg], i) => {
+      const src = steady(0.4, 1074 + i, 120, 2600);
+      const k = src.length;
+      const h = Math.floor(k / 2);
+      const P = concat(
+        line([side * 0.8, 1.6, -10.0], [side * near, 1.5, 0.0], h),
+        line([side * near, 1.5, 0.0], [side * (near + 1.0), 1.4, 9.0], k - h),
+      );
+      m.add(`tear-pass${i}`, src, t - 0.2, P, { target: tg, kind: 'i', sendDb: -10 });
+    });
+  });
+  m.part('tear-hit', () => {
+    const rt = rng(1085);
+    (
+      [
+        [10.17, 0.45, [0.6, 1.5, -3.2]],
+        [10.86, 0.6, [-0.4, 1.6, -3.4]],
+      ] as [number, number, Vec3][]
+    ).forEach(([t, size, pos], i) => {
+      const hit = zeros(nsamp(0.7));
+      addAt(hit, S.norm(S.stoneImpact(size, 14.0, rt)), 0);
+      addAt(
+        hit,
+        S.heavyCrack(1086 + i, { size, dur: 0.3, kRate: 8 }).subarray(0, hit.length),
+        0,
+        0.6,
+      );
+      addAt(hit, S.sizzle(0.7, 1088 + i, 0.14), 0, 0.3);
+      m.add(`tear-hit${i}`, hit, t, pos, { target: -18 + i, kind: 'i', sendDb: -6 });
+      m.add(`tear-hit${i}-slap`, S.slap(hit, 1200), t + 0.21, [8.5 * (i ? -1 : 1), 2.0, -8.0], {
+        target: -27 + i,
+        kind: 'i',
+        sendDb: -6,
+      });
+    });
+  });
+
+  // ---- 11.55 to 14.81: wide. A mass of stones turns round the orb and packs in.
+  m.part('gather-grind', () => {
+    const CORE: Vec3 = [0.0, 3.0, -10.0];
+    const grindEnv = (n: number) =>
       curve(
         [
           [11.55, 0.0],
-          [11.8, 0.4],
-          [14.7, 1],
-          [14.82, 0.2],
-          [14.82 + 3.26, 0],
+          [11.8, 0.35],
+          [13.2, 0.7],
+          [14.75, 1.0],
+          [14.82, 0.0],
         ],
         11.55,
-        gl[0].length,
+        n,
+      );
+    (
+      [
+        [-3.0, 3.0, -10.0],
+        [3.0, 3.5, -11.0],
+      ] as Vec3[]
+    ).forEach((pos, i) => {
+      const g = S.grind(3.27, 1092 + i, { rLo: 50, rHi: 160 });
+      m.add(`gather-grind${i}`, times(g, grindEnv(g.length)), 11.55, pos, {
+        target: -21,
+        kind: 'm',
+        focusDb: 3,
+        sendDb: -4,
+      });
+    });
+    // blocks strike blocks, faster and faster, as they are pulled in from all sides
+    const rg = rng(1095);
+    const gt = risingTimes(rg, 3.2, 4.0, 15.0, 0.2);
+    (
+      [
+        ['l', -6.0],
+        ['c', 0.0],
+        ['r', 6.0],
+      ] as const
+    ).forEach(([side, x0], idx) => {
+      const mine = gt.filter((_, k) => k % 3 === idx);
+      const cl = ticks(
+        mine,
+        (i) => {
+          const size = rg.uniform(0.45, 1.3);
+          const v = rg.uniform(5.0, 10.0);
+          return times(S.blockHit(1100 + 7 * i + idx, size, v), 0.55 + (0.45 * mine[i]!) / 3.2);
+        },
+        3.6,
+      );
+      const P = line([x0, 1.0 + Math.abs(x0) * 0.4, -7.0], CORE, cl.length);
+      m.add(`gather-clump-${side}`, cl, 11.55, P, { target: -19, kind: 'i', focusDb: 3, sendDb: -4 });
+    });
+    m.add(
+      'gather-rubble',
+      S.rubble(3.2, 1097, (t) => 8.0 + 6.0 * t, { sizes: [0.15, 0.6], bright: 0.2, body: 0.6 }),
+      11.6,
+      [0.5, 2.5, -9.0],
+      { target: -25, kind: 'm', focusDb: 2, sendDb: -4 },
+    );
+    [0, 1, 2, 3].forEach((i) => {
+      const t = 11.6 + 0.35 * i;
+      const src = steady(14.78 - t, 1098 + 13 * i, 100, 1800);
+      const P = spiral(src.length, CORE, 6.0 - 0.5 * i, 2.0, 0.8 + 0.25 * i, (Math.PI * i) / 2, 1.5);
+      m.add(`orbit${i}`, src, t, P, { target: -27, kind: 'm', sendDb: -6 });
+    });
+  });
+  m.part('gather-low', () => {
+    const gl = S.billow(3.27, 1099, 35.0, 180.0, 2.0);
+    m.addWide(
+      'gather-low',
+      shapeSt(
+        gl,
+        curve(
+          [
+            [11.55, 0.0],
+            [11.8, 0.4],
+            [14.7, 1],
+            [14.82, 0.2],
+            [14.82 + 3.26, 0],
+          ],
+          11.55,
+          gl[0].length,
+        ),
       ),
-    ),
-    11.55,
-    { target: -25, kind: 'm', sendDb: -4 },
-  );
+      11.55,
+      { target: -25, kind: 'm', sendDb: -4 },
+    );
+  });
 
   // ---- 14.81 to 15.47: a face of stone, far. The stone groans; the gathering goes on, far.
-  m.add(
-    'face-groan',
-    S.groan(0.62, 1110, { rLo: 60, rHi: 130, res: [90.0, 170.0, 320.0] }),
-    14.84,
-    [1.0, 0.5, -6.0],
-    {
-      target: -26,
-      kind: 'm',
-      focusDb: 2,
-    },
-  );
-  m.add(
-    'face-grind',
-    times(
-      S.grind(0.66, 1111),
-      curve(
-        [
-          [14.81, 1.0],
-          [15.47, 0.6],
-        ],
-        14.81,
-        nsamp(0.66),
+  m.part('face-groan', () => {
+    m.add(
+      'face-groan',
+      S.groan(0.62, 1110, { rLo: 60, rHi: 130, res: [90.0, 170.0, 320.0] }),
+      14.84,
+      [1.0, 0.5, -6.0],
+      {
+        target: -26,
+        kind: 'm',
+        focusDb: 2,
+      },
+    );
+  });
+  m.part('face-grind', () => {
+    m.add(
+      'face-grind',
+      times(
+        S.grind(0.66, 1111),
+        curve(
+          [
+            [14.81, 1.0],
+            [15.47, 0.6],
+          ],
+          14.81,
+          nsamp(0.66),
+        ),
       ),
-    ),
-    14.81,
-    [-4.0, 4.0, -16.0],
-    { target: -30, kind: 'm', sendDb: -2 },
-  );
+      14.81,
+      [-4.0, 4.0, -16.0],
+      { target: -30, kind: 'm', sendDb: -2 },
+    );
+  });
 
   // ---- 15.47 to 16.40: a block falls onto the face and cracks it.
-  m.add('block-land', S.slabFall(1120, 1.6), 15.56, [0.5, 0.0, -6.0], {
-    target: -11,
-    kind: 'i',
-    focusDb: 3,
-    sendDb: -3,
+  m.part('block-land', () => {
+    m.add('block-land', S.slabFall(1120, 1.6), 15.56, [0.5, 0.0, -6.0], {
+      target: -11,
+      kind: 'i',
+      focusDb: 3,
+      sendDb: -3,
+    });
   });
-  m.add('block-land-body', S.boom(1121, { f: 62.0, tau: 0.7 }), 15.56, [0.5, 0.0, -6.0], {
-    target: -14,
-    kind: 'i',
-    sendDb: -4,
+  m.part('block-land-body', () => {
+    m.add('block-land-body', S.boom(1121, { f: 62.0, tau: 0.7 }), 15.56, [0.5, 0.0, -6.0], {
+      target: -14,
+      kind: 'i',
+      sendDb: -4,
+    });
   });
-  const rc = rng(1122);
-  const ct = risingTimes(rc, 0.5, 26.0, 10.0, 0.04);
-  const cracks = ticks(
-    ct,
-    (i) => {
-      const size = rc.uniform(0.2, 0.6);
-      return times(S.stoneCrack(rc, size, 0.4), rc.uniform(0.5, 1.0) * Math.exp(-ct[i]! / 0.4));
-    },
-    0.9,
-  );
-  m.add('block-cracks', cracks, 15.58, [0.3, 0.3, -4.0], {
-    target: -19,
-    kind: 'i',
-    focusDb: 2,
-    sendDb: -6,
+  m.part('block-cracks', () => {
+    const rc = rng(1122);
+    const ct = risingTimes(rc, 0.5, 26.0, 10.0, 0.04);
+    const cracks = ticks(
+      ct,
+      (i) => {
+        const size = rc.uniform(0.2, 0.6);
+        return times(S.stoneCrack(rc, size, 0.4), rc.uniform(0.5, 1.0) * Math.exp(-ct[i]! / 0.4));
+      },
+      0.9,
+    );
+    m.add('block-cracks', cracks, 15.58, [0.3, 0.3, -4.0], {
+      target: -19,
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -6,
+    });
   });
-  m.addWide('block-dust', S.puff(1.5, 1123, 150.0, 4000.0, 0.06, 0.5), 15.6, {
-    target: -25,
-    kind: 'i',
-    sendDb: -4,
+  m.part('block-dust', () => {
+    m.addWide('block-dust', S.puff(1.5, 1123, 150.0, 4000.0, 0.06, 0.5), 15.6, {
+      target: -25,
+      kind: 'i',
+      sendDb: -4,
+    });
   });
-  m.add('block-slap', S.slap(S.slabFall(1120, 1.6), 900), 15.56 + 0.22, [0.0, 3.0, -15.0], {
-    target: -22,
-    kind: 'i',
-    focusDb: 6,
+  m.part('block-slap', () => {
+    m.add('block-slap', S.slap(S.slabFall(1120, 1.6), 900), 15.56 + 0.22, [0.0, 3.0, -15.0], {
+      target: -22,
+      kind: 'i',
+      focusDb: 6,
+    });
   });
 
   // ---- 16.30 to 17.73: quick cuts. Stones fall; she leaps from stone to stone.
-  (
-    [
-      [16.33, 'block', 0.8, [-1.5, 0.5, -4.0], -17],
-      [16.62, 'fall', 0.3, [2.0, 0.0, -5.0], -21],
-      [16.9, 'block', 0.6, [1.0, 0.8, -3.5], -18],
-      [17.07, 'crack', 1.0, [-2.0, 0.5, -6.0], -17],
-      [17.24, 'fall', 0.25, [2.5, 0.0, -4.5], -22],
-      [17.4, 'block', 0.5, [-0.5, 1.0, -3.0], -19],
-      [17.57, 'fall', 0.2, [1.5, 0.0, -5.5], -23],
-    ] as [number, string, number, Vec3, number][]
-  ).forEach(([t, kind, size, pos, tg], i) => {
-    const s =
-      kind === 'block'
-        ? S.blockHit(1130 + i, size, 7.0)
-        : kind === 'crack'
-          ? S.heavyCrack(1130 + i, { size, dur: 0.4, kRate: 8, bright: 0.5 })
-          : S.rockFall(size, 2.0, 1130 + i);
-    m.add(`leap-hit${i}`, s, t, pos, { target: tg, kind: 'i', focusDb: 2, sendDb: -6 });
+  m.part('leap-hit', () => {
+    (
+      [
+        [16.33, 'block', 0.8, [-1.5, 0.5, -4.0], -17],
+        [16.62, 'fall', 0.3, [2.0, 0.0, -5.0], -21],
+        [16.9, 'block', 0.6, [1.0, 0.8, -3.5], -18],
+        [17.07, 'crack', 1.0, [-2.0, 0.5, -6.0], -17],
+        [17.24, 'fall', 0.25, [2.5, 0.0, -4.5], -22],
+        [17.4, 'block', 0.5, [-0.5, 1.0, -3.0], -19],
+        [17.57, 'fall', 0.2, [1.5, 0.0, -5.5], -23],
+      ] as [number, string, number, Vec3, number][]
+    ).forEach(([t, kind, size, pos, tg], i) => {
+      const s =
+        kind === 'block'
+          ? S.blockHit(1130 + i, size, 7.0)
+          : kind === 'crack'
+            ? S.heavyCrack(1130 + i, { size, dur: 0.4, kRate: 8, bright: 0.5 })
+            : S.rockFall(size, 2.0, 1130 + i);
+      m.add(`leap-hit${i}`, s, t, pos, { target: tg, kind: 'i', focusDb: 2, sendDb: -6 });
+    });
   });
-  [16.6, 17.18].forEach((t, i) =>
+  m.part('leap-whoosh', () => {
+    [16.6, 17.18].forEach((t, i) =>
+      m.add(
+        `leap-whoosh${i}`,
+        S.bandSweep(0.28, 1140 + i, 400.0, 2500.0),
+        t,
+        line([3.0 * (i ? 1 : -1), 1.5, -2.0], [-3.0 * (i ? 1 : -1), 1.6, -1.0], nsamp(0.28)),
+        { target: -26, kind: 'i', sendDb: -8 },
+      ),
+    );
+  });
+  m.part('leap-debris', () => {
     m.add(
-      `leap-whoosh${i}`,
-      S.bandSweep(0.28, 1140 + i, 400.0, 2500.0),
-      t,
-      line([3.0 * (i ? 1 : -1), 1.5, -2.0], [-3.0 * (i ? 1 : -1), 1.6, -1.0], nsamp(0.28)),
-      { target: -26, kind: 'i', sendDb: -8 },
-    ),
-  );
-  m.add(
-    'leap-debris',
-    S.tumble(1.5, 1142, (t) => 10.0 - 4.0 * t, [0.05, 0.25], [3.0, 7.0]),
-    16.3,
-    [0.0, 0.0, -7.0],
-    { target: -27, kind: 'm', focusDb: 2 },
-  );
+      'leap-debris',
+      S.tumble(1.5, 1142, (t) => 10.0 - 4.0 * t, [0.05, 0.25], [3.0, 7.0]),
+      16.3,
+      [0.0, 0.0, -7.0],
+      { target: -27, kind: 'm', focusDb: 2 },
+    );
+  });
 
   // ---- 17.73 to 18.60: dark. Slabs pass; the draw rumbles far.
-  (
-    [
-      [17.85, -1, 2.0],
-      [18.12, 1, 1.6],
-      [18.38, -1, 2.4],
-    ] as const
-  ).forEach(([t, side, near], i) => {
-    const src = steady(0.5, 1150 + i, 80, 1500);
-    const k = src.length;
-    const h = Math.floor(k / 2);
-    const P = concat(
-      line([side * 1.0, 2.0, -9.0], [side * near, 1.8, 0.0], h),
-      line([side * near, 1.8, 0.0], [side * (near + 1.0), 1.6, 8.0], k - h),
-    );
-    m.add(`slab-pass${i}`, src, t - 0.25, P, { target: -24, kind: 'i', sendDb: -8 });
+  m.part('slab-pass', () => {
+    (
+      [
+        [17.85, -1, 2.0],
+        [18.12, 1, 1.6],
+        [18.38, -1, 2.4],
+      ] as const
+    ).forEach(([t, side, near], i) => {
+      const src = steady(0.5, 1150 + i, 80, 1500);
+      const k = src.length;
+      const h = Math.floor(k / 2);
+      const P = concat(
+        line([side * 1.0, 2.0, -9.0], [side * near, 1.8, 0.0], h),
+        line([side * near, 1.8, 0.0], [side * (near + 1.0), 1.6, 8.0], k - h),
+      );
+      m.add(`slab-pass${i}`, src, t - 0.25, P, { target: -24, kind: 'i', sendDb: -8 });
+    });
   });
-  m.add(
-    'dark-draw',
-    fade(
-      material(
-        17.7,
-        1.0,
-        1153,
-        [
-          [17.7, 0.1],
-          [18.7, 0.15],
-        ],
-        [1.0, 0.6, 0.1],
+  m.part('dark-draw', () => {
+    m.add(
+      'dark-draw',
+      fade(
+        material(
+          17.7,
+          1.0,
+          1153,
+          [
+            [17.7, 0.1],
+            [18.7, 0.15],
+          ],
+          [1.0, 0.6, 0.1],
+        ),
+        0.05,
+        0.1,
       ),
-      0.05,
-      0.1,
-    ),
-    17.7,
-    [0.0, 3.0, -14.0],
-    { target: -27, kind: 'm', sendDb: -2 },
-  );
+      17.7,
+      [0.0, 3.0, -14.0],
+      { target: -27, kind: 'm', sendDb: -2 },
+    );
+  });
 
   // ---- 18.60 to 20.00: the orb comes back on a streak among flying stones.
-  const ap = material(
-    18.6,
-    1.45,
-    1160,
-    [
-      [18.6, 0.1],
-      [20.05, 0.15],
-    ],
-    [0.8, 1.0, 0.4],
-  );
-  const apPath = line([-6.0, 2.0, -24.0], [0.0, 1.5, -3.0], ap.length);
-  const apEnv = curve(
-    [
-      [18.6, 0],
-      [18.7, 0.5],
-      [19.9, 1],
-      [20.05, 0],
-    ],
-    18.6,
-    ap.length,
-  );
-  m.add('orb-approach', times(ap, apEnv), 18.6, apPath, { target: -22, kind: 'm', sendDb: -8 });
-  m.add('orb-approach-voice', times(S.voice(1.45, 1161, ORB), apEnv), 18.6, apPath, {
-    target: -22,
-    kind: 'm',
-    sendDb: -10,
-  });
-  (
-    [
-      [18.75, 1, 2.6, -27],
-      [19.05, -1, 2.0, -26],
-      [19.3, 1, 1.7, -25],
-      [19.55, -1, 1.4, -24],
-      [19.82, 1, 2.2, -26],
-    ] as [number, number, number, number][]
-  ).forEach(([t, side, near, tg], i) => {
-    const src = steady(0.36, 1162 + i, 150, 3000);
-    const k = src.length;
-    const h = Math.floor(k / 2);
-    const P = concat(
-      line([side * 0.6, 1.5, -9.0], [side * near, 1.5, 0.0], h),
-      line([side * near, 1.5, 0.0], [side * (near + 0.8), 1.5, 9.0], k - h),
+  m.part('orb-approach', () => {
+    const ap = material(
+      18.6,
+      1.45,
+      1160,
+      [
+        [18.6, 0.1],
+        [20.05, 0.15],
+      ],
+      [0.8, 1.0, 0.4],
     );
-    m.add(`approach-pass${i}`, src, t - 0.18, P, { target: tg, kind: 'i', sendDb: -10 });
+    const apPath = line([-6.0, 2.0, -24.0], [0.0, 1.5, -3.0], ap.length);
+    const apEnv = curve(
+      [
+        [18.6, 0],
+        [18.7, 0.5],
+        [19.9, 1],
+        [20.05, 0],
+      ],
+      18.6,
+      ap.length,
+    );
+    m.add('orb-approach', times(ap, apEnv), 18.6, apPath, { target: -22, kind: 'm', sendDb: -8 });
+    m.add('orb-approach-voice', times(S.voice(1.45, 1161, ORB), apEnv), 18.6, apPath, {
+      target: -22,
+      kind: 'm',
+      sendDb: -10,
+    });
   });
-  const aa = S.wind(1.45, 1168, 150, 1500);
-  m.addWide(
-    'approach-air',
-    shapeSt(
-      aa,
-      curve(
-        [
-          [18.6, 0],
-          [19.95, 1],
-          [20.05, 0],
-        ],
-        18.6,
-        aa[0].length,
+  m.part('approach-pass', () => {
+    (
+      [
+        [18.75, 1, 2.6, -27],
+        [19.05, -1, 2.0, -26],
+        [19.3, 1, 1.7, -25],
+        [19.55, -1, 1.4, -24],
+        [19.82, 1, 2.2, -26],
+      ] as [number, number, number, number][]
+    ).forEach(([t, side, near, tg], i) => {
+      const src = steady(0.36, 1162 + i, 150, 3000);
+      const k = src.length;
+      const h = Math.floor(k / 2);
+      const P = concat(
+        line([side * 0.6, 1.5, -9.0], [side * near, 1.5, 0.0], h),
+        line([side * near, 1.5, 0.0], [side * (near + 0.8), 1.5, 9.0], k - h),
+      );
+      m.add(`approach-pass${i}`, src, t - 0.18, P, { target: tg, kind: 'i', sendDb: -10 });
+    });
+  });
+  m.part('approach-air', () => {
+    const aa = S.wind(1.45, 1168, 150, 1500);
+    m.addWide(
+      'approach-air',
+      shapeSt(
+        aa,
+        curve(
+          [
+            [18.6, 0],
+            [19.95, 1],
+            [20.05, 0],
+          ],
+          18.6,
+          aa[0].length,
+        ),
       ),
-    ),
-    18.6,
-    { target: -26, kind: 'm' },
-  );
+      18.6,
+      { target: -26, kind: 'm' },
+    );
+  });
 
   // ---- 3.87 to 20.05: the draw itself. Air that is pulled to the core, all the time the orb is
   // there; it swells when the orb is near and climbs as it grows, and hands over to the red passage.
-  const DRAW: Points = [
-    [3.87, 0.0],
-    [4.6, 0.75],
-    [4.71, 0.35],
-    [4.9, 0.95],
-    [7.2, 1.0],
-    [7.32, 0.55],
-    [8.05, 0.5],
-    [9.47, 0.55],
-    [10.6, 1.0],
-    [11.55, 0.75],
-    [14.75, 1.0],
-    [14.95, 0.35],
-    [15.47, 0.3],
-    [16.3, 0.45],
-    [17.73, 0.4],
-    [18.6, 0.55],
-    [19.95, 1.0],
-    [20.05, 0.0],
-  ];
-  const dd = 20.05 - 3.87;
-  const draw = curve(DRAW, 3.87, nsamp(dd));
-  m.addWide('draw', drawnAir(dd, 1170, draw, 220, 900, 1.2), 3.87, {
-    target: -23,
-    kind: 'm',
-    sendDb: -5,
-  });
-  const lowDraw = material(
-    3.87,
-    dd,
-    1172,
-    [
-      [3.87, 0.1],
-      [20.05, 0.2],
-    ],
-    [1.0, 0.25, 0.0],
-  );
-  m.add('draw-low', times(lowDraw, draw), 3.87, [0.0, 2.5, -8.0], {
-    target: -25,
-    kind: 'm',
-    sendDb: -3,
+  m.part('draw', () => {
+    const DRAW: Points = [
+      [3.87, 0.0],
+      [4.6, 0.75],
+      [4.71, 0.35],
+      [4.9, 0.95],
+      [7.2, 1.0],
+      [7.32, 0.55],
+      [8.05, 0.5],
+      [9.47, 0.55],
+      [10.6, 1.0],
+      [11.55, 0.75],
+      [14.75, 1.0],
+      [14.95, 0.35],
+      [15.47, 0.3],
+      [16.3, 0.45],
+      [17.73, 0.4],
+      [18.6, 0.55],
+      [19.95, 1.0],
+      [20.05, 0.0],
+    ];
+    const dd = 20.05 - 3.87;
+    const draw = curve(DRAW, 3.87, nsamp(dd));
+    m.addWide('draw', drawnAir(dd, 1170, draw, 220, 900, 1.2), 3.87, {
+      target: -23,
+      kind: 'm',
+      sendDb: -5,
+    });
+    const lowDraw = material(
+      3.87,
+      dd,
+      1172,
+      [
+        [3.87, 0.1],
+        [20.05, 0.2],
+      ],
+      [1.0, 0.25, 0.0],
+    );
+    m.add('draw-low', times(lowDraw, draw), 3.87, [0.0, 2.5, -8.0], {
+      target: -25,
+      kind: 'm',
+      sendDb: -3,
+    });
   });
 }
 
@@ -877,71 +951,91 @@ const proximityAt = (t: number): number =>
     PROXIMITY.map((p) => p[1]),
   );
 
+/** The proximity over the hole's span (from HOLE_FROM) raised to a power. */
+function holePower(e: number): Float64Array {
+  return curve(PROXIMITY, HOLE_FROM, nsamp(HOLE_TO - HOLE_FROM)).map((p) => p ** e);
+}
+
 function holeBody(m: Mix): void {
-  const dur = HOLE_TO - HOLE_FROM;
-  const n = nsamp(dur);
-  const prox = curve(PROXIMITY, HOLE_FROM, n);
-  const pw = (e: number) => prox.map((p) => p ** e);
-  // the torrent: four bands of one deep spectrum, each with its own wandering level; the nearer the
-  // orb, the more of the upper bands (the inrush is heard only near it) and the louder the whole
-  const bands = S.turbulence(dur, 1200, HOLE_CURVE, HOLE_BANDS, 0.25);
-  const weights = [pw(0.8), pw(1.0), pw(1.7), pw(2.6)];
-  const roar: Stereo = [new Float64Array(n), new Float64Array(n)];
-  bands.forEach((b, k) => {
-    for (let c = 0; c < 2; c++)
-      for (let i = 0; i < n; i++) roar[c]![i] = roar[c]![i]! + b[c]![i]! * weights[k]![i]!;
+  m.part('hole-roar', () => {
+    const dur = HOLE_TO - HOLE_FROM;
+    const n = nsamp(dur);
+    const prox = curve(PROXIMITY, HOLE_FROM, n);
+    const pw = (e: number) => prox.map((p) => p ** e);
+    // the torrent: four bands of one deep spectrum, each with its own wandering level; the nearer the
+    // orb, the more of the upper bands (the inrush is heard only near it) and the louder the whole
+    const bands = S.turbulence(dur, 1200, HOLE_CURVE, HOLE_BANDS, 0.25);
+    const weights = [pw(0.8), pw(1.0), pw(1.7), pw(2.6)];
+    const roar: Stereo = [new Float64Array(n), new Float64Array(n)];
+    bands.forEach((b, k) => {
+      for (let c = 0; c < 2; c++)
+        for (let i = 0; i < n; i++) roar[c]![i] = roar[c]![i]! + b[c]![i]! * weights[k]![i]!;
+    });
+    m.addWide('hole-roar', [fade(roar[0], 0.05, 0.02), fade(roar[1], 0.05, 0.02)], HOLE_FROM, {
+      target: -18.5,
+      kind: 'm',
+      sendDb: -6,
+    });
   });
-  m.addWide('hole-roar', [fade(roar[0], 0.05, 0.02), fade(roar[1], 0.05, 0.02)], HOLE_FROM, {
-    target: -18.5,
-    kind: 'm',
-    sendDb: -6,
+  m.part('hole-core', () => {
+    const dur = HOLE_TO - HOLE_FROM;
+    const n = nsamp(dur);
+    const prox = curve(PROXIMITY, HOLE_FROM, n);
+    // the core: the same deep noise as one source that moves with the orb, shot by shot, so its
+    // distance, its side and its Doppler shift come from the path
+    const core0 = S.curveNoise(n, 1210, HOLE_CURVE);
+    const walk = S.levelWalk(n, 1211, 2.0, 0.3, 4.0);
+    const core = core0.map((v, i) => v * walk[i]! * prox[i]! ** 0.7);
+    across(
+      m,
+      'hole-core',
+      core,
+      HOLE_FROM,
+      HOLE_SHOTS.map((keys, k) => ({
+        from: keys[0]![0],
+        to: k < HOLE_SHOTS.length - 1 ? HOLE_SHOTS[k + 1]![0]![0] : keys[keys.length - 1]![0],
+        pos: keys,
+        opts: { target: null, gainDb: 0, sendDb: -8 },
+      })),
+    );
   });
-  // the core: the same deep noise as one source that moves with the orb, shot by shot, so its
-  // distance, its side and its Doppler shift come from the path
-  const core0 = S.curveNoise(n, 1210, HOLE_CURVE);
-  const walk = S.levelWalk(n, 1211, 2.0, 0.3, 4.0);
-  const core = core0.map((v, i) => v * walk[i]! * prox[i]! ** 0.7);
-  across(
-    m,
-    'hole-core',
-    core,
-    HOLE_FROM,
-    HOLE_SHOTS.map((keys, k) => ({
-      from: keys[0]![0],
-      to: k < HOLE_SHOTS.length - 1 ? HOLE_SHOTS[k + 1]![0]![0] : keys[keys.length - 1]![0],
-      pos: keys,
-      opts: { target: null, gainDb: 0, sendDb: -8 },
-    })),
-  );
-  // the inrush: air drawn into the core, its band climbing as the orb nears
-  m.addWide('hole-inrush', drawnAir(dur, 1220, pw(1.4), 150, 1400, 1.3), HOLE_FROM, {
-    target: -22,
-    kind: 'm',
-    sendDb: -6,
-  });
-  // the pressure under the camera: noise from 25 to 70 Hz, only when the orb is near
-  const pr = S.wideNoise(dur, 1230, 25, 70, 3, false);
-  const pe = pw(2.0);
-  m.addWide(
-    'hole-pressure',
-    [
-      fade(
-        pr[0].map((v, i) => v * pe[i]!),
-        0.05,
-        0.02,
-      ),
-      fade(
-        pr[1].map((v, i) => v * pe[i]!),
-        0.05,
-        0.02,
-      ),
-    ],
-    HOLE_FROM,
-    {
+  m.part('hole-inrush', () => {
+    const dur = HOLE_TO - HOLE_FROM;
+    const pw = holePower;
+    // the inrush: air drawn into the core, its band climbing as the orb nears
+    m.addWide('hole-inrush', drawnAir(dur, 1220, pw(1.4), 150, 1400, 1.3), HOLE_FROM, {
       target: -22,
       kind: 'm',
-    },
-  );
+      sendDb: -6,
+    });
+  });
+  m.part('hole-pressure', () => {
+    const dur = HOLE_TO - HOLE_FROM;
+    const pw = holePower;
+    // the pressure under the camera: noise from 25 to 70 Hz, only when the orb is near
+    const pr = S.wideNoise(dur, 1230, 25, 70, 3, false);
+    const pe = pw(2.0);
+    m.addWide(
+      'hole-pressure',
+      [
+        fade(
+          pr[0].map((v, i) => v * pe[i]!),
+          0.05,
+          0.02,
+        ),
+        fade(
+          pr[1].map((v, i) => v * pe[i]!),
+          0.05,
+          0.02,
+        ),
+      ],
+      HOLE_FROM,
+      {
+        target: -22,
+        kind: 'm',
+      },
+    );
+  });
 }
 
 /** The core's level, set against the roar once both are in the mix: 3 dB under it at the closest. */
@@ -966,24 +1060,21 @@ const COVERS =
   /^(face-wind|fly-air|fly-whoosh|pebbles|tear-pass|gather-clump|gather-grind|gather-rubble|orbit|gather-low|approach-pass|approach-air|flight-air|rock-pass|slab-pass|dark-draw)/;
 
 /**
- * Carve the covering layers while the orb is near: up to 6 dB under 500 Hz and 2 dB in all, with
- * the proximity. The landings and the strikes are not touched.
+ * Carve a covering layer while the orb is near: up to 6 dB under 500 Hz and 2 dB in all, with
+ * the proximity. The landings and the strikes are not touched. A layer step (`Mix.eachLayer`).
  */
-function carve(m: Mix): void {
-  for (const name of m.order) {
-    if (!COVERS.test(name)) continue;
-    const l = m.layers.get(name)!;
-    for (const part of [l.dry, l.wet])
-      for (const ch of part) {
-        const x = Float64Array.from(ch);
-        const low = lp(x, 500);
-        for (let i = 0; i < ch.length; i++) {
-          const p = proximityAt(m.t0 + (l.start + i) / SR);
-          if (p <= 0) continue;
-          ch[i] = lin(-2 * p) * (x[i]! - low[i]! + lin(-6 * p) * low[i]!);
-        }
+function carve(m: Mix, name: string, l: Layer): void {
+  if (!COVERS.test(name)) return;
+  for (const part of [l.dry, l.wet])
+    for (const ch of part) {
+      const x = Float64Array.from(ch);
+      const low = lp(x, 500);
+      for (let i = 0; i < ch.length; i++) {
+        const p = proximityAt(m.t0 + (l.start + i) / SR);
+        if (p <= 0) continue;
+        ch[i] = lin(-2 * p) * (x[i]! - low[i]! + lin(-6 * p) * low[i]!);
       }
-  }
+    }
 }
 
 // ---- Review 2, 2026-11-11. The owner: good, not yet 100 points. The hole sounds like wind, not
@@ -1064,210 +1155,230 @@ function swallow(dur: number, seed: number, f0: number, f1: number): Float64Arra
 }
 
 function suction(m: Mix): void {
-  const r = rng(1300);
-  let t = HOLE_FROM + 0.2;
-  let i = 0;
-  while (t < HOLE_TO - 0.3) {
-    t += r.exponential(1 / 4.0);
-    const p = proximityAt(t);
-    if (r.random() > p || p < 0.3) continue;
-    const dur = r.uniform(0.35, 1.1);
-    const shot = shotOf(t);
-    if (!shot) continue;
-    const start = Math.max(t - dur, shot[0]![0] + 0.02);
-    const d = t - start;
-    if (d < 0.25) continue;
-    const az = r.uniform(0, 2 * Math.PI);
-    const rad = r.uniform(3.0, 6.0);
-    const core = orbAt(t);
-    const from: Vec3 = [
-      core[0] + rad * Math.cos(az),
-      Math.max(0.3, core[1] + r.uniform(-1.5, 1.5)),
-      core[2] + rad * Math.sin(az),
-    ];
-    const sig = swallow(d, 1310 + 7 * i, r.uniform(1400, 2600), r.uniform(90, 160));
-    m.add(`hole-swallow${i}`, sig, start, drawnPath(from, core, sig.length), {
-      target: -17 + 9 * (p - 1),
-      kind: 'm',
-      // the walls' first answers would carry the gesture past its stop; the hall's late field stays
-      erDb: -12,
-      sendDb: -8,
-    });
-    i++;
-  }
+  m.part('hole-swallow', () => {
+    const r = rng(1300);
+    let t = HOLE_FROM + 0.2;
+    let i = 0;
+    while (t < HOLE_TO - 0.3) {
+      t += r.exponential(1 / 4.0);
+      const p = proximityAt(t);
+      if (r.random() > p || p < 0.3) continue;
+      const dur = r.uniform(0.35, 1.1);
+      const shot = shotOf(t);
+      if (!shot) continue;
+      const start = Math.max(t - dur, shot[0]![0] + 0.02);
+      const d = t - start;
+      if (d < 0.25) continue;
+      const az = r.uniform(0, 2 * Math.PI);
+      const rad = r.uniform(3.0, 6.0);
+      const core = orbAt(t);
+      const from: Vec3 = [
+        core[0] + rad * Math.cos(az),
+        Math.max(0.3, core[1] + r.uniform(-1.5, 1.5)),
+        core[2] + rad * Math.sin(az),
+      ];
+      const sig = swallow(d, 1310 + 7 * i, r.uniform(1400, 2600), r.uniform(90, 160));
+      m.add(`hole-swallow${i}`, sig, start, drawnPath(from, core, sig.length), {
+        target: -17 + 9 * (p - 1),
+        kind: 'm',
+        // the walls' first answers would carry the gesture past its stop; the hall's late field stays
+        erDb: -12,
+        sendDb: -8,
+      });
+      i++;
+    }
+  });
 }
 
 function character(m: Mix): void {
-  const dur = HOLE_TO - HOLE_FROM;
-  const n = nsamp(dur);
-  const prox = curve(PROXIMITY, HOLE_FROM, n);
-  // the mana: inharmonic partials that sink slowly, two clusters that drift against each other
-  const ratios = [1.0, 1.41, 1.87, 2.63, 3.31];
-  const a = S.glide(dur, 1400, 233, 147, { ratios, wander: 0.012, shape: 1.0, tilt: 0.6 });
-  const b = S.glide(dur, 1401, 236, 149, {
-    ratios: ratios.map((q) => q * 1.013),
-    wander: 0.012,
-    shape: 1.0,
-    tilt: 0.6,
+  m.part('hole-mana', () => {
+    const dur = HOLE_TO - HOLE_FROM;
+    const n = nsamp(dur);
+    const prox = curve(PROXIMITY, HOLE_FROM, n);
+    // the mana: inharmonic partials that sink slowly, two clusters that drift against each other
+    const ratios = [1.0, 1.41, 1.87, 2.63, 3.31];
+    const a = S.glide(dur, 1400, 233, 147, { ratios, wander: 0.012, shape: 1.0, tilt: 0.6 });
+    const b = S.glide(dur, 1401, 236, 149, {
+      ratios: ratios.map((q) => q * 1.013),
+      wander: 0.012,
+      shape: 1.0,
+      tilt: 0.6,
+    });
+    const pm = prox.map((p) => p ** 1.2);
+    m.addWide(
+      'hole-mana',
+      [
+        fade(
+          a.map((v, i) => v * pm[i]!),
+          0.1,
+          0.03,
+        ),
+        fade(
+          b.map((v, i) => v * pm[i]!),
+          0.1,
+          0.03,
+        ),
+      ],
+      HOLE_FROM,
+      {
+        target: -21,
+        kind: 'm',
+        sendDb: -4,
+      },
+    );
   });
-  const pm = prox.map((p) => p ** 1.2);
-  m.addWide(
-    'hole-mana',
-    [
-      fade(
-        a.map((v, i) => v * pm[i]!),
-        0.1,
-        0.03,
-      ),
-      fade(
-        b.map((v, i) => v * pm[i]!),
-        0.1,
-        0.03,
-      ),
-    ],
-    HOLE_FROM,
-    {
-      target: -21,
-      kind: 'm',
-      sendDb: -4,
-    },
-  );
-  // the growl under the camera: three low partials, a level that breathes, only near
-  const growl = S.voice(dur, 1410, [38.0, 53.0, 71.0], {
-    wander: 0.04,
-    rate: 3.0,
-    tilt: 0.4,
-    breath: 0.9,
-  });
-  const pg = prox.map((p) => p ** 2);
-  const gr = fade(
-    growl.map((v, i) => v * pg[i]!),
-    0.1,
-    0.03,
-  );
-  m.addWide('hole-growl', [gr, gr.slice()], HOLE_FROM, { target: -20, kind: 'm' });
-  // formants on the inrush: narrow bands of noise whose centres wander
-  const ring = S.howl(dur, 1420, [233.0, 349.0, 523.0, 741.0], 9.0, 0.06, 1.0);
-  const pr = prox.map((p) => p ** 1.5);
-  m.add(
-    'hole-ring',
-    fade(
-      ring.map((v, i) => v * pr[i]!),
+  m.part('hole-growl', () => {
+    const dur = HOLE_TO - HOLE_FROM;
+    const n = nsamp(dur);
+    const prox = curve(PROXIMITY, HOLE_FROM, n);
+    // the growl under the camera: three low partials, a level that breathes, only near
+    const growl = S.voice(dur, 1410, [38.0, 53.0, 71.0], {
+      wander: 0.04,
+      rate: 3.0,
+      tilt: 0.4,
+      breath: 0.9,
+    });
+    const pg = prox.map((p) => p ** 2);
+    const gr = fade(
+      growl.map((v, i) => v * pg[i]!),
       0.1,
       0.03,
-    ),
-    HOLE_FROM,
-    [0.0, 2.5, -2.5],
-    {
-      target: -25,
-      kind: 'm',
-      sendDb: -4,
-    },
-  );
+    );
+    m.addWide('hole-growl', [gr, gr.slice()], HOLE_FROM, { target: -20, kind: 'm' });
+  });
+  m.part('hole-ring', () => {
+    const dur = HOLE_TO - HOLE_FROM;
+    const n = nsamp(dur);
+    const prox = curve(PROXIMITY, HOLE_FROM, n);
+    // formants on the inrush: narrow bands of noise whose centres wander
+    const ring = S.howl(dur, 1420, [233.0, 349.0, 523.0, 741.0], 9.0, 0.06, 1.0);
+    const pr = prox.map((p) => p ** 1.5);
+    m.add(
+      'hole-ring',
+      fade(
+        ring.map((v, i) => v * pr[i]!),
+        0.1,
+        0.03,
+      ),
+      HOLE_FROM,
+      [0.0, 2.5, -2.5],
+      {
+        target: -25,
+        kind: 'm',
+        sendDb: -4,
+      },
+    );
+  });
   // review 3: the glassy grains that glided down and were cut off (heard as a laser) are gone
 }
 
 function gathering(m: Mix): void {
-  const r = rng(1500);
-  // stones dragged to the core: louder and faster until they strike it
-  const arrivals: number[] = [];
-  for (const [a, b, r0, r1] of [
-    [9.8, 11.0, 2.0, 3.0],
-    [11.75, 14.75, 2.0, 6.0],
-    [19.0, 19.95, 2.0, 3.0],
-  ] as const) {
-    let t = a;
-    for (;;) {
-      t += r.exponential(1 / (r0 + ((r1 - r0) * (t - a)) / (b - a)));
-      if (t >= b) break;
-      arrivals.push(t);
+  m.part('drag', () => {
+    const r = rng(1500);
+    // stones dragged to the core: louder and faster until they strike it
+    const arrivals: number[] = [];
+    for (const [a, b, r0, r1] of [
+      [9.8, 11.0, 2.0, 3.0],
+      [11.75, 14.75, 2.0, 6.0],
+      [19.0, 19.95, 2.0, 3.0],
+    ] as const) {
+      let t = a;
+      for (;;) {
+        t += r.exponential(1 / (r0 + ((r1 - r0) * (t - a)) / (b - a)));
+        if (t >= b) break;
+        arrivals.push(t);
+      }
     }
-  }
-  arrivals.forEach((ta, i) => {
-    const shot = shotOf(ta);
-    if (!shot) return;
-    const d = Math.min(r.uniform(0.7, 1.6), ta - shot[0]![0] - 0.02);
-    if (d < 0.3) return;
-    const core = orbAt(ta);
-    const az = r.uniform(0, 2 * Math.PI);
-    const rad = r.uniform(5.0, 8.0);
-    const from: Vec3 = [
-      core[0] + rad * Math.cos(az),
-      r.uniform(0.5, 4.0),
-      core[2] + rad * Math.sin(az),
-    ];
-    const size = r.uniform(0.4, 1.2);
-    const g = S.grind(d, 1510 + 11 * i, { rLo: 50, rHi: 260, scrape: 1.6 });
-    const drag = g.map((v, k) => v * (k / g.length) ** 1.5);
-    const cut = nsamp(0.006);
-    for (let k = 0; k < cut; k++)
-      drag[drag.length - cut + k] = drag[drag.length - cut + k]! * (1 - k / cut);
-    m.add(`drag-${i}`, drag, ta - d, drawnPath(from, core, drag.length), {
-      target: -25 + 3 * size,
-      kind: 'm',
-      sendDb: -6,
-    });
-    const hit = S.blockHit(1520 + 11 * i, size, 9.0);
-    addAt(hit, S.crush(0.3, 1521 + 11 * i, 0.06).subarray(0, hit.length), 0, 0.5);
-    m.add(`drag-${i}-arrive`, hit, ta, core, {
-      // the arrival lands as the accepted landings do: the largest at the level of the block at
-      // 15.56 s (-11), a smaller one lower by its size
-      target: -11 + 10 * Math.log10(size / 1.2),
-      kind: 'i',
-      focusDb: 2,
-      sendDb: -5,
+    arrivals.forEach((ta, i) => {
+      const shot = shotOf(ta);
+      if (!shot) return;
+      const d = Math.min(r.uniform(0.7, 1.6), ta - shot[0]![0] - 0.02);
+      if (d < 0.3) return;
+      const core = orbAt(ta);
+      const az = r.uniform(0, 2 * Math.PI);
+      const rad = r.uniform(5.0, 8.0);
+      const from: Vec3 = [
+        core[0] + rad * Math.cos(az),
+        r.uniform(0.5, 4.0),
+        core[2] + rad * Math.sin(az),
+      ];
+      const size = r.uniform(0.4, 1.2);
+      const g = S.grind(d, 1510 + 11 * i, { rLo: 50, rHi: 260, scrape: 1.6 });
+      const drag = g.map((v, k) => v * (k / g.length) ** 1.5);
+      const cut = nsamp(0.006);
+      for (let k = 0; k < cut; k++)
+        drag[drag.length - cut + k] = drag[drag.length - cut + k]! * (1 - k / cut);
+      m.add(`drag-${i}`, drag, ta - d, drawnPath(from, core, drag.length), {
+        target: -25 + 3 * size,
+        kind: 'm',
+        sendDb: -6,
+      });
+      const hit = S.blockHit(1520 + 11 * i, size, 9.0);
+      addAt(hit, S.crush(0.3, 1521 + 11 * i, 0.06).subarray(0, hit.length), 0, 0.5);
+      m.add(`drag-${i}-arrive`, hit, ta, core, {
+        // the arrival lands as the accepted landings do: the largest at the level of the block at
+        // 15.56 s (-11), a smaller one lower by its size
+        target: -11 + 10 * Math.log10(size / 1.2),
+        kind: 'i',
+        focusDb: 2,
+        sendDb: -5,
+      });
     });
   });
   // stones that fly past the camera into the core
-  (
-    [
-      [10.1, -1],
-      [10.6, 1],
-      [11.9, 1],
-      [12.6, -1],
-      [13.2, 1],
-      [13.7, -1],
-      [14.2, 1],
-      [19.5, -1],
-    ] as const
-  ).forEach(([t, side], i) => {
-    const src = steady(0.6, 1560 + i, 90, 1800);
-    const core = orbAt(t + 0.3);
-    const P = concat(
-      line([side * 2.5, 1.2, 6.0], [side * 1.0, 1.4, 0.0], Math.floor(src.length / 2)),
-      line([side * 1.0, 1.4, 0.0], core, src.length - Math.floor(src.length / 2)),
-    );
-    m.add(`fly-past${i}`, src, t - 0.3, P, { target: -21, kind: 'i', sendDb: -8 });
+  m.part('fly-past', () => {
+    (
+      [
+        [10.1, -1],
+        [10.6, 1],
+        [11.9, 1],
+        [12.6, -1],
+        [13.2, 1],
+        [13.7, -1],
+        [14.2, 1],
+        [19.5, -1],
+      ] as const
+    ).forEach(([t, side], i) => {
+      const src = steady(0.6, 1560 + i, 90, 1800);
+      const core = orbAt(t + 0.3);
+      const P = concat(
+        line([side * 2.5, 1.2, 6.0], [side * 1.0, 1.4, 0.0], Math.floor(src.length / 2)),
+        line([side * 1.0, 1.4, 0.0], core, src.length - Math.floor(src.length / 2)),
+      );
+      m.add(`fly-past${i}`, src, t - 0.3, P, { target: -21, kind: 'i', sendDb: -8 });
+    });
   });
   // the pile at the core: crunching and grinding more as they arrive, and the groan of large masses
-  const CORE: Vec3 = [0.0, 3.0, -10.0];
-  m.add(
-    'pile-crunch',
-    S.rubble(3.2, 1580, (t) => 6.0 + 9.0 * t, { sizes: [0.2, 0.8], bright: 0.2, body: 0.8 }),
-    11.6,
-    CORE,
-    { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
-  );
-  const groan = S.groan(3.2, 1581, { rLo: 40, rHi: 90, res: [60.0, 110.0, 190.0], q: 3.0 });
-  m.add(
-    'pile-groan',
-    times(
-      groan,
-      curve(
-        [
-          [11.6, 0.0],
-          [11.85, 0.3],
-          [14.7, 1.0],
-          [14.8, 0.0],
-        ],
-        11.6,
-        groan.length,
+  m.part('pile-crunch', () => {
+    const CORE: Vec3 = [0.0, 3.0, -10.0];
+    m.add(
+      'pile-crunch',
+      S.rubble(3.2, 1580, (t) => 6.0 + 9.0 * t, { sizes: [0.2, 0.8], bright: 0.2, body: 0.8 }),
+      11.6,
+      CORE,
+      { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
+    );
+    const groan = S.groan(3.2, 1581, { rLo: 40, rHi: 90, res: [60.0, 110.0, 190.0], q: 3.0 });
+    m.add(
+      'pile-groan',
+      times(
+        groan,
+        curve(
+          [
+            [11.6, 0.0],
+            [11.85, 0.3],
+            [14.7, 1.0],
+            [14.8, 0.0],
+          ],
+          11.6,
+          groan.length,
+        ),
       ),
-    ),
-    11.6,
-    CORE,
-    { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
-  );
+      11.6,
+      CORE,
+      { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
+    );
+  });
 }
 
 // ---- Review 4, 2026-11-11. The owner: at the cut near 11.55 s the sound does not go on. The orb's
@@ -1319,76 +1430,80 @@ function across(
 
 /** The orb's red material and its voice: one source each from 4.86 s, across the cuts to 14.81 s. */
 function orbAcross(m: Mix): void {
-  const T0 = 4.86;
-  const T1 = 15.05;
-  const body = material(
-    T0,
-    T1 - T0,
-    1040,
-    [
-      [4.86, 0.45],
-      [7.2, 0.6],
-      [8.05, 0.5],
-      [9.47, 0.3],
-      [11.55, 0.33],
-      [14.8, 0.45],
-    ],
-    [0.9, 1.0, 0.3],
-  );
-  const voice = S.voice(T1 - T0, 1041, ORB);
-  const tearAt = (n: number) => line([-1.5, 2.0, -5.0], [0.8, 1.4, -3.0], n);
-  const shots: [number, number, Where | ((n: number) => Where), number, number, number][] = [
-    [4.86, 7.21, [0.0, 1.4, -2.2], -19.5, -23.5, -10],
-    [7.21, 8.05, [1.5, 1.5, -6.0], -26, -29, -4],
-    [8.05, 9.47, [0.0, 3.0, -14.0], -31, -33, -4],
-    [9.47, 11.55, tearAt, -20.5, -21.5, -10],
-    [11.55, 14.81, [0.0, 3.0, -10.0], -23, -26, -4],
-  ];
-  for (const [name, sig, which] of [
-    ['orb-body', body, 3],
-    ['orb-body-voice', voice, 4],
-  ] as const) {
-    const parts = shots.map(([from, to, pos, tb, tv, send], k) => {
-      const len = nsamp(to - from + (k === 0 ? 0.06 : 0.12) + (k === shots.length - 1 ? 0.14 : 0));
-      const p = typeof pos === 'function' ? (pos as (n: number) => Where)(len) : pos;
-      return {
-        from,
-        to,
-        pos: p,
-        opts: {
-          target: which === 3 ? tb : tv,
-          kind: 'm' as const,
-          focusDb: k === 4 ? 3 : 0,
-          sendDb: send - (which === 4 ? 2 : 0),
-        },
-      };
-    });
-    across(m, name, sig, T0, parts);
-  }
+  m.part('orb-body', () => {
+    const T0 = 4.86;
+    const T1 = 15.05;
+    const body = material(
+      T0,
+      T1 - T0,
+      1040,
+      [
+        [4.86, 0.45],
+        [7.2, 0.6],
+        [8.05, 0.5],
+        [9.47, 0.3],
+        [11.55, 0.33],
+        [14.8, 0.45],
+      ],
+      [0.9, 1.0, 0.3],
+    );
+    const voice = S.voice(T1 - T0, 1041, ORB);
+    const tearAt = (n: number) => line([-1.5, 2.0, -5.0], [0.8, 1.4, -3.0], n);
+    const shots: [number, number, Where | ((n: number) => Where), number, number, number][] = [
+      [4.86, 7.21, [0.0, 1.4, -2.2], -19.5, -23.5, -10],
+      [7.21, 8.05, [1.5, 1.5, -6.0], -26, -29, -4],
+      [8.05, 9.47, [0.0, 3.0, -14.0], -31, -33, -4],
+      [9.47, 11.55, tearAt, -20.5, -21.5, -10],
+      [11.55, 14.81, [0.0, 3.0, -10.0], -23, -26, -4],
+    ];
+    for (const [name, sig, which] of [
+      ['orb-body', body, 3],
+      ['orb-body-voice', voice, 4],
+    ] as const) {
+      const parts = shots.map(([from, to, pos, tb, tv, send], k) => {
+        const len = nsamp(to - from + (k === 0 ? 0.06 : 0.12) + (k === shots.length - 1 ? 0.14 : 0));
+        const p = typeof pos === 'function' ? (pos as (n: number) => Where)(len) : pos;
+        return {
+          from,
+          to,
+          pos: p,
+          opts: {
+            target: which === 3 ? tb : tv,
+            kind: 'm' as const,
+            focusDb: k === 4 ? 3 : 0,
+            sendDb: send - (which === 4 ? 2 : 0),
+          },
+        };
+      });
+      across(m, name, sig, T0, parts);
+    }
+  });
 }
 
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
 export function scene(): Mix {
   const m = new Mix('scene1', 0.0, SCENE_END, 1.5);
   m.until = SCENE_END;
-  fullBed(m, 0.0, SCENE_END + 1.5, 101, -41.0, [
-    [0, -30],
-    [1.0, 0],
-    [24.7, 0],
-    [25.3, -4],
-    [25.7, -4],
-    [26.6, 0],
-    [SCENE_END + 1.5, 0],
-  ]);
+  m.part('bed', () =>
+    fullBed(m, 0.0, SCENE_END + 1.5, 101, -41.0, [
+      [0, -30],
+      [1.0, 0],
+      [24.7, 0],
+      [25.3, -4],
+      [25.7, -4],
+      [26.6, 0],
+      [SCENE_END + 1.5, 0],
+    ]),
+  );
   blackHole(m);
   orbAcross(m);
   redLayers(m, { bed: false });
   holeBody(m);
-  levelCore(m);
+  m.finish(levelCore);
   suction(m);
   character(m);
   gathering(m);
-  carve(m);
+  m.eachLayer('carve', carve);
   m.driveDb = 8.8;
   // review 3: 1 dB less into the master where the black hole is near, so the soft clip's final trim
   // of the true peak no longer lowers the whole scene; the landings lie within 0.2 dB of review 0

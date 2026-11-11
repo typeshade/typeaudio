@@ -4,6 +4,12 @@
 //   bun experiments/12-scene1-red-seal/run.ts scene [--out dir]
 //   bun experiments/12-scene1-red-seal/run.ts red --parity study-red.f64
 //
+// The layers are built from their parts (`src/study/build.ts`): a part whose code and settings did
+// not change since a render is read from the cache (`.cache/scene-parts/`), and the others are made
+// on worker threads, one for each core. The samples are the same either way. `--workers N` sets the
+// threads (0 makes the parts in this thread), `--no-cache` reads and writes no cache, and `--plain`
+// runs the scene's code as written, with no builder.
+//
 // `red` is the study's red passage (20.0 to 30.0 s, 2.5 s of tail). `scene` is scene 1, the red
 // seal, 0.0 to 29.5 s. Each writes a 24-bit stereo WAV at 48 kHz and a JSON of its layers. With
 // `--against`, `red` is measured against another render of the passage (`measure.ts`). With
@@ -14,6 +20,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { integratedLufs, truePeakDb, wav24, type Stereo } from '../../src/study/dsp.ts';
+import { build, renderMaster, type BuildReport } from '../../src/study/build.ts';
 import type { Mix } from '../../src/study/mix.ts';
 import { compare, readWav, report } from './measure.ts';
 import { red } from './red.ts';
@@ -28,10 +35,22 @@ const what = process.argv[2] ?? 'scene';
 const out = arg('out') ?? join(here, 'out');
 mkdirSync(out, { recursive: true });
 
+const workers = arg('workers');
 const t0 = performance.now();
-const m: Mix = what === 'red' ? red() : scene();
+let m: Mix;
+let built: BuildReport | undefined;
+if (process.argv.includes('--plain')) m = what === 'red' ? red() : scene();
+else {
+  const r = await build(join(here, what === 'red' ? 'red.ts' : 'scene.ts'), {
+    exportName: what === 'red' ? 'red' : 'scene',
+    cacheDir: process.argv.includes('--no-cache') ? null : undefined,
+    workers: workers === undefined ? undefined : Number(workers),
+  });
+  m = r.mix;
+  built = r.report;
+}
 const t1 = performance.now();
-const y: Stereo = m.render();
+const y: Stereo = built ? await renderMaster(m) : m.render();
 const t2 = performance.now();
 const file = join(out, `${what}.wav`);
 writeFileSync(file, wav24(y));
@@ -48,6 +67,7 @@ writeFileSync(
       limitDb: m.limitDb,
       limitedShare: m.limitedShare,
       seconds: { build: (t1 - t0) / 1000, master: (t2 - t1) / 1000 },
+      build: built,
       layers: Object.fromEntries(
         m.order.map((k) => {
           const l = m.layers.get(k)!;
@@ -59,6 +79,10 @@ writeFileSync(
     1,
   ),
 );
+if (built)
+  console.log(
+    `${what}: ${built.parts} parts, ${built.loaded} from the cache, ${built.made} made on ${built.workers} workers (collect ${built.seconds.collect.toFixed(1)} s, keys ${built.seconds.keys.toFixed(1)} s, parts ${built.seconds.parts.toFixed(1)} s, finish ${built.seconds.finish.toFixed(1)} s), cache ${(built.cacheBytes / 2 ** 20).toFixed(0)} MiB`,
+  );
 console.log(
   `${what}: ${m.order.length} layers, master ${m.masterGainDb.toFixed(2)} dB, drive ${m.driveDb} dB (limiter ${m.limitDb.toFixed(1)} dB deep, ${(100 * m.limitedShare).toFixed(1)} % of the time), integrated ${integratedLufs(y).toFixed(1)} LUFS, true peak ${truePeakDb(y).toFixed(2)} dBTP; layers ${((t1 - t0) / 1000).toFixed(1)} s, master ${((t2 - t1) / 1000).toFixed(1)} s -> ${file}`,
 );
