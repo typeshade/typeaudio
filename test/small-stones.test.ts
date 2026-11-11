@@ -5,7 +5,9 @@
 // - `slabFall` without `scatter` 0 (its scatter is a tumble of 5 to 15 cm pieces);
 // - `rockFall` (pieces of 0.8 to 3 cm after the impact);
 // - `tumble` or `rubble` with pieces under 0.3 m (or with the default sizes);
-// - a `stoneCrack` of a written size under 0.2 m (a chip that flies off).
+// - a `stoneCrack` of a written size under 0.2 m (a chip that flies off);
+// - `cloth` (its flutter is a run of clicks) or reversed grains (`.reverse()`): heard as pebbles
+//   on 2026-11-11 (scene 1 at 7.2 s, scene 2 at 43.6 s).
 //
 // The study's red passage (`red.ts`) stays the study's; the layers of it that carry small stones
 // must be left out by the scenes (`tail.ts`, and scene 2's `tidy` where it exists).
@@ -84,6 +86,10 @@ describe('the owner rule on small stones', () => {
       const s = smallest(c.args.match(/sizes:\s*(\[[^\]]*\])/)?.[1]);
       if (s === undefined || s < 0.3) problems.push(`${at(c.line)}: rubble of pieces under 0.3 m`);
     }
+    for (const c of calls(src, 'cloth'))
+      problems.push(`${at(c.line)}: cloth (a flutter of clicks)`);
+    for (const c of calls(src, 'reverse'))
+      problems.push(`${at(c.line)}: reversed grains (clicks that crowd)`);
     for (const c of calls(src, 'stoneCrack')) {
       const size = Number(split(c.args)[1]);
       if (!Number.isNaN(size) && size < 0.2) problems.push(`${at(c.line)}: a chip (stoneCrack)`);
