@@ -279,7 +279,8 @@ export function blackHole(m: Mix): void {
   m.part('orb-form-sparks', () => {
     m.add(
       'orb-form-sparks',
-      fade(S.pops(0.85, 1022, 22.0, 800, 6000, 0.004), 0.2, 0.01),
+      // the owner's rule (2026-11-11): sparks, bright and short, not ticks that read as pebbles
+      fade(S.pops(0.85, 1022, 22.0, 2500, 9000, 0.002), 0.2, 0.01),
       3.86,
       [0.3, 1.2, -1.2],
       {
@@ -406,7 +407,8 @@ export function blackHole(m: Mix): void {
   m.part('orb-tear-sparks', () => {
     m.add(
       'orb-tear-sparks',
-      fade(S.pops(2.08, 1072, 16.0, 500, 4000, 0.005), 0.02, 0.15),
+      // the owner's rule (2026-11-11): sparks, bright and short, not ticks that read as pebbles
+      fade(S.pops(2.08, 1072, 16.0, 2500, 9000, 0.002), 0.02, 0.15),
       9.47,
       [1.0, 1.5, -3.0],
       {

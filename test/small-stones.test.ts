@@ -6,6 +6,7 @@
 // - `rockFall` (pieces of 0.8 to 3 cm after the impact);
 // - `tumble` or `rubble` with pieces under 0.3 m (or with the default sizes);
 // - a `stoneCrack` of a written size under 0.2 m (a chip that flies off);
+// - `pops` under 2 kHz (low ticks, not sparks);
 // - `cloth` (its flutter is a run of clicks) or reversed grains (`.reverse()`): heard as pebbles
 //   on 2026-11-11 (scene 1 at 7.2 s, scene 2 at 43.6 s).
 //
@@ -86,6 +87,10 @@ describe('the owner rule on small stones', () => {
       const s = smallest(c.args.match(/sizes:\s*(\[[^\]]*\])/)?.[1]);
       if (s === undefined || s < 0.3) problems.push(`${at(c.line)}: rubble of pieces under 0.3 m`);
     }
+    for (const c of calls(src, 'pops')) {
+      const lo = Number(split(c.args)[3]);
+      if (Number.isNaN(lo) || lo < 2000) problems.push(`${at(c.line)}: pops under 2 kHz (ticks)`);
+    }
     for (const c of calls(src, 'cloth'))
       problems.push(`${at(c.line)}: cloth (a flutter of clicks)`);
     for (const c of calls(src, 'reverse'))
@@ -106,6 +111,8 @@ describe('the owner rule on small stones', () => {
       'wall-debris1',
       'debris-rain0',
       'debris-rain1',
+      'orb-sparks0',
+      'orb-sparks1',
     ])
       expect(tail).toContain(`'${name}'`);
     expect(tail).toContain('`ray-debris${i}`');
