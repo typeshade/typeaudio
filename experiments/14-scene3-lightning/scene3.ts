@@ -857,7 +857,7 @@ type Crash = readonly [number, Vec3, number];
  * strong". The limiter holds every peak at one ceiling, so the size comes from weight and length:
  * a sub-pressure pulse at the onset; a body of 30 to 80 Hz that holds `hold` s and rolls away over
  * `decay` s; thunder that rolls through the hall; large chunks of the giant that crash down one
- * after another (1.8 m and more, at the accepted landing's level for their size).
+ * after another (1.8 m and more, at the accepted landing's level for their size, with no scatter of small pieces).
  */
 function enormity(
   m: Mix,
@@ -917,7 +917,7 @@ function enormity(
     { target: -15 + db, kind: 'm', sendDb: 0 },
   );
   crashes.forEach(([tc, pos, size], j) =>
-    m.add(`${p}-crash${j}`, lp2(S.slabFall(seed + 40 + j, size, 1.2), 9000), tc, pos, {
+    m.add(`${p}-crash${j}`, lp2(S.slabFall(seed + 40 + j, size, 1.2, 0), 9000), tc, pos, {
       target: landing(size) + db,
       kind: 'i',
       focusDb: 2,
