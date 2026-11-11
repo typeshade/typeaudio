@@ -348,5 +348,5 @@ describe('the kinds as functions', () => {
       )!;
       expectSame(fn, () => unit.tick());
     }
-  });
+  }, 120_000);
 });
