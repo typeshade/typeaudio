@@ -47,14 +47,24 @@ const len = (x: { length: number }) => x.length;
 /** The red passage as the study's `red()` builds it. */
 export function red(): Mix {
   const m = new Mix('red', 20.0, 30.0);
-  fullBed(m, T0, 12.5, 101, -41.0, [
-    [20, 0],
-    [24.7, 0],
-    [25.3, -4],
-    [25.7, -4],
-    [26.6, 0],
-    [32.5, 0],
-  ]);
+  redLayers(m);
+  return m;
+}
+
+/**
+ * The layers of the red passage, laid into a mix. `bed: false` leaves out the hall's bed, for a
+ * mix that has its own; the mix's `until` leaves out the layers that start after it.
+ */
+export function redLayers(m: Mix, { bed = true } = {}): void {
+  if (bed)
+    fullBed(m, T0, 12.5, 101, -41.0, [
+      [20, 0],
+      [24.7, 0],
+      [25.3, -4],
+      [25.7, -4],
+      [26.6, 0],
+      [32.5, 0],
+    ]);
 
   // 20.00 to 22.30: the camera flies with the orb. The orb stays in front of us; rocks pass on both sides.
   const n = nsamp(22.3 - T0);
@@ -1055,5 +1065,4 @@ export function red(): Mix {
     kind: 'm',
     sendDb: -4,
   });
-  return m;
 }

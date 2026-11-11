@@ -30,7 +30,7 @@ import {
   zeros,
   type Rng,
   type Stereo,
-} from "./dsp.ts";
+} from './dsp.ts';
 
 const G = 9.81;
 const log = Math.log;
@@ -47,20 +47,14 @@ const meanSq = (x: ArrayLike<number>): number => {
   return e / x.length;
 };
 const meanSqSt = (y: Stereo): number => (meanSq(y[0]) + meanSq(y[1])) / 2;
-const scaleSt = (y: Stereo, g: number): Stereo => [
-  y[0].map((v) => v * g),
-  y[1].map((v) => v * g),
-];
-const tilted =
-  (lo: number, hi: number, order: number, tilt: number) => (f: number) =>
-    bandGain(f, lo, hi, order) * (lo / Math.max(f, lo)) ** tilt;
+const scaleSt = (y: Stereo, g: number): Stereo => [y[0].map((v) => v * g), y[1].map((v) => v * g)];
+const tilted = (lo: number, hi: number, order: number, tilt: number) => (f: number) =>
+  bandGain(f, lo, hi, order) * (lo / Math.max(f, lo)) ** tilt;
 
 /** The hall's own noise: diffuse, band-limited pink, breathing slowly. */
 export function hallAir(dur: number, seed: number): Stereo {
   const n = nsamp(dur);
-  const ch = [0, 1].map((c) =>
-    spectral(pink(n, seed + c), (f) => bandGain(f, 70, 1800, 1)),
-  );
+  const ch = [0, 1].map((c) => spectral(pink(n, seed + c), (f) => bandGain(f, 70, 1800, 1)));
   const m = smooth(white(n, seed + 7), 2.5);
   const mp = peak(m) + 1e-9;
   for (let i = 0; i < n; i++) {
@@ -83,8 +77,7 @@ export function cloth(
   const n = nsamp(dur);
   const r = rng(seed);
   const arc = new Float64Array(n);
-  for (let i = 0; i < n; i++)
-    arc[i] = Math.sin((Math.PI * (i + 0.5)) / n) ** 1.5;
+  for (let i = 0; i < n; i++) arc[i] = Math.sin((Math.PI * (i + 0.5)) / n) ** 1.5;
   const cdf = new Float64Array(n);
   let s = 0;
   for (let i = 0; i < n; i++) cdf[i] = s += arc[i]!;
@@ -104,15 +97,8 @@ export function cloth(
     const a = r.exponential(1.0);
     const k = new Float64Array(L);
     for (let i = 0; i < L; i++)
-      k[i] =
-        (0.6 * Math.sin(2 * Math.PI * fc * (i / SR) + ph) + 0.4 * nz[i]!) *
-        h[i]! *
-        a;
-    addAt(
-      y,
-      k.subarray(0, Math.max(0, Math.min(n, nsamp(t0) + L) - nsamp(t0))),
-      nsamp(t0),
-    );
+      k[i] = (0.6 * Math.sin(2 * Math.PI * fc * (i / SR) + ph) + 0.4 * nz[i]!) * h[i]! * a;
+    addAt(y, k.subarray(0, Math.max(0, Math.min(n, nsamp(t0) + L) - nsamp(t0))), nsamp(t0));
   }
   const z = spectral(y, (f) => bandGain(f, fLo * 0.7, fHi * 1.2, 2));
   for (let i = 0; i < n; i++) z[i] = z[i]! * arc[i]! ** 0.5;
@@ -125,32 +111,19 @@ export function fracture(
   fLo: number,
   fHi: number,
   loss: number,
-  {
-    dur = 0.5,
-    nModes = 90,
-    kRate = 12.0,
-    c = 0.012,
-    hard = 0.00015,
-    tilt = 0.5,
-    burst = 0.9,
-  } = {},
+  { dur = 0.5, nModes = 90, kRate = 12.0, c = 0.012, hard = 0.00015, tilt = 0.5, burst = 0.9 } = {},
 ): Float64Array {
   const r = rng(seed);
   const fm = r.uniformN(log(fLo), log(fHi), nModes).map(exp);
   const taus = fm.map((f) => tauOf(f, loss));
   const n = nsamp(dur);
   const y = zeros(n);
-  const am = r
-    .uniformN(0.3, 1, nModes)
-    .map((a, i) => a * (fLo / fm[i]!) ** tilt);
+  const am = r.uniformN(0.3, 1, nModes).map((a, i) => a * (fLo / fm[i]!) ** tilt);
   addAt(y, norm(modal(fm, am, taus, dur)), 0);
   const nb = nsamp(0.03);
   const nzb = r.normalN(nb);
   for (let i = 0; i < nb; i++) nzb[i] = nzb[i]! * exp(-i / SR / 0.003);
-  const bn = spectral(
-    nzb,
-    (f) => bandGain(f, fLo, fHi, 2) * (fLo / Math.max(f, fLo)) ** tilt,
-  );
+  const bn = spectral(nzb, (f) => bandGain(f, fLo, fHi, 2) * (fLo / Math.max(f, fLo)) ** tilt);
   addAt(y, norm(bn), 0, burst);
   const span = dur * 0.8;
   const count = r.poisson(kRate * log(1 + span / c));
@@ -161,9 +134,7 @@ export function fracture(
     const t0 = times[j]!;
     const a = amps[j]!;
     const fe = r.uniformN(log(fLo), log(fHi), 5).map(exp);
-    const ae = r
-      .uniformN(0.3, 1, 5)
-      .map((v, i) => a * v * (fLo / fe[i]!) ** tilt);
+    const ae = r.uniformN(0.3, 1, 5).map((v, i) => a * v * (fLo / fe[i]!) ** tilt);
     const k = modal(
       fe,
       ae,
@@ -194,9 +165,7 @@ export function aero(
     const amp = Math.min((u / u0) ** 3, cap);
     for (let k = 0; k < fr.length; k++)
       g[k] =
-        amp /
-        Math.sqrt(1 + (fr[k]! / fc) ** 4) /
-        Math.sqrt(1 + (60.0 / Math.max(fr[k]!, 1)) ** 4);
+        amp / Math.sqrt(1 + (fr[k]! / fc) ** 4) / Math.sqrt(1 + (60.0 / Math.max(fr[k]!, 1)) ** 4);
   });
 }
 
@@ -243,9 +212,7 @@ export function wideNoise(
   return [0, 1].map((c) => {
     const x = spectral(
       white(n, seed + c),
-      (f) =>
-        bandGain(f, lo, hi, order) /
-        (pinkish ? Math.sqrt(Math.max(f, 50.0)) : 1.0),
+      (f) => bandGain(f, lo, hi, order) / (pinkish ? Math.sqrt(Math.max(f, 50.0)) : 1.0),
     );
     const g = 1 / Math.sqrt(meanSq(x));
     return x.map((v) => v * g);
@@ -258,12 +225,7 @@ export function saturate(x: Float64Array, drive = 2.2): Float64Array {
 }
 
 /** A modulator with no period: band-limited noise, unit deviation, clipped to +-1.5 and scaled to +-1. */
-export function irregular(
-  n: number,
-  seed: number,
-  lo = 10.0,
-  hi = 90.0,
-): Float64Array {
+export function irregular(n: number, seed: number, lo = 10.0, hi = 90.0): Float64Array {
   const m = spectral(white(n, seed), (f) => bandGain(f, lo, hi, 2));
   const s = stdOf(m) + 1e-12;
   return m.map((v) => Math.min(1.5, Math.max(-1.5, v / s)) / 1.5);
@@ -321,11 +283,7 @@ export function burst(
   lo: number,
   hi: number,
   tau: number,
-  {
-    dur,
-    rise = 0.0005,
-    order = 2,
-  }: { dur?: number; rise?: number; order?: number } = {},
+  { dur, rise = 0.0005, order = 2 }: { dur?: number; rise?: number; order?: number } = {},
 ): Float64Array {
   return shapedBurst(seed, tau, dur, rise, (f) => bandGain(f, lo, hi, order));
 }
@@ -358,11 +316,7 @@ export function whump(
 ): [Float64Array, Float64Array, Float64Array] {
   const front = friedlander(dur, tplus);
   const low = zeros(nsamp(dur));
-  addAt(
-    low,
-    burst(seed, 35, 130, 0.045, { rise: 0.002 }).subarray(0, low.length),
-    0,
-  );
+  addAt(low, burst(seed, 35, 130, 0.045, { rise: 0.002 }).subarray(0, low.length), 0);
   const slap = zeros(nsamp(dur));
   addAt(slap, burst(seed + 1, 250, 2600, 0.016).subarray(0, slap.length), 0);
   return [front, low, slap];
@@ -437,9 +391,7 @@ export function bandSweepWide(
     stftShape(white(n, seed + c), sweepGain(dur, f0, f1, widthOct)),
   ) as Stereo;
   const g = 1 / Math.sqrt(meanSqSt(y));
-  return y.map((ch) =>
-    ch.map((v, i) => v * g * bell(i / SR / dur, attack)),
-  ) as Stereo;
+  return y.map((ch) => ch.map((v, i) => v * g * bell(i / SR / dur, attack))) as Stereo;
 }
 
 const sweepGain =
@@ -501,12 +453,7 @@ export function tumble(
 }
 
 /** Crumbling stone: mid-band noise with an irregular, fast flutter. */
-export function gravel(
-  dur: number,
-  seed: number,
-  lo = 300.0,
-  hi = 3500.0,
-): Float64Array {
+export function gravel(dur: number, seed: number, lo = 300.0, hi = 3500.0): Float64Array {
   const n = nsamp(dur);
   const x = spectral(white(n, seed), (f) => bandGain(f, lo, hi, 2));
   const m = irregular(n, seed + 1, 8, 60);
@@ -515,12 +462,7 @@ export function gravel(
 }
 
 /** Wind in hair and cloth after a blast: wide noise in slow, irregular gusts. */
-export function wind(
-  dur: number,
-  seed: number,
-  lo = 250.0,
-  hi = 3000.0,
-): Stereo {
+export function wind(dur: number, seed: number, lo = 250.0, hi = 3000.0): Stereo {
   const n = nsamp(dur);
   const ch = [0, 1].map((c) => {
     const x = spectral(pink(n, seed + c), (f) => bandGain(f, lo, hi, 2));
@@ -555,20 +497,15 @@ export function voice(
   const n = nsamp(dur);
   const y = zeros(n);
   freqs.forEach((f, i) => {
-    const w0 = spectral(white(n, seed + 31 * (i + 1)), (q) =>
-      bandGain(q, 0.2, rate, 1),
-    );
+    const w0 = spectral(white(n, seed + 31 * (i + 1)), (q) => bandGain(q, 0.2, rate, 1));
     const ws = stdOf(w0) + 1e-12;
     const ph = cumPhase((k) => f * (1 + (wander * w0[k]!) / ws), n);
-    const a0 = spectral(white(n, seed + 57 * (i + 1)), (q) =>
-      bandGain(q, 0.1, 2.0, 1),
-    );
+    const a0 = spectral(white(n, seed + 57 * (i + 1)), (q) => bandGain(q, 0.1, 2.0, 1));
     const ap = peak(a0) + 1e-12;
     const off = r.uniform(0, 6.28);
     const tw = (i + 1) ** tilt;
     for (let k = 0; k < n; k++)
-      y[k] =
-        y[k]! + ((1 + (breath * a0[k]!) / ap) * Math.sin(ph[k]! + off)) / tw;
+      y[k] = y[k]! + ((1 + (breath * a0[k]!) / ap) * Math.sin(ph[k]! + off)) / tw;
   });
   return norm(y);
 }
@@ -579,23 +516,14 @@ export function glide(
   seed: number,
   f0: number,
   f1: number,
-  {
-    ratios = [1.0, 1.5, 2.0] as readonly number[],
-    wander = 0.006,
-    shape = 1.0,
-    tilt = 0.8,
-  } = {},
+  { ratios = [1.0, 1.5, 2.0] as readonly number[], wander = 0.006, shape = 1.0, tilt = 0.8 } = {},
 ): Float64Array {
   const r = rng(seed);
   const n = nsamp(dur);
-  const base = new Float64Array(n).map(
-    (_, i) => f0 * (f1 / f0) ** ((i / n) ** shape),
-  );
+  const base = new Float64Array(n).map((_, i) => f0 * (f1 / f0) ** ((i / n) ** shape));
   const y = zeros(n);
   ratios.forEach((q, i) => {
-    const w0 = spectral(white(n, seed + 13 * (i + 1)), (z) =>
-      bandGain(z, 0.3, 5.0, 1),
-    );
+    const w0 = spectral(white(n, seed + 13 * (i + 1)), (z) => bandGain(z, 0.3, 5.0, 1));
     const ws = stdOf(w0) + 1e-12;
     const ph = cumPhase((k) => base[k]! * q * (1 + (wander * w0[k]!) / ws), n);
     const off = r.uniform(0, 6.28);
@@ -643,11 +571,7 @@ export function tiltedBurst(
   lo: number,
   hi: number,
   tau: number,
-  {
-    tilt = 0.8,
-    dur,
-    rise = 0.0005,
-  }: { tilt?: number; dur?: number; rise?: number } = {},
+  { tilt = 0.8, dur, rise = 0.0005 }: { tilt?: number; dur?: number; rise?: number } = {},
 ): Float64Array {
   return shapedBurst(seed, tau, dur, rise, tilted(lo, hi, 2, tilt));
 }
@@ -665,13 +589,9 @@ export function heavyCrack(
     tilt: 0.6,
     hard: 0.0004,
   });
-  const knock = burst(
-    seed + 1,
-    Math.max(28.0, 0.5 * fk),
-    top,
-    0.04 + 0.1 * Math.min(size, 2.0),
-    { rise: 0.003 },
-  );
+  const knock = burst(seed + 1, Math.max(28.0, 0.5 * fk), top, 0.04 + 0.1 * Math.min(size, 2.0), {
+    rise: 0.003,
+  });
   const edge = tiltedBurst(seed + 2, 900.0, 7000.0, 0.012, { tilt: 0.5 });
   const y = zeros(Math.max(body.length, knock.length));
   addAt(y, body, 0);
@@ -684,12 +604,7 @@ export function heavyCrack(
 export function stoneCrack(r: Rng, size = 0.3, bright = 0.4): Float64Array {
   const fk = 54.6 / size;
   const seed = r.integers(1, 2 ** 31 - 1);
-  const top = tiltedBurst(
-    seed,
-    Math.max(80.0, fk),
-    4500.0,
-    0.008 + 0.03 * size,
-  );
+  const top = tiltedBurst(seed, Math.max(80.0, fk), 4500.0, 0.008 + 0.03 * size);
   const knock = burst(
     seed + 1,
     Math.max(35.0, 0.5 * fk),
@@ -719,9 +634,7 @@ export function groan(
 ): Float64Array {
   const r = rng(seed);
   const n = nsamp(dur);
-  const path = irregular(n, seed + 1, 0.7, 5.0).map(
-    (m) => rLo * (rHi / rLo) ** (0.5 + 0.5 * m),
-  );
+  const path = irregular(n, seed + 1, 0.7, 5.0).map((m) => rLo * (rHi / rLo) ** (0.5 + 0.5 * m));
   const y = zeros(n + nsamp(0.1));
   let t = r.uniform(0, 0.01);
   while (t < dur) {
@@ -779,11 +692,7 @@ export const BEAM_CURVE: readonly (readonly [number, number])[] = [
 ];
 
 /** Noise whose third-octave levels follow `curve`. */
-export function curveNoise(
-  n: number,
-  seed: number,
-  curve = BEAM_CURVE,
-): Float64Array {
+export function curveNoise(n: number, seed: number, curve = BEAM_CURVE): Float64Array {
   const lf = curve.map((c) => log(c[0]));
   const lv = curve.map((c) => c[1]);
   return spectral(white(n, seed), (f0) => {
@@ -803,18 +712,10 @@ export function levelWalk(
 ): Float64Array {
   const m = spectral(white(n, seed), (f) => bandGain(f, lo, hi, 1));
   const s = stdOf(m) + 1e-12;
-  return m.map(
-    (v) => 10 ** ((sdDb * Math.min(2.5, Math.max(-2.5, v / s))) / 20),
-  );
+  return m.map((v) => 10 ** ((sdDb * Math.min(2.5, Math.max(-2.5, v / s))) / 20));
 }
 
-export const TURBULENCE_BANDS: readonly (readonly [
-  number,
-  number,
-  number,
-  number,
-  number,
-])[] = [
+export const TURBULENCE_BANDS: readonly (readonly [number, number, number, number, number])[] = [
   [25.0, 110.0, 1.0, 0.4, 6.0],
   [110.0, 900.0, 1.3, 0.5, 8.0],
   [900.0, 4000.0, 5.5, 1.0, 11.0],
@@ -834,9 +735,7 @@ export function turbulence(
   const b = Math.sqrt(1 - corr);
   return bands.map(([lo, hi, sd, rLo, rHi], i) => {
     const p = [0, 1, 2].map((c) =>
-      spectral(curveNoise(n, seed + 10 * i + c, curve), (f) =>
-        bandGain(f, lo, hi, 4),
-      ),
+      spectral(curveNoise(n, seed + 10 * i + c, curve), (f) => bandGain(f, lo, hi, 4)),
     );
     const walk = levelWalk(n, seed + 10 * i + 5, sd, rLo, rHi);
     return [
@@ -862,21 +761,13 @@ export function howl(
     const ab = [1, 2].map((c) =>
       spectral(white(n, seed + 7 * i + c), (f) => bandGain(f, 0.01, bw / 2, 2)),
     );
-    const w0 = spectral(white(n, seed + 7 * i + 3), (f) =>
-      bandGain(f, 0.1, rate, 1),
-    );
+    const w0 = spectral(white(n, seed + 7 * i + 3), (f) => bandGain(f, 0.1, rate, 1));
     const ws = stdOf(w0) + 1e-12;
-    const ph = cumPhase(
-      (k) => fc * 2 ** (wander * Math.min(2.5, Math.max(-2.5, w0[k]! / ws))),
-      n,
-    );
+    const ph = cumPhase((k) => fc * 2 ** (wander * Math.min(2.5, Math.max(-2.5, w0[k]! / ws))), n);
     const s0 = stdOf(ab[0]!) + 1e-12;
     const g = 1 / (i + 1) ** 0.5;
     for (let k = 0; k < n; k++)
-      y[k] =
-        y[k]! +
-        ((ab[0]![k]! * Math.cos(ph[k]!) - ab[1]![k]! * Math.sin(ph[k]!)) / s0) *
-          g;
+      y[k] = y[k]! + ((ab[0]![k]! * Math.cos(ph[k]!) - ab[1]![k]! * Math.sin(ph[k]!)) / s0) * g;
   });
   return norm(y);
 }
@@ -894,14 +785,10 @@ export function puff(
   const n = nsamp(dur);
   const k = Math.max(2, nsamp(rise));
   const e = new Float64Array(n).map(
-    (_, i) =>
-      exp(-i / SR / tau) *
-      (i < k ? 0.5 - 0.5 * Math.cos((Math.PI * (i + 0.5)) / k) : 1),
+    (_, i) => exp(-i / SR / tau) * (i < k ? 0.5 - 0.5 * Math.cos((Math.PI * (i + 0.5)) / k) : 1),
   );
   const y = [0, 1].map((c) =>
-    spectral(white(n, seed + c), tilted(lo, hi, 2, tilt)).map(
-      (v, i) => v * e[i]!,
-    ),
+    spectral(white(n, seed + c), tilted(lo, hi, 2, tilt)).map((v, i) => v * e[i]!),
   ) as Stereo;
   const p = Math.max(peak(y[0]), peak(y[1])) + 1e-12;
   return scaleSt(y, 1 / p);
@@ -918,27 +805,14 @@ export function dust(
     const x0 = spectral(white(n, seed + c), tilted(lo, hi, 2, tilt));
     const gx = 1 / Math.sqrt(meanSq(x0));
     const walk = levelWalk(n, seed + 10 + c, sd, 0.4, 7.0);
-    const g = sand(
-      dur,
-      seed + 20 + c,
-      1800.0,
-      dur * 4,
-      2500.0,
-      9000.0,
-    ).subarray(0, n);
+    const g = sand(dur, seed + 20 + c, 1800.0, dur * 4, 2500.0, 9000.0).subarray(0, n);
     const gg = (2.0 * grain) / (Math.sqrt(meanSq(g)) + 1e-12);
     return x0.map((v, i) => v * gx * walk[i]! + g[i]! * gg);
   }) as Stereo;
 }
 
 /** A cloud of smoke or dust that rolls: low noise in slow, irregular surges. */
-export function billow(
-  dur: number,
-  seed: number,
-  lo = 70.0,
-  hi = 700.0,
-  sd = 3.0,
-): Stereo {
+export function billow(dur: number, seed: number, lo = 70.0, hi = 700.0, sd = 3.0): Stereo {
   const n = nsamp(dur);
   return [0, 1].map((c) => {
     const x = spectral(white(n, seed + c), tilted(lo, hi, 2, 0.5));
@@ -951,24 +825,14 @@ export function billow(
 /** A slab of stone that lands: a deep thud that lasts, the slab cracks, small pieces scatter. */
 export function slabFall(seed: number, size = 1.0, tail = 1.0): Float64Array {
   const hc = heavyCrack(seed, { size, dur: 0.35, kRate: 6, bright: 0.3 });
-  const thud = burst(
-    seed + 5,
-    26.0,
-    95.0,
-    tail * (0.18 + 0.1 * Math.min(size, 2.0)),
-    { rise: 0.006 },
-  );
+  const thud = burst(seed + 5, 26.0, 95.0, tail * (0.18 + 0.1 * Math.min(size, 2.0)), {
+    rise: 0.006,
+  });
   const body = boom(seed + 9, {
     f: 110.0 / Math.max(size, 0.3) ** 0.3,
     tau: tail * (0.28 + 0.12 * Math.min(size, 2.0)),
   });
-  const sc = tumble(
-    0.7,
-    seed + 7,
-    (t) => 16.0 * exp(-t / 0.22),
-    [0.05, 0.15],
-    [2.0, 5.0],
-  );
+  const sc = tumble(0.7, seed + 7, (t) => 16.0 * exp(-t / 0.22), [0.05, 0.15], [2.0, 5.0]);
   const y = zeros(Math.max(hc.length, thud.length, sc.length, body.length));
   addAt(y, hc, 0, 0.6);
   addAt(y, thud, 0, 0.5);
@@ -1007,9 +871,7 @@ export function grind(
 ): Float64Array {
   const r = rng(seed);
   const n = nsamp(dur);
-  const path = irregular(n, seed + 1, 0.7, 5.0).map(
-    (m) => rLo * (rHi / rLo) ** (0.5 + 0.5 * m),
-  );
+  const path = irregular(n, seed + 1, 0.7, 5.0).map((m) => rLo * (rHi / rLo) ** (0.5 + 0.5 * m));
   const y = zeros(n + nsamp(0.1));
   const L = nsamp(0.004);
   let t = r.uniform(0, 0.02);
@@ -1031,23 +893,12 @@ export function grind(
 }
 
 /** A ray that leaves its source: a short tear whose band falls fast. */
-export function lance(
-  seed: number,
-  dur = 0.09,
-  f0 = 6000.0,
-  f1 = 700.0,
-): Stereo {
+export function lance(seed: number, dur = 0.09, f0 = 6000.0, f1 = 700.0): Stereo {
   return bandSweepWide(dur, seed, f0, f1, 1.3, 0.12);
 }
 
 /** A ray that is held: noise in a band whose level moves fast and with no period. */
-export function sear(
-  dur: number,
-  seed: number,
-  lo = 900.0,
-  hi = 6000.0,
-  sd = 4.0,
-): Float64Array {
+export function sear(dur: number, seed: number, lo = 900.0, hi = 6000.0, sd = 4.0): Float64Array {
   const n = nsamp(dur);
   const x = spectral(white(n, seed), tilted(lo, hi, 2, 0.6));
   const g = 1 / Math.sqrt(meanSq(x));
@@ -1078,10 +929,7 @@ export function boom(
     [f, 1.0],
     [0.72 * f, 0.7],
   ] as const) {
-    const ph = cumPhase(
-      (i) => fm * (1.0 - 0.08 * (1 - exp(-i / SR / (0.6 * tau)))),
-      n,
-    );
+    const ph = cumPhase((i) => fm * (1.0 - 0.08 * (1 - exp(-i / SR / (0.6 * tau)))), n);
     const off = r.uniform(0, 6.28);
     for (let i = 0; i < n; i++) md[i] = md[i]! + a * Math.sin(ph[i]! + off);
   }
@@ -1100,11 +948,7 @@ export function rubble(
   dur: number,
   seed: number,
   rate: (t: number) => number,
-  {
-    sizes = [0.3, 1.0] as readonly [number, number],
-    bright = 0.25,
-    body = 0.0,
-  } = {},
+  { sizes = [0.3, 1.0] as readonly [number, number], bright = 0.25, body = 0.0 } = {},
 ): Float64Array {
   const r = rng(seed);
   const n = nsamp(dur);

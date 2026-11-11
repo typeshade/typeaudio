@@ -14,10 +14,10 @@ import {
   spectral,
   white,
   zeros,
-} from "./dsp.ts";
-import type { Path, Stereo, Vec3 } from "./dsp.ts";
-import type { Mix } from "./mix.ts";
-import { hallAir, wideNoise } from "./sources.ts";
+} from './dsp.ts';
+import type { Path, Stereo, Vec3 } from './dsp.ts';
+import type { Mix } from './mix.ts';
+import { hallAir, wideNoise } from './sources.ts';
 
 /** An envelope from (picture seconds, value) points for a layer that starts at t0. */
 export const curve = (
@@ -42,10 +42,7 @@ export function line(
 }
 
 /** Two paths, one after the other. */
-export function concat(
-  p: Exclude<Path, Vec3>,
-  q: Exclude<Path, Vec3>,
-): Exclude<Path, Vec3> {
+export function concat(p: Exclude<Path, Vec3>, q: Exclude<Path, Vec3>): Exclude<Path, Vec3> {
   const join = (a: Float64Array, b: Float64Array) => {
     const y = new Float64Array(a.length + b.length);
     y.set(a);
@@ -56,12 +53,7 @@ export function concat(
 }
 
 /** Steady band noise with short fades: a source whose envelope comes from its path. */
-export function steady(
-  dur: number,
-  seed: number,
-  lo: number,
-  hi: number,
-): Float64Array {
+export function steady(dur: number, seed: number, lo: number, hi: number): Float64Array {
   const n = nsamp(dur);
   return fade(
     spectral(white(n, seed), (f) => bandGain(f, lo, hi, 2)),
@@ -79,17 +71,14 @@ export function fullBed(
   level: number,
   duck: readonly (readonly [number, number])[],
 ): void {
-  const beds: [string, Stereo, number, "a" | "r"][] = [
-    ["bed", hallAir(dur, seed), level, "a"],
-    ["bed-low", wideNoise(dur, seed + 3, 28, 90, 3), -47.0, "r"],
-    ["bed-high", wideNoise(dur, seed + 5, 5000, 12000), level - 9.0, "a"],
+  const beds: [string, Stereo, number, 'a' | 'r'][] = [
+    ['bed', hallAir(dur, seed), level, 'a'],
+    ['bed-low', wideNoise(dur, seed + 3, 28, 90, 3), -47.0, 'r'],
+    ['bed-high', wideNoise(dur, seed + 5, 5000, 12000), level - 9.0, 'a'],
   ];
   for (const [name, sig, tg, kind] of beds) {
     const d = curve(duck, t0, sig[0].length);
-    const s: Stereo = [
-      sig[0].map((v, i) => v * lin(d[i]!)),
-      sig[1].map((v, i) => v * lin(d[i]!)),
-    ];
+    const s: Stereo = [sig[0].map((v, i) => v * lin(d[i]!)), sig[1].map((v, i) => v * lin(d[i]!))];
     m.addWide(name, s, t0, { target: tg, kind });
   }
 }
@@ -123,21 +112,13 @@ export const shapeSt = (x: Stereo, env: Float64Array): Stereo => [
 ];
 
 /** A mono signal times an envelope or a number. */
-export const times = (
-  x: Float64Array,
-  e: Float64Array | number,
-): Float64Array =>
-  typeof e === "number"
-    ? x.map((v) => v * e)
-    : x.map((v, i) => v * (e[i] ?? 0));
+export const times = (x: Float64Array, e: Float64Array | number): Float64Array =>
+  typeof e === 'number' ? x.map((v) => v * e) : x.map((v, i) => v * (e[i] ?? 0));
 
 /** a·x + b·y + ..., each term a (weight, signal); the length of the first. */
-export function sum(
-  ...terms: (readonly [number, Float64Array])[]
-): Float64Array {
+export function sum(...terms: (readonly [number, Float64Array])[]): Float64Array {
   const y = zeros(terms[0]![1].length);
-  for (const [w, x] of terms)
-    addAt(y, x.subarray(0, Math.min(x.length, y.length)), 0, w);
+  for (const [w, x] of terms) addAt(y, x.subarray(0, Math.min(x.length, y.length)), 0, w);
   return y;
 }
 

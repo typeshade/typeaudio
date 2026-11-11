@@ -5,8 +5,8 @@
 // late field, the loudness of ITU-R BS.1770 and the true peak. Each function keeps the name and the
 // arithmetic of the study's, so `test/study.test.ts` can hold it to the study.
 
-import { irfft, rfft, rfftfreq } from "./fft.ts";
-import { Rng, rng } from "./rng.ts";
+import { irfft, rfft, rfftfreq } from './fft.ts';
+import { Rng, rng } from './rng.ts';
 
 export const SR = 48000;
 export const C_AIR = 343.0;
@@ -29,13 +29,11 @@ export function pyRound(x: number): number {
 
 export const nsamp = (seconds: number): number => pyRound(seconds * SR);
 export const lin = (d: number): number => 10 ** (d / 20);
-export const db = (x: number): number =>
-  20 * Math.log10(Math.max(Math.abs(x), 1e-12));
+export const db = (x: number): number => 20 * Math.log10(Math.max(Math.abs(x), 1e-12));
 
 // ---------------------------------------------------------------- arrays
 
-export const zeros = (n: number): Float64Array =>
-  new Float64Array(Math.max(0, n));
+export const zeros = (n: number): Float64Array => new Float64Array(Math.max(0, n));
 export const stereo = (n: number): Stereo => [zeros(n), zeros(n)];
 
 /** numpy's `interp`: x sorted or not, xp increasing; the ends hold their values. */
@@ -108,16 +106,10 @@ export const stdOf = (x: ArrayLike<number>): number => {
   return Math.sqrt(e / x.length);
 };
 
-export const scale = (x: Float64Array, g: number): Float64Array =>
-  x.map((v) => v * g);
+export const scale = (x: Float64Array, g: number): Float64Array => x.map((v) => v * g);
 
 /** y[a:a+len(k)] += k, clipped to y. */
-export function addAt(
-  y: Float64Array,
-  k: ArrayLike<number>,
-  at: number,
-  w = 1,
-): void {
+export function addAt(y: Float64Array, k: ArrayLike<number>, at: number, w = 1): void {
   const s = Math.max(0, at);
   const e = Math.min(y.length, at + k.length);
   for (let i = s; i < e; i++) y[i] = y[i]! + w * k[i - at]!;
@@ -126,10 +118,7 @@ export function addAt(
 // ---------------------------------------------------------------- envelopes
 
 /** A piecewise-linear envelope through (seconds, value) points, n samples. */
-export function envPoints(
-  points: readonly (readonly [number, number])[],
-  n: number,
-): Float64Array {
+export function envPoints(points: readonly (readonly [number, number])[], n: number): Float64Array {
   const ts = points.map((p) => p[0]);
   const vs = points.map((p) => p[1]);
   const y = new Float64Array(n);
@@ -142,8 +131,7 @@ export function fade(x: Float64Array, fin = 0.003, fout = 0.003): Float64Array {
   const half = Math.floor(y.length / 2);
   const a = Math.min(nsamp(fin), half);
   const b = Math.min(nsamp(fout), half);
-  for (let i = 0; i < a; i++)
-    y[i] = y[i]! * (0.5 - 0.5 * Math.cos((Math.PI * i) / a));
+  for (let i = 0; i < a; i++) y[i] = y[i]! * (0.5 - 0.5 * Math.cos((Math.PI * i) / a));
   for (let i = 0; i < b; i++) {
     const j = y.length - b + i;
     y[j] = y[j]! * (0.5 + 0.5 * Math.cos((Math.PI * i) / b));
@@ -182,43 +170,35 @@ export function rbj(kind: string, f0: number, q = 0.7071, gainDb = 0): Section {
   const alpha = sw / (2 * q);
   let b: number[];
   let a: number[];
-  if (kind === "lp") {
+  if (kind === 'lp') {
     b = [(1 - cw) / 2, 1 - cw, (1 - cw) / 2];
     a = [1 + alpha, -2 * cw, 1 - alpha];
-  } else if (kind === "hp") {
+  } else if (kind === 'hp') {
     b = [(1 + cw) / 2, -(1 + cw), (1 + cw) / 2];
     a = [1 + alpha, -2 * cw, 1 - alpha];
-  } else if (kind === "bp") {
+  } else if (kind === 'bp') {
     b = [alpha, 0, -alpha];
     a = [1 + alpha, -2 * cw, 1 - alpha];
-  } else if (kind === "peak") {
+  } else if (kind === 'peak') {
     b = [1 + alpha * A, -2 * cw, 1 - alpha * A];
     a = [1 + alpha / A, -2 * cw, 1 - alpha / A];
-  } else if (kind === "ls" || kind === "hs") {
+  } else if (kind === 'ls' || kind === 'hs') {
     const al = (sw / 2) * Math.sqrt(2.0);
     const r = 2 * Math.sqrt(A) * al;
-    if (kind === "ls") {
+    if (kind === 'ls') {
       b = [
         A * (A + 1 - (A - 1) * cw + r),
         2 * A * (A - 1 - (A + 1) * cw),
         A * (A + 1 - (A - 1) * cw - r),
       ];
-      a = [
-        A + 1 + (A - 1) * cw + r,
-        -2 * (A - 1 + (A + 1) * cw),
-        A + 1 + (A - 1) * cw - r,
-      ];
+      a = [A + 1 + (A - 1) * cw + r, -2 * (A - 1 + (A + 1) * cw), A + 1 + (A - 1) * cw - r];
     } else {
       b = [
         A * (A + 1 + (A - 1) * cw + r),
         -2 * A * (A - 1 + (A + 1) * cw),
         A * (A + 1 + (A - 1) * cw - r),
       ];
-      a = [
-        A + 1 - (A - 1) * cw + r,
-        2 * (A - 1 - (A + 1) * cw),
-        A + 1 - (A - 1) * cw - r,
-      ];
+      a = [A + 1 - (A - 1) * cw + r, 2 * (A - 1 - (A + 1) * cw), A + 1 - (A - 1) * cw - r];
     }
   } else throw new Error(`rbj: no filter "${kind}"`);
   return {
@@ -228,11 +208,7 @@ export function rbj(kind: string, f0: number, q = 0.7071, gainDb = 0): Section {
 }
 
 /** Biquad sections applied exactly: circular convolution with enough zero padding. Keeps the length. */
-export function iir(
-  x: Float64Array,
-  sections: readonly Section[],
-  tail = 0.5,
-): Float64Array {
+export function iir(x: Float64Array, sections: readonly Section[], tail = 0.5): Float64Array {
   const n = x.length;
   const m = n + nsamp(tail);
   const nfft = 2 ** Math.ceil(Math.log2(m));
@@ -265,24 +241,19 @@ export function iir(
   return irfft(re, im, nfft).slice(0, n);
 }
 
-export const iirSt = (
-  x: Stereo,
-  sections: readonly Section[],
-  tail = 0.5,
-): Stereo => [iir(x[0], sections, tail), iir(x[1], sections, tail)];
+export const iirSt = (x: Stereo, sections: readonly Section[], tail = 0.5): Stereo => [
+  iir(x[0], sections, tail),
+  iir(x[1], sections, tail),
+];
 
 export const lp = (x: Float64Array, f: number, q = 0.7071): Float64Array =>
-  iir(x, [rbj("lp", f, q)]);
+  iir(x, [rbj('lp', f, q)]);
 export const hp = (x: Float64Array, f: number, q = 0.7071): Float64Array =>
-  iir(x, [rbj("hp", f, q)]);
-export const bp = (x: Float64Array, f: number, q = 1.0): Float64Array =>
-  iir(x, [rbj("bp", f, q)]);
+  iir(x, [rbj('hp', f, q)]);
+export const bp = (x: Float64Array, f: number, q = 1.0): Float64Array => iir(x, [rbj('bp', f, q)]);
 
 /** Zero-phase magnitude shaping, for stationary noise only. `mag(f)` gives the gain at f Hz. */
-export function spectral(
-  x: Float64Array,
-  mag: (f: number) => number,
-): Float64Array {
+export function spectral(x: Float64Array, mag: (f: number) => number): Float64Array {
   const n = x.length;
   const [re, im] = rfft(x);
   const f = rfftfreq(n, 1 / SR);
@@ -297,11 +268,7 @@ export function spectral(
 /** A smooth band-pass magnitude with Butterworth-like skirts. */
 export function bandGain(f: number, lo: number, hi: number, order = 2): number {
   f = Math.max(f, 1e-3);
-  return (
-    1 /
-    Math.sqrt(1 + (lo / f) ** (2 * order)) /
-    Math.sqrt(1 + (f / hi) ** (2 * order))
-  );
+  return 1 / Math.sqrt(1 + (lo / f) ** (2 * order)) / Math.sqrt(1 + (f / hi) ** (2 * order));
 }
 
 /**
@@ -315,8 +282,7 @@ export function stftShape(
   hop = 256,
 ): Float64Array {
   const win = new Float64Array(nfft);
-  for (let i = 0; i < nfft; i++)
-    win[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / nfft);
+  for (let i = 0; i < nfft; i++) win[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / nfft);
   const n = x.length;
   const xp = new Float64Array(n + 2 * nfft);
   xp.set(x, nfft);
@@ -344,8 +310,7 @@ export function stftShape(
 
 // ---------------------------------------------------------------- sources
 
-export const white = (n: number, seed: number): Float64Array =>
-  rng(seed).normalN(n);
+export const white = (n: number, seed: number): Float64Array => rng(seed).normalN(n);
 
 export const pink = (n: number, seed: number): Float64Array =>
   spectral(white(n, seed), (f) => 1 / Math.sqrt(Math.max(f, 20.0)));
@@ -369,15 +334,13 @@ export function modal(
     const ph = phases ? phases[i]! : 0;
     for (let k = 0; k < m; k++) {
       const t = k / SR;
-      y[k] =
-        y[k]! + a * Math.exp(-t / tau) * Math.sin(2 * Math.PI * f * t + ph);
+      y[k] = y[k]! + a * Math.exp(-t / tau) * Math.sin(2 * Math.PI * f * t + ph);
     }
   }
   return y;
 }
 
-export const tauOf = (f: number, loss: number): number =>
-  1.0 / (Math.PI * f * loss);
+export const tauOf = (f: number, loss: number): number => 1.0 / (Math.PI * f * loss);
 
 /** Convolution with a half-sine force pulse of tc seconds: the hardness of the contact. */
 export function contact(y: Float64Array, tc: number): Float64Array {
@@ -396,11 +359,7 @@ export function contact(y: Float64Array, tc: number): Float64Array {
 }
 
 /** Blast-wave pressure: an instant rise, then (1 - t/t+) exp(-t/t+). */
-export function friedlander(
-  dur: number,
-  tplus: number,
-  rise = 0.000125,
-): Float64Array {
+export function friedlander(dur: number, tplus: number, rise = 0.000125): Float64Array {
   const n = nsamp(dur);
   const y = new Float64Array(n);
   for (let i = 0; i < n; i++) {
@@ -415,18 +374,14 @@ export function friedlander(
 
 export function hann(n: number): Float64Array {
   const y = new Float64Array(n);
-  for (let i = 0; i < n; i++)
-    y[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * (i + 0.5)) / n);
+  for (let i = 0; i < n; i++) y[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * (i + 0.5)) / n);
   return y;
 }
 
 // ---------------------------------------------------------------- space
 
 /** Read x at t - delay(t): the propagation delay, with Doppler when it changes. */
-export function vdelay(
-  x: Float64Array,
-  delaySeconds: (i: number) => number,
-): Float64Array {
+export function vdelay(x: Float64Array, delaySeconds: (i: number) => number): Float64Array {
   const n = x.length;
   const y = new Float64Array(n);
   for (let i = 0; i < n; i++) {
@@ -489,12 +444,12 @@ export class Room {
   /** The first-order image sources of a position. */
   planes(): [string, number, number][] {
     return [
-      ["x0", 0, this.x[0]],
-      ["x1", 0, this.x[1]],
-      ["y0", 1, this.y[0]],
-      ["y1", 1, this.y[1]],
-      ["z0", 2, this.z[0]],
-      ["z1", 2, this.z[1]],
+      ['x0', 0, this.x[0]],
+      ['x1', 0, this.x[1]],
+      ['y0', 1, this.y[0]],
+      ['y1', 1, this.y[1]],
+      ['z0', 2, this.z[0]],
+      ['z1', 2, this.z[1]],
     ];
   }
 }
@@ -506,10 +461,7 @@ export function panGains(az: number): [number, number] {
   return [Math.cos(th), Math.sin(th)];
 }
 
-function pathAxes(
-  pos: Path,
-  n: number,
-): [Float64Array, Float64Array, Float64Array] {
+function pathAxes(pos: Path, n: number): [Float64Array, Float64Array, Float64Array] {
   if (isFixed(pos)) {
     return [
       new Float64Array(n).fill(pos[0]),
@@ -569,18 +521,12 @@ export function place(
       ip[axis] = mirrored;
       const di = new Float64Array(n);
       for (let i = 0; i < n; i++)
-        di[i] = Math.hypot(
-          ip[0][i]! - L[0],
-          ip[1][i]! - L[1],
-          ip[2][i]! - L[2],
-        );
+        di[i] = Math.hypot(ip[0][i]! - L[0], ip[1][i]! - L[1], ip[2][i]! - L[2]);
       const xi = vdelay(x, (i) => (di[i]! - dSync) / C_AIR);
       const beta = room.beta[name]!;
       for (let i = 0; i < n; i++) {
         const gi = (ge * beta) / Math.max(di[i]!, minD);
-        const [l, r] = panGains(
-          Math.atan2(ip[0][i]! - L[0], -(ip[2][i]! - L[2])),
-        );
+        const [l, r] = panGains(Math.atan2(ip[0][i]! - L[0], -(ip[2][i]! - L[2])));
         er[0][i] = er[0][i]! + xi[i]! * gi * l;
         er[1][i] = er[1][i]! + xi[i]! * gi * r;
       }
@@ -593,12 +539,7 @@ export function place(
  * The late field: noise that dies with a decay time for each frequency, a different noise in each
  * ear. For a steady source its power equals the direct power at the room's critical distance.
  */
-export function reverbIr(
-  room: Room,
-  seconds?: number,
-  seed = 11,
-  predelay = 0.03,
-): Stereo {
+export function reverbIr(room: Room, seconds?: number, seed = 11, predelay = 0.03): Stereo {
   const rt = room.rtMid;
   const dur = seconds ?? rt * 1.6;
   const n = nsamp(dur);
@@ -612,10 +553,7 @@ export function reverbIr(
     const w = new Float64Array(n);
     for (let i = 0; i < n; i++) {
       const t = i / SR + predelay;
-      const p = Math.min(
-        1.0,
-        (4 * Math.PI * C_AIR ** 3 * t * t) / room.volume / SR,
-      );
+      const p = Math.min(1.0, (4 * Math.PI * C_AIR ** 3 * t * t) / room.volume / SR);
       w[i] = u[i]! < p ? sgn[i]! / Math.sqrt(p) : 0;
     }
     const y = stftShape(w, (tf, fr, g) => {
@@ -623,14 +561,11 @@ export function reverbIr(
       for (let k = 0; k < fr.length; k++) {
         const f = Math.max(fr[k]!, 20.0);
         const rtf = rt * interp(Math.log2(f), lf, lv);
-        g[k] =
-          Math.exp((-6.908 * tt) / rtf) *
-          (1 / (1 + (fr[k]! / 9000.0) ** 2)) ** 0.5;
+        g[k] = Math.exp((-6.908 * tt) / rtf) * (1 / (1 + (fr[k]! / 9000.0) ** 2)) ** 0.5;
       }
     });
     const k = nsamp(0.012);
-    for (let i = 0; i < k; i++)
-      y[i] = y[i]! * (0.5 - 0.5 * Math.cos((Math.PI * i) / k));
+    for (let i = 0; i < k; i++) y[i] = y[i]! * (0.5 - 0.5 * Math.cos((Math.PI * i) / k));
     const full = new Float64Array(nsamp(predelay) + n);
     full.set(y, nsamp(predelay));
     out.push(full);
@@ -683,8 +618,7 @@ export function loudnessBlocks(
   const k1 = kWeight(x[1]);
   const n = k0.length;
   const c = new Float64Array(n + 1);
-  for (let i = 0; i < n; i++)
-    c[i + 1] = c[i]! + k0[i]! * k0[i]! + k1[i]! * k1[i]!;
+  for (let i = 0; i < n; i++) c[i + 1] = c[i]! + k0[i]! * k0[i]! + k1[i]! * k1[i]!;
   const w = nsamp(window);
   const h = nsamp(hop);
   const last = Math.max(1, n - w + 1);
@@ -745,12 +679,11 @@ export function wav24(x: Stereo): Uint8Array {
   const r = rng(1234);
   const data = new Uint8Array(44 + n * 6);
   const v = new DataView(data.buffer);
-  const str = (o: number, s: string) =>
-    [...s].forEach((ch, i) => (data[o + i] = ch.charCodeAt(0)));
-  str(0, "RIFF");
+  const str = (o: number, s: string) => [...s].forEach((ch, i) => (data[o + i] = ch.charCodeAt(0)));
+  str(0, 'RIFF');
   v.setUint32(4, 36 + n * 6, true);
-  str(8, "WAVE");
-  str(12, "fmt ");
+  str(8, 'WAVE');
+  str(12, 'fmt ');
   v.setUint32(16, 16, true);
   v.setUint16(20, 1, true);
   v.setUint16(22, 2, true);
@@ -758,16 +691,13 @@ export function wav24(x: Stereo): Uint8Array {
   v.setUint32(28, SR * 6, true);
   v.setUint16(32, 6, true);
   v.setUint16(34, 24, true);
-  str(36, "data");
+  str(36, 'data');
   v.setUint32(40, n * 6, true);
   let o = 44;
   for (let i = 0; i < n; i++)
     for (let c = 0; c < 2; c++) {
       const d = (r.next() - r.next()) / full;
-      const q = Math.max(
-        -full - 1,
-        Math.min(full, Math.round((x[c]![i]! + d) * full)),
-      );
+      const q = Math.max(-full - 1, Math.min(full, Math.round((x[c]![i]! + d) * full)));
       const u = q < 0 ? q + 16777216 : q;
       data[o++] = u & 0xff;
       data[o++] = (u >> 8) & 0xff;

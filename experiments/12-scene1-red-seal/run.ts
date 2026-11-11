@@ -2,12 +2,15 @@
 //
 //   bun experiments/12-scene1-red-seal/run.ts red   [--out dir] [--against r11.wav]
 //   bun experiments/12-scene1-red-seal/run.ts scene [--out dir]
+//   bun experiments/12-scene1-red-seal/run.ts red --parity study-red.f64
 //
 // `red` is the study's red passage (20.0 to 30.0 s, 2.5 s of tail). `scene` is scene 1, the red
 // seal, 0.0 to 29.5 s. Each writes a 24-bit stereo WAV at 48 kHz and a JSON of its layers. With
-// `--against`, `red` is measured against another render of the passage (`measure.ts`).
+// `--against`, `red` is measured against another render of the passage (`measure.ts`). With
+// `--parity`, it is compared sample by sample with the study's render of the same passage with the
+// shared generator (`parity/render_shared.py`).
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { integratedLufs, truePeakDb, wav24, type Stereo } from '../../src/study/dsp.ts';
@@ -61,3 +64,22 @@ console.log(
 );
 const against = arg('against');
 if (against && what === 'red') console.log(report(compare(y, readWav(against)), 'engine', 'study'));
+const parity = arg('parity');
+if (parity) {
+  const b = readFileSync(parity);
+  const study = new Float64Array(b.buffer, b.byteOffset, b.byteLength / 8);
+  const n = y[0].length;
+  let worst = 0;
+  let e = 0;
+  let d = 0;
+  for (let c = 0; c < 2; c++)
+    for (let i = 0; i < n; i++) {
+      const s = study[c * n + i]!;
+      worst = Math.max(worst, Math.abs(y[c]![i]! - s));
+      e += s * s;
+      d += (y[c]![i]! - s) ** 2;
+    }
+  console.log(
+    `parity with the study's render: largest difference ${worst.toExponential(2)}, the difference ${(10 * Math.log10(d / e)).toFixed(1)} dB under the signal`,
+  );
+}

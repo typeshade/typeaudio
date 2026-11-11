@@ -253,10 +253,7 @@ function bluestein(
 }
 
 /** numpy's `rfft(x, n)`: the first n / 2 + 1 bins of the transform of x, cut or padded to n. */
-export function rfft(
-  x: ArrayLike<number>,
-  n = x.length,
-): [Float64Array, Float64Array] {
+export function rfft(x: ArrayLike<number>, n = x.length): [Float64Array, Float64Array] {
   const re = new Float64Array(n);
   const m = Math.min(n, x.length);
   for (let i = 0; i < m; i++) re[i] = x[i]!;
@@ -266,11 +263,7 @@ export function rfft(
 }
 
 /** numpy's `irfft(X, n)`: the real signal of n samples whose half spectrum is X. */
-export function irfft(
-  re: Float64Array,
-  im: Float64Array,
-  n: number,
-): Float64Array {
+export function irfft(re: Float64Array, im: Float64Array, n: number): Float64Array {
   const h = Math.floor(n / 2) + 1;
   const fr = new Float64Array(n);
   const fi = new Float64Array(n);

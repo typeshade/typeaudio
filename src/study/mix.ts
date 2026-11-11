@@ -25,22 +25,21 @@ import {
   type Path,
   type Stereo,
   type Vec3,
-} from "./dsp.ts";
+} from './dsp.ts';
 
-export type Meter = "m" | "i" | "s" | "a" | "r";
+export type Meter = 'm' | 'i' | 's' | 'a' | 'r';
 
 /**
  * The loudness of a stereo layer: 'm' the highest momentary (0.4 s), 'i' the highest over 0.1 s,
  * 's' the highest short-term (3 s), 'a' the average over the active part, 'r' unweighted RMS in dBFS.
  */
 export function meter(st: Stereo, kind: Meter): number {
-  if (kind === "r" || kind === "a") {
-    const [l, r] = kind === "a" ? [kWeight(st[0]), kWeight(st[1])] : st;
+  if (kind === 'r' || kind === 'a') {
+    const [l, r] = kind === 'a' ? [kWeight(st[0]), kWeight(st[1])] : st;
     const n = l.length;
     const p = new Float64Array(n);
     let pmax = 0;
-    for (let i = 0; i < n; i++)
-      pmax = Math.max(pmax, (p[i] = l[i]! * l[i]! + r[i]! * r[i]!));
+    for (let i = 0; i < n; i++) pmax = Math.max(pmax, (p[i] = l[i]! * l[i]! + r[i]! * r[i]!));
     let s = 0;
     let c = 0;
     for (let i = 0; i < n; i++)
@@ -49,7 +48,7 @@ export function meter(st: Stereo, kind: Meter): number {
         c++;
       }
     const mean = s / c;
-    return kind === "r"
+    return kind === 'r'
       ? 10 * Math.log10(Math.max(mean / 2, 1e-12))
       : -0.691 + 10 * Math.log10(Math.max(mean, 1e-12));
   }
@@ -151,6 +150,8 @@ export class Mix {
   readonly layers = new Map<string, Layer>();
   readonly order: string[] = [];
   driveDb = 0;
+  /** A layer that starts at or after this picture second is left out (the end of a scene). */
+  until = Infinity;
   afterDb: readonly (readonly [number, number])[] | undefined;
   masterGainDb = 0;
   limitDb = 0;
@@ -172,7 +173,7 @@ export class Mix {
   }
 
   positions(pos: Where, t: number, n: number): Path {
-    if (!Array.isArray(pos) || typeof pos[0] === "number") return pos as Path;
+    if (!Array.isArray(pos) || typeof pos[0] === 'number') return pos as Path;
     const keys = pos as readonly (readonly [number, Vec3])[];
     const ts = keys.map((k) => k[0]);
     const axes = [0, 1, 2].map((c) => {
@@ -184,10 +185,7 @@ export class Mix {
     return { x: axes[0]!, y: axes[1]!, z: axes[2]! };
   }
 
-  private fit(
-    x: Float64Array,
-    s: number,
-  ): { start: number; data: Float32Array } {
+  private fit(x: Float64Array, s: number): { start: number; data: Float32Array } {
     const a = Math.max(s, 0);
     const b = Math.min(this.n, s + x.length);
     const data = new Float32Array(Math.max(0, b - a));
@@ -202,20 +200,18 @@ export class Mix {
     t: number,
     opts: AddOptions,
   ): void {
-    const wet: Stereo =
-      send !== null ? convolve(send, this.ir) : stereo(dry[0].length);
+    const wet: Stereo = send !== null ? convolve(send, this.ir) : stereo(dry[0].length);
     const m = Math.max(dry[0].length, wet[0].length);
     const full = stereo(m);
     const d = stereo(m);
     for (let c = 0; c < 2; c++) {
       full[c].set(dry[c]);
       d[c].set(dry[c]);
-      for (let i = 0; i < wet[c].length; i++)
-        full[c][i] = full[c][i]! + wet[c][i]!;
+      for (let i = 0; i < wet[c].length; i++) full[c][i] = full[c][i]! + wet[c][i]!;
     }
     let g = lin(opts.gainDb ?? 0);
     const target = opts.target ?? null;
-    const kind = opts.kind ?? "m";
+    const kind = opts.kind ?? 'm';
     if (target !== null) g *= lin(target - meter(full, kind));
     const s = nsamp(t - this.t0);
     const dl = this.fit(
@@ -247,13 +243,8 @@ export class Mix {
   }
 
   /** A mono source at a place in the hall. */
-  add(
-    name: string,
-    sig: Float64Array,
-    t: number,
-    pos: Where,
-    opts: AddOptions = {},
-  ): void {
+  add(name: string, sig: Float64Array, t: number, pos: Where, opts: AddOptions = {}): void {
+    if (t >= this.until) return;
     const P = this.positions(pos, t, sig.length);
     const [d, er] = place(
       sig,
@@ -272,18 +263,11 @@ export class Mix {
 
   /** A stereo source with no place, as wide as it was made. */
   addWide(name: string, sig: Stereo, t: number, opts: AddOptions = {}): void {
+    if (t >= this.until) return;
     const sendDb = opts.sendDb ?? null;
     const send =
-      sendDb !== null
-        ? sig[0].map((v, i) => ((v + sig[1][i]!) / 2) * lin(sendDb))
-        : null;
-    this.store(
-      name,
-      [Float64Array.from(sig[0]), Float64Array.from(sig[1])],
-      send,
-      t,
-      opts,
-    );
+      sendDb !== null ? sig[0].map((v, i) => ((v + sig[1][i]!) / 2) * lin(sendDb)) : null;
+    this.store(name, [Float64Array.from(sig[0]), Float64Array.from(sig[1])], send, t, opts);
   }
 
   /** A layer over the whole mix, its room included. */
@@ -298,8 +282,7 @@ export class Mix {
       const dry = l.dry[c]!;
       const wet = l.wet[c]!;
       const o = out[c]!;
-      for (let i = 0; i < dry.length; i++)
-        o[l.start + i] = o[l.start + i]! + (dry[i]! + wet[i]!);
+      for (let i = 0; i < dry.length; i++) o[l.start + i] = o[l.start + i]! + (dry[i]! + wet[i]!);
     }
   }
 
@@ -311,8 +294,8 @@ export class Mix {
     let mix = stereo(this.n);
     for (const name of this.order) this.addLayer(mix, this.layers.get(name)!);
     mix = [
-      iir(mix[0], [rbj("hp", 27.0, 0.7071)], 0.5),
-      iir(mix[1], [rbj("hp", 27.0, 0.7071)], 0.5),
+      iir(mix[0], [rbj('hp', 27.0, 0.7071)], 0.5),
+      iir(mix[1], [rbj('hp', 27.0, 0.7071)], 0.5),
     ];
     const tp = truePeakDb(mix);
     this.masterGainDb = peakDbtp - tp;
@@ -326,9 +309,7 @@ export class Mix {
       const dg = lin(drive);
       const driven: Stereo = [y[0].map((v) => v * dg), y[1].map((v) => v * dg)];
       const gain = limiter(driven, c * lin(4.0), 0.004, 0.06);
-      y = driven.map((ch) =>
-        ch.map((v, i) => c * Math.tanh((v * gain[i]!) / c)),
-      ) as Stereo;
+      y = driven.map((ch) => ch.map((v, i) => c * Math.tanh((v * gain[i]!) / c))) as Stereo;
       const g2 = lin(peakDbtp - truePeakDb(y));
       y = [y[0].map((v) => v * g2), y[1].map((v) => v * g2)];
       let gmin = Infinity;
