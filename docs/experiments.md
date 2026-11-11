@@ -1071,7 +1071,7 @@ level is no target. The low tail at the start of the overlap was not traced to i
   stops (31.93, 32.08, 32.77, 32.89 s) is the stone's thud with its attack taken by the field (low
   passed at 1.4 kHz and softened over 8 ms), the field's own resonance from 120 to 420 Hz, a crackle
   of its surface and a chip that flies off. The blooms rise 7 to 8 dB over the 0.15 s before
-  them; the stones lie at -15.5 to -17 dB over 0.15 s, 0 to 3 dB over the bloom they follow.
+  them; the stones lie at -15.5 to -17 dB over 0.15 s, 0 to 4 dB over the bloom they follow.
 - The forming of the giant. It was one wash of roll, groan and grind from 33.58 to 41.5 s. Now 11
   blocks slide and seat in sequence from 37.9 to 40.2 s: a scrape that grows, the seat in the timbre
   of the accepted landing (`slab_fall`) with a deep clunk, some overlapping; two groans of the body;
