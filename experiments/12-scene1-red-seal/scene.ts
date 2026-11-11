@@ -53,6 +53,7 @@ import {
   ticks,
   times,
 } from '../../src/study/passage.ts';
+import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
 import * as S from '../../src/study/sources.ts';
 import { redLayers } from './red.ts';
 
@@ -1773,6 +1774,17 @@ function replaceRed(m: Mix): void {
   }
 }
 
+/**
+ * The presence pass (`src/study/presence.ts`): the main events get the body of 120 Hz to 2 kHz.
+ * The hole's voice and body, the orb, every stone that strikes, lands, grinds or breaks, the shell,
+ * the lock, the rays and the ice; not the air, the wind, the dust or the tears of passing stones.
+ */
+const MAIN =
+  /^(hole-(swallow|growl|mana|ring|core|roar|pressure)|orb-(body|voice|flight|approach|far|form)|launch|block-|leap-hit\d+$|tear-hit\d+$|drag-\d+-arrive|pile-|gather-grind|clump-grind|face-(grind|groan)|flame-(close|crumble|cracks)|shell|crack-|release|lock|ray-(hit|sear|lance|stone\d+$)|rock-burst-stone|wall-stones|spark-hit|ice-(boom|crack|crush|slab|groan)|whip|target-strike)/;
+function presence1(_m: Mix, name: string, l: Layer): void {
+  if (MAIN.test(name)) body(l);
+}
+
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
 export function scene(): Mix {
   const m = new Mix('scene1', 0.0, SCENE_END, 1.5);
@@ -1805,7 +1817,11 @@ export function scene(): Mix {
   gathering(m);
   m.eachLayer('carve', carve);
   m.eachLayer('fore-hole', foreHole);
+  m.eachLayer('presence', presence1);
   m.driveDb = 8.8;
+  // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
+  m.lift = LIFT;
+  m.ceilingDb = CEILING_DBTP;
   // review 3: 1 dB less into the master where the black hole is near, so the soft clip's final trim
   // of the true peak no longer lowers the whole scene; the landings lie within 0.2 dB of review 0
   m.beforeDb = [
