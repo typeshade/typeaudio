@@ -18,8 +18,8 @@ import {
   type Stereo,
   type Vec3,
   stftShape,
-} from "../../src/study/dsp.ts";
-import { Mix } from "../../src/study/mix.ts";
+} from '../../src/study/dsp.ts';
+import { Mix } from '../../src/study/mix.ts';
 import {
   concat,
   curve,
@@ -31,8 +31,8 @@ import {
   sum,
   ticks,
   times,
-} from "../../src/study/passage.ts";
-import * as S from "../../src/study/sources.ts";
+} from '../../src/study/passage.ts';
+import * as S from '../../src/study/sources.ts';
 
 // the anchors of the picture study (frame-accurate)
 export const RED_FRACTURE = 25.692333;
@@ -46,7 +46,7 @@ const len = (x: { length: number }) => x.length;
 
 /** The red passage as the study's `red()` builds it. */
 export function red(): Mix {
-  const m = new Mix("red", 20.0, 30.0);
+  const m = new Mix('red', 20.0, 30.0);
   fullBed(m, T0, 12.5, 101, -41.0, [
     [20, 0],
     [24.7, 0],
@@ -58,28 +58,24 @@ export function red(): Mix {
 
   // 20.00 to 22.30: the camera flies with the orb. The orb stays in front of us; rocks pass on both sides.
   const n = nsamp(22.3 - T0);
-  let [rumble, roar, crackle] = S.redMaterial(
-    n,
-    new Float64Array(n).fill(0.15),
-    111,
-  );
+  let [rumble, roar, crackle] = S.redMaterial(n, new Float64Array(n).fill(0.15), 111);
   m.add(
-    "orb-flight",
+    'orb-flight',
     fade(sum([0.8, rumble], [1.0, roar], [0.4, crackle]), 0.03, 0.01),
     T0,
     [0.0, 1.5, -3.0],
     {
       target: -21.5,
-      kind: "m",
+      kind: 'm',
       sendDb: -12,
     },
   );
   const rush = S.wind(22.3 - T0, 114, 150, 1500);
   m.addWide(
-    "flight-air",
+    'flight-air',
     shapeSt(rush, fade(new Float64Array(len(rush[0])).fill(1), 0.03, 0.01)),
     T0,
-    { target: -25, kind: "m" },
+    { target: -25, kind: 'm' },
   );
   const passes: [number, number, number, number][] = [
     [20.15, -1, 2.2, -26],
@@ -102,7 +98,7 @@ export function red(): Mix {
     );
     m.add(`rock-pass${i}`, src, t - 0.18, P, {
       target: tg,
-      kind: "i",
+      kind: 'i',
       sendDb: -10,
     });
   });
@@ -112,88 +108,70 @@ export function red(): Mix {
   const hit1 = zeros(nsamp(0.6));
   addAt(hit1, S.norm(S.stoneImpact(0.35, 14.0, r)), 0);
   addAt(hit1, S.sizzle(0.6, 121, 0.12), 0, 0.3);
-  m.add("spark-hit1", hit1, 21.12, [0.3, 1.5, -3.0], {
+  m.add('spark-hit1', hit1, 21.12, [0.3, 1.5, -3.0], {
     target: -19,
-    kind: "i",
+    kind: 'i',
     sendDb: -6,
   });
   const hit2 = zeros(nsamp(0.7));
   addAt(hit2, S.norm(S.stoneImpact(0.5, 16.0, r)), 0);
   addAt(
     hit2,
-    S.heavyCrack(122, { size: 0.5, dur: 0.3, kRate: 8 }).subarray(
-      0,
-      hit2.length,
-    ),
+    S.heavyCrack(122, { size: 0.5, dur: 0.3, kRate: 8 }).subarray(0, hit2.length),
     0,
     0.6,
   );
   addAt(hit2, S.sizzle(0.7, 123, 0.16), 0, 0.35);
-  m.add("spark-hit2", hit2, 21.8, [-0.2, 1.5, -3.0], {
+  m.add('spark-hit2', hit2, 21.8, [-0.2, 1.5, -3.0], {
     target: -16,
-    kind: "i",
+    kind: 'i',
     sendDb: -6,
   });
   const rb = S.norm(S.rockFall(0.35, 1.5, 124));
-  addAt(
-    rb,
-    S.heavyCrack(126, { size: 0.7, dur: 0.4, kRate: 8 }).subarray(0, rb.length),
-    0,
-    0.9,
-  );
-  m.add("rock-burst", rb, 21.98, [-0.8, 1.2, -1.5], {
+  addAt(rb, S.heavyCrack(126, { size: 0.7, dur: 0.4, kRate: 8 }).subarray(0, rb.length), 0, 0.9);
+  m.add('rock-burst', rb, 21.98, [-0.8, 1.2, -1.5], {
     target: -16,
-    kind: "i",
+    kind: 'i',
     sendDb: -6,
   });
 
   // 22.31 to 22.78: close on the flame as it tears through stone
   const n2 = nsamp(22.79 - 22.31);
-  [rumble, roar, crackle] = S.redMaterial(
-    n2,
-    new Float64Array(n2).fill(0.35),
-    115,
-  );
+  [rumble, roar, crackle] = S.redMaterial(n2, new Float64Array(n2).fill(0.35), 115);
   m.add(
-    "flame-close",
+    'flame-close',
     fade(sum([0.8, rumble], [1.0, roar], [0.4, crackle]), 0.008, 0.01),
     22.31,
     [0.6, 1.2, -1.4],
     {
       target: -18.5,
-      kind: "m",
+      kind: 'm',
       sendDb: -12,
     },
   );
-  m.add(
-    "flame-crumble",
-    fade(S.gravel(22.79 - 22.31, 116), 0.008, 0.01),
-    22.31,
-    [1.0, 0.8, -2.0],
-    { target: -22, kind: "m", sendDb: -8 },
-  );
-  // 22.80 to 23.02: the camera whips
-  m.addWide("whip", S.bandSweepWide(0.22, 117, 400, 3000), 22.8, {
+  m.add('flame-crumble', fade(S.gravel(22.79 - 22.31, 116), 0.008, 0.01), 22.31, [1.0, 0.8, -2.0], {
     target: -22,
-    kind: "i",
+    kind: 'm',
+    sendDb: -8,
+  });
+  // 22.80 to 23.02: the camera whips
+  m.addWide('whip', S.bandSweepWide(0.22, 117, 400, 3000), 22.8, {
+    target: -22,
+    kind: 'i',
   });
 
   // 23.06 to 23.77: wide; the red core is far, and the stone of the hall is pulled to it
   const rrG = rng(127);
   const n3 = nsamp(23.76 - 23.06);
-  [rumble, roar, crackle] = S.redMaterial(
-    n3,
-    new Float64Array(n3).fill(0.3),
-    118,
-  );
+  [rumble, roar, crackle] = S.redMaterial(n3, new Float64Array(n3).fill(0.3), 118);
   m.add(
-    "orb-far",
+    'orb-far',
     fade(sum([0.8, rumble], [1.0, roar], [0.3, crackle]), 0.01, 0.01),
     23.06,
     line([2.0, 3.0, -10.0], [0.0, 2.0, -9.0], n3),
     {
       target: -26,
-      kind: "m",
+      kind: 'm',
       sendDb: -4,
     },
   );
@@ -208,9 +186,9 @@ export function red(): Mix {
   }
   (
     [
-      ["l", -4.5],
-      ["c", 0.0],
-      ["r", 4.5],
+      ['l', -4.5],
+      ['c', 0.0],
+      ['r', 4.5],
     ] as const
   ).forEach(([side, x0], idx) => {
     const mine = gt.filter((_, k) => k % 3 === idx);
@@ -219,17 +197,14 @@ export function red(): Mix {
       (i) => {
         const size = rrG.uniform(0.35, 1.0);
         const v = rrG.uniform(6.0, 11.0);
-        return times(
-          S.blockHit(500 + 7 * i + idx, size, v),
-          0.5 + (0.5 * mine[i]!) / 0.7,
-        );
+        return times(S.blockHit(500 + 7 * i + idx, size, v), 0.5 + (0.5 * mine[i]!) / 0.7);
       },
       1.5,
     );
     const P = line([x0, 1.0 + Math.abs(x0) * 0.4, -8.0], core, cl.length);
     m.add(`clump-${side}`, cl, 23.06, P, {
       target: -19,
-      kind: "i",
+      kind: 'i',
       focusDb: 4,
       sendDb: -4,
     });
@@ -246,25 +221,23 @@ export function red(): Mix {
     const src = steady(0.26, 520 + i, 150, 2500);
     m.add(`pull${i}`, src, tt, line(a, core, src.length), {
       target: -26,
-      kind: "i",
+      kind: 'i',
       sendDb: -8,
     });
   });
   const g0 = S.grind(0.52, 526);
   const gr = times(g0, linspace(0.3, 1.0, S.grind(0.52, 526).length));
-  m.add("clump-grind", gr, 23.26, core, {
+  m.add('clump-grind', gr, 23.26, core, {
     target: -22,
-    kind: "m",
+    kind: 'm',
     focusDb: 4,
     sendDb: -4,
   });
-  m.add(
-    "target-strike",
-    S.burst(129, 35, 140, 0.08, { rise: 0.004 }),
-    23.7,
-    [0.0, 2.0, -9.0],
-    { target: -22, kind: "i", focusDb: 4 },
-  );
+  m.add('target-strike', S.burst(129, 35, 140, 0.08, { rise: 0.004 }), 23.7, [0.0, 2.0, -9.0], {
+    target: -22,
+    kind: 'i',
+    focusDb: 4,
+  });
 
   // 23.81 to 24.65: close on red cracks that spread across the stone
   let span = 24.65 - 23.81;
@@ -282,9 +255,9 @@ export function red(): Mix {
   };
   const crack = ticks(tt, oneCrack, span + 0.4);
   const close: Vec3 = [0.3, 1.4, -1.6];
-  m.add("crack-spread", crack, 23.81, close, {
+  m.add('crack-spread', crack, 23.81, close, {
     target: -21,
-    kind: "i",
+    kind: 'i',
     sendDb: -8,
   });
   // the plates of stone lock into one another: five heavy seatings, and the grind between them
@@ -299,13 +272,13 @@ export function red(): Mix {
   ).forEach(([tl, size, x], i) => {
     m.add(`lock${i}`, S.blockHit(530 + i, size, 5.0), tl, [x, 1.3, -1.7], {
       target: -18,
-      kind: "i",
+      kind: 'i',
       sendDb: -8,
     });
   });
   const gc = S.grind(0.62, 536);
   m.add(
-    "lock-grind",
+    'lock-grind',
     times(
       gc,
       curve(
@@ -320,7 +293,7 @@ export function red(): Mix {
     ),
     23.81,
     [0.2, 1.2, -1.5],
-    { target: -21, kind: "m", sendDb: -8 },
+    { target: -21, kind: 'm', sendDb: -8 },
   );
   (
     [
@@ -330,24 +303,24 @@ export function red(): Mix {
   ).forEach(([tl, d], i) =>
     m.add(`lock-creak${i}`, S.groan(d, 538 + i), tl, close, {
       target: -27,
-      kind: "m",
+      kind: 'm',
       sendDb: -8,
     }),
   );
   const n4 = nsamp(span);
   crackle = S.redMaterial(n4, new Float64Array(n4).fill(0.6), 131)[2];
-  m.add("crack-energy", fade(crackle, 0.005, 0.01), 23.81, close, {
+  m.add('crack-energy', fade(crackle, 0.005, 0.01), 23.81, close, {
     target: -25,
-    kind: "m",
+    kind: 'm',
     sendDb: -8,
   });
   const groan = times(
     spectral(white(n4, 132), (f) => bandGain(f, 180, 420, 3)),
     linspace(0.4, 1.0, n4),
   );
-  m.add("crack-groan", fade(groan, 0.005, 0.01), 23.81, close, {
+  m.add('crack-groan', fade(groan, 0.005, 0.01), 23.81, close, {
     target: -26,
-    kind: "m",
+    kind: 'm',
     sendDb: -8,
   });
 
@@ -375,13 +348,12 @@ export function red(): Mix {
     24.75,
     n5,
   );
-  m.add(
-    "shell",
-    times(sum([0.8, rumble], [1.0, roar], [0.3, crackle]), src),
-    24.75,
-    far,
-    { target: -23.5, kind: "m", focusDb: 4, sendDb: -2 },
-  );
+  m.add('shell', times(sum([0.8, rumble], [1.0, roar], [0.3, crackle]), src), 24.75, far, {
+    target: -23.5,
+    kind: 'm',
+    focusDb: 4,
+    sendDb: -2,
+  });
   span = RED_FRACTURE - 24.75;
   const c = 0.03;
   const cnt = rr.poisson(7 * Math.log((span + c) / c));
@@ -394,16 +366,13 @@ export function red(): Mix {
     (i) => {
       const size = rr.uniform(0.2, 0.5);
       const k = S.stoneCrack(rr, size, 0.3);
-      return times(
-        times(k, 0.35 + 0.65 * (strainT[i]! / span) ** 2),
-        rr.uniform(0.6, 1.0),
-      );
+      return times(times(k, 0.35 + 0.65 * (strainT[i]! / span) ** 2), rr.uniform(0.6, 1.0));
     },
     span + 0.4,
   );
-  m.add("shell-strain", strain, 24.75, far, {
+  m.add('shell-strain', strain, 24.75, far, {
     target: -25,
-    kind: "i",
+    kind: 'i',
     focusDb: 4,
     sendDb: -3,
   });
@@ -415,7 +384,7 @@ export function red(): Mix {
   ).forEach(([tl, d], i) =>
     m.add(`shell-groan${i}`, S.groan(d, 136 + i), tl, far, {
       target: -27,
-      kind: "m",
+      kind: 'm',
       focusDb: 4,
       sendDb: -3,
     }),
@@ -423,24 +392,22 @@ export function red(): Mix {
 
   // the shell fractures; the pressure leaves two frames later as a violet burst
   m.add(
-    "shell-fracture",
+    'shell-fracture',
     S.heavyCrack(140, { size: 1.0, dur: 0.4, kRate: 10, bright: 0.8 }),
     RED_FRACTURE,
     far,
     {
       target: -21,
-      kind: "i",
+      kind: 'i',
       focusDb: 8,
     },
   );
   const [front, low, slp] = S.whump(141, 0.0035, 0.6);
-  m.add(
-    "release",
-    S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])),
-    RED_RELEASE,
-    far,
-    { target: -12, kind: "i", focusDb: 10 },
-  );
+  m.add('release', S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])), RED_RELEASE, far, {
+    target: -12,
+    kind: 'i',
+    focusDb: 10,
+  });
   const nw = nsamp(1.6);
   const env = new Float64Array(nw).map((_, i) => Math.exp(-i / SR / 0.35));
   const k4 = nsamp(0.004);
@@ -450,42 +417,38 @@ export function red(): Mix {
     stftShape(white(nw, 150 + ch), (tf, fr, g) => {
       const fcn = 300 + 1500 * Math.exp(-Math.max(tf, 0) / 0.16);
       for (let k = 0; k < fr.length; k++)
-        g[k] = Math.exp(
-          -0.5 * (Math.log2(Math.max(fr[k]!, 1) / fcn) / 1.0) ** 2,
-        );
+        g[k] = Math.exp(-0.5 * (Math.log2(Math.max(fr[k]!, 1) / fcn) / 1.0) ** 2);
     }),
   ) as Stereo;
-  m.addWide("release-wash", shapeSt(wash, env), RED_RELEASE, {
+  m.addWide('release-wash', shapeSt(wash, env), RED_RELEASE, {
     target: -17,
-    kind: "i",
+    kind: 'i',
     sendDb: -3,
   });
 
   // The ice, read again from the frames (round 10).
   const fig: Vec3 = [0.0, 1.4, -4.0];
   const wall: Vec3 = [0.0, 2.0, -5.0];
-  m.add(
-    "ice-boom",
-    S.boom(160, { f: 88.0, tau: 0.16 }),
-    ICE,
-    [0.0, 0.5, -4.5],
-    { target: -10, kind: "i", sendDb: -8 },
-  );
+  m.add('ice-boom', S.boom(160, { f: 88.0, tau: 0.16 }), ICE, [0.0, 0.5, -4.5], {
+    target: -10,
+    kind: 'i',
+    sendDb: -8,
+  });
   const ic = S.heavyCrack(161, {
     size: 1.6,
     dur: 0.22,
     kRate: 14,
     bright: 0.8,
   });
-  m.add("ice-crack", ic, ICE, fig, {
+  m.add('ice-crack', ic, ICE, fig, {
     target: -11,
-    kind: "i",
+    kind: 'i',
     focusDb: 2,
     sendDb: -6,
   });
-  m.add("ice-slap", S.slap(ic, 800), ICE + 0.26, [0.0, 3.0, -15.0], {
+  m.add('ice-slap', S.slap(ic, 800), ICE + 0.26, [0.0, 3.0, -15.0], {
     target: -23,
-    kind: "i",
+    kind: 'i',
     focusDb: 6,
   });
   let up = S.bandSweepWide(0.2, 169, 350, 3800, 1.5, 0.5);
@@ -515,9 +478,9 @@ export function red(): Mix {
   const zz = zeros(up[0].length);
   zz.set(zn.subarray(0, Math.min(zn.length, zz.length)));
   up = up.map((ch) => ch.map((v, i) => (0.6 * v) / upPeak + zz[i]!)) as Stereo;
-  m.addWide("ice-rise", up, ICE - 0.005, {
+  m.addWide('ice-rise', up, ICE - 0.005, {
     target: -14,
-    kind: "i",
+    kind: 'i',
     sendDb: -4,
   });
   // the slabs come at irregular times: equal steps of 40 ms would be a rattle at 25 Hz
@@ -538,7 +501,7 @@ export function red(): Mix {
       pos,
       {
         target: -18,
-        kind: "i",
+        kind: 'i',
         focusDb: 2,
         sendDb: -6,
       },
@@ -565,21 +528,19 @@ export function red(): Mix {
       [[2.6, 2.6, -5.5], 380.0, 1700.0],
     ] as [Vec3, number, number][]
   ).forEach(([pos, lo, hi], i) => {
-    m.add(
-      `block-press${i}`,
-      times(S.sear(0.36, 190 + i, lo, hi, 5.0), benv),
-      ICE,
-      pos,
-      { target: -18, kind: "m", focusDb: 3, sendDb: -8 },
-    );
+    m.add(`block-press${i}`, times(S.sear(0.36, 190 + i, lo, hi, 5.0), benv), ICE, pos, {
+      target: -18,
+      kind: 'm',
+      focusDb: 3,
+      sendDb: -8,
+    });
   });
-  m.add(
-    "block-hiss",
-    times(S.sear(0.36, 197, 2500.0, 9000.0, 6.0), benv),
-    ICE,
-    wall,
-    { target: -27, kind: "m", focusDb: 3, sendDb: -8 },
-  );
+  m.add('block-hiss', times(S.sear(0.36, 197, 2500.0, 9000.0, 6.0), benv), ICE, wall, {
+    target: -27,
+    kind: 'm',
+    focusDb: 3,
+    sendDb: -8,
+  });
   const fz = ICE_FLASH - ICE;
   const ft = rr.uniformN(0.02, fz, 9).sort();
   const fis = ticks(
@@ -590,9 +551,9 @@ export function red(): Mix {
     },
     fz + 0.3,
   );
-  m.add("block-fissure", fis, ICE, wall, {
+  m.add('block-fissure', fis, ICE, wall, {
     target: -19,
-    kind: "i",
+    kind: 'i',
     focusDb: 3,
     sendDb: -6,
   });
@@ -604,19 +565,17 @@ export function red(): Mix {
     [S.boom(194, { f: 92.0, tau: 0.55 }), 1.3],
   ] as const)
     addAt(brk, k.subarray(0, brk.length), 0, w);
-  m.add("block-break", S.norm(brk), ICE_FLASH, wall, {
+  m.add('block-break', S.norm(brk), ICE_FLASH, wall, {
     target: -8,
-    kind: "i",
+    kind: 'i',
     focusDb: 3,
     sendDb: -3,
   });
-  m.add(
-    "block-slap",
-    S.slap(S.norm(brk), 900),
-    ICE_FLASH + 0.2,
-    [0.0, 3.0, -15.0],
-    { target: -22, kind: "i", focusDb: 6 },
-  );
+  m.add('block-slap', S.slap(S.norm(brk), 900), ICE_FLASH + 0.2, [0.0, 3.0, -15.0], {
+    target: -22,
+    kind: 'i',
+    focusDb: 6,
+  });
   // the ice that the rays broke is crushed: bright, with no pitch
   (
     [
@@ -624,13 +583,11 @@ export function red(): Mix {
       [2.2, 2.5, -5.5],
     ] as Vec3[]
   ).forEach((pos, i) =>
-    m.add(
-      `ice-crush${i}`,
-      S.crush(0.9, 187 + i, 0.14),
-      ICE_FLASH + 0.004 + 0.03 * i,
-      pos,
-      { target: -17, kind: "i", focusDb: 2 },
-    ),
+    m.add(`ice-crush${i}`, S.crush(0.9, 187 + i, 0.14), ICE_FLASH + 0.004 + 0.03 * i, pos, {
+      target: -17,
+      kind: 'i',
+      focusDb: 2,
+    }),
   );
   // one frame later what is left of the rays flies off to the sides and up
   (
@@ -646,7 +603,7 @@ export function red(): Mix {
       26.568208 + 0.012 * i,
       {
         target: -20,
-        kind: "i",
+        kind: 'i',
         sendDb: -6,
       },
     ),
@@ -654,25 +611,21 @@ export function red(): Mix {
   // the ice stands. It keeps working for a second: it cracks less and less often, it groans, frost hangs.
   const ex = rr.exponentialN(1.0, 16);
   let acc = 0;
-  const wt = Array.from(
-    ex,
-    (v, k) => 26.62 + (acc += v * 0.035 * 1.32 ** k),
-  ).filter((v) => v < 28.35);
+  const wt = Array.from(ex, (v, k) => 26.62 + (acc += v * 0.035 * 1.32 ** k)).filter(
+    (v) => v < 28.35,
+  );
   const work = ticks(
     wt.map((v) => v - 26.62),
     (i) => {
       const size = rr.uniform(0.25, 0.7);
       const k = S.stoneCrack(rr, size, 0.6);
-      return times(
-        times(k, rr.uniform(0.5, 1.0)),
-        Math.exp(-(wt[i]! - 26.62) / 0.9),
-      );
+      return times(times(k, rr.uniform(0.5, 1.0)), Math.exp(-(wt[i]! - 26.62) / 0.9));
     },
     28.6 - 26.62,
   );
-  m.add("ice-work", work, 26.62, [-0.8, 2.0, -5.2], {
+  m.add('ice-work', work, 26.62, [-0.8, 2.0, -5.2], {
     target: -21,
-    kind: "i",
+    kind: 'i',
     focusDb: 2,
     sendDb: -4,
   });
@@ -686,7 +639,7 @@ export function red(): Mix {
   ).forEach(([tl, d, pos, tg], i) =>
     m.add(`ice-groan${i}`, S.groan(d, 172 + i), tl, pos, {
       target: tg,
-      kind: "m",
+      kind: 'm',
       focusDb: 2,
     }),
   );
@@ -703,7 +656,7 @@ export function red(): Mix {
       S.heavyCrack(180 + i, { size, dur: 0.25, kRate: 3, bright: 0.3 }),
       tl,
       pos,
-      { target: tg, kind: "i", focusDb: 2 },
+      { target: tg, kind: 'i', focusDb: 2 },
     ),
   );
   const mist = shapeSt(
@@ -719,7 +672,7 @@ export function red(): Mix {
       nsamp(1.9),
     ),
   );
-  m.addWide("ice-mist", mist, 26.6, { target: -33, kind: "m", sendDb: -6 });
+  m.addWide('ice-mist', mist, 26.6, { target: -33, kind: 'm', sendDb: -6 });
   const frost = shapeSt(
     S.dust(1.9, 186, {
       lo: 3500.0,
@@ -740,7 +693,7 @@ export function red(): Mix {
       nsamp(1.9),
     ),
   );
-  m.addWide("ice-frost", frost, 26.62, { target: -31, kind: "m" });
+  m.addWide('ice-frost', frost, 26.62, { target: -31, kind: 'm' });
 
   // 25.776 to 26.31: the burst is a star of eight to ten rays that reach the walls and the vault.
   const rays: [number, Vec3, number][] = [
@@ -756,15 +709,11 @@ export function red(): Mix {
   rays.forEach(([dt, pos, size], i) => {
     m.addWide(
       `ray-lance${i}`,
-      spread(
-        S.lance(540 + i),
-        pos[0] <= 0 ? 1.0 : 0.45,
-        pos[0] >= 0 ? 1.0 : 0.45,
-      ),
+      spread(S.lance(540 + i), pos[0] <= 0 ? 1.0 : 0.45, pos[0] >= 0 ? 1.0 : 0.45),
       RED_RELEASE + dt - 0.035,
       {
         target: -19,
-        kind: "i",
+        kind: 'i',
         sendDb: -8,
       },
     );
@@ -775,7 +724,7 @@ export function red(): Mix {
       pos,
       {
         target: -13,
-        kind: "i",
+        kind: 'i',
         focusDb: 5,
         sendDb: -7,
       },
@@ -807,7 +756,7 @@ export function red(): Mix {
     );
     m.add(`ray-sear${i}`, se, 25.8, pos, {
       target: -15,
-      kind: "m",
+      kind: 'm',
       focusDb: 5,
       sendDb: -8,
     });
@@ -821,13 +770,11 @@ export function red(): Mix {
       [26.88, [-5.0, 0.0, -15.0]],
     ] as [number, Vec3][]
   ).forEach(([tl, pos], i) =>
-    m.add(
-      `ray-debris${i}`,
-      S.slabFall(566 + i, [0.5, 0.4, 0.7, 0.5, 0.6][i]!),
-      tl,
-      pos,
-      { target: -20, kind: "i", focusDb: 4 },
-    ),
+    m.add(`ray-debris${i}`, S.slabFall(566 + i, [0.5, 0.4, 0.7, 0.5, 0.6][i]!), tl, pos, {
+      target: -20,
+      kind: 'i',
+      focusDb: 4,
+    }),
   );
   // 26.7 to 28.45: behind the ice, stone keeps coming down from the walls and the vault
   (
@@ -845,7 +792,7 @@ export function red(): Mix {
     );
     m.add(`wall-debris${i}`, wd, 26.7, pos, {
       target: -24,
-      kind: "m",
+      kind: 'm',
       focusDb: 3,
     });
   });
@@ -867,10 +814,10 @@ export function red(): Mix {
       nsamp(2.4),
     ),
   );
-  m.addWide("smoke", sm, SMK, { target: -20, kind: "m", sendDb: -6 });
+  m.addWide('smoke', sm, SMK, { target: -20, kind: 'm', sendDb: -6 });
   const sw = S.boom(581, { f: 85.0, tau: 0.55 });
   m.add(
-    "smoke-swell",
+    'smoke-swell',
     times(
       sw,
       curve(
@@ -885,7 +832,7 @@ export function red(): Mix {
     ),
     28.85,
     [0.0, 3.0, -10.0],
-    { target: -22, kind: "m", sendDb: -2 },
+    { target: -22, kind: 'm', sendDb: -2 },
   );
   const hiss = shapeSt(
     S.dust(2.2, 582, { lo: 700.0, hi: 6000.0, grain: 0.15, tilt: 0.6 }),
@@ -901,7 +848,7 @@ export function red(): Mix {
       nsamp(2.2),
     ),
   );
-  m.addWide("smoke-hiss", hiss, SMK, { target: -26, kind: "m" });
+  m.addWide('smoke-hiss', hiss, SMK, { target: -26, kind: 'm' });
   (
     [
       [-6.0, 0.0, -11.0],
@@ -915,38 +862,32 @@ export function red(): Mix {
       [0.05, 0.2],
       [3.0, 7.0],
     );
-    m.add(`debris-rain${i}`, dr, SMK + 0.1, pos, { target: -28, kind: "m" });
+    m.add(`debris-rain${i}`, dr, SMK + 0.1, pos, { target: -28, kind: 'm' });
   });
   // ---- round 4: tones that last, sharp moments, what comes back from the walls
   const ORB = [185.0, 311.0, 466.0, 740.0, 1109.0];
+  m.add('orb-voice', fade(S.voice(22.3 - T0, 401, ORB), 0.03, 0.01), T0, [0.0, 1.5, -3.0], {
+    target: -20.5,
+    kind: 'm',
+    sendDb: -12,
+  });
   m.add(
-    "orb-voice",
-    fade(S.voice(22.3 - T0, 401, ORB), 0.03, 0.01),
-    T0,
-    [0.0, 1.5, -3.0],
-    { target: -20.5, kind: "m", sendDb: -12 },
-  );
-  m.add(
-    "orb-voice-close",
-    fade(
-      S.voice(22.79 - 22.31, 402, [...ORB, 1480.0], { wander: 0.02 }),
-      0.008,
-      0.01,
-    ),
+    'orb-voice-close',
+    fade(S.voice(22.79 - 22.31, 402, [...ORB, 1480.0], { wander: 0.02 }), 0.008, 0.01),
     22.31,
     [0.6, 1.2, -1.4],
     {
       target: -18,
-      kind: "m",
+      kind: 'm',
       sendDb: -12,
     },
   );
   m.add(
-    "orb-voice-far",
+    'orb-voice-far',
     fade(S.voice(23.76 - 23.06, 403, ORB.slice(0, 4)), 0.01, 0.01),
     23.06,
     line([2.0, 3.0, -10.0], [0.0, 2.0, -9.0], nsamp(23.76 - 23.06)),
-    { target: -26, kind: "m", sendDb: -4 },
+    { target: -26, kind: 'm', sendDb: -4 },
   );
   (
     [
@@ -959,50 +900,49 @@ export function red(): Mix {
       fade(S.pops(22.3 - T0, 404 + i, 16.0, 500, 4000, 0.005), 0.02, 0.01),
       T0,
       pos,
-      { target: -28, kind: "m", sendDb: -10 },
+      { target: -28, kind: 'm', sendDb: -10 },
     ),
   );
   (
     [
-      ["hit1", hit1, 21.12, -26],
-      ["hit2", hit2, 21.8, -23],
+      ['hit1', hit1, 21.12, -26],
+      ['hit2', hit2, 21.8, -23],
     ] as const
   ).forEach(([nm, sig, tl, tg]) => {
     m.add(`${nm}-slap0`, S.slap(sig), tl + 0.17, [-8.5, 2.0, -6.0], {
       target: tg,
-      kind: "i",
+      kind: 'i',
       sendDb: -6,
     });
     m.add(`${nm}-slap1`, S.slap(sig, 1200), tl + 0.27, [8.5, 2.0, -9.0], {
       target: tg - 2,
-      kind: "i",
+      kind: 'i',
       sendDb: -6,
     });
     m.add(
       `${nm}-low`,
-      S.burst(406 + (nm === "hit2" ? 1 : 0), 40, 140, 0.12, { rise: 0.004 }),
+      S.burst(406 + (nm === 'hit2' ? 1 : 0), 40, 140, 0.12, { rise: 0.004 }),
       tl,
       [0.0, 1.0, -3.0],
       {
         target: tg + 4,
-        kind: "i",
+        kind: 'i',
         sendDb: -8,
       },
     );
   });
   const ck = ticks(
     [0.05, 0.21, 0.37],
-    (i) =>
-      S.heavyCrack(408 + i, { size: [0.5, 0.8, 0.6][i]!, dur: 0.2, kRate: 5 }),
+    (i) => S.heavyCrack(408 + i, { size: [0.5, 0.8, 0.6][i]!, dur: 0.2, kRate: 5 }),
     1.3,
   );
-  m.add("flame-cracks", ck, 22.31, [1.0, 0.8, -1.8], {
+  m.add('flame-cracks', ck, 22.31, [1.0, 0.8, -1.8], {
     target: -17.5,
-    kind: "i",
+    kind: 'i',
     sendDb: -8,
   });
   m.add(
-    "crack-tone",
+    'crack-tone',
     fade(
       S.glide(24.65 - 23.81, 410, 220, 311, {
         ratios: [1.0, 1.5, 2.4, 3.2],
@@ -1015,7 +955,7 @@ export function red(): Mix {
     close,
     {
       target: -23,
-      kind: "m",
+      kind: 'm',
       sendDb: -8,
     },
   );
@@ -1032,9 +972,9 @@ export function red(): Mix {
       nsamp(RED_FRACTURE - 24.75),
     ),
   );
-  m.add("shell-tone", shTone, 24.75, far, {
+  m.add('shell-tone', shTone, 24.75, far, {
     target: -22.5,
-    kind: "m",
+    kind: 'm',
     focusDb: 4,
     sendDb: -2,
   });
@@ -1042,20 +982,18 @@ export function red(): Mix {
     ratios: [1.0, 1.5, 2.25],
     shape: 0.6,
   }).map((v, i) => v * Math.exp(-i / (0.22 * SR)));
-  m.add("release-fall", fade(fall, 0.004, 0.05), RED_RELEASE, far, {
+  m.add('release-fall', fade(fall, 0.004, 0.05), RED_RELEASE, far, {
     target: -18,
-    kind: "m",
+    kind: 'm',
     focusDb: 10,
     sendDb: -2,
   });
   const rel = S.saturate(sum([0.55, front], [0.9, low], [0.6, slp]));
-  m.add(
-    "release-slap",
-    S.slap(rel, 900),
-    RED_RELEASE + 0.24,
-    [0.0, 3.0, -15.0],
-    { target: -19, kind: "i", focusDb: 6 },
-  );
+  m.add('release-slap', S.slap(rel, 900), RED_RELEASE + 0.24, [0.0, 3.0, -15.0], {
+    target: -19,
+    kind: 'i',
+    focusDb: 6,
+  });
   // under the close shot of her face the smoke is still there, far and soft, and two last stones land
   (
     [
@@ -1065,13 +1003,13 @@ export function red(): Mix {
   ).forEach(([tl, a, pos], i) =>
     m.add(`settle${i}`, S.rockFall(a, 0.5, 415 + i), tl, pos, {
       target: -33,
-      kind: "i",
+      kind: 'i',
     }),
   );
   m.driveDb = 8.8;
   const wi = S.wind(2.25, 182, 300, 3500);
   m.addWide(
-    "hair-wind",
+    'hair-wind',
     shapeSt(
       wi,
       curve(
@@ -1086,13 +1024,13 @@ export function red(): Mix {
       ),
     ),
     30.25,
-    { target: -33, kind: "m" },
+    { target: -33, kind: 'm' },
   );
   const irrC = S.irregular(nsamp(2.2), 184, 2, 9);
   const fl = S.cloth(2.2, 183, 260).map((v, i) => v * (0.6 + 0.4 * irrC[i]!));
-  m.add("hair-cloth", fl, 30.27, [0.2, 1.5, -0.8], {
+  m.add('hair-cloth', fl, 30.27, [0.2, 1.5, -0.8], {
     target: -34,
-    kind: "m",
+    kind: 'm',
     sendDb: -10,
   });
   const wtone = times(
@@ -1112,9 +1050,9 @@ export function red(): Mix {
       nsamp(2.2),
     ),
   );
-  m.add("wind-tone", wtone, 30.25, [-0.6, 1.8, -1.5], {
+  m.add('wind-tone', wtone, 30.25, [-0.6, 1.8, -1.5], {
     target: -39,
-    kind: "m",
+    kind: 'm',
     sendDb: -4,
   });
   return m;
