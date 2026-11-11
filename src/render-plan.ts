@@ -156,8 +156,8 @@ export function onePlan(plan: SoundPlan): SoundPlan {
   };
 }
 
-/** The picture time nearest to `t` within `SNAP_WINDOW`, or `t`. */
-function snapped(plan: SoundPlan, t: number): number {
+/** The picture time nearest to `t` within `SNAP_WINDOW`, or `t`: where the render places an onset. */
+export function snapped(plan: SoundPlan, t: number): number {
   let best = t;
   let gap = SNAP_WINDOW;
   for (const p of [...plan.picture.cuts, ...plan.picture.motion]) {
