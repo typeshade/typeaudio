@@ -21,6 +21,7 @@ devices yet.
 | 8   | A layered, spatial render of a hand-written plan           | The plan format, the first spatialization units, the analyzers, the A/B speed | harness ready; container runs recorded (`docs/records/08-sound-design-container.md`, `docs/records/08-sound-design-container-2.md`, `docs/records/08-sound-design-container-3.md`, `docs/records/08-sound-design-container-4.md`); device runs pending |
 | 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
 | 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
+| 11  | The whole video, a first draft of effects and ambience     | The cue sheet of a whole video; which kinds a whole video needs               | first draft rendered (container, WebGPU on SwiftShader); waits for the owner's review                                                                                                                                                               |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -754,3 +755,79 @@ and `slow` was not asked again; the accepted variant is built on `slow`.
 blast, and the break with the hang and the fall. Their sounds are in the store: `wall-hit`,
 `stone-landing`, `blast`, `break`. `module-4.json`, variant `slow-many-ordered`, is the whole force
 passage as accepted.
+
+## 11. The whole video, a first draft of effects and ambience
+
+The owner asked on 2026-11-11 for the sound of the whole reference video (212.6 s) in TypeAudio code:
+every sound effect and every ambience bed. Dialogue and music are out of scope. The order the owner
+chose: a rough draft of the whole video first, for the owner's review, then each scene refined, then
+the scenes published on the site as function nodes.
+
+**Question.** Can the method of experiment 10 make a first draft of a whole video in practical time:
+every cue present at a plausible level, the accepted force passage unchanged?
+
+**Decides.** The form of a cue sheet for a whole video. Which kinds and definitions a whole video
+needs that the engine lacks. The order of the refinement.
+
+**Method.**
+
+1. Go through the picture: a frame sheet at 2 frames a second, a scene-cut detector, and the onsets
+   and band levels of the reference's audio. The audio was measured privately in the session's
+   scratch directory; no sample of it enters a render or this repository.
+2. Write the cue sheet: each scene with its range, its picture and its space; each sound event with its
+   time, its seven answers in short, what makes it and a priority; an ambience bed for each scene.
+3. Render the cue sheet with the engine, segment by segment, and lay the accepted force passage into its
+   range.
+4. Put the draft on the picture for the owner, privately.
+
+**What it holds.** `experiments/11-full-video/`:
+
+| File          | What it holds                                                                                                                       |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `cues.json`   | The cue sheet: 60 scenes, 227 sound events, 56 ambience beds, 9 render segments                                                     |
+| `cues.md`     | The readable form of the cue sheet, written by `cues-md.ts`, with the list of what to hear first                                    |
+| `recipes.ts`  | 25 recipes: a cue as events of the engine's kinds, with a few parameters (`size`, `brightness`, a length)                            |
+| `draft.ts`    | `bun experiments/11-full-video/draft.ts [--out dir] [--only seg-NN]`: the segments on WebGPU, the stored cues, the passage, the ceiling |
+| `test/full-video.test.ts` | Each segment is a valid plan; the segments keep out of the passage; each cue lies in its scene; `cues.md` matches |
+
+How the draft is made, as the code states it:
+
+- Each segment is one plan of the engine, with the room of the force passage (18 × 24 × 14 m, stone)
+  and 3 s of tail. Its render is kept under `out/segments/` by a hash of the plan, as the store of
+  experiment 10 keeps its renders.
+- Each segment is put in the scale of the accepted passage: the engine's master gain is undone, and
+  the gain of the passage's bed is applied. A cue's intensity is in the scale of experiment 9's plan.
+- A cue can name an accepted sound of the store in place of a recipe: `stone-landing` (with a pitch
+  node: higher for a smaller block) for the large blocks that land (8 cues), and `break` for three
+  breaks of a rock mass or a structure. Its level is against the accepted hit on the wall, as
+  `module-4.json` sets the landing's.
+- The accepted force passage, `module-4.json` variant `slow-many-ordered`, is composed as experiment
+  10 composes it and laid at 136.5 to 152.2 s at its own gain. The draft fades out over 0.25 s after
+  the passage starts and back in over 0.25 s before it ends. Measured: inside those edges the draft
+  holds the composition's samples exactly (1,459,200 samples, largest difference 0).
+- The rest passes the engine's limiter (`limiterGain`) at -1 dBFS. After 189.25 s the reference has no
+  audio (an end card and the promotion of another title), and the draft is silent too.
+
+**Run 1, 2026-11-11.** In the container of an agent session, headless Chromium, WebGPU on SwiftShader,
+compiler pin `415b276a`, the cue sheet at commit `b2772ec` plus the bed levels of the next commit. A
+full render from an empty cache took 380 s (6 min 20 s): 364 s for the 9 segments on WebGPU (27 to
+101 events each, 28 to 49 s each) and 16 s for the stored cues, the passage and the ceiling. A change
+to one segment renders that segment only (about 30 to 50 s). Measured on the draft: the loud scenes
+reach the ceiling, as the passage does; the scene levels run from -14 dB RMS (the blasts) to -51 dB
+RMS (a close face with dialogue).
+
+**What the draft lacks, as the agent reads the sheet.** Nothing of it was heard by its writer.
+
+- Kinds the video needs that the engine does not have: an electric arc (the lightning is a bright roar
+  and short cracks), glass or crystal that shatters (cracks and shimmer), a tonal beam or hum of mana
+  (a roar, a shimmer and a riser), fire and sparks, a room tone for a quiet hall (the `wind` kind at a
+  low gust is faint: -51 dB RMS in the quietest scene), and hair.
+- Typed functions exist for impact, boom, roar, crack and rubble; the draft also uses whoosh, wind,
+  shimmer, riser, cloth and footstep, which have none yet.
+- Fourteen cues of priority A stand less than 1.5 dB over the second before them: each lies under a
+  beam or lightning that lasts. The refinement decides which sound leads in those moments.
+- The blocks that land use the accepted `stone-landing`; the stones that the beams break use the
+  recipes, not an accepted sound.
+
+**Status.** The first draft waits for the owner's review. The preview went to the owner privately; the
+picture, its frames and its audio are not in this repository.

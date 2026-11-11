@@ -1,0 +1,6266 @@
+{
+ "video": {
+  "id": "YHCqcyX9N3s",
+  "duration": 212.578685,
+  "fps": 23.976
+ },
+ "note": "The cue sheet of experiment 11: the sound effects and the ambience of the whole reference video, a first draft. Times are seconds of the picture. A cue names a recipe of recipes.ts (events of the engine's kinds) or a store entry of experiment 10 (an accepted sound through its effect nodes). The level is in dB under the sound that leads the moment; a stored cue's level is against the accepted hit on the wall, as module-4.json sets it. Dialogue and music are notes only and are not designed. The scenes and the cue times come from a frame sheet at 2 frames a second, a scene-cut detector and the onsets of the reference's audio, measured privately; no sample of the reference is used.",
+ "accepted": {
+  "from": 136.5,
+  "to": 152.2,
+  "module": "../10-seven-questions/module-4.json",
+  "variant": "slow-many-ordered"
+ },
+ "end": 189.25,
+ "room": {
+  "size": [
+   18,
+   24,
+   14
+  ],
+  "material": "stone"
+ },
+ "segments": [
+  {
+   "id": "seg-01",
+   "from": 0.0,
+   "to": 22.31
+  },
+  {
+   "id": "seg-02",
+   "from": 22.31,
+   "to": 40.33
+  },
+  {
+   "id": "seg-03",
+   "from": 40.33,
+   "to": 60.31
+  },
+  {
+   "id": "seg-04",
+   "from": 60.31,
+   "to": 82.0
+  },
+  {
+   "id": "seg-05",
+   "from": 82.0,
+   "to": 101.48
+  },
+  {
+   "id": "seg-06",
+   "from": 101.48,
+   "to": 117.45
+  },
+  {
+   "id": "seg-07",
+   "from": 117.45,
+   "to": 136.5
+  },
+  {
+   "id": "seg-08",
+   "from": 152.2,
+   "to": 172.67
+  },
+  {
+   "id": "seg-09",
+   "from": 172.67,
+   "to": 189.25
+  }
+ ],
+ "scenes": [
+  {
+   "id": "s01",
+   "from": 0.0,
+   "to": 3.29,
+   "picture": "Fade from black: a grey curtain of dust over the hall floor",
+   "space": "the stone hall, after a blow",
+   "music": "score enters"
+  },
+  {
+   "id": "s02",
+   "from": 3.29,
+   "to": 8.05,
+   "picture": "A red beam with a black core fires; a face close up; a figure leaps",
+   "space": "the hall, close",
+   "music": "score"
+  },
+  {
+   "id": "s03",
+   "from": 8.05,
+   "to": 11.55,
+   "picture": "A figure flies between falling rocks; the red beam cuts among them",
+   "space": "the hall, mid air",
+   "music": "score"
+  },
+  {
+   "id": "s04",
+   "from": 11.55,
+   "to": 14.81,
+   "picture": "Dark: lit rocks hang; the red beam drives through the rock field",
+   "space": "the hall, a field of rocks",
+   "music": "score"
+  },
+  {
+   "id": "s05",
+   "from": 14.81,
+   "to": 18.06,
+   "picture": "Fast cuts: rocks fall and crash, stone breaks into shapes",
+   "space": "the hall, falling rock",
+   "music": "score"
+  },
+  {
+   "id": "s06",
+   "from": 18.06,
+   "to": 22.31,
+   "picture": "The red beam streaks through the rocks; sparks burst; a streak of fire",
+   "space": "the hall, a field of rocks",
+   "music": "score"
+  },
+  {
+   "id": "s07",
+   "from": 22.31,
+   "to": 23.73,
+   "picture": "A great orange beam crosses the frame; a blast of rock",
+   "space": "the hall, wide",
+   "music": "score"
+  },
+  {
+   "id": "s08",
+   "from": 23.73,
+   "to": 26.23,
+   "picture": "A red crystal sphere holds the beam; it cracks; radial release; a blue flash",
+   "space": "the hall, the containment",
+   "music": "score"
+  },
+  {
+   "id": "s09",
+   "from": 26.23,
+   "to": 28.57,
+   "picture": "Frieren stands in dust under blue light; fragments fall around her",
+   "space": "the hall, dust",
+   "music": "score"
+  },
+  {
+   "id": "s10",
+   "from": 28.57,
+   "to": 30.32,
+   "picture": "A grey close view: dust and wind lines over the stone",
+   "space": "the hall, close to the stone",
+   "music": "score"
+  },
+  {
+   "id": "s11",
+   "from": 30.32,
+   "to": 33.58,
+   "picture": "Frieren's face, hair blowing hard; a blue flash crosses her face",
+   "space": "the hall, close",
+   "music": "score"
+  },
+  {
+   "id": "s12",
+   "from": 33.58,
+   "to": 36.45,
+   "picture": "Top view: an emblem on the floor, stones about; Frieren runs across it",
+   "space": "the hall floor, from above",
+   "music": "score"
+  },
+  {
+   "id": "s13",
+   "from": 36.45,
+   "to": 38.0,
+   "picture": "Blocks come at Frieren from all sides; she slips between them",
+   "space": "the hall, among the blocks",
+   "music": "score"
+  },
+  {
+   "id": "s14",
+   "from": 38.0,
+   "to": 40.33,
+   "picture": "The giant block body fills the frame; Frieren runs on top of it",
+   "space": "the hall, on the block",
+   "music": "score"
+  },
+  {
+   "id": "s15",
+   "from": 40.33,
+   "to": 43.21,
+   "picture": "Wide: the stone giant stands; a wave of dust rushes; a block flies at the camera",
+   "space": "the hall, wide",
+   "music": "score"
+  },
+  {
+   "id": "s16",
+   "from": 43.21,
+   "to": 43.96,
+   "picture": "Fern's silhouette with her staff",
+   "space": "the hall, close",
+   "music": "score thins"
+  },
+  {
+   "id": "s17",
+   "from": 43.96,
+   "to": 45.67,
+   "picture": "Wide: Fern casts; purple light gathers at her staff",
+   "space": "the hall, wide",
+   "music": "score"
+  },
+  {
+   "id": "s18",
+   "from": 45.67,
+   "to": 47.46,
+   "picture": "Purple lightning blasts; a blue hexagon barrier takes it; sparks",
+   "space": "the hall, the clash",
+   "music": "score"
+  },
+  {
+   "id": "s19",
+   "from": 47.46,
+   "to": 49.42,
+   "picture": "Purple lightning crawls over the giant block",
+   "space": "the hall, on the giant",
+   "music": "score"
+  },
+  {
+   "id": "s20",
+   "from": 49.42,
+   "to": 53.0,
+   "picture": "Wide: purple lightning wraps the hall; a great cloud of purple smoke bursts; a flash",
+   "space": "the hall, wide",
+   "music": "score"
+  },
+  {
+   "id": "s21",
+   "from": 53.0,
+   "to": 55.97,
+   "picture": "Dark purple smoke; a shadow figure moves inside it",
+   "space": "the hall, in the smoke",
+   "music": "score"
+  },
+  {
+   "id": "s22",
+   "from": 55.97,
+   "to": 57.22,
+   "picture": "Bright purple; the hexagon barrier flares",
+   "space": "the hall, the barrier",
+   "music": "score"
+  },
+  {
+   "id": "s23",
+   "from": 57.22,
+   "to": 60.31,
+   "picture": "Grey smoke with sparkles; Frieren inside it; white ribbons of magic swirl",
+   "space": "the hall, in the smoke",
+   "music": "score"
+  },
+  {
+   "id": "s24",
+   "from": 60.31,
+   "to": 62.27,
+   "picture": "Frieren's profile, close; her hair moves; she closes her eyes",
+   "space": "the hall, close",
+   "music": "score"
+  },
+  {
+   "id": "s25",
+   "from": 62.27,
+   "to": 65.15,
+   "picture": "A blue flash; a beam cuts through rocks; rocks are blown apart",
+   "space": "the hall, a field of rocks",
+   "music": "score"
+  },
+  {
+   "id": "s26",
+   "from": 65.15,
+   "to": 67.61,
+   "picture": "A hexagon barrier sphere among flying blocks; blocks batter it",
+   "space": "the hall, the barrier",
+   "music": "score"
+  },
+  {
+   "id": "s27",
+   "from": 67.61,
+   "to": 68.86,
+   "picture": "Frieren in dust and blocks, staff in hand",
+   "space": "the hall, among the blocks",
+   "music": "score"
+  },
+  {
+   "id": "s28",
+   "from": 68.86,
+   "to": 71.0,
+   "picture": "Fern close up: \"It blocked it.\"",
+   "space": "the hall, close",
+   "dialogue": "Fern: \"It blocked it.\"",
+   "music": "score"
+  },
+  {
+   "id": "s29",
+   "from": 71.0,
+   "to": 74.12,
+   "picture": "Wide: sparkles; Frieren and Fern face the giant; a white streak and a burst",
+   "space": "the hall, wide",
+   "music": "score"
+  },
+  {
+   "id": "s30",
+   "from": 74.12,
+   "to": 76.91,
+   "picture": "Frieren stands; rocks float around her: \"It's still within our expectations.\"",
+   "space": "the hall",
+   "dialogue": "Frieren: \"It's still within our expectations.\"",
+   "music": "score"
+  },
+  {
+   "id": "s31",
+   "from": 76.91,
+   "to": 79.41,
+   "picture": "Frieren's eye, close: \"From here on,\"",
+   "space": "the hall, close",
+   "dialogue": "Frieren: \"From here on,\"",
+   "music": "score thins"
+  },
+  {
+   "id": "s32",
+   "from": 79.41,
+   "to": 82.0,
+   "picture": "Grey, Frieren's face; embers float; fade to black",
+   "space": "the hall, close",
+   "dialogue": "Frieren: \"it will be a battle of attrition.\"",
+   "music": "score thins"
+  },
+  {
+   "id": "s33",
+   "from": 82.0,
+   "to": 87.13,
+   "picture": "A storm of coloured spells; orbs and bolts burst; a great burst at the end",
+   "space": "abstract, the spells",
+   "music": "score swells"
+  },
+  {
+   "id": "s34",
+   "from": 87.13,
+   "to": 93.72,
+   "picture": "Bright hall in dust; Frieren fires; blue shards fly; a profile; a blade",
+   "space": "the hall, bright, dust",
+   "music": "score"
+  },
+  {
+   "id": "s35",
+   "from": 93.72,
+   "to": 97.43,
+   "picture": "Bright hall: a vortex of magic spins around a figure",
+   "space": "the hall, bright",
+   "music": "score"
+  },
+  {
+   "id": "s36",
+   "from": 97.43,
+   "to": 99.35,
+   "picture": "Frieren's profile; then the hall in dust; a magic ring rises",
+   "space": "the hall",
+   "music": "score"
+  },
+  {
+   "id": "s37",
+   "from": 99.35,
+   "to": 101.48,
+   "picture": "A disc of magic slices; a blue beam fires along the floor",
+   "space": "the hall, low",
+   "music": "score"
+  },
+  {
+   "id": "s38",
+   "from": 101.48,
+   "to": 104.19,
+   "picture": "A blue hexagon sphere bursts with rays of light",
+   "space": "the hall, the barrier",
+   "music": "score"
+  },
+  {
+   "id": "s39",
+   "from": 104.19,
+   "to": 107.61,
+   "picture": "Strobe cuts: blue crystal cracks; ice-like lines; crystal shards fly",
+   "space": "abstract, crystal",
+   "music": "score"
+  },
+  {
+   "id": "s40",
+   "from": 107.61,
+   "to": 110.7,
+   "picture": "Frieren in crystal light, calm",
+   "space": "the hall, crystal light",
+   "music": "score"
+  },
+  {
+   "id": "s41",
+   "from": 110.7,
+   "to": 114.45,
+   "picture": "Golden lightning duel; a golden staff turns; Frieren calm",
+   "space": "the hall, the duel",
+   "music": "score"
+  },
+  {
+   "id": "s42",
+   "from": 114.45,
+   "to": 117.45,
+   "picture": "A blue beam and an explosion of shards around a figure",
+   "space": "the hall, the shards",
+   "music": "score"
+  },
+  {
+   "id": "s43",
+   "from": 117.45,
+   "to": 123.71,
+   "picture": "Frieren in a white glow; Fern stands in a large magic circle",
+   "space": "the hall, the circle",
+   "music": "score"
+  },
+  {
+   "id": "s44",
+   "from": 123.71,
+   "to": 125.0,
+   "picture": "Fern's silhouette swings the staff",
+   "space": "the hall, close",
+   "music": "score"
+  },
+  {
+   "id": "s45",
+   "from": 125.0,
+   "to": 126.71,
+   "picture": "A white flash; sparkles in the dark hall",
+   "space": "the hall, dark",
+   "music": "score"
+  },
+  {
+   "id": "s46",
+   "from": 126.71,
+   "to": 128.59,
+   "picture": "Fern behind circles of magic fires bolts",
+   "space": "the hall, Fern",
+   "music": "score"
+  },
+  {
+   "id": "s47",
+   "from": 128.59,
+   "to": 131.05,
+   "picture": "Bolts strike; a cyan explosion against the hall",
+   "space": "the hall, wide",
+   "music": "score"
+  },
+  {
+   "id": "s48",
+   "from": 131.05,
+   "to": 133.84,
+   "picture": "Grey smoke; Fern's boots land and stand",
+   "space": "the hall, in the smoke",
+   "music": "score"
+  },
+  {
+   "id": "s49",
+   "from": 133.84,
+   "to": 136.5,
+   "picture": "Dark smoke; pieces of the hexagon barrier drift and fade",
+   "space": "the hall, dark",
+   "music": "score falls away"
+  },
+  {
+   "id": "s50",
+   "from": 136.5,
+   "to": 152.2,
+   "picture": "THE ACCEPTED FORCE PASSAGE (experiment 10, module-4.json, variant slow-many-ordered): Fern close up, the dark face, the strike and the blast, the wall hit, the break and the slow hang, the fog, the fall of 24 large and 30 small blocks, the vignette",
+   "space": "the hall",
+   "dialogue": "Fern: \"It's still standing. But it has taken a fatal wound. I need to finish it.\"",
+   "music": "score falls away; silence frames at 145.02 and 145.90"
+  },
+  {
+   "id": "s51",
+   "from": 152.2,
+   "to": 154.28,
+   "picture": "A vignette view of the cracked floor: \"What happened? Was that an attack?\"",
+   "space": "the hall, after",
+   "dialogue": "\"What happened?\" \"Was that an attack?\"",
+   "music": "none"
+  },
+  {
+   "id": "s52",
+   "from": 154.28,
+   "to": 162.04,
+   "picture": "A hand on the cracked floor beside a broken book: \"I don't sense any mana...\"",
+   "space": "the hall floor, close",
+   "dialogue": "\"I don't sense any mana.\" \"I don't recognize this attack as magic.\"",
+   "music": "none to 160 s"
+  },
+  {
+   "id": "s53",
+   "from": 162.04,
+   "to": 168.54,
+   "picture": "Top view: a figure in a blue magic circle on the cracked floor",
+   "space": "the hall floor, from above",
+   "dialogue": "\"Incredible, Mistress Frieren...\" \"So this is the height of magic.\"",
+   "music": "score returns"
+  },
+  {
+   "id": "s54",
+   "from": 168.54,
+   "to": 172.67,
+   "picture": "Fern's face, bleeding: \"But that's so unlike you.\"",
+   "space": "the hall, close",
+   "dialogue": "Fern: \"But that's so unlike you.\"",
+   "music": "score"
+  },
+  {
+   "id": "s55",
+   "from": 172.67,
+   "to": 174.51,
+   "picture": "Rocks in the fog; Frieren's staff swings in",
+   "space": "the hall, fog",
+   "music": "score"
+  },
+  {
+   "id": "s56",
+   "from": 174.51,
+   "to": 177.51,
+   "picture": "Frieren and her dark double on a magic circle: \"Your guard is completely down.\"",
+   "space": "the hall, the circle",
+   "dialogue": "Frieren: \"Your guard is completely down.\"",
+   "music": "score"
+  },
+  {
+   "id": "s57",
+   "from": 177.51,
+   "to": 183.7,
+   "picture": "A graphic white flash; a blue-white beam engulfs the double; stone blocks blow away; white-out",
+   "space": "the hall, the beam",
+   "music": "score"
+  },
+  {
+   "id": "s58",
+   "from": 183.7,
+   "to": 185.6,
+   "picture": "Dark tendrils of the double unravel and fall away",
+   "space": "the hall",
+   "music": "score"
+  },
+  {
+   "id": "s59",
+   "from": 185.6,
+   "to": 189.25,
+   "picture": "Frieren stands by a kneeling figure at a lit doorway: \"You did great, Fern.\"; fade to black",
+   "space": "the hall, by the doorway",
+   "dialogue": "Frieren: \"You did great, Fern.\"",
+   "music": "score ends"
+  },
+  {
+   "id": "s60",
+   "from": 189.25,
+   "to": 212.58,
+   "picture": "End card and the promotion of another title (scrolls, a sword, roosters, fish)",
+   "space": "none",
+   "music": "the reference is silent here"
+  }
+ ],
+ "cues": [
+  {
+   "id": "s01-bed01",
+   "scene": "s01",
+   "t": 0.0,
+   "what": "dust settles in the hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "0.00 to 3.29 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s01-c02",
+   "scene": "s01",
+   "t": 0.6,
+   "what": "pieces trickle out of the dust",
+   "seven": {
+    "who": "small stones",
+    "what": "the stone floor",
+    "how": "fall",
+    "howMuch": "few, small",
+    "when": "0.60 s for 2.4 s",
+    "where": "centre, 12 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "debris",
+   "size": 0.2,
+   "duration": 2.4,
+   "count": 3,
+   "distance": 12
+  },
+  {
+   "id": "s02-bed01",
+   "scene": "s02",
+   "t": 3.29,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "3.29 to 8.05 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s02-c02",
+   "scene": "s02",
+   "t": 3.66,
+   "what": "the red beam ignites",
+   "seven": {
+    "who": "red mana beam",
+    "what": "air",
+    "how": "ignites and holds",
+    "howMuch": "large",
+    "when": "3.66 s for 2.4 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "beam",
+   "size": 0.7,
+   "brightness": 0.6,
+   "duration": 2.4
+  },
+  {
+   "id": "s02-c03",
+   "scene": "s02",
+   "t": 5.62,
+   "what": "the beam sweeps past the camera",
+   "seven": {
+    "who": "red mana beam",
+    "what": "air",
+    "how": "sweeps",
+    "howMuch": "large",
+    "when": "5.62 s for 0.5 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -4,
+   "recipe": "whoosh",
+   "size": 0.8,
+   "brightness": 0.6,
+   "duration": 0.5,
+   "pan": 0.4
+  },
+  {
+   "id": "s02-c04",
+   "scene": "s02",
+   "t": 6.11,
+   "what": "the beam passes again, the other way",
+   "seven": {
+    "who": "red mana beam",
+    "what": "air",
+    "how": "sweeps",
+    "howMuch": "large",
+    "when": "6.11 s for 1 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "beam",
+   "size": 0.6,
+   "brightness": 0.7,
+   "duration": 1.0,
+   "pan": -0.3
+  },
+  {
+   "id": "s02-c05",
+   "scene": "s02",
+   "t": 7.2,
+   "what": "hair and cloak snap in the beam's wind",
+   "seven": {
+    "who": "hair, cloak",
+    "what": "air",
+    "how": "flutter",
+    "howMuch": "medium",
+    "when": "7.20 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "cloth",
+   "size": 0.8,
+   "duration": 0.6
+  },
+  {
+   "id": "s02-c06",
+   "scene": "s02",
+   "t": 7.95,
+   "what": "the figure leaps away",
+   "seven": {
+    "who": "a body",
+    "what": "air",
+    "how": "leaps",
+    "howMuch": "fast",
+    "when": "7.95 s for 0.4 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "whoosh",
+   "size": 0.9,
+   "brightness": 0.5,
+   "duration": 0.4,
+   "pan": 0.3
+  },
+  {
+   "id": "s03-bed01",
+   "scene": "s03",
+   "t": 8.05,
+   "what": "air rushes past the flying body",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "8.05 to 11.55 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "wind",
+   "brightness": 0.6
+  },
+  {
+   "id": "s03-c02",
+   "scene": "s03",
+   "t": 8.42,
+   "what": "the body pushes off; air",
+   "seven": {
+    "who": "a body",
+    "what": "air",
+    "how": "flies",
+    "howMuch": "fast",
+    "when": "8.42 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "whoosh",
+   "size": 1.0,
+   "brightness": 0.6,
+   "duration": 0.6
+  },
+  {
+   "id": "s03-c03",
+   "scene": "s03",
+   "t": 9.5,
+   "what": "rocks tumble past",
+   "seven": {
+    "who": "rocks",
+    "what": "air",
+    "how": "tumble",
+    "howMuch": "many, medium",
+    "when": "9.50 s for 1.8 s",
+    "where": "centre, 6 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "debris",
+   "size": 0.5,
+   "duration": 1.8,
+   "count": 5,
+   "distance": 6
+  },
+  {
+   "id": "s03-c04",
+   "scene": "s03",
+   "t": 9.8,
+   "what": "the red beam crosses the rocks",
+   "seven": {
+    "who": "red mana beam",
+    "what": "rocks",
+    "how": "cuts",
+    "howMuch": "large",
+    "when": "9.80 s for 1.6 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "beam",
+   "size": 0.6,
+   "brightness": 0.7,
+   "duration": 1.6,
+   "pan": 0.2
+  },
+  {
+   "id": "s04-bed01",
+   "scene": "s04",
+   "t": 11.55,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "11.55 to 14.81 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s04-c02",
+   "scene": "s04",
+   "t": 11.72,
+   "what": "the beam enters the rock field",
+   "seven": {
+    "who": "red mana beam",
+    "what": "rocks",
+    "how": "drives through",
+    "howMuch": "large",
+    "when": "11.72 s for 3 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "beam",
+   "size": 0.8,
+   "brightness": 0.6,
+   "duration": 3.0
+  },
+  {
+   "id": "s04-c03",
+   "scene": "s04",
+   "t": 12.76,
+   "what": "a rock bursts in the beam",
+   "seven": {
+    "who": "red mana beam",
+    "what": "a rock",
+    "how": "bursts it",
+    "howMuch": "medium",
+    "when": "12.76 s",
+    "where": "left, 5 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "rock-shatter",
+   "size": 0.6,
+   "pan": -0.4,
+   "distance": 5
+  },
+  {
+   "id": "s04-c04",
+   "scene": "s04",
+   "t": 13.26,
+   "what": "a rock bursts in the beam",
+   "seven": {
+    "who": "red mana beam",
+    "what": "a rock",
+    "how": "bursts it",
+    "howMuch": "medium",
+    "when": "13.26 s",
+    "where": "right, 5 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "recipe": "rock-shatter",
+   "size": 0.6,
+   "pan": 0.3,
+   "distance": 5
+  },
+  {
+   "id": "s04-c05",
+   "scene": "s04",
+   "t": 13.75,
+   "what": "a rock bursts in the beam",
+   "seven": {
+    "who": "red mana beam",
+    "what": "a rock",
+    "how": "bursts it",
+    "howMuch": "medium",
+    "when": "13.75 s",
+    "where": "centre, 5 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "rock-shatter",
+   "size": 0.6,
+   "pan": -0.1,
+   "distance": 5
+  },
+  {
+   "id": "s04-c06",
+   "scene": "s04",
+   "t": 14.08,
+   "what": "a rock bursts in the beam",
+   "seven": {
+    "who": "red mana beam",
+    "what": "a rock",
+    "how": "bursts it",
+    "howMuch": "medium",
+    "when": "14.08 s",
+    "where": "right, 5 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "rock-shatter",
+   "size": 0.6,
+   "pan": 0.5,
+   "distance": 5
+  },
+  {
+   "id": "s04-c07",
+   "scene": "s04",
+   "t": 14.41,
+   "what": "a rock bursts in the beam",
+   "seven": {
+    "who": "red mana beam",
+    "what": "a rock",
+    "how": "bursts it",
+    "howMuch": "medium",
+    "when": "14.41 s",
+    "where": "left, 5 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "rock-shatter",
+   "size": 0.6,
+   "pan": -0.5,
+   "distance": 5
+  },
+  {
+   "id": "s05-bed01",
+   "scene": "s05",
+   "t": 14.81,
+   "what": "dust and the hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "14.81 to 18.06 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s05-c02",
+   "scene": "s05",
+   "t": 14.85,
+   "what": "a large rock lands",
+   "seven": {
+    "who": "a large block",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "heavy",
+    "when": "14.85 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -6,
+   "store": {
+    "name": "stone-landing"
+   },
+   "pan": -0.2
+  },
+  {
+   "id": "s05-c03",
+   "scene": "s05",
+   "t": 15.47,
+   "what": "a rock crashes",
+   "seven": {
+    "who": "a rock",
+    "what": "stone",
+    "how": "crashes",
+    "howMuch": "medium",
+    "when": "15.47 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "stone-hit",
+   "size": 0.6,
+   "pan": 0.4,
+   "distance": 4
+  },
+  {
+   "id": "s05-c04",
+   "scene": "s05",
+   "t": 15.97,
+   "what": "a rock splits",
+   "seven": {
+    "who": "a rock",
+    "what": "stone",
+    "how": "splits",
+    "howMuch": "medium",
+    "when": "15.97 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "rock-shatter",
+   "size": 0.5,
+   "pan": -0.3
+  },
+  {
+   "id": "s05-c05",
+   "scene": "s05",
+   "t": 16.36,
+   "what": "a block lands hard",
+   "seven": {
+    "who": "a block",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "heavy",
+    "when": "16.36 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "store": {
+    "name": "stone-landing"
+   },
+   "pan": 0.2
+  },
+  {
+   "id": "s05-c06",
+   "scene": "s05",
+   "t": 16.6,
+   "what": "pieces scatter after the landing",
+   "seven": {
+    "who": "pieces",
+    "what": "the floor",
+    "how": "scatter",
+    "howMuch": "many, small",
+    "when": "16.60 s for 1.2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "debris",
+   "size": 0.4,
+   "duration": 1.2,
+   "count": 6
+  },
+  {
+   "id": "s05-c07",
+   "scene": "s05",
+   "t": 17.31,
+   "what": "a rock tumbles past",
+   "seven": {
+    "who": "a rock",
+    "what": "air",
+    "how": "tumbles",
+    "howMuch": "medium",
+    "when": "17.31 s for 0.4 s",
+    "where": "right, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "whoosh",
+   "size": 0.4,
+   "brightness": 0.3,
+   "duration": 0.4,
+   "pan": 0.5
+  },
+  {
+   "id": "s06-bed01",
+   "scene": "s06",
+   "t": 18.06,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "18.06 to 22.31 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s06-c02",
+   "scene": "s06",
+   "t": 18.7,
+   "what": "the beam streaks through the rocks",
+   "seven": {
+    "who": "red mana beam",
+    "what": "rocks",
+    "how": "streaks",
+    "howMuch": "large",
+    "when": "18.70 s for 2.2 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": -1,
+   "recipe": "beam",
+   "size": 0.7,
+   "brightness": 0.7,
+   "duration": 2.2
+  },
+  {
+   "id": "s06-c03",
+   "scene": "s06",
+   "t": 19.6,
+   "what": "rocks are hit in the beam",
+   "seven": {
+    "who": "red mana beam",
+    "what": "rocks",
+    "how": "chips",
+    "howMuch": "medium",
+    "when": "19.60 s for 1.2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "debris",
+   "size": 0.4,
+   "duration": 1.2,
+   "count": 4
+  },
+  {
+   "id": "s06-c04",
+   "scene": "s06",
+   "t": 21.0,
+   "what": "sparks burst at the beam's head",
+   "seven": {
+    "who": "red mana beam",
+    "what": "a rock",
+    "how": "bursts",
+    "howMuch": "large",
+    "when": "21.00 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "blast",
+   "size": 0.4,
+   "brightness": 0.9
+  },
+  {
+   "id": "s06-c05",
+   "scene": "s06",
+   "t": 21.1,
+   "what": "sparks fly",
+   "seven": {
+    "who": "sparks",
+    "what": "air",
+    "how": "scatter",
+    "howMuch": "many",
+    "when": "21.10 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "sparkle",
+   "size": 0.8,
+   "brightness": 0.9,
+   "duration": 1.0
+  },
+  {
+   "id": "s06-c06",
+   "scene": "s06",
+   "t": 21.5,
+   "what": "a streak of fire passes",
+   "seven": {
+    "who": "fire",
+    "what": "air",
+    "how": "passes",
+    "howMuch": "fast",
+    "when": "21.50 s for 0.6 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "whoosh",
+   "size": 0.9,
+   "brightness": 0.8,
+   "duration": 0.6,
+   "pan": -0.3
+  },
+  {
+   "id": "s07-c01",
+   "scene": "s07",
+   "t": 22.31,
+   "what": "the great beam crosses",
+   "seven": {
+    "who": "orange mana beam",
+    "what": "air",
+    "how": "crosses",
+    "howMuch": "very large",
+    "when": "22.31 s for 1.2 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "beam",
+   "size": 1.0,
+   "brightness": 0.8,
+   "duration": 1.2
+  },
+  {
+   "id": "s07-c02",
+   "scene": "s07",
+   "t": 23.06,
+   "what": "the beam strikes rock: a blast",
+   "seven": {
+    "who": "orange mana beam",
+    "what": "a rock mass",
+    "how": "blasts",
+    "howMuch": "very large",
+    "when": "23.06 s",
+    "where": "right, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "blast",
+   "size": 0.8,
+   "brightness": 0.6,
+   "pan": 0.2
+  },
+  {
+   "id": "s07-c03",
+   "scene": "s07",
+   "t": 23.1,
+   "what": "the rock mass breaks",
+   "seven": {
+    "who": "a rock mass",
+    "what": "itself",
+    "how": "breaks",
+    "howMuch": "large",
+    "when": "23.10 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "store": {
+    "name": "break"
+   },
+   "pan": 0.2
+  },
+  {
+   "id": "s08-bed01",
+   "scene": "s08",
+   "t": 23.73,
+   "what": "the air near the containment",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "23.73 to 26.23 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.3
+  },
+  {
+   "id": "s08-c02",
+   "scene": "s08",
+   "t": 23.8,
+   "what": "the red crystal holds and hums",
+   "seven": {
+    "who": "red containment",
+    "what": "the beam's energy",
+    "how": "holds",
+    "howMuch": "strained",
+    "when": "23.80 s for 1.9 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -6,
+   "recipe": "shield",
+   "brightness": 0.2,
+   "duration": 1.9
+  },
+  {
+   "id": "s08-c03",
+   "scene": "s08",
+   "t": 25.13,
+   "what": "the containment shell cracks",
+   "seven": {
+    "who": "the red shell",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "25.13 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "shatter",
+   "size": 0.3
+  },
+  {
+   "id": "s08-c04",
+   "scene": "s08",
+   "t": 25.45,
+   "what": "a second crack",
+   "seven": {
+    "who": "the red shell",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "small",
+    "when": "25.45 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "zap"
+  },
+  {
+   "id": "s08-c05",
+   "scene": "s08",
+   "t": 25.78,
+   "what": "radial pressure release",
+   "seven": {
+    "who": "the contained energy",
+    "what": "the shell and the air",
+    "how": "bursts out",
+    "howMuch": "very large",
+    "when": "25.78 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "blast",
+   "size": 0.9,
+   "brightness": 0.5
+  },
+  {
+   "id": "s08-c06",
+   "scene": "s08",
+   "t": 26.13,
+   "what": "a blue flash, the defence absorbs it",
+   "seven": {
+    "who": "blue defence magic",
+    "what": "the energy",
+    "how": "absorbs",
+    "howMuch": "large",
+    "when": "26.13 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "flash",
+   "brightness": 0.8,
+   "duration": 0.6
+  },
+  {
+   "id": "s09-bed01",
+   "scene": "s09",
+   "t": 26.23,
+   "what": "dust after the pressure has passed",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "26.23 to 28.57 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s09-c02",
+   "scene": "s09",
+   "t": 26.3,
+   "what": "blue sparks rain",
+   "seven": {
+    "who": "blue sparks",
+    "what": "air",
+    "how": "rain",
+    "howMuch": "many",
+    "when": "26.30 s for 2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -10,
+   "recipe": "sparkle",
+   "size": 0.7,
+   "brightness": 0.8,
+   "duration": 2.0
+  },
+  {
+   "id": "s09-c03",
+   "scene": "s09",
+   "t": 26.42,
+   "what": "a fragment lands",
+   "seven": {
+    "who": "a fragment",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "small",
+    "when": "26.42 s",
+    "where": "left, 6 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "stone-hit",
+   "size": 0.25,
+   "pan": -0.5,
+   "distance": 6
+  },
+  {
+   "id": "s09-c04",
+   "scene": "s09",
+   "t": 26.69,
+   "what": "a fragment lands",
+   "seven": {
+    "who": "a fragment",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "small",
+    "when": "26.69 s",
+    "where": "right, 6 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "stone-hit",
+   "size": 0.25,
+   "pan": 0.4,
+   "distance": 6
+  },
+  {
+   "id": "s09-c05",
+   "scene": "s09",
+   "t": 27.13,
+   "what": "a fragment lands",
+   "seven": {
+    "who": "a fragment",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "small",
+    "when": "27.13 s",
+    "where": "left, 6 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -10,
+   "recipe": "stone-hit",
+   "size": 0.25,
+   "pan": -0.2,
+   "distance": 6
+  },
+  {
+   "id": "s09-c06",
+   "scene": "s09",
+   "t": 27.82,
+   "what": "a fragment lands",
+   "seven": {
+    "who": "a fragment",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "small",
+    "when": "27.82 s",
+    "where": "right, 6 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -11,
+   "recipe": "stone-hit",
+   "size": 0.25,
+   "pan": 0.6,
+   "distance": 6
+  },
+  {
+   "id": "s09-c07",
+   "scene": "s09",
+   "t": 28.46,
+   "what": "a fragment lands",
+   "seven": {
+    "who": "a fragment",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "small",
+    "when": "28.46 s",
+    "where": "left, 6 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -12,
+   "recipe": "stone-hit",
+   "size": 0.25,
+   "pan": -0.4,
+   "distance": 6
+  },
+  {
+   "id": "s09-c08",
+   "scene": "s09",
+   "t": 26.5,
+   "what": "cloak stirs in the push of air",
+   "seven": {
+    "who": "cloak",
+    "what": "air",
+    "how": "flutters",
+    "howMuch": "small",
+    "when": "26.50 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "cloth",
+   "size": 0.5,
+   "duration": 1.0
+  },
+  {
+   "id": "s10-bed01",
+   "scene": "s10",
+   "t": 28.57,
+   "what": "wind lines over the stone",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "28.57 to 30.32 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "wind",
+   "brightness": 0.4
+  },
+  {
+   "id": "s10-c02",
+   "scene": "s10",
+   "t": 28.82,
+   "what": "the stone groans",
+   "seven": {
+    "who": "the stone mass",
+    "what": "itself",
+    "how": "groans",
+    "howMuch": "large",
+    "when": "28.82 s for 1.5 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "rumble",
+   "size": 0.6,
+   "duration": 1.5
+  },
+  {
+   "id": "s10-c03",
+   "scene": "s10",
+   "t": 29.09,
+   "what": "grit blows across",
+   "seven": {
+    "who": "grit",
+    "what": "the stone",
+    "how": "blows",
+    "howMuch": "small",
+    "when": "29.09 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "debris",
+   "size": 0.1,
+   "duration": 1.0,
+   "count": 3
+  },
+  {
+   "id": "s11-bed01",
+   "scene": "s11",
+   "t": 30.32,
+   "what": "wind on the face and the hair",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "30.32 to 33.58 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -9,
+   "bed": true,
+   "recipe": "wind",
+   "brightness": 0.7
+  },
+  {
+   "id": "s11-c02",
+   "scene": "s11",
+   "t": 30.5,
+   "what": "hair whips",
+   "seven": {
+    "who": "hair",
+    "what": "air",
+    "how": "whips",
+    "howMuch": "medium",
+    "when": "30.50 s for 1.2 s",
+    "where": "centre, 1.5 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "cloth",
+   "size": 0.9,
+   "duration": 1.2,
+   "distance": 1.5
+  },
+  {
+   "id": "s11-c03",
+   "scene": "s11",
+   "t": 31.9,
+   "what": "a blue flash crosses",
+   "seven": {
+    "who": "blue magic",
+    "what": "air",
+    "how": "flashes",
+    "howMuch": "medium",
+    "when": "31.90 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "zap",
+   "pan": 0.3
+  },
+  {
+   "id": "s11-c04",
+   "scene": "s11",
+   "t": 32.03,
+   "what": "the light hums for a moment",
+   "seven": {
+    "who": "blue magic",
+    "what": "air",
+    "how": "hums",
+    "howMuch": "small",
+    "when": "32.03 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "sparkle",
+   "size": 0.4,
+   "brightness": 0.6,
+   "duration": 0.6
+  },
+  {
+   "id": "s12-bed01",
+   "scene": "s12",
+   "t": 33.58,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "33.58 to 36.45 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s12-c02",
+   "scene": "s12",
+   "t": 35.3,
+   "what": "a quick step on stone",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "the stone floor",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "35.30 s",
+    "where": "left, 8 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "step",
+   "size": 0.2,
+   "pan": -0.2,
+   "distance": 8
+  },
+  {
+   "id": "s12-c03",
+   "scene": "s12",
+   "t": 35.6,
+   "what": "a quick step on stone",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "the stone floor",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "35.60 s",
+    "where": "centre, 8 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "step",
+   "size": 0.2,
+   "pan": -0.05000000000000002,
+   "distance": 8
+  },
+  {
+   "id": "s12-c04",
+   "scene": "s12",
+   "t": 35.9,
+   "what": "a quick step on stone",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "the stone floor",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "35.90 s",
+    "where": "centre, 8 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "step",
+   "size": 0.2,
+   "pan": 0.09999999999999998,
+   "distance": 8
+  },
+  {
+   "id": "s12-c05",
+   "scene": "s12",
+   "t": 36.2,
+   "what": "a quick step on stone",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "the stone floor",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "36.20 s",
+    "where": "right, 8 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "step",
+   "size": 0.2,
+   "pan": 0.24999999999999994,
+   "distance": 8
+  },
+  {
+   "id": "s12-c06",
+   "scene": "s12",
+   "t": 34.52,
+   "what": "a stone settles",
+   "seven": {
+    "who": "a stone",
+    "what": "the floor",
+    "how": "settles",
+    "howMuch": "small",
+    "when": "34.52 s",
+    "where": "right, 8 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "stone-hit",
+   "size": 0.2,
+   "pan": 0.4,
+   "distance": 8
+  },
+  {
+   "id": "s13-bed01",
+   "scene": "s13",
+   "t": 36.45,
+   "what": "dust in the hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "36.45 to 38.00 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s13-c02",
+   "scene": "s13",
+   "t": 36.5,
+   "what": "a block swings past",
+   "seven": {
+    "who": "a block",
+    "what": "air",
+    "how": "swings",
+    "howMuch": "very heavy",
+    "when": "36.50 s for 0.6 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "whoosh",
+   "size": 0.4,
+   "brightness": 0.2,
+   "duration": 0.6,
+   "pan": 0.5
+  },
+  {
+   "id": "s13-c03",
+   "scene": "s13",
+   "t": 36.87,
+   "what": "a block hits a block",
+   "seven": {
+    "who": "a block",
+    "what": "a block",
+    "how": "hits",
+    "howMuch": "very heavy",
+    "when": "36.87 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "store": {
+    "name": "stone-landing",
+    "pitch": 1.2
+   },
+   "pan": -0.3
+  },
+  {
+   "id": "s13-c04",
+   "scene": "s13",
+   "t": 37.54,
+   "what": "another block hits",
+   "seven": {
+    "who": "a block",
+    "what": "a block",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "37.54 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -6,
+   "store": {
+    "name": "stone-landing",
+    "pitch": 1.3
+   },
+   "pan": 0.4
+  },
+  {
+   "id": "s13-c05",
+   "scene": "s13",
+   "t": 37.6,
+   "what": "chips fly off the blocks",
+   "seven": {
+    "who": "chips",
+    "what": "air",
+    "how": "scatter",
+    "howMuch": "many, small",
+    "when": "37.60 s for 0.8 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "debris",
+   "size": 0.3,
+   "duration": 0.8,
+   "count": 5
+  },
+  {
+   "id": "s13-c06",
+   "scene": "s13",
+   "t": 37.2,
+   "what": "Frieren dodges",
+   "seven": {
+    "who": "Frieren",
+    "what": "air",
+    "how": "dodges",
+    "howMuch": "fast",
+    "when": "37.20 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "swish"
+  },
+  {
+   "id": "s14-bed01",
+   "scene": "s14",
+   "t": 38.0,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "38.00 to 40.33 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s14-c02",
+   "scene": "s14",
+   "t": 38.05,
+   "what": "the giant block shifts",
+   "seven": {
+    "who": "the giant block",
+    "what": "the floor",
+    "how": "shifts",
+    "howMuch": "very heavy",
+    "when": "38.05 s for 2 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "rumble",
+   "size": 0.9,
+   "duration": 2.0
+  },
+  {
+   "id": "s14-c03",
+   "scene": "s14",
+   "t": 39.2,
+   "what": "a step on the block",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "stone",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "39.20 s",
+    "where": "centre, 6 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -13,
+   "recipe": "step",
+   "size": 0.2,
+   "distance": 6
+  },
+  {
+   "id": "s14-c04",
+   "scene": "s14",
+   "t": 39.45,
+   "what": "a step on the block",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "stone",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "39.45 s",
+    "where": "centre, 6 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -13,
+   "recipe": "step",
+   "size": 0.2,
+   "distance": 6
+  },
+  {
+   "id": "s14-c05",
+   "scene": "s14",
+   "t": 39.7,
+   "what": "a step on the block",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "stone",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "39.70 s",
+    "where": "centre, 6 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -13,
+   "recipe": "step",
+   "size": 0.2,
+   "distance": 6
+  },
+  {
+   "id": "s14-c06",
+   "scene": "s14",
+   "t": 39.95,
+   "what": "a step on the block",
+   "seven": {
+    "who": "Frieren's boot",
+    "what": "stone",
+    "how": "runs",
+    "howMuch": "light",
+    "when": "39.95 s",
+    "where": "centre, 6 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -13,
+   "recipe": "step",
+   "size": 0.2,
+   "distance": 6
+  },
+  {
+   "id": "s15-bed01",
+   "scene": "s15",
+   "t": 40.33,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "40.33 to 43.21 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s15-c02",
+   "scene": "s15",
+   "t": 40.4,
+   "what": "the stone giant's mass settles",
+   "seven": {
+    "who": "the stone giant",
+    "what": "the floor",
+    "how": "stands",
+    "howMuch": "very heavy",
+    "when": "40.40 s for 1.2 s",
+    "where": "centre, 14 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "rumble",
+   "size": 1.0,
+   "duration": 1.2,
+   "distance": 14
+  },
+  {
+   "id": "s15-c03",
+   "scene": "s15",
+   "t": 41.15,
+   "what": "a wave of dust rushes",
+   "seven": {
+    "who": "a wave of dust",
+    "what": "the hall",
+    "how": "rushes",
+    "howMuch": "large",
+    "when": "41.15 s for 1.8 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "dust",
+   "brightness": 0.4,
+   "duration": 1.8
+  },
+  {
+   "id": "s15-c04",
+   "scene": "s15",
+   "t": 41.6,
+   "what": "the giant's blow lands",
+   "seven": {
+    "who": "the giant's fist",
+    "what": "the floor",
+    "how": "lands",
+    "howMuch": "very heavy",
+    "when": "41.60 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "store": {
+    "name": "stone-landing"
+   },
+   "pan": 0.3
+  },
+  {
+   "id": "s15-c05",
+   "scene": "s15",
+   "t": 42.0,
+   "what": "a block flies past the camera",
+   "seven": {
+    "who": "a block",
+    "what": "air",
+    "how": "flies",
+    "howMuch": "heavy, fast",
+    "when": "42.00 s for 0.5 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "whoosh",
+   "size": 0.7,
+   "brightness": 0.3,
+   "duration": 0.5,
+   "pan": -0.2
+  },
+  {
+   "id": "s15-c06",
+   "scene": "s15",
+   "t": 42.29,
+   "what": "debris rains in the dust",
+   "seven": {
+    "who": "debris",
+    "what": "the floor",
+    "how": "rains",
+    "howMuch": "many",
+    "when": "42.29 s for 1 s",
+    "where": "centre, 8 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "debris",
+   "size": 0.5,
+   "duration": 1.0,
+   "count": 6,
+   "distance": 8
+  },
+  {
+   "id": "s16-bed01",
+   "scene": "s16",
+   "t": 43.21,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "43.21 to 43.96 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -15,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s16-c02",
+   "scene": "s16",
+   "t": 43.3,
+   "what": "Fern raises the staff",
+   "seven": {
+    "who": "Fern's sleeve",
+    "what": "the staff",
+    "how": "raises",
+    "howMuch": "small",
+    "when": "43.30 s for 0.4 s",
+    "where": "centre, 1.5 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "cloth",
+   "size": 0.3,
+   "duration": 0.4,
+   "distance": 1.5
+  },
+  {
+   "id": "s17-bed01",
+   "scene": "s17",
+   "t": 43.96,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "43.96 to 45.67 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s17-c02",
+   "scene": "s17",
+   "t": 44.0,
+   "what": "purple mana gathers",
+   "seven": {
+    "who": "purple mana",
+    "what": "the staff",
+    "how": "gathers",
+    "howMuch": "medium",
+    "when": "44.00 s for 1.6 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -6,
+   "recipe": "charge",
+   "brightness": 0.6,
+   "duration": 1.6,
+   "pan": -0.3
+  },
+  {
+   "id": "s17-c03",
+   "scene": "s17",
+   "t": 44.41,
+   "what": "small arcs at the staff",
+   "seven": {
+    "who": "purple arcs",
+    "what": "air",
+    "how": "crackle",
+    "howMuch": "small",
+    "when": "44.41 s",
+    "where": "left, 8 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -10,
+   "recipe": "zap",
+   "pan": -0.3,
+   "distance": 8
+  },
+  {
+   "id": "s18-bed01",
+   "scene": "s18",
+   "t": 45.67,
+   "what": "the air of the clash",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "45.67 to 47.46 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.6
+  },
+  {
+   "id": "s18-c02",
+   "scene": "s18",
+   "t": 45.77,
+   "what": "purple lightning blasts",
+   "seven": {
+    "who": "purple lightning",
+    "what": "the barrier",
+    "how": "blasts",
+    "howMuch": "very large",
+    "when": "45.77 s for 1.3 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "lightning",
+   "duration": 1.3,
+   "count": 6
+  },
+  {
+   "id": "s18-c03",
+   "scene": "s18",
+   "t": 45.8,
+   "what": "the blast's pressure",
+   "seven": {
+    "who": "purple lightning",
+    "what": "air",
+    "how": "pushes",
+    "howMuch": "large",
+    "when": "45.80 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "blast",
+   "size": 0.5,
+   "brightness": 0.8
+  },
+  {
+   "id": "s18-c04",
+   "scene": "s18",
+   "t": 46.05,
+   "what": "the hexagon barrier takes the hit",
+   "seven": {
+    "who": "the hexagon barrier",
+    "what": "the lightning",
+    "how": "holds",
+    "howMuch": "large",
+    "when": "46.05 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "brightness": 0.6
+  },
+  {
+   "id": "s18-c05",
+   "scene": "s18",
+   "t": 46.1,
+   "what": "the barrier holds and hums",
+   "seven": {
+    "who": "the hexagon barrier",
+    "what": "the lightning",
+    "how": "holds",
+    "howMuch": "medium",
+    "when": "46.10 s for 1.3 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "shield",
+   "brightness": 0.6,
+   "duration": 1.3
+  },
+  {
+   "id": "s19-bed01",
+   "scene": "s19",
+   "t": 47.46,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "47.46 to 49.42 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s19-c02",
+   "scene": "s19",
+   "t": 47.59,
+   "what": "lightning crawls over the stone",
+   "seven": {
+    "who": "purple lightning",
+    "what": "the stone giant",
+    "how": "crawls",
+    "howMuch": "medium",
+    "when": "47.59 s for 1.8 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "lightning",
+   "duration": 1.8,
+   "count": 7
+  },
+  {
+   "id": "s19-c03",
+   "scene": "s19",
+   "t": 48.1,
+   "what": "the stone cracks under the lightning",
+   "seven": {
+    "who": "the stone giant",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "48.10 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "rock-shatter",
+   "size": 0.6
+  },
+  {
+   "id": "s20-bed01",
+   "scene": "s20",
+   "t": 49.42,
+   "what": "the hall full of lightning",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "49.42 to 53.00 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.7
+  },
+  {
+   "id": "s20-c02",
+   "scene": "s20",
+   "t": 49.52,
+   "what": "lightning wraps the hall",
+   "seven": {
+    "who": "purple lightning",
+    "what": "the hall",
+    "how": "wraps",
+    "howMuch": "very large",
+    "when": "49.52 s for 2.9 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": -1,
+   "recipe": "lightning",
+   "duration": 2.9,
+   "count": 10
+  },
+  {
+   "id": "s20-c03",
+   "scene": "s20",
+   "t": 50.0,
+   "what": "the giant is struck: a burst of smoke",
+   "seven": {
+    "who": "purple lightning",
+    "what": "the stone giant",
+    "how": "bursts",
+    "howMuch": "very large",
+    "when": "50.00 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "blast",
+   "size": 1.0,
+   "brightness": 0.5
+  },
+  {
+   "id": "s20-c04",
+   "scene": "s20",
+   "t": 50.1,
+   "what": "the smoke rolls out",
+   "seven": {
+    "who": "smoke",
+    "what": "the hall",
+    "how": "billows",
+    "howMuch": "large",
+    "when": "50.10 s for 2.5 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "dust",
+   "brightness": 0.3,
+   "duration": 2.5
+  },
+  {
+   "id": "s20-c05",
+   "scene": "s20",
+   "t": 52.33,
+   "what": "a white flash in the smoke",
+   "seven": {
+    "who": "lightning",
+    "what": "smoke",
+    "how": "flashes",
+    "howMuch": "large",
+    "when": "52.33 s for 0.8 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "flash",
+   "brightness": 0.9,
+   "duration": 0.8
+  },
+  {
+   "id": "s20-c06",
+   "scene": "s20",
+   "t": 50.6,
+   "what": "the hall answers",
+   "seven": {
+    "who": "the hall",
+    "what": "the blast",
+    "how": "answers",
+    "howMuch": "large",
+    "when": "50.60 s for 2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "rumble",
+   "size": 0.8,
+   "duration": 2.0
+  },
+  {
+   "id": "s21-bed01",
+   "scene": "s21",
+   "t": 53.0,
+   "what": "smoke hangs",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "53.00 to 55.97 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s21-c02",
+   "scene": "s21",
+   "t": 53.32,
+   "what": "the smoke churns",
+   "seven": {
+    "who": "smoke",
+    "what": "the hall",
+    "how": "churns",
+    "howMuch": "medium",
+    "when": "53.32 s for 2.5 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "dust",
+   "brightness": 0.2,
+   "duration": 2.5
+  },
+  {
+   "id": "s21-c03",
+   "scene": "s21",
+   "t": 54.3,
+   "what": "arcs flicker in the smoke",
+   "seven": {
+    "who": "purple arcs",
+    "what": "smoke",
+    "how": "flicker",
+    "howMuch": "small",
+    "when": "54.30 s for 1.5 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "lightning",
+   "duration": 1.5,
+   "count": 4
+  },
+  {
+   "id": "s21-c04",
+   "scene": "s21",
+   "t": 54.97,
+   "what": "a figure moves in the smoke",
+   "seven": {
+    "who": "a figure",
+    "what": "air",
+    "how": "moves",
+    "howMuch": "fast",
+    "when": "54.97 s for 0.5 s",
+    "where": "right, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "whoosh",
+   "size": 0.6,
+   "brightness": 0.3,
+   "duration": 0.5,
+   "pan": 0.4
+  },
+  {
+   "id": "s22-c01",
+   "scene": "s22",
+   "t": 55.97,
+   "what": "the barrier flares in the light",
+   "seven": {
+    "who": "the hexagon barrier",
+    "what": "lightning",
+    "how": "flares",
+    "howMuch": "large",
+    "when": "55.97 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "shield-hit",
+   "size": 0.8,
+   "brightness": 0.8
+  },
+  {
+   "id": "s22-c02",
+   "scene": "s22",
+   "t": 56.0,
+   "what": "lightning lashes the barrier",
+   "seven": {
+    "who": "purple lightning",
+    "what": "the barrier",
+    "how": "lashes",
+    "howMuch": "large",
+    "when": "56.00 s for 1.1 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "lightning",
+   "duration": 1.1,
+   "count": 5
+  },
+  {
+   "id": "s23-bed01",
+   "scene": "s23",
+   "t": 57.22,
+   "what": "smoke hangs",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "57.22 to 60.31 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s23-c02",
+   "scene": "s23",
+   "t": 57.3,
+   "what": "sparkles drift",
+   "seven": {
+    "who": "sparkles",
+    "what": "air",
+    "how": "drift",
+    "howMuch": "many, small",
+    "when": "57.30 s for 2.6 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -11,
+   "recipe": "sparkle",
+   "size": 0.5,
+   "brightness": 0.7,
+   "duration": 2.6
+  },
+  {
+   "id": "s23-c03",
+   "scene": "s23",
+   "t": 58.74,
+   "what": "a ribbon of magic swirls",
+   "seven": {
+    "who": "white magic",
+    "what": "air",
+    "how": "swirls",
+    "howMuch": "medium",
+    "when": "58.74 s for 1 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "recipe": "whoosh",
+   "size": 0.6,
+   "brightness": 0.8,
+   "duration": 1.0,
+   "pan": -0.3
+  },
+  {
+   "id": "s23-c04",
+   "scene": "s23",
+   "t": 59.4,
+   "what": "the ribbons gather",
+   "seven": {
+    "who": "white magic",
+    "what": "air",
+    "how": "gathers",
+    "howMuch": "medium",
+    "when": "59.40 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -6,
+   "recipe": "charge",
+   "brightness": 0.8,
+   "duration": 1.0
+  },
+  {
+   "id": "s23-c05",
+   "scene": "s23",
+   "t": 59.9,
+   "what": "a ribbon cuts across",
+   "seven": {
+    "who": "white magic",
+    "what": "air",
+    "how": "cuts",
+    "howMuch": "fast",
+    "when": "59.90 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "swish",
+   "brightness": 0.8,
+   "pan": 0.4
+  },
+  {
+   "id": "s24-bed01",
+   "scene": "s24",
+   "t": 60.31,
+   "what": "a soft wind on the hair",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "60.31 to 62.27 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "wind",
+   "brightness": 0.3
+  },
+  {
+   "id": "s24-c02",
+   "scene": "s24",
+   "t": 60.6,
+   "what": "hair moves",
+   "seven": {
+    "who": "hair",
+    "what": "air",
+    "how": "moves",
+    "howMuch": "small",
+    "when": "60.60 s for 1.4 s",
+    "where": "centre, 1.5 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "cloth",
+   "size": 0.3,
+   "duration": 1.4,
+   "distance": 1.5
+  },
+  {
+   "id": "s25-bed01",
+   "scene": "s25",
+   "t": 62.27,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "62.27 to 65.15 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s25-c02",
+   "scene": "s25",
+   "t": 62.4,
+   "what": "a blue flash fires",
+   "seven": {
+    "who": "blue mana",
+    "what": "air",
+    "how": "fires",
+    "howMuch": "large",
+    "when": "62.40 s for 0.5 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "flash",
+   "brightness": 0.9,
+   "duration": 0.5
+  },
+  {
+   "id": "s25-c03",
+   "scene": "s25",
+   "t": 63.0,
+   "what": "the blue beam cuts across",
+   "seven": {
+    "who": "blue mana beam",
+    "what": "air",
+    "how": "cuts",
+    "howMuch": "large",
+    "when": "63.00 s for 0.8 s",
+    "where": "right, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": -1,
+   "recipe": "beam",
+   "size": 0.7,
+   "brightness": 0.8,
+   "duration": 0.8,
+   "pan": 0.2
+  },
+  {
+   "id": "s25-c04",
+   "scene": "s25",
+   "t": 63.56,
+   "what": "rocks are blown apart",
+   "seven": {
+    "who": "blue mana beam",
+    "what": "rocks",
+    "how": "blows apart",
+    "howMuch": "very large",
+    "when": "63.56 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "blast",
+   "size": 0.7,
+   "brightness": 0.5
+  },
+  {
+   "id": "s25-c05",
+   "scene": "s25",
+   "t": 63.6,
+   "what": "the rocks break",
+   "seven": {
+    "who": "rocks",
+    "what": "themselves",
+    "how": "break",
+    "howMuch": "large",
+    "when": "63.60 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "store": {
+    "name": "break"
+   },
+   "pan": -0.2
+  },
+  {
+   "id": "s25-c06",
+   "scene": "s25",
+   "t": 64.67,
+   "what": "pieces fly",
+   "seven": {
+    "who": "pieces",
+    "what": "air",
+    "how": "fly",
+    "howMuch": "many",
+    "when": "64.67 s for 0.5 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "debris",
+   "size": 0.6,
+   "duration": 0.5,
+   "count": 5
+  },
+  {
+   "id": "s26-bed01",
+   "scene": "s26",
+   "t": 65.15,
+   "what": "dust and the hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "65.15 to 67.61 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s26-c02",
+   "scene": "s26",
+   "t": 65.2,
+   "what": "the barrier holds",
+   "seven": {
+    "who": "the hexagon barrier",
+    "what": "the blocks",
+    "how": "holds",
+    "howMuch": "medium",
+    "when": "65.20 s for 2.4 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "shield",
+   "brightness": 0.5,
+   "duration": 2.4
+  },
+  {
+   "id": "s26-c03",
+   "scene": "s26",
+   "t": 65.5,
+   "what": "a block hits the barrier",
+   "seven": {
+    "who": "a block",
+    "what": "the hexagon barrier",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "65.50 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "pan": -0.4
+  },
+  {
+   "id": "s26-c04",
+   "scene": "s26",
+   "t": 65.82,
+   "what": "a block hits the barrier",
+   "seven": {
+    "who": "a block",
+    "what": "the hexagon barrier",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "65.82 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "pan": 0.3
+  },
+  {
+   "id": "s26-c05",
+   "scene": "s26",
+   "t": 66.17,
+   "what": "a block hits the barrier",
+   "seven": {
+    "who": "a block",
+    "what": "the hexagon barrier",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "66.17 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "pan": -0.1
+  },
+  {
+   "id": "s26-c06",
+   "scene": "s26",
+   "t": 66.5,
+   "what": "a block hits the barrier",
+   "seven": {
+    "who": "a block",
+    "what": "the hexagon barrier",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "66.50 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "pan": 0.5
+  },
+  {
+   "id": "s26-c07",
+   "scene": "s26",
+   "t": 66.83,
+   "what": "a block hits the barrier",
+   "seven": {
+    "who": "a block",
+    "what": "the hexagon barrier",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "66.83 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "pan": -0.5
+  },
+  {
+   "id": "s26-c08",
+   "scene": "s26",
+   "t": 67.16,
+   "what": "a block hits the barrier",
+   "seven": {
+    "who": "a block",
+    "what": "the hexagon barrier",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "67.16 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "pan": 0.2
+  },
+  {
+   "id": "s26-c09",
+   "scene": "s26",
+   "t": 67.49,
+   "what": "a block hits the barrier",
+   "seven": {
+    "who": "a block",
+    "what": "the hexagon barrier",
+    "how": "hits",
+    "howMuch": "heavy",
+    "when": "67.49 s",
+    "where": "left, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "shield-hit",
+   "size": 0.7,
+   "pan": -0.3
+  },
+  {
+   "id": "s26-c10",
+   "scene": "s26",
+   "t": 65.6,
+   "what": "blocks tumble through the air",
+   "seven": {
+    "who": "blocks",
+    "what": "air",
+    "how": "tumble",
+    "howMuch": "heavy",
+    "when": "65.60 s for 2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "float",
+   "duration": 2.0
+  },
+  {
+   "id": "s27-bed01",
+   "scene": "s27",
+   "t": 67.61,
+   "what": "dust",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "67.61 to 68.86 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s27-c02",
+   "scene": "s27",
+   "t": 67.81,
+   "what": "a block lands near her",
+   "seven": {
+    "who": "a block",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "heavy",
+    "when": "67.81 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "store": {
+    "name": "stone-landing",
+    "pitch": 1.1
+   },
+   "pan": 0.4
+  },
+  {
+   "id": "s27-c03",
+   "scene": "s27",
+   "t": 68.14,
+   "what": "a second block lands",
+   "seven": {
+    "who": "a block",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "heavy",
+    "when": "68.14 s",
+    "where": "left, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "store": {
+    "name": "stone-landing",
+    "pitch": 1.3
+   },
+   "pan": -0.4
+  },
+  {
+   "id": "s28-bed01",
+   "scene": "s28",
+   "t": 68.86,
+   "what": "dust settles",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "68.86 to 71.00 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s28-c02",
+   "scene": "s28",
+   "t": 69.47,
+   "what": "pebbles settle",
+   "seven": {
+    "who": "pebbles",
+    "what": "the floor",
+    "how": "settle",
+    "howMuch": "few, small",
+    "when": "69.47 s for 1.4 s",
+    "where": "centre, 10 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -16,
+   "recipe": "debris",
+   "size": 0.1,
+   "duration": 1.4,
+   "count": 3,
+   "distance": 10
+  },
+  {
+   "id": "s29-bed01",
+   "scene": "s29",
+   "t": 71.0,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "71.00 to 74.12 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s29-c02",
+   "scene": "s29",
+   "t": 71.1,
+   "what": "sparkles drift",
+   "seven": {
+    "who": "sparkles",
+    "what": "air",
+    "how": "drift",
+    "howMuch": "few",
+    "when": "71.10 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -13,
+   "recipe": "sparkle",
+   "size": 0.3,
+   "duration": 1.0
+  },
+  {
+   "id": "s29-c03",
+   "scene": "s29",
+   "t": 72.0,
+   "what": "a white streak flies",
+   "seven": {
+    "who": "white magic",
+    "what": "air",
+    "how": "flies",
+    "howMuch": "fast",
+    "when": "72.00 s for 0.4 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "whoosh",
+   "size": 1.0,
+   "brightness": 0.9,
+   "duration": 0.4,
+   "pan": -0.4
+  },
+  {
+   "id": "s29-c04",
+   "scene": "s29",
+   "t": 72.5,
+   "what": "the streak bursts on the giant",
+   "seven": {
+    "who": "white magic",
+    "what": "the stone giant",
+    "how": "bursts",
+    "howMuch": "large",
+    "when": "72.50 s",
+    "where": "right, 10 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "blast",
+   "size": 0.5,
+   "brightness": 0.7,
+   "pan": 0.3,
+   "distance": 10
+  },
+  {
+   "id": "s29-c05",
+   "scene": "s29",
+   "t": 73.52,
+   "what": "the giant's stone cracks",
+   "seven": {
+    "who": "the stone giant",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "large",
+    "when": "73.52 s",
+    "where": "right, 10 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "rock-shatter",
+   "size": 0.8,
+   "pan": 0.3,
+   "distance": 10
+  },
+  {
+   "id": "s29-c06",
+   "scene": "s29",
+   "t": 73.62,
+   "what": "pieces fall off the giant",
+   "seven": {
+    "who": "pieces",
+    "what": "the floor",
+    "how": "fall",
+    "howMuch": "many",
+    "when": "73.62 s for 0.5 s",
+    "where": "centre, 10 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "debris",
+   "size": 0.6,
+   "duration": 0.5,
+   "count": 5,
+   "distance": 10
+  },
+  {
+   "id": "s30-bed01",
+   "scene": "s30",
+   "t": 74.12,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "74.12 to 76.91 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s30-c02",
+   "scene": "s30",
+   "t": 74.2,
+   "what": "rocks drift past",
+   "seven": {
+    "who": "rocks",
+    "what": "air",
+    "how": "drift",
+    "howMuch": "medium",
+    "when": "74.20 s for 2.5 s",
+    "where": "centre, 4 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "float",
+   "duration": 2.5
+  },
+  {
+   "id": "s30-c03",
+   "scene": "s30",
+   "t": 75.0,
+   "what": "cloak moves",
+   "seven": {
+    "who": "cloak",
+    "what": "air",
+    "how": "moves",
+    "howMuch": "small",
+    "when": "75.00 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -16,
+   "recipe": "cloth",
+   "size": 0.3,
+   "duration": 1.0
+  },
+  {
+   "id": "s31-bed01",
+   "scene": "s31",
+   "t": 76.91,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "76.91 to 79.41 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s32-bed01",
+   "scene": "s32",
+   "t": 79.41,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "79.41 to 82.00 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s32-c02",
+   "scene": "s32",
+   "t": 79.5,
+   "what": "embers drift",
+   "seven": {
+    "who": "embers",
+    "what": "air",
+    "how": "drift",
+    "howMuch": "few",
+    "when": "79.50 s for 2 s",
+    "where": "centre, 4 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -15,
+   "recipe": "sparkle",
+   "size": 0.2,
+   "brightness": 0.4,
+   "duration": 2.0
+  },
+  {
+   "id": "s33-bed01",
+   "scene": "s33",
+   "t": 82.0,
+   "what": "the air of the spells",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "82.00 to 87.13 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.8
+  },
+  {
+   "id": "s33-c02",
+   "scene": "s33",
+   "t": 82.6,
+   "what": "the first spells fly",
+   "seven": {
+    "who": "spells",
+    "what": "air",
+    "how": "fly",
+    "howMuch": "many",
+    "when": "82.60 s for 0.6 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "whoosh",
+   "size": 0.8,
+   "brightness": 0.8,
+   "duration": 0.6,
+   "pan": -0.4
+  },
+  {
+   "id": "s33-c03",
+   "scene": "s33",
+   "t": 83.1,
+   "what": "a spell bursts",
+   "seven": {
+    "who": "a spell",
+    "what": "a spell",
+    "how": "bursts",
+    "howMuch": "medium",
+    "when": "83.10 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -4,
+   "recipe": "zap",
+   "pan": 0.4
+  },
+  {
+   "id": "s33-c04",
+   "scene": "s33",
+   "t": 83.6,
+   "what": "a spell bursts",
+   "seven": {
+    "who": "a spell",
+    "what": "a spell",
+    "how": "bursts",
+    "howMuch": "medium",
+    "when": "83.60 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "zap",
+   "pan": -0.3
+  },
+  {
+   "id": "s33-c05",
+   "scene": "s33",
+   "t": 84.05,
+   "what": "a spell bursts",
+   "seven": {
+    "who": "a spell",
+    "what": "a spell",
+    "how": "bursts",
+    "howMuch": "medium",
+    "when": "84.05 s",
+    "where": "right, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "zap",
+   "pan": 0.2
+  },
+  {
+   "id": "s33-c06",
+   "scene": "s33",
+   "t": 84.5,
+   "what": "a spell bursts",
+   "seven": {
+    "who": "a spell",
+    "what": "a spell",
+    "how": "bursts",
+    "howMuch": "medium",
+    "when": "84.50 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -4,
+   "recipe": "zap",
+   "pan": -0.5
+  },
+  {
+   "id": "s33-c07",
+   "scene": "s33",
+   "t": 85.0,
+   "what": "a spell bursts",
+   "seven": {
+    "who": "a spell",
+    "what": "a spell",
+    "how": "bursts",
+    "howMuch": "medium",
+    "when": "85.00 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "zap",
+   "pan": 0.5
+  },
+  {
+   "id": "s33-c08",
+   "scene": "s33",
+   "t": 85.45,
+   "what": "a spell bursts",
+   "seven": {
+    "who": "a spell",
+    "what": "a spell",
+    "how": "bursts",
+    "howMuch": "medium",
+    "when": "85.45 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "zap",
+   "pan": -0.1
+  },
+  {
+   "id": "s33-c09",
+   "scene": "s33",
+   "t": 84.0,
+   "what": "orbs ring",
+   "seven": {
+    "who": "orbs of light",
+    "what": "air",
+    "how": "ring",
+    "howMuch": "many",
+    "when": "84.00 s for 2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "sparkle",
+   "size": 0.9,
+   "brightness": 0.9,
+   "duration": 2.0
+  },
+  {
+   "id": "s33-c10",
+   "scene": "s33",
+   "t": 85.5,
+   "what": "bolts streak",
+   "seven": {
+    "who": "bolts",
+    "what": "air",
+    "how": "streak",
+    "howMuch": "fast",
+    "when": "85.50 s for 0.5 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "whoosh",
+   "size": 1.0,
+   "brightness": 0.9,
+   "duration": 0.5,
+   "pan": 0.4
+  },
+  {
+   "id": "s33-c11",
+   "scene": "s33",
+   "t": 86.0,
+   "what": "the great burst",
+   "seven": {
+    "who": "spells",
+    "what": "spells",
+    "how": "burst",
+    "howMuch": "very large",
+    "when": "86.00 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "blast",
+   "size": 0.9,
+   "brightness": 0.9
+  },
+  {
+   "id": "s33-c12",
+   "scene": "s33",
+   "t": 86.1,
+   "what": "shards of light scatter",
+   "seven": {
+    "who": "shards of light",
+    "what": "air",
+    "how": "scatter",
+    "howMuch": "many",
+    "when": "86.10 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "recipe": "shatter",
+   "size": 0.8
+  },
+  {
+   "id": "s34-bed01",
+   "scene": "s34",
+   "t": 87.13,
+   "what": "dust in the bright hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "87.13 to 93.72 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s34-c02",
+   "scene": "s34",
+   "t": 87.2,
+   "what": "dust rolls",
+   "seven": {
+    "who": "dust",
+    "what": "the hall",
+    "how": "rolls",
+    "howMuch": "large",
+    "when": "87.20 s for 2.5 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "dust",
+   "brightness": 0.4,
+   "duration": 2.5
+  },
+  {
+   "id": "s34-c03",
+   "scene": "s34",
+   "t": 87.6,
+   "what": "a blue shard flies and strikes",
+   "seven": {
+    "who": "a blue shard",
+    "what": "stone",
+    "how": "strikes",
+    "howMuch": "medium",
+    "when": "87.60 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -4,
+   "recipe": "zap",
+   "pan": 0.3
+  },
+  {
+   "id": "s34-c04",
+   "scene": "s34",
+   "t": 88.4,
+   "what": "a blue shard flies and strikes",
+   "seven": {
+    "who": "a blue shard",
+    "what": "stone",
+    "how": "strikes",
+    "howMuch": "medium",
+    "when": "88.40 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "zap",
+   "pan": -0.2
+  },
+  {
+   "id": "s34-c05",
+   "scene": "s34",
+   "t": 89.1,
+   "what": "a blue shard flies and strikes",
+   "seven": {
+    "who": "a blue shard",
+    "what": "stone",
+    "how": "strikes",
+    "howMuch": "medium",
+    "when": "89.10 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "zap",
+   "pan": 0.5
+  },
+  {
+   "id": "s34-c06",
+   "scene": "s34",
+   "t": 89.6,
+   "what": "a blue shard flies and strikes",
+   "seven": {
+    "who": "a blue shard",
+    "what": "stone",
+    "how": "strikes",
+    "howMuch": "medium",
+    "when": "89.60 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "zap",
+   "pan": -0.4
+  },
+  {
+   "id": "s34-c07",
+   "scene": "s34",
+   "t": 90.2,
+   "what": "a blue shard flies and strikes",
+   "seven": {
+    "who": "a blue shard",
+    "what": "stone",
+    "how": "strikes",
+    "howMuch": "medium",
+    "when": "90.20 s",
+    "where": "right, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "zap",
+   "pan": 0.2
+  },
+  {
+   "id": "s34-c08",
+   "scene": "s34",
+   "t": 89.1,
+   "what": "a shard strikes stone",
+   "seven": {
+    "who": "a blue shard",
+    "what": "the wall",
+    "how": "strikes",
+    "howMuch": "medium",
+    "when": "89.10 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "rock-shatter",
+   "size": 0.4,
+   "pan": 0.5
+  },
+  {
+   "id": "s34-c09",
+   "scene": "s34",
+   "t": 90.97,
+   "what": "Frieren turns, cloak",
+   "seven": {
+    "who": "cloak",
+    "what": "air",
+    "how": "turns",
+    "howMuch": "small",
+    "when": "90.97 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "cloth",
+   "size": 0.5,
+   "duration": 0.6
+  },
+  {
+   "id": "s34-c10",
+   "scene": "s34",
+   "t": 92.84,
+   "what": "a blade sweeps",
+   "seven": {
+    "who": "a blade of magic",
+    "what": "air",
+    "how": "sweeps",
+    "howMuch": "fast",
+    "when": "92.84 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "swish",
+   "brightness": 0.7
+  },
+  {
+   "id": "s34-c11",
+   "scene": "s34",
+   "t": 93.0,
+   "what": "the blade's edge rings",
+   "seven": {
+    "who": "a blade of magic",
+    "what": "air",
+    "how": "rings",
+    "howMuch": "medium",
+    "when": "93.00 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "sparkle",
+   "size": 0.4,
+   "brightness": 0.9,
+   "duration": 0.6
+  },
+  {
+   "id": "s35-bed01",
+   "scene": "s35",
+   "t": 93.72,
+   "what": "the hall in the vortex",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "93.72 to 97.43 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.6
+  },
+  {
+   "id": "s35-c02",
+   "scene": "s35",
+   "t": 93.8,
+   "what": "the vortex spins up",
+   "seven": {
+    "who": "a vortex of magic",
+    "what": "the air",
+    "how": "spins",
+    "howMuch": "large",
+    "when": "93.80 s for 3.6 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "wind",
+   "brightness": 0.9,
+   "duration": 3.6
+  },
+  {
+   "id": "s35-c03",
+   "scene": "s35",
+   "t": 94.0,
+   "what": "the vortex roars",
+   "seven": {
+    "who": "a vortex of magic",
+    "what": "the air",
+    "how": "roars",
+    "howMuch": "large",
+    "when": "94.00 s for 3.3 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "recipe": "beam",
+   "size": 0.5,
+   "brightness": 0.4,
+   "duration": 3.3
+  },
+  {
+   "id": "s35-c04",
+   "scene": "s35",
+   "t": 95.5,
+   "what": "debris whirls",
+   "seven": {
+    "who": "debris",
+    "what": "the vortex",
+    "how": "whirls",
+    "howMuch": "medium",
+    "when": "95.50 s for 1.8 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -10,
+   "recipe": "debris",
+   "size": 0.3,
+   "duration": 1.8,
+   "count": 4
+  },
+  {
+   "id": "s36-bed01",
+   "scene": "s36",
+   "t": 97.43,
+   "what": "dust",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "97.43 to 99.35 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s36-c02",
+   "scene": "s36",
+   "t": 98.43,
+   "what": "the dust stirs",
+   "seven": {
+    "who": "dust",
+    "what": "air",
+    "how": "stirs",
+    "howMuch": "small",
+    "when": "98.43 s for 0.9 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "dust",
+   "brightness": 0.3,
+   "duration": 0.9
+  },
+  {
+   "id": "s36-c03",
+   "scene": "s36",
+   "t": 99.0,
+   "what": "a ring of magic rises",
+   "seven": {
+    "who": "a ring of magic",
+    "what": "air",
+    "how": "rises",
+    "howMuch": "medium",
+    "when": "99.00 s for 0.4 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "charge",
+   "brightness": 0.7,
+   "duration": 0.4
+  },
+  {
+   "id": "s37-bed01",
+   "scene": "s37",
+   "t": 99.35,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "99.35 to 101.48 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s37-c02",
+   "scene": "s37",
+   "t": 99.4,
+   "what": "the disc slices",
+   "seven": {
+    "who": "a disc of magic",
+    "what": "air",
+    "how": "slices",
+    "howMuch": "fast",
+    "when": "99.40 s for 0.4 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "whoosh",
+   "size": 1.0,
+   "brightness": 0.9,
+   "duration": 0.4,
+   "pan": -0.3
+  },
+  {
+   "id": "s37-c03",
+   "scene": "s37",
+   "t": 99.57,
+   "what": "the disc cuts stone",
+   "seven": {
+    "who": "a disc of magic",
+    "what": "the floor",
+    "how": "cuts",
+    "howMuch": "medium",
+    "when": "99.57 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "recipe": "rock-shatter",
+   "size": 0.5,
+   "pan": -0.2
+  },
+  {
+   "id": "s37-c04",
+   "scene": "s37",
+   "t": 100.43,
+   "what": "the blue beam fires",
+   "seven": {
+    "who": "blue mana beam",
+    "what": "the floor",
+    "how": "fires",
+    "howMuch": "large",
+    "when": "100.43 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": -1,
+   "recipe": "beam",
+   "size": 0.7,
+   "brightness": 0.8,
+   "duration": 1.0
+  },
+  {
+   "id": "s37-c05",
+   "scene": "s37",
+   "t": 100.74,
+   "what": "the beam tears the floor",
+   "seven": {
+    "who": "blue mana beam",
+    "what": "the floor",
+    "how": "tears",
+    "howMuch": "medium",
+    "when": "100.74 s for 0.7 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "debris",
+   "size": 0.4,
+   "duration": 0.7,
+   "count": 4
+  },
+  {
+   "id": "s38-bed01",
+   "scene": "s38",
+   "t": 101.48,
+   "what": "the air of the barrier",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "101.48 to 104.19 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.8
+  },
+  {
+   "id": "s38-c02",
+   "scene": "s38",
+   "t": 101.5,
+   "what": "the sphere bursts with rays",
+   "seven": {
+    "who": "the hexagon sphere",
+    "what": "rays of mana",
+    "how": "bursts",
+    "howMuch": "very large",
+    "when": "101.50 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": -1,
+   "recipe": "blast",
+   "size": 0.8,
+   "brightness": 0.9
+  },
+  {
+   "id": "s38-c03",
+   "scene": "s38",
+   "t": 101.6,
+   "what": "the rays stream out",
+   "seven": {
+    "who": "rays of mana",
+    "what": "air",
+    "how": "stream",
+    "howMuch": "large",
+    "when": "101.60 s for 2.5 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "beam",
+   "size": 0.6,
+   "brightness": 1.0,
+   "duration": 2.5
+  },
+  {
+   "id": "s38-c04",
+   "scene": "s38",
+   "t": 101.7,
+   "what": "the barrier strains",
+   "seven": {
+    "who": "the hexagon barrier",
+    "what": "the rays",
+    "how": "strains",
+    "howMuch": "large",
+    "when": "101.70 s for 2.4 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "shield",
+   "brightness": 0.9,
+   "duration": 2.4
+  },
+  {
+   "id": "s39-bed01",
+   "scene": "s39",
+   "t": 104.19,
+   "what": "the air of the crystal",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "104.19 to 107.61 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.9
+  },
+  {
+   "id": "s39-c02",
+   "scene": "s39",
+   "t": 104.19,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "104.19 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "zap",
+   "pan": 0.15
+  },
+  {
+   "id": "s39-c03",
+   "scene": "s39",
+   "t": 104.52,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "104.52 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "zap",
+   "pan": -0.2
+  },
+  {
+   "id": "s39-c04",
+   "scene": "s39",
+   "t": 104.86,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "104.86 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "zap",
+   "pan": 0.25
+  },
+  {
+   "id": "s39-c05",
+   "scene": "s39",
+   "t": 105.19,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "105.19 s",
+    "where": "left, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "zap",
+   "pan": -0.30000000000000004
+  },
+  {
+   "id": "s39-c06",
+   "scene": "s39",
+   "t": 105.69,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "105.69 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "zap",
+   "pan": 0.35
+  },
+  {
+   "id": "s39-c07",
+   "scene": "s39",
+   "t": 106.02,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "106.02 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "zap",
+   "pan": -0.4
+  },
+  {
+   "id": "s39-c08",
+   "scene": "s39",
+   "t": 106.36,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "106.36 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "zap",
+   "pan": 0.45000000000000007
+  },
+  {
+   "id": "s39-c09",
+   "scene": "s39",
+   "t": 106.69,
+   "what": "a crystal crack",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "cracks",
+    "howMuch": "medium",
+    "when": "106.69 s",
+    "where": "left, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "zap",
+   "pan": -0.5
+  },
+  {
+   "id": "s39-c10",
+   "scene": "s39",
+   "t": 106.0,
+   "what": "crystal fractures spread",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "fractures",
+    "howMuch": "large",
+    "when": "106.00 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "shatter",
+   "size": 0.6
+  },
+  {
+   "id": "s39-c11",
+   "scene": "s39",
+   "t": 107.07,
+   "what": "the crystal shatters into shards",
+   "seven": {
+    "who": "crystal",
+    "what": "itself",
+    "how": "shatters",
+    "howMuch": "very large",
+    "when": "107.07 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "shatter",
+   "size": 1.0
+  },
+  {
+   "id": "s39-c12",
+   "scene": "s39",
+   "t": 107.1,
+   "what": "the shatter's pressure",
+   "seven": {
+    "who": "crystal",
+    "what": "air",
+    "how": "bursts",
+    "howMuch": "large",
+    "when": "107.10 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "recipe": "blast",
+   "size": 0.4,
+   "brightness": 1.0
+  },
+  {
+   "id": "s40-bed01",
+   "scene": "s40",
+   "t": 107.61,
+   "what": "crystal light hums",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "107.61 to 110.70 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -13,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.9
+  },
+  {
+   "id": "s40-c02",
+   "scene": "s40",
+   "t": 107.7,
+   "what": "shards fall like snow",
+   "seven": {
+    "who": "crystal shards",
+    "what": "the floor",
+    "how": "fall",
+    "howMuch": "many, small",
+    "when": "107.70 s for 2.8 s",
+    "where": "centre, 4 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "debris",
+   "size": 0.0,
+   "brightness": 1.0,
+   "duration": 2.8,
+   "count": 6
+  },
+  {
+   "id": "s40-c03",
+   "scene": "s40",
+   "t": 108.0,
+   "what": "the shards ring",
+   "seven": {
+    "who": "crystal shards",
+    "what": "air",
+    "how": "ring",
+    "howMuch": "many",
+    "when": "108.00 s for 2.5 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "sparkle",
+   "size": 0.6,
+   "brightness": 1.0,
+   "duration": 2.5
+  },
+  {
+   "id": "s41-bed01",
+   "scene": "s41",
+   "t": 110.7,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "110.70 to 114.45 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s41-c02",
+   "scene": "s41",
+   "t": 110.7,
+   "what": "golden lightning lashes",
+   "seven": {
+    "who": "golden lightning",
+    "what": "the staff",
+    "how": "lashes",
+    "howMuch": "large",
+    "when": "110.70 s for 1.2 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": -1,
+   "recipe": "lightning",
+   "duration": 1.2,
+   "count": 6
+  },
+  {
+   "id": "s41-c03",
+   "scene": "s41",
+   "t": 111.0,
+   "what": "the staffs clash",
+   "seven": {
+    "who": "a staff",
+    "what": "a staff",
+    "how": "clash",
+    "howMuch": "medium",
+    "when": "111.00 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "shield-hit",
+   "size": 0.5,
+   "brightness": 0.8
+  },
+  {
+   "id": "s41-c04",
+   "scene": "s41",
+   "t": 111.95,
+   "what": "the golden staff swings",
+   "seven": {
+    "who": "the golden staff",
+    "what": "air",
+    "how": "swings",
+    "howMuch": "fast",
+    "when": "111.95 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "swish",
+   "brightness": 0.6,
+   "pan": 0.3
+  },
+  {
+   "id": "s41-c05",
+   "scene": "s41",
+   "t": 112.4,
+   "what": "sparks hiss",
+   "seven": {
+    "who": "sparks",
+    "what": "air",
+    "how": "hiss",
+    "howMuch": "small",
+    "when": "112.40 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "sparkle",
+   "size": 0.5,
+   "brightness": 0.8,
+   "duration": 1.0
+  },
+  {
+   "id": "s41-c06",
+   "scene": "s41",
+   "t": 113.45,
+   "what": "the staff turns, heavy",
+   "seven": {
+    "who": "the golden staff",
+    "what": "air",
+    "how": "turns",
+    "howMuch": "medium",
+    "when": "113.45 s for 0.5 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "whoosh",
+   "size": 0.3,
+   "brightness": 0.4,
+   "duration": 0.5
+  },
+  {
+   "id": "s42-bed01",
+   "scene": "s42",
+   "t": 114.45,
+   "what": "the air of the beam",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "114.45 to 117.45 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.8
+  },
+  {
+   "id": "s42-c02",
+   "scene": "s42",
+   "t": 114.97,
+   "what": "the blue beam fires",
+   "seven": {
+    "who": "blue mana beam",
+    "what": "a figure",
+    "how": "fires",
+    "howMuch": "very large",
+    "when": "114.97 s for 2.4 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "beam",
+   "size": 0.9,
+   "brightness": 0.9,
+   "duration": 2.4
+  },
+  {
+   "id": "s42-c03",
+   "scene": "s42",
+   "t": 115.46,
+   "what": "shards explode around the figure",
+   "seven": {
+    "who": "shards",
+    "what": "air",
+    "how": "explode",
+    "howMuch": "very large",
+    "when": "115.46 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": -1,
+   "recipe": "shatter",
+   "size": 1.0
+  },
+  {
+   "id": "s42-c04",
+   "scene": "s42",
+   "t": 115.5,
+   "what": "the explosion",
+   "seven": {
+    "who": "the beam",
+    "what": "the shards",
+    "how": "bursts",
+    "howMuch": "large",
+    "when": "115.50 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "blast",
+   "size": 0.6,
+   "brightness": 0.8
+  },
+  {
+   "id": "s42-c05",
+   "scene": "s42",
+   "t": 116.2,
+   "what": "shards rain",
+   "seven": {
+    "who": "shards",
+    "what": "the floor",
+    "how": "rain",
+    "howMuch": "many",
+    "when": "116.20 s for 1.2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "debris",
+   "size": 0.2,
+   "brightness": 1.0,
+   "duration": 1.2,
+   "count": 6
+  },
+  {
+   "id": "s43-bed01",
+   "scene": "s43",
+   "t": 117.45,
+   "what": "the glow and the circle",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "117.45 to 123.71 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.6
+  },
+  {
+   "id": "s43-c02",
+   "scene": "s43",
+   "t": 117.57,
+   "what": "the glow swells",
+   "seven": {
+    "who": "white light",
+    "what": "air",
+    "how": "swells",
+    "howMuch": "medium",
+    "when": "117.57 s for 2.4 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "charge",
+   "brightness": 0.9,
+   "duration": 2.4
+  },
+  {
+   "id": "s43-c03",
+   "scene": "s43",
+   "t": 119.95,
+   "what": "the magic circle hums",
+   "seven": {
+    "who": "the magic circle",
+    "what": "the floor",
+    "how": "hums",
+    "howMuch": "medium",
+    "when": "119.95 s for 3.7 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "shield",
+   "brightness": 0.3,
+   "duration": 3.7
+  },
+  {
+   "id": "s43-c04",
+   "scene": "s43",
+   "t": 120.2,
+   "what": "Fern's coat moves in the circle's air",
+   "seven": {
+    "who": "Fern's coat",
+    "what": "air",
+    "how": "moves",
+    "howMuch": "small",
+    "when": "120.20 s for 1.5 s",
+    "where": "centre, 4 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "cloth",
+   "size": 0.3,
+   "duration": 1.5
+  },
+  {
+   "id": "s44-bed01",
+   "scene": "s44",
+   "t": 123.71,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "123.71 to 125.00 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s44-c02",
+   "scene": "s44",
+   "t": 124.31,
+   "what": "the staff swings",
+   "seven": {
+    "who": "Fern's staff",
+    "what": "air",
+    "how": "swings",
+    "howMuch": "fast",
+    "when": "124.31 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "swish",
+   "brightness": 0.5,
+   "pan": 0.3
+  },
+  {
+   "id": "s44-c03",
+   "scene": "s44",
+   "t": 124.4,
+   "what": "the coat follows",
+   "seven": {
+    "who": "Fern's coat",
+    "what": "air",
+    "how": "follows",
+    "howMuch": "medium",
+    "when": "124.40 s for 0.5 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "cloth",
+   "size": 0.7,
+   "duration": 0.5
+  },
+  {
+   "id": "s45-bed01",
+   "scene": "s45",
+   "t": 125.0,
+   "what": "the dark hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "125.00 to 126.71 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -13,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.5
+  },
+  {
+   "id": "s45-c02",
+   "scene": "s45",
+   "t": 125.0,
+   "what": "a white flash",
+   "seven": {
+    "who": "white magic",
+    "what": "air",
+    "how": "flashes",
+    "howMuch": "large",
+    "when": "125.00 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -2,
+   "recipe": "flash",
+   "brightness": 0.9,
+   "duration": 0.6
+  },
+  {
+   "id": "s45-c03",
+   "scene": "s45",
+   "t": 125.4,
+   "what": "sparkles glitter",
+   "seven": {
+    "who": "sparkles",
+    "what": "air",
+    "how": "glitter",
+    "howMuch": "many",
+    "when": "125.40 s for 1.3 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -10,
+   "recipe": "sparkle",
+   "size": 0.6,
+   "brightness": 0.9,
+   "duration": 1.3
+  },
+  {
+   "id": "s46-bed01",
+   "scene": "s46",
+   "t": 126.71,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "126.71 to 128.59 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s46-c02",
+   "scene": "s46",
+   "t": 126.83,
+   "what": "a bolt fires",
+   "seven": {
+    "who": "a bolt of mana",
+    "what": "air",
+    "how": "fires",
+    "howMuch": "medium",
+    "when": "126.83 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -3,
+   "recipe": "zap",
+   "pan": -0.3
+  },
+  {
+   "id": "s46-c03",
+   "scene": "s46",
+   "t": 127.29,
+   "what": "a bolt fires",
+   "seven": {
+    "who": "a bolt of mana",
+    "what": "air",
+    "how": "fires",
+    "howMuch": "medium",
+    "when": "127.29 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "zap",
+   "pan": 0.2
+  },
+  {
+   "id": "s46-c04",
+   "scene": "s46",
+   "t": 127.63,
+   "what": "a bolt fires",
+   "seven": {
+    "who": "a bolt of mana",
+    "what": "air",
+    "how": "fires",
+    "howMuch": "medium",
+    "when": "127.63 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -3,
+   "recipe": "zap",
+   "pan": -0.1
+  },
+  {
+   "id": "s46-c05",
+   "scene": "s46",
+   "t": 127.96,
+   "what": "a bolt fires",
+   "seven": {
+    "who": "a bolt of mana",
+    "what": "air",
+    "how": "fires",
+    "howMuch": "medium",
+    "when": "127.96 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "zap",
+   "pan": 0.3
+  },
+  {
+   "id": "s46-c06",
+   "scene": "s46",
+   "t": 128.34,
+   "what": "a bolt fires",
+   "seven": {
+    "who": "a bolt of mana",
+    "what": "air",
+    "how": "fires",
+    "howMuch": "medium",
+    "when": "128.34 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -3,
+   "recipe": "zap",
+   "pan": -0.2
+  },
+  {
+   "id": "s46-c07",
+   "scene": "s46",
+   "t": 126.9,
+   "what": "the circles hum",
+   "seven": {
+    "who": "circles of magic",
+    "what": "air",
+    "how": "hum",
+    "howMuch": "small",
+    "when": "126.90 s for 1.6 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -11,
+   "recipe": "shield",
+   "brightness": 0.5,
+   "duration": 1.6
+  },
+  {
+   "id": "s47-bed01",
+   "scene": "s47",
+   "t": 128.59,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "128.59 to 131.05 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s47-c02",
+   "scene": "s47",
+   "t": 128.6,
+   "what": "the bolts streak in",
+   "seven": {
+    "who": "bolts of mana",
+    "what": "air",
+    "how": "streak",
+    "howMuch": "fast",
+    "when": "128.60 s for 0.5 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -4,
+   "recipe": "whoosh",
+   "size": 1.0,
+   "brightness": 0.9,
+   "duration": 0.5,
+   "pan": 0.4
+  },
+  {
+   "id": "s47-c03",
+   "scene": "s47",
+   "t": 129.0,
+   "what": "a cyan explosion",
+   "seven": {
+    "who": "bolts of mana",
+    "what": "the giant",
+    "how": "burst",
+    "howMuch": "large",
+    "when": "129.00 s",
+    "where": "left, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "blast",
+   "size": 0.6,
+   "brightness": 0.6,
+   "pan": -0.3
+  },
+  {
+   "id": "s47-c04",
+   "scene": "s47",
+   "t": 129.5,
+   "what": "a second burst",
+   "seven": {
+    "who": "bolts of mana",
+    "what": "the giant",
+    "how": "burst",
+    "howMuch": "medium",
+    "when": "129.50 s",
+    "where": "left, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -4,
+   "recipe": "blast",
+   "size": 0.4,
+   "brightness": 0.6,
+   "pan": -0.2
+  },
+  {
+   "id": "s47-c05",
+   "scene": "s47",
+   "t": 129.6,
+   "what": "the giant's stone breaks",
+   "seven": {
+    "who": "the stone giant",
+    "what": "itself",
+    "how": "breaks",
+    "howMuch": "large",
+    "when": "129.60 s",
+    "where": "left, 10 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "rock-shatter",
+   "size": 0.8,
+   "pan": -0.3,
+   "distance": 10
+  },
+  {
+   "id": "s47-c06",
+   "scene": "s47",
+   "t": 130.1,
+   "what": "smoke rolls",
+   "seven": {
+    "who": "smoke",
+    "what": "the hall",
+    "how": "rolls",
+    "howMuch": "medium",
+    "when": "130.10 s for 1 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "dust",
+   "brightness": 0.4,
+   "duration": 1.0
+  },
+  {
+   "id": "s48-bed01",
+   "scene": "s48",
+   "t": 131.05,
+   "what": "smoke",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "131.05 to 133.84 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s48-c02",
+   "scene": "s48",
+   "t": 131.4,
+   "what": "Fern lands",
+   "seven": {
+    "who": "Fern",
+    "what": "the stone floor",
+    "how": "lands",
+    "howMuch": "light",
+    "when": "131.40 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "land",
+   "size": 0.4
+  },
+  {
+   "id": "s48-c03",
+   "scene": "s48",
+   "t": 132.1,
+   "what": "a step",
+   "seven": {
+    "who": "Fern's boot",
+    "what": "the stone floor",
+    "how": "steps",
+    "howMuch": "light",
+    "when": "132.10 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "step",
+   "size": 0.3
+  },
+  {
+   "id": "s48-c04",
+   "scene": "s48",
+   "t": 132.6,
+   "what": "a step",
+   "seven": {
+    "who": "Fern's boot",
+    "what": "the stone floor",
+    "how": "steps",
+    "howMuch": "light",
+    "when": "132.60 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -10,
+   "recipe": "step",
+   "size": 0.3
+  },
+  {
+   "id": "s48-c05",
+   "scene": "s48",
+   "t": 131.5,
+   "what": "the coat settles",
+   "seven": {
+    "who": "Fern's coat",
+    "what": "air",
+    "how": "settles",
+    "howMuch": "small",
+    "when": "131.50 s for 0.8 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "cloth",
+   "size": 0.4,
+   "duration": 0.8
+  },
+  {
+   "id": "s49-bed01",
+   "scene": "s49",
+   "t": 133.84,
+   "what": "smoke hangs",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "133.84 to 136.50 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s49-c02",
+   "scene": "s49",
+   "t": 134.0,
+   "what": "barrier pieces fade",
+   "seven": {
+    "who": "pieces of the barrier",
+    "what": "air",
+    "how": "fade",
+    "howMuch": "small",
+    "when": "134.00 s for 2.4 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -12,
+   "recipe": "sparkle",
+   "size": 0.3,
+   "brightness": 0.6,
+   "duration": 2.4
+  },
+  {
+   "id": "s49-c03",
+   "scene": "s49",
+   "t": 135.95,
+   "what": "a piece falls",
+   "seven": {
+    "who": "a fragment",
+    "what": "the floor",
+    "how": "falls",
+    "howMuch": "small",
+    "when": "135.95 s",
+    "where": "right, 8 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "stone-hit",
+   "size": 0.15,
+   "pan": 0.4,
+   "distance": 8
+  },
+  {
+   "id": "s50-c01",
+   "scene": "s50",
+   "t": 145.19,
+   "what": "the strike as her hair snaps up",
+   "seven": {
+    "who": "see module-4.json",
+    "what": "see module-4.json",
+    "how": "see module-4.json",
+    "howMuch": "see module-4.json",
+    "when": "145.19 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "accepted": true
+  },
+  {
+   "id": "s50-c02",
+   "scene": "s50",
+   "t": 145.27,
+   "what": "the blast",
+   "seven": {
+    "who": "see module-4.json",
+    "what": "see module-4.json",
+    "how": "see module-4.json",
+    "howMuch": "see module-4.json",
+    "when": "145.27 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "accepted": true
+  },
+  {
+   "id": "s50-c03",
+   "scene": "s50",
+   "t": 145.94,
+   "what": "the hit on the wall (accepted wall-hit)",
+   "seven": {
+    "who": "see module-4.json",
+    "what": "see module-4.json",
+    "how": "see module-4.json",
+    "howMuch": "see module-4.json",
+    "when": "145.94 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "accepted": true
+  },
+  {
+   "id": "s50-c04",
+   "scene": "s50",
+   "t": 146.48,
+   "what": "the break, played slow (accepted break)",
+   "seven": {
+    "who": "see module-4.json",
+    "what": "see module-4.json",
+    "how": "see module-4.json",
+    "howMuch": "see module-4.json",
+    "when": "146.48 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "accepted": true
+  },
+  {
+   "id": "s50-c05",
+   "scene": "s50",
+   "t": 147.9,
+   "what": "the first landing (accepted stone-landing)",
+   "seven": {
+    "who": "see module-4.json",
+    "what": "see module-4.json",
+    "how": "see module-4.json",
+    "howMuch": "see module-4.json",
+    "when": "147.90 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "accepted": true
+  },
+  {
+   "id": "s50-c06",
+   "scene": "s50",
+   "t": 147.86,
+   "what": "24 large blocks land, largest first",
+   "seven": {
+    "who": "see module-4.json",
+    "what": "see module-4.json",
+    "how": "see module-4.json",
+    "howMuch": "see module-4.json",
+    "when": "147.86 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "accepted": true
+  },
+  {
+   "id": "s50-c07",
+   "scene": "s50",
+   "t": 148.25,
+   "what": "30 small blocks land, largest first",
+   "seven": {
+    "who": "see module-4.json",
+    "what": "see module-4.json",
+    "how": "see module-4.json",
+    "howMuch": "see module-4.json",
+    "when": "148.25 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "accepted": true
+  },
+  {
+   "id": "s51-bed01",
+   "scene": "s51",
+   "t": 152.2,
+   "what": "dust after the blow",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "152.20 to 154.28 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s51-c02",
+   "scene": "s51",
+   "t": 152.3,
+   "what": "grit trickles",
+   "seven": {
+    "who": "grit",
+    "what": "the floor",
+    "how": "trickles",
+    "howMuch": "few",
+    "when": "152.30 s for 1.8 s",
+    "where": "centre, 6 m",
+    "why": "rings on"
+   },
+   "priority": "B",
+   "level": -14,
+   "recipe": "debris",
+   "size": 0.1,
+   "duration": 1.8,
+   "count": 3,
+   "distance": 6
+  },
+  {
+   "id": "s51-c03",
+   "scene": "s51",
+   "t": 153.0,
+   "what": "the hall settles from far",
+   "seven": {
+    "who": "the hall",
+    "what": "itself",
+    "how": "settles",
+    "howMuch": "medium",
+    "when": "153.00 s for 1.2 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -12,
+   "recipe": "rumble",
+   "size": 0.5,
+   "duration": 1.2
+  },
+  {
+   "id": "s52-bed01",
+   "scene": "s52",
+   "t": 154.28,
+   "what": "the quiet hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "154.28 to 162.04 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s52-c02",
+   "scene": "s52",
+   "t": 154.4,
+   "what": "fingers move on grit",
+   "seven": {
+    "who": "fingers",
+    "what": "grit on stone",
+    "how": "slide",
+    "howMuch": "small",
+    "when": "154.40 s for 0.6 s",
+    "where": "centre, 1 m",
+    "why": "rings on"
+   },
+   "priority": "B",
+   "level": -14,
+   "recipe": "cloth",
+   "size": 0.2,
+   "duration": 0.6,
+   "distance": 1.0
+  },
+  {
+   "id": "s52-c03",
+   "scene": "s52",
+   "t": 155.5,
+   "what": "a pebble rolls",
+   "seven": {
+    "who": "a pebble",
+    "what": "the floor",
+    "how": "rolls",
+    "howMuch": "small",
+    "when": "155.50 s for 0.5 s",
+    "where": "centre, 3 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -16,
+   "recipe": "debris",
+   "size": 0.0,
+   "duration": 0.5,
+   "count": 2,
+   "distance": 3
+  },
+  {
+   "id": "s52-c04",
+   "scene": "s52",
+   "t": 158.5,
+   "what": "a small stone drops",
+   "seven": {
+    "who": "a small stone",
+    "what": "the floor",
+    "how": "drops",
+    "howMuch": "small",
+    "when": "158.50 s",
+    "where": "right, 6 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -16,
+   "recipe": "stone-hit",
+   "size": 0.1,
+   "pan": 0.5,
+   "distance": 6
+  },
+  {
+   "id": "s52-c05",
+   "scene": "s52",
+   "t": 160.8,
+   "what": "the hand closes",
+   "seven": {
+    "who": "the hand",
+    "what": "grit",
+    "how": "closes",
+    "howMuch": "small",
+    "when": "160.80 s for 0.5 s",
+    "where": "centre, 1 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "cloth",
+   "size": 0.2,
+   "duration": 0.5,
+   "distance": 1.0
+  },
+  {
+   "id": "s53-bed01",
+   "scene": "s53",
+   "t": 162.04,
+   "what": "the circle's light",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "162.04 to 168.54 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -14,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.4
+  },
+  {
+   "id": "s53-c02",
+   "scene": "s53",
+   "t": 162.1,
+   "what": "the magic circle turns and hums",
+   "seven": {
+    "who": "the magic circle",
+    "what": "the floor",
+    "how": "turns",
+    "howMuch": "medium",
+    "when": "162.10 s for 6.3 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "shield",
+   "brightness": 0.4,
+   "duration": 6.3
+  },
+  {
+   "id": "s53-c03",
+   "scene": "s53",
+   "t": 163.4,
+   "what": "a stone falls far off",
+   "seven": {
+    "who": "a stone",
+    "what": "the floor",
+    "how": "falls",
+    "howMuch": "small",
+    "when": "163.40 s",
+    "where": "left, 14 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -15,
+   "recipe": "stone-hit",
+   "size": 0.3,
+   "pan": -0.6,
+   "distance": 14
+  },
+  {
+   "id": "s54-bed01",
+   "scene": "s54",
+   "t": 168.54,
+   "what": "the quiet hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "168.54 to 172.67 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s55-bed01",
+   "scene": "s55",
+   "t": 172.67,
+   "what": "fog",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "172.67 to 174.51 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -12,
+   "bed": true,
+   "recipe": "dust-bed"
+  },
+  {
+   "id": "s55-c02",
+   "scene": "s55",
+   "t": 173.2,
+   "what": "close restrained handling",
+   "seven": {
+    "who": "Frieren's hands",
+    "what": "the staff",
+    "how": "grip",
+    "howMuch": "small",
+    "when": "173.20 s for 0.7 s",
+    "where": "centre, 1.5 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -10,
+   "recipe": "cloth",
+   "size": 0.3,
+   "duration": 0.7,
+   "distance": 1.5
+  },
+  {
+   "id": "s55-c03",
+   "scene": "s55",
+   "t": 174.0,
+   "what": "the staff swings in",
+   "seven": {
+    "who": "Frieren's staff",
+    "what": "air",
+    "how": "swings",
+    "howMuch": "fast",
+    "when": "174.00 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "swish",
+   "brightness": 0.6,
+   "pan": 0.4
+  },
+  {
+   "id": "s56-bed01",
+   "scene": "s56",
+   "t": 174.51,
+   "what": "the circle's light",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "174.51 to 177.51 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -13,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.5
+  },
+  {
+   "id": "s56-c02",
+   "scene": "s56",
+   "t": 174.6,
+   "what": "the circle flares",
+   "seven": {
+    "who": "the magic circle",
+    "what": "the floor",
+    "how": "flares",
+    "howMuch": "medium",
+    "when": "174.60 s for 2.8 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -9,
+   "recipe": "shield",
+   "brightness": 0.5,
+   "duration": 2.8
+  },
+  {
+   "id": "s56-c03",
+   "scene": "s56",
+   "t": 176.75,
+   "what": "compact preparation",
+   "seven": {
+    "who": "Frieren's mana",
+    "what": "the staff",
+    "how": "gathers",
+    "howMuch": "medium",
+    "when": "176.75 s for 0.8 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -5,
+   "recipe": "charge",
+   "brightness": 0.8,
+   "duration": 0.8
+  },
+  {
+   "id": "s57-bed01",
+   "scene": "s57",
+   "t": 177.51,
+   "what": "the beam's air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "177.51 to 183.70 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -10,
+   "bed": true,
+   "recipe": "magic-air",
+   "brightness": 0.9
+  },
+  {
+   "id": "s57-c02",
+   "scene": "s57",
+   "t": 177.55,
+   "what": "the graphic flash",
+   "seven": {
+    "who": "Frieren's spell",
+    "what": "air",
+    "how": "flashes",
+    "howMuch": "very large",
+    "when": "177.55 s for 0.6 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "flash",
+   "brightness": 1.0,
+   "duration": 0.6
+  },
+  {
+   "id": "s57-c03",
+   "scene": "s57",
+   "t": 177.8,
+   "what": "the beam engulfs",
+   "seven": {
+    "who": "the white beam",
+    "what": "the double",
+    "how": "engulfs",
+    "howMuch": "very large",
+    "when": "177.80 s for 5.9 s",
+    "where": "centre, 4 m",
+    "why": "leads"
+   },
+   "priority": "A",
+   "level": 0,
+   "recipe": "beam",
+   "size": 1.0,
+   "brightness": 0.9,
+   "duration": 5.9
+  },
+  {
+   "id": "s57-c04",
+   "scene": "s57",
+   "t": 177.8,
+   "what": "the beam's turbulent edge",
+   "seven": {
+    "who": "the white beam",
+    "what": "air",
+    "how": "churns",
+    "howMuch": "large",
+    "when": "177.80 s for 5.9 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "wind",
+   "brightness": 0.9,
+   "duration": 5.9
+  },
+  {
+   "id": "s57-c05",
+   "scene": "s57",
+   "t": 178.89,
+   "what": "a block blows away",
+   "seven": {
+    "who": "a stone block",
+    "what": "the beam",
+    "how": "blows away",
+    "howMuch": "heavy",
+    "when": "178.89 s",
+    "where": "left, 6 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -4,
+   "recipe": "stone-hit",
+   "size": 0.6,
+   "pan": -0.5,
+   "distance": 6
+  },
+  {
+   "id": "s57-c06",
+   "scene": "s57",
+   "t": 179.17,
+   "what": "a block blows away",
+   "seven": {
+    "who": "a stone block",
+    "what": "the beam",
+    "how": "blows away",
+    "howMuch": "heavy",
+    "when": "179.17 s",
+    "where": "right, 6 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -6,
+   "recipe": "stone-hit",
+   "size": 0.6,
+   "pan": 0.4,
+   "distance": 6
+  },
+  {
+   "id": "s57-c07",
+   "scene": "s57",
+   "t": 179.77,
+   "what": "a block blows away",
+   "seven": {
+    "who": "a stone block",
+    "what": "the beam",
+    "how": "blows away",
+    "howMuch": "heavy",
+    "when": "179.77 s",
+    "where": "left, 6 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -7,
+   "recipe": "stone-hit",
+   "size": 0.6,
+   "pan": -0.3,
+   "distance": 6
+  },
+  {
+   "id": "s57-c08",
+   "scene": "s57",
+   "t": 180.52,
+   "what": "a block blows away",
+   "seven": {
+    "who": "a stone block",
+    "what": "the beam",
+    "how": "blows away",
+    "howMuch": "heavy",
+    "when": "180.52 s",
+    "where": "right, 6 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "stone-hit",
+   "size": 0.6,
+   "pan": 0.5,
+   "distance": 6
+  },
+  {
+   "id": "s57-c09",
+   "scene": "s57",
+   "t": 180.14,
+   "what": "one structural response",
+   "seven": {
+    "who": "the hall",
+    "what": "the beam",
+    "how": "breaks",
+    "howMuch": "very large",
+    "when": "180.14 s",
+    "where": "right, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "store": {
+    "name": "break"
+   },
+   "pan": 0.2
+  },
+  {
+   "id": "s57-c10",
+   "scene": "s57",
+   "t": 181.6,
+   "what": "the white-out roars",
+   "seven": {
+    "who": "the white beam",
+    "what": "the hall",
+    "how": "roars",
+    "howMuch": "large",
+    "when": "181.60 s for 2 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "B",
+   "level": -5,
+   "recipe": "rumble",
+   "size": 1.0,
+   "duration": 2.0
+  },
+  {
+   "id": "s58-bed01",
+   "scene": "s58",
+   "t": 183.7,
+   "what": "hall air",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "183.70 to 185.60 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -13,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s58-c02",
+   "scene": "s58",
+   "t": 183.77,
+   "what": "the double unravels",
+   "seven": {
+    "who": "the dark double",
+    "what": "itself",
+    "how": "unravels",
+    "howMuch": "medium",
+    "when": "183.77 s for 1.6 s",
+    "where": "centre, 4 m",
+    "why": "explains"
+   },
+   "priority": "A",
+   "level": -4,
+   "recipe": "dust",
+   "brightness": 0.6,
+   "duration": 1.6
+  },
+  {
+   "id": "s58-c03",
+   "scene": "s58",
+   "t": 183.9,
+   "what": "the tendrils hiss away",
+   "seven": {
+    "who": "dark tendrils",
+    "what": "air",
+    "how": "dissolve",
+    "howMuch": "medium",
+    "when": "183.90 s for 1.5 s",
+    "where": "centre, 4 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -8,
+   "recipe": "sparkle",
+   "size": 0.5,
+   "brightness": 0.4,
+   "duration": 1.5
+  },
+  {
+   "id": "s58-c04",
+   "scene": "s58",
+   "t": 184.5,
+   "what": "a tendril whips",
+   "seven": {
+    "who": "a tendril",
+    "what": "air",
+    "how": "whips",
+    "howMuch": "small",
+    "when": "184.50 s",
+    "where": "left, 4 m",
+    "why": "hints"
+   },
+   "priority": "C",
+   "level": -10,
+   "recipe": "swish",
+   "brightness": 0.3,
+   "pan": -0.3
+  },
+  {
+   "id": "s59-bed01",
+   "scene": "s59",
+   "t": 185.6,
+   "what": "the quiet hall",
+   "seven": {
+    "who": "the space",
+    "what": "the listener",
+    "how": "sustains",
+    "howMuch": "low",
+    "when": "185.60 to 189.25 s, the whole scene",
+    "where": "centre, 4 m",
+    "why": "bed"
+   },
+   "priority": "B",
+   "level": -11,
+   "bed": true,
+   "recipe": "hall-air"
+  },
+  {
+   "id": "s59-c02",
+   "scene": "s59",
+   "t": 185.8,
+   "what": "small remnants fall",
+   "seven": {
+    "who": "small stones",
+    "what": "the floor",
+    "how": "fall",
+    "howMuch": "few",
+    "when": "185.80 s for 1.5 s",
+    "where": "centre, 8 m",
+    "why": "hints"
+   },
+   "priority": "B",
+   "level": -13,
+   "recipe": "debris",
+   "size": 0.15,
+   "duration": 1.5,
+   "count": 3,
+   "distance": 8
+  },
+  {
+   "id": "s59-c03",
+   "scene": "s59",
+   "t": 186.3,
+   "what": "cloak settles",
+   "seven": {
+    "who": "Frieren's cloak",
+    "what": "air",
+    "how": "settles",
+    "howMuch": "small",
+    "when": "186.30 s for 0.8 s",
+    "where": "centre, 4 m",
+    "why": "rings on"
+   },
+   "priority": "C",
+   "level": -14,
+   "recipe": "cloth",
+   "size": 0.2,
+   "duration": 0.8
+  }
+ ]
+}
