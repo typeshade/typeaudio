@@ -520,7 +520,12 @@ export function blackHole(m: Mix): void {
     });
     m.add(
       'gather-rubble',
-      S.rubble(3.2, 1097, (t) => 8.0 + 6.0 * t, { sizes: [0.15, 0.6], bright: 0.2, body: 0.6 }),
+      // the owner's rule: only the stones of 0.35 m and more, at their share of the rate
+      S.rubble(3.2, 1097, (t) => (8.0 + 6.0 * t) * (Math.log(0.6 / 0.35) / Math.log(0.6 / 0.15)), {
+        sizes: [0.35, 0.6],
+        bright: 0.2,
+        body: 0.6,
+      }),
       11.6,
       [0.5, 2.5, -9.0],
       { target: -25, kind: 'm', focusDb: 2, sendDb: -4 },
@@ -599,7 +604,9 @@ export function blackHole(m: Mix): void {
 
   // ---- 15.47 to 16.40: a block falls onto the face and cracks it.
   m.part('block-land', () => {
-    m.add('block-land', S.slabFall(1120, 1.6), 15.56, [0.5, 0.0, -6.0], {
+    // the owner accepted this landing (review 0); the owner's later rule on small stones that roll
+    // (2026-11-11) supersedes its scatter: its body, crack and thud stay, its small pieces go
+    m.add('block-land', S.slabFall(1120, 1.6, 1.0, 0), 15.56, [0.5, 0.0, -6.0], {
       target: -11,
       kind: 'i',
       focusDb: 3,
@@ -639,11 +646,17 @@ export function blackHole(m: Mix): void {
     });
   });
   m.part('block-slap', () => {
-    m.add('block-slap', S.slap(S.slabFall(1120, 1.6), 900), 15.56 + 0.22, [0.0, 3.0, -15.0], {
-      target: -22,
-      kind: 'i',
-      focusDb: 6,
-    });
+    m.add(
+      'block-slap',
+      S.slap(S.slabFall(1120, 1.6, 1.0, 0), 900),
+      15.56 + 0.22,
+      [0.0, 3.0, -15.0],
+      {
+        target: -22,
+        kind: 'i',
+        focusDb: 6,
+      },
+    );
   });
 
   // ---- 16.30 to 17.73: quick cuts. Stones fall; she leaps from stone to stone.
@@ -1312,7 +1325,6 @@ function gathering(m: Mix): void {
         sendDb: -6,
       });
       const hit = S.blockHit(1520 + 11 * i, size, 9.0);
-      addAt(hit, S.crush(0.3, 1521 + 11 * i, 0.06).subarray(0, hit.length), 0, 0.5);
       m.add(`drag-${i}-arrive`, hit, ta, core, {
         // the arrival lands as the accepted landings do: the largest at the level of the block at
         // 15.56 s (-11), a smaller one lower by its size
@@ -1366,7 +1378,12 @@ function gathering(m: Mix): void {
     const CORE: Vec3 = [0.0, 3.0, -10.0];
     m.add(
       'pile-crunch',
-      S.rubble(3.2, 1580, (t) => 6.0 + 9.0 * t, { sizes: [0.2, 0.8], bright: 0.2, body: 0.8 }),
+      // the owner's rule: only the stones of 0.35 m and more, at their share of the rate
+      S.rubble(3.2, 1580, (t) => (6.0 + 9.0 * t) * (Math.log(0.8 / 0.35) / Math.log(0.8 / 0.2)), {
+        sizes: [0.35, 0.8],
+        bright: 0.2,
+        body: 0.8,
+      }),
       11.6,
       CORE,
       { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
