@@ -41,7 +41,7 @@ import {
   type Stereo,
   type Vec3,
 } from '../../src/study/dsp.ts';
-import { Mix } from '../../src/study/mix.ts';
+import { Mix, type AddOptions, type Where } from '../../src/study/mix.ts';
 import {
   concat,
   curve,
@@ -304,26 +304,6 @@ export function blackHole(m: Mix): void {
 
   // ---- 4.88 to 7.21: close on the orb. The black core draws the air round it.
   const ORB_CLOSE: Vec3 = [0.0, 1.4, -2.2];
-  const hole = material(
-    4.86,
-    2.36,
-    1040,
-    [
-      [4.86, 0.45],
-      [7.2, 0.62],
-    ],
-    [0.9, 1.0, 0.3],
-  );
-  m.add('hole-close', fade(hole, 0.02, 0.012), 4.86, ORB_CLOSE, {
-    target: -19.5,
-    kind: 'm',
-    sendDb: -10,
-  });
-  m.add('hole-voice', fade(S.voice(2.36, 1041, ORB), 0.03, 0.012), 4.86, ORB_CLOSE, {
-    target: -23.5,
-    kind: 'm',
-    sendDb: -12,
-  });
   // the blue lines of wind turn round the camera toward the core, faster as they close in
   [0, 1, 2].forEach((i) => {
     const t = 5.75 + 0.22 * i;
@@ -341,7 +321,7 @@ export function blackHole(m: Mix): void {
   });
 
   // ---- 7.21 to 8.05: her face. The wind streams past her toward the orb.
-  const fw = S.wind(0.9, 1050, 300, 3500);
+  const fw = S.wind(1.0, 1050, 300, 3500);
   m.addWide(
     'face-wind',
     shapeSt(
@@ -350,8 +330,8 @@ export function blackHole(m: Mix): void {
         [
           [7.2, 0.6],
           [7.5, 1],
-          [8.05, 0.8],
-          [8.1, 0],
+          [8.0, 0.8],
+          [8.2, 0],
         ],
         7.2,
         fw[0].length,
@@ -368,33 +348,13 @@ export function blackHole(m: Mix): void {
     [0.2, 1.5, -0.8],
     { target: -29, kind: 'm', sendDb: -10 },
   );
-  m.add(
-    'hole-off',
-    fade(
-      material(
-        7.21,
-        0.86,
-        1053,
-        [
-          [7.21, 0.55],
-          [8.07, 0.5],
-        ],
-        [1.0, 1.0, 0.2],
-      ),
-      0.01,
-      0.02,
-    ),
-    7.21,
-    [1.5, 1.5, -6.0],
-    { target: -26, kind: 'm', sendDb: -4 },
-  );
 
   // ---- 8.05 to 9.47: she flies through the white hall; the first small stones drift in the draw.
-  const fa = S.wind(1.45, 1060, 150, 1500);
+  const fa = S.wind(1.67, 1060, 150, 1500);
   m.addWide(
     'fly-air',
-    shapeSt(fa, fade(new Float64Array(fa[0].length).fill(1), 0.03, 0.03)),
-    8.05,
+    shapeSt(fa, fade(new Float64Array(fa[0].length).fill(1), 0.15, 0.15)),
+    7.95,
     {
       target: -22,
       kind: 'm',
@@ -420,30 +380,9 @@ export function blackHole(m: Mix): void {
   );
 
   // ---- 9.47 to 11.55: the orb tears through the hall; stones fly past and at it.
-  const tear = material(
-    9.47,
-    2.08,
-    1070,
-    [
-      [9.47, 0.25],
-      [11.55, 0.35],
-    ],
-    [0.8, 1.0, 0.4],
-  );
-  const tearPath = line([-1.5, 2.0, -5.0], [0.8, 1.4, -3.0], tear.length);
-  m.add('orb-tear', fade(tear, 0.015, 0.012), 9.47, tearPath, {
-    target: -20.5,
-    kind: 'm',
-    sendDb: -10,
-  });
-  m.add('orb-tear-voice', fade(S.voice(2.08, 1071, ORB), 0.03, 0.012), 9.47, tearPath, {
-    target: -21.5,
-    kind: 'm',
-    sendDb: -12,
-  });
   m.add(
     'orb-tear-sparks',
-    fade(S.pops(2.08, 1072, 16.0, 500, 4000, 0.005), 0.02, 0.01),
+    fade(S.pops(2.08, 1072, 16.0, 500, 4000, 0.005), 0.02, 0.15),
     9.47,
     [1.0, 1.5, -3.0],
     {
@@ -497,31 +436,11 @@ export function blackHole(m: Mix): void {
 
   // ---- 11.55 to 14.81: wide. A mass of stones turns round the orb and packs in.
   const CORE: Vec3 = [0.0, 3.0, -10.0];
-  const gc = material(
-    11.55,
-    3.27,
-    1090,
-    [
-      [11.55, 0.25],
-      [14.8, 0.45],
-    ],
-    [1.0, 1.0, 0.3],
-  );
-  m.add('gather-core', fade(gc, 0.01, 0.015), 11.55, CORE, {
-    target: -23,
-    kind: 'm',
-    focusDb: 3,
-    sendDb: -4,
-  });
-  m.add('gather-voice', fade(S.voice(3.27, 1091, ORB.slice(0, 4)), 0.01, 0.015), 11.55, CORE, {
-    target: -26,
-    kind: 'm',
-    sendDb: -4,
-  });
   const grindEnv = (n: number) =>
     curve(
       [
-        [11.55, 0.35],
+        [11.55, 0.0],
+        [11.8, 0.35],
         [13.2, 0.7],
         [14.75, 1.0],
         [14.82, 0.0],
@@ -545,7 +464,7 @@ export function blackHole(m: Mix): void {
   });
   // blocks strike blocks, faster and faster, as they are pulled in from all sides
   const rg = rng(1095);
-  const gt = risingTimes(rg, 3.2, 4.0, 15.0);
+  const gt = risingTimes(rg, 3.2, 4.0, 15.0, 0.2);
   (
     [
       ['l', -6.0],
@@ -586,7 +505,8 @@ export function blackHole(m: Mix): void {
       gl,
       curve(
         [
-          [11.55, 0.4],
+          [11.55, 0.0],
+          [11.8, 0.4],
           [14.7, 1],
           [14.82, 0.2],
           [14.82 + 3.26, 0],
@@ -816,13 +736,13 @@ export function blackHole(m: Mix): void {
     [4.71, 0.35],
     [4.9, 0.95],
     [7.2, 1.0],
-    [7.25, 0.55],
+    [7.32, 0.55],
     [8.05, 0.5],
     [9.47, 0.55],
     [10.6, 1.0],
     [11.55, 0.75],
     [14.75, 1.0],
-    [14.82, 0.35],
+    [14.95, 0.35],
     [15.47, 0.3],
     [16.3, 0.45],
     [17.73, 0.4],
@@ -869,8 +789,8 @@ export const PROXIMITY: Points = [
   [4.712, 0.2],
   [4.86, 0.75],
   [5.3, 1.0],
-  [7.2, 1.0],
-  [7.25, 0.5],
+  [7.14, 1.0],
+  [7.3, 0.5],
   [8.05, 0.3],
   [9.47, 0.35],
   [10.0, 0.85],
@@ -881,8 +801,8 @@ export const PROXIMITY: Points = [
   [12.5, 0.75],
   [13.5, 0.85],
   [14.3, 0.8],
-  [14.81, 0.65],
-  [14.85, 0.12],
+  [14.76, 0.65],
+  [14.96, 0.12],
   [18.6, 0.2],
   [19.2, 0.5],
   [19.9, 1.0],
@@ -981,16 +901,18 @@ function holeBody(m: Mix): void {
   const core0 = S.curveNoise(n, 1210, HOLE_CURVE);
   const walk = S.levelWalk(n, 1211, 2.0, 0.3, 4.0);
   const core = core0.map((v, i) => v * walk[i]! * prox[i]! ** 0.7);
-  HOLE_SHOTS.forEach((keys, k) => {
-    const a = Math.max(0, nsamp(keys[0]![0] - HOLE_FROM));
-    const b = Math.min(n, nsamp(keys[keys.length - 1]![0] - HOLE_FROM));
-    m.add(`hole-core${k}`, fade(core.slice(a, b), 0.01, 0.01), HOLE_FROM + a / SR, keys, {
-      target: null,
-      gainDb: 0,
-      focusDb: 0,
-      sendDb: -8,
-    });
-  });
+  across(
+    m,
+    'hole-core',
+    core,
+    HOLE_FROM,
+    HOLE_SHOTS.map((keys, k) => ({
+      from: keys[0]![0],
+      to: k < HOLE_SHOTS.length - 1 ? HOLE_SHOTS[k + 1]![0]![0] : keys[keys.length - 1]![0],
+      pos: keys,
+      opts: { target: null, gainDb: 0, sendDb: -8 },
+    })),
+  );
   // the inrush: air drawn into the core, its band climbing as the orb nears
   m.addWide('hole-inrush', drawnAir(dur, 1220, pw(1.4), 150, 1400, 1.3), HOLE_FROM, {
     target: -22,
@@ -1333,7 +1255,8 @@ function gathering(m: Mix): void {
       groan,
       curve(
         [
-          [11.6, 0.3],
+          [11.6, 0.0],
+          [11.85, 0.3],
           [14.7, 1.0],
           [14.8, 0.0],
         ],
@@ -1345,6 +1268,103 @@ function gathering(m: Mix): void {
     CORE,
     { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
   );
+}
+
+// ---- Review 4, 2026-11-11. The owner: at the cut near 11.55 s the sound does not go on. The orb's
+// material, its voice and its core were made shot by shot, each with its own noise and place, so
+// at each cut they stopped in 10 to 15 ms and began again. Now each is one source that runs across
+// the cuts; at a cut only its place, distance and level change, through an equal-power crossfade of
+// 120 ms. Nothing begins fresh on a cut, and the proximity changes over 150 ms or more.
+
+interface AcrossPart {
+  readonly from: number;
+  readonly to: number;
+  readonly pos: Where;
+  readonly opts: AddOptions;
+}
+
+/**
+ * One continuous signal (from `t0`), laid shot by shot: each part from its cut to the next, with an
+ * equal-power crossfade of `xf` seconds across each cut, and `tail` seconds of fade after the last.
+ */
+function across(
+  m: Mix,
+  name: string,
+  sig: Float64Array,
+  t0: number,
+  parts: readonly AcrossPart[],
+  xf = 0.12,
+  tail = 0.2,
+): void {
+  parts.forEach((p, k) => {
+    const first = k === 0;
+    const last = k === parts.length - 1;
+    const a = Math.max(t0, p.from - (first ? 0 : xf / 2));
+    const b = p.to + (last ? tail : xf / 2);
+    const ia = nsamp(a - t0);
+    const ib = Math.min(sig.length, nsamp(b - t0));
+    if (ib - ia < 2) return;
+    const x = sig.slice(ia, ib);
+    const fin = first ? nsamp(0.02) : nsamp(xf);
+    const fout = last ? nsamp(tail) : nsamp(xf);
+    for (let i = 0; i < Math.min(fin, x.length); i++)
+      x[i] = x[i]! * Math.sin((0.5 * Math.PI * (i + 0.5)) / fin);
+    for (let i = 0; i < Math.min(fout, x.length); i++) {
+      const j = x.length - fout + i;
+      if (j >= 0) x[j] = x[j]! * Math.cos((0.5 * Math.PI * (i + 0.5)) / fout);
+    }
+    m.add(`${name}${k}`, x, a, p.pos, p.opts);
+  });
+}
+
+/** The orb's red material and its voice: one source each from 4.86 s, across the cuts to 14.81 s. */
+function orbAcross(m: Mix): void {
+  const T0 = 4.86;
+  const T1 = 15.05;
+  const body = material(
+    T0,
+    T1 - T0,
+    1040,
+    [
+      [4.86, 0.45],
+      [7.2, 0.6],
+      [8.05, 0.5],
+      [9.47, 0.3],
+      [11.55, 0.33],
+      [14.8, 0.45],
+    ],
+    [0.9, 1.0, 0.3],
+  );
+  const voice = S.voice(T1 - T0, 1041, ORB);
+  const tearAt = (n: number) => line([-1.5, 2.0, -5.0], [0.8, 1.4, -3.0], n);
+  const shots: [number, number, Where | ((n: number) => Where), number, number, number][] = [
+    [4.86, 7.21, [0.0, 1.4, -2.2], -19.5, -23.5, -10],
+    [7.21, 8.05, [1.5, 1.5, -6.0], -26, -29, -4],
+    [8.05, 9.47, [0.0, 3.0, -14.0], -31, -33, -4],
+    [9.47, 11.55, tearAt, -20.5, -21.5, -10],
+    [11.55, 14.81, [0.0, 3.0, -10.0], -23, -26, -4],
+  ];
+  for (const [name, sig, which] of [
+    ['orb-body', body, 3],
+    ['orb-body-voice', voice, 4],
+  ] as const) {
+    const parts = shots.map(([from, to, pos, tb, tv, send], k) => {
+      const len = nsamp(to - from + (k === 0 ? 0.06 : 0.12) + (k === shots.length - 1 ? 0.14 : 0));
+      const p = typeof pos === 'function' ? (pos as (n: number) => Where)(len) : pos;
+      return {
+        from,
+        to,
+        pos: p,
+        opts: {
+          target: which === 3 ? tb : tv,
+          kind: 'm' as const,
+          focusDb: k === 4 ? 3 : 0,
+          sendDb: send - (which === 4 ? 2 : 0),
+        },
+      };
+    });
+    across(m, name, sig, T0, parts);
+  }
 }
 
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
@@ -1361,6 +1381,7 @@ export function scene(): Mix {
     [SCENE_END + 1.5, 0],
   ]);
   blackHole(m);
+  orbAcross(m);
   redLayers(m, { bed: false });
   holeBody(m);
   levelCore(m);
