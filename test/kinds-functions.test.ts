@@ -20,7 +20,14 @@ import {
   ROAR_MODULE,
   ROAR_SOURCE,
 } from '../src/kinds/functions/roar.ts';
-import { RefBoom, RefImpact, RefRoar } from './reference-kinds.ts';
+import {
+  STONE_BAND_DEFINITION,
+  STONE_CLOCK_DEFINITION,
+  STONE_MIX_DEFINITION,
+  STONES_MODULE,
+  STONES_SOURCE,
+} from '../src/kinds/functions/stones.ts';
+import { RefBoom, RefImpact, RefRoar, RefStones } from './reference-kinds.ts';
 
 function run(doc: FunctionGraphDocument, frames: number): Float32Array {
   const program = compileFunctionGraph(doc);
@@ -216,6 +223,93 @@ describe('the kinds as functions', () => {
     [ref.b0, ref.b1, ref.b2, ref.b3].forEach((band, i) => {
       const b = bands[i]!;
       band.set(b.coef, b.damp, b.gain, b.depth, b.rate);
+    });
+    expectSame(fn, () => ref.tick());
+  });
+
+  it('stones, as two clocks, five band nodes and a mix, sound as the kind does', () => {
+    const sr = 48000;
+    const key = 0x5eed123;
+    const clock = {
+      key,
+      len: 0.6 * sr,
+      rateA: 40 / sr,
+      rateB: 80 / sr,
+      rateC: 120 / sr,
+      sizeLo: 0.05,
+      sizeLog: Math.log(20),
+      grow0: 1,
+      grow1: 0.5,
+      first: 0.4,
+      firstSize: 0.5,
+    };
+    const bright = 0.6;
+    const bands = [70, 180, 480, 1300, 3400].map((fc, i) => ({
+      coef: Math.min(2 * Math.sin((Math.PI * fc) / sr), 1.2),
+      damp: 0.5,
+      keep: Math.exp(-1 / ((0.4 / (i + 1)) * sr)),
+      ratio: fc / 54.6,
+      edge: [0, 0.05, 0.15, 0.35, 0.6][i]!,
+      gain: [1.6, 1.1, 0.9, 0.8, 0.7][i]!,
+    }));
+    const constant = (value: number) => ({ kind: 'constant' as const, value });
+    const wire = (node: string) => ({ kind: 'connection' as const, node, port: 'out' });
+    const clockInputs = (part: number) =>
+      Object.fromEntries([
+        ['part', constant(part)],
+        ...Object.entries(clock).map(([k, v]) => [k, constant(v)]),
+      ]);
+    const doc: FunctionGraphDocument = {
+      schema: 'typeaudio.function-graph',
+      version: 1,
+      modules: { [NOISE_MODULE]: NOISE_SOURCE, [STONES_MODULE]: STONES_SOURCE },
+      definitions: [STONE_CLOCK_DEFINITION, STONE_BAND_DEFINITION, STONE_MIX_DEFINITION],
+      nodes: [
+        { id: 'level', definition: 'stoneClock', inputs: clockInputs(0) },
+        { id: 'size', definition: 'stoneClock', inputs: clockInputs(1) },
+        ...bands.map((b, i) => ({
+          id: `band${i}`,
+          definition: 'stoneBand',
+          inputs: {
+            amp: wire('level'),
+            size: wire('size'),
+            key: constant((key ^ (101 + i)) >>> 0),
+            coef: constant(b.coef),
+            damp: constant(b.damp),
+            keep: constant(b.keep),
+            ratio: constant(b.ratio),
+            edge: constant(b.edge),
+            gain: constant(b.gain),
+            bright: constant(bright),
+          },
+        })),
+        {
+          id: 'mix',
+          definition: 'stoneMix',
+          inputs: Object.fromEntries([0, 1, 2, 3, 4].map((i) => [`b${i}`, wire(`band${i}`)])),
+        },
+      ],
+      parameters: [],
+      output: { node: 'mix', port: 'out' },
+    };
+    const fn = run(doc, sr);
+    const ref = new RefStones().shape(
+      key,
+      clock.len,
+      clock.rateA,
+      clock.rateB,
+      clock.rateC,
+      clock.sizeLo,
+      clock.sizeLog,
+      clock.grow0,
+      clock.grow1,
+      bright,
+      clock.first,
+      clock.firstSize,
+    );
+    [ref.b0, ref.b1, ref.b2, ref.b3, ref.b4].forEach((band, i) => {
+      const b = bands[i]!;
+      band.set(b.coef, b.damp, b.keep, b.ratio, b.edge, b.gain);
     });
     expectSame(fn, () => ref.tick());
   });

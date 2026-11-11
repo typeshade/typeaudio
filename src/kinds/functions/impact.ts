@@ -14,7 +14,7 @@ export const IMPACT_MODULE = '/kinds/impact.shade.ts';
 
 /** The kinds' noise: the hash of `typeshade/random` and the noise of `src/kinds/noise.shade.ts`. */
 export const NOISE_SOURCE = `"use typeshade";
-function hash32(x: u32): u32 {
+export function hash32(x: u32): u32 {
   let h: u32 = x ^ (x >> 16);
   h = h * 0x7feb352d;
   h = h ^ (h >> 15);
@@ -22,7 +22,7 @@ function hash32(x: u32): u32 {
   h = h ^ (h >> 16);
   return h;
 }
-function uniform(word: u32): f32 {
+export function uniform(word: u32): f32 {
   return f32(word >> 8) * (1. / 16777216.);
 }
 /** A sample of noise in [-1, 1) for the frame \`age\`, from \`key\` only. */
