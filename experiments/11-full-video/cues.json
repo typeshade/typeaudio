@@ -3247,7 +3247,7 @@
     "why": "bed"
    },
    "priority": "B",
-   "level": -14,
+   "level": -11,
    "bed": true,
    "recipe": "dust-bed"
   },
@@ -3414,7 +3414,7 @@
     "why": "bed"
    },
    "priority": "B",
-   "level": -15,
+   "level": -11,
    "bed": true,
    "recipe": "hall-air"
   },
@@ -3472,7 +3472,7 @@
     "why": "bed"
    },
    "priority": "B",
-   "level": -16,
+   "level": -10,
    "bed": true,
    "recipe": "hall-air"
   },
@@ -3491,7 +3491,7 @@
     "why": "bed"
    },
    "priority": "B",
-   "level": -16,
+   "level": -11,
    "bed": true,
    "recipe": "hall-air"
   },
@@ -5626,7 +5626,7 @@
     "why": "bed"
    },
    "priority": "B",
-   "level": -14,
+   "level": -12,
    "bed": true,
    "recipe": "hall-air"
   },
@@ -5791,7 +5791,7 @@
     "why": "bed"
    },
    "priority": "B",
-   "level": -15,
+   "level": -10,
    "bed": true,
    "recipe": "hall-air"
   },
@@ -6216,7 +6216,7 @@
     "why": "bed"
    },
    "priority": "B",
-   "level": -14,
+   "level": -11,
    "bed": true,
    "recipe": "hall-air"
   },

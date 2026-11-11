@@ -461,7 +461,7 @@ Fern close up: "It blocked it.". Space: the hall, close.
 
 - Dialogue (not designed): Fern: "It blocked it."
 - Music (not designed): score
-- Ambience bed: dust settles (`dust-bed`, -14 dB)
+- Ambience bed: dust settles (`dust-bed`, -11 dB)
 
 | Time | Cue | What | Who | What is met | How | How much | Where | Why | Made by | dB | P |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -488,7 +488,7 @@ Frieren stands; rocks float around her: "It's still within our expectations.". S
 
 - Dialogue (not designed): Frieren: "It's still within our expectations."
 - Music (not designed): score
-- Ambience bed: hall air (`hall-air`, -15 dB)
+- Ambience bed: hall air (`hall-air`, -11 dB)
 
 | Time | Cue | What | Who | What is met | How | How much | Where | Why | Made by | dB | P |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -501,7 +501,7 @@ Frieren's eye, close: "From here on,". Space: the hall, close.
 
 - Dialogue (not designed): Frieren: "From here on,"
 - Music (not designed): score thins
-- Ambience bed: hall air (`hall-air`, -16 dB)
+- Ambience bed: hall air (`hall-air`, -10 dB)
 
 ### s32, 1:19.41 to 1:22.00
 
@@ -509,7 +509,7 @@ Grey, Frieren's face; embers float; fade to black. Space: the hall, close.
 
 - Dialogue (not designed): Frieren: "it will be a battle of attrition."
 - Music (not designed): score thins
-- Ambience bed: hall air (`hall-air`, -16 dB)
+- Ambience bed: hall air (`hall-air`, -11 dB)
 
 | Time | Cue | What | Who | What is met | How | How much | Where | Why | Made by | dB | P |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -800,7 +800,7 @@ A hand on the cracked floor beside a broken book: "I don't sense any mana...". S
 
 - Dialogue (not designed): "I don't sense any mana." "I don't recognize this attack as magic."
 - Music (not designed): none to 160 s
-- Ambience bed: the quiet hall (`hall-air`, -14 dB)
+- Ambience bed: the quiet hall (`hall-air`, -12 dB)
 
 | Time | Cue | What | Who | What is met | How | How much | Where | Why | Made by | dB | P |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -828,7 +828,7 @@ Fern's face, bleeding: "But that's so unlike you.". Space: the hall, close.
 
 - Dialogue (not designed): Fern: "But that's so unlike you."
 - Music (not designed): score
-- Ambience bed: the quiet hall (`hall-air`, -15 dB)
+- Ambience bed: the quiet hall (`hall-air`, -10 dB)
 
 ### s55, 2:52.67 to 2:54.51
 
@@ -893,7 +893,7 @@ Frieren stands by a kneeling figure at a lit doorway: "You did great, Fern."; fa
 
 - Dialogue (not designed): Frieren: "You did great, Fern."
 - Music (not designed): score ends
-- Ambience bed: the quiet hall (`hall-air`, -14 dB)
+- Ambience bed: the quiet hall (`hall-air`, -11 dB)
 
 | Time | Cue | What | Who | What is met | How | How much | Where | Why | Made by | dB | P |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
