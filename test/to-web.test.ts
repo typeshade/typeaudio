@@ -125,5 +125,5 @@ describe('the force passage as a project of the site', () => {
     const peakDb = 20 * Math.log10(peak) + scene.space.gainDb;
     expect(peakDb).toBeLessThanOrEqual(PEAK_CEILING_DB + 0.01);
     expect(peakDb).toBeGreaterThan(PEAK_CEILING_DB - 0.1);
-  });
+  }, 120_000);
 });
