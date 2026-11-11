@@ -25,8 +25,10 @@ import {
   addAt,
   fade,
   interp,
+  bandGain,
   linspace,
   lp,
+  spectral,
   nsamp,
   rng,
   stftShape,
@@ -628,54 +630,150 @@ function dustWave(m: Mix): void {
   });
 }
 
-/** 43.96 to 45.67: the purple circle at her staff: mana that gathers, sparks, small arcs. */
+// ---- Review 2, 2026-11-11: the charge. The owner heard the preparation of the spell as just sparks.
+// Now it is power that gathers for a big spell over the whole shot (43.96 to 45.67 s): mana drawn
+// into the staff tip (swallows that converge on it, faster and faster, smaller and brighter than the
+// black hole's), a low drone that swells in level and density, a crackle of stored charge that
+// thickens from many small arcs into one growing hum, and the circle's own tone (fixed inharmonic
+// partials that drift slowly, no glide, no beep). It crests at 45.45 s, holds, draws back once at
+// 45.50 s (an intake), and stops on the cut, where scene 3's lightning lands. The sparks and the
+// small arcs are gone (the owner's rule).
+
+/** The charge's shape: 0 to 1, a crest from 45.45 s, an intake from 45.50 s, the stop at the cut. */
+const CHARGE: Points = [
+  [43.96, 0],
+  [44.3, 0.12],
+  [44.8, 0.3],
+  [45.2, 0.62],
+  [45.45, 1.0],
+  [45.5, 1.0],
+  [45.6, 0.6],
+  [45.664, 0.6],
+  [45.67, 0],
+];
+
+/** Air drawn into a point: a band that falls and narrows, a level that grows and stops in 4 ms. */
+function swallow(dur: number, seed: number, f0: number, f1: number): Float64Array {
+  const n = nsamp(dur);
+  const x = stftShape(white(n, seed), (tf, fr, g) => {
+    const u = Math.min(1, Math.max(0, tf / dur));
+    const fc = f0 * (f1 / f0) ** u;
+    const w = 1.3 * (1 - u) + 0.35;
+    for (let k = 0; k < fr.length; k++)
+      g[k] = Math.exp(-0.5 * (Math.log2(Math.max(fr[k]!, 1) / fc) / w) ** 2);
+  });
+  const y = x.map((v, i) => v * ((Math.exp(4.5 * (i / n)) - 1) / (Math.exp(4.5) - 1)));
+  const k = nsamp(0.004);
+  for (let i = 0; i < k; i++)
+    y[n - k + i] = y[n - k + i]! * (0.5 + 0.5 * Math.cos((Math.PI * (i + 1)) / k));
+  return y;
+}
+
 function charge(m: Mix): void {
   const T0 = 43.96;
-  const dur = SCENE2_END + 0.3 - T0;
+  const T1 = SCENE2_END;
+  const dur = T1 - T0;
   const n = nsamp(dur);
-  const draw = env(
-    [
-      [T0, 0],
-      [44.3, 0.25],
-      [45.6, 1.0],
-      [SCENE2_END + 0.3, 1.0],
-    ],
-    T0,
-    n,
-  );
-  m.addWide('charge-air', drawnAir(dur, 2120, draw, 260, 1100), T0, {
-    target: -21,
+  const B = env(CHARGE, T0, n);
+  const TIP: Vec3 = [-1.2, 1.6, -6.5];
+  const pw = (e: number) => B.map((v) => v ** e);
+  // the base: air drawn in, its band climbing with the charge
+  m.addWide('charge-air', drawnAir(dur, 2120, pw(1.0), 300, 1600), T0, {
+    target: -22,
     kind: 'm',
     sendDb: -6,
   });
-  const breath = S.howl(dur, 2121, [300.0, 450.0, 610.0], 8.0, 0.05, 1.2);
-  m.add(
-    'charge-breath',
-    breath.map((v, i) => v * draw[i]!),
-    T0,
-    [-1.5, 1.4, -7.0],
-    { target: -25, kind: 'm', sendDb: -6 },
+  // mana that converges on the tip, faster and faster
+  const r = rng(2140);
+  let t = T0 + 0.15;
+  let k = 0;
+  while (t < 45.44) {
+    const b = interp(
+      t,
+      CHARGE.map((p) => p[0]),
+      CHARGE.map((p) => p[1]),
+    );
+    t += r.exponential(1 / (2.0 + 9.0 * b));
+    if (t >= 45.44) break;
+    const d = r.uniform(0.25, 0.6);
+    const start = Math.max(T0, t - d);
+    const az = r.uniform(0, 2 * Math.PI);
+    const rad = r.uniform(2.0, 4.0);
+    const from: Vec3 = [
+      TIP[0] + rad * Math.cos(az),
+      TIP[1] + r.uniform(-1.0, 1.5),
+      TIP[2] + rad * Math.sin(az),
+    ];
+    const sig = swallow(t - start, 2150 + 5 * k, r.uniform(3000, 5000), r.uniform(350, 600));
+    const P = line(from, TIP, sig.length);
+    m.add(`charge-draw${k}`, sig, start, P, { target: -26 + 8 * b, kind: 'm', sendDb: -6 });
+    k++;
+  }
+  // the intake: one large draw from all round, cut on the cut
+  const intake = swallow(45.664 - 45.4, 2199, 2500, 180);
+  m.add('charge-intake', intake, 45.4, line([0.0, 2.5, 4.0], TIP, intake.length), {
+    target: -15,
+    kind: 'm',
+    sendDb: -4,
+  });
+  // the low drone: noise and low partials that swell in level and density
+  const low = S.wideNoise(dur, 2160, 40, 160, 3, false);
+  const tone = S.voice(dur, 2162, [55.0, 82.4, 117.0], {
+    wander: 0.004,
+    rate: 1.5,
+    tilt: 0.3,
+    breath: 0.6,
+  });
+  const pd = pw(1.5);
+  const drone: Stereo = [0, 1].map((c) =>
+    fade(
+      low[c]!.map((v, i) => (0.7 * v + 0.9 * tone[i]! * 3) * pd[i]!),
+      0.05,
+      0.004,
+    ),
+  ) as Stereo;
+  m.addWide('charge-drone', drone, T0, { target: -19, kind: 'm', sendDb: -4 });
+  // stored charge: impulses from 300 to 3000 a second, from 1.5 to 9 kHz, and a buzz with no period
+  const rc = rng(2170);
+  const u = rc.randomN(n);
+  const amp = rc.uniformN(0.3, 1.0, n);
+  const sg = rc.signN(n);
+  const imp = new Float64Array(n);
+  for (let i = 0; i < n; i++)
+    imp[i] = u[i]! < (300 + 2700 * B[i]! ** 1.5) / SR ? amp[i]! * sg[i]! : 0;
+  const crack = spectral(imp, (f) => bandGain(f, 1500, 9000, 2));
+  const buzz = S.gravel(dur, 2171, 90, 600);
+  const fl = S.irregular(n, 2172, 30, 120);
+  const cg = S.norm(crack);
+  const bg = S.norm(buzz.map((v, i) => v * (0.6 + 0.4 * fl[i]!)));
+  const stored = fade(
+    cg.map((v, i) => (v * (0.5 + 0.5 * B[i]!) + 0.8 * bg[i]! * B[i]! ** 2) * B[i]!),
+    0.05,
+    0.004,
   );
-  const sp = S.pops(dur, 2122, 18.0, 1500, 7000, 0.004);
+  m.add('charge-stored', stored, T0, TIP, { target: -18, kind: 'm', sendDb: -5 });
+  // the circle's tone: fixed inharmonic partials, dark and bright, that drift slowly and grow
+  const circle = S.voice(dur, 2180, [311.0, 466.0, 659.0, 987.0, 1397.0], {
+    wander: 0.003,
+    rate: 0.8,
+    tilt: 0.9,
+    breath: 0.4,
+  });
   m.add(
-    'charge-sparks',
-    sp.map((v, i) => v * draw[i]!),
+    'charge-circle',
+    fade(
+      circle.map((v, i) => v * B[i]! ** 2),
+      0.05,
+      0.004,
+    ),
     T0,
-    [-1.5, 1.4, -7.0],
-    { target: -26, kind: 'm', sendDb: -8 },
-  );
-  const r = rng(2123);
-  const at = [44.85, 45.05, 45.2, 45.38, 45.52];
-  const arcs = ticks(
-    at.map((t) => t - 44.8),
-    (k) => {
-      const z = S.sizzle(0.12, 2124 + k, 0.03, 4000);
-      addAt(z, S.tiltedBurst(2130 + k, 1200.0, 9000.0, 0.006, { tilt: 0.4 }), 0, 0.8);
-      return z.map((v) => v * r.uniform(0.6, 1.0));
+    TIP,
+    {
+      target: -23,
+      kind: 'm',
+      sendDb: -4,
     },
-    1.0,
   );
-  m.add('charge-arcs', arcs, 44.8, [-1.2, 1.6, -6.5], { target: -21, kind: 'i', sendDb: -6 });
 }
 
 /** Leave layers out of a mix. */

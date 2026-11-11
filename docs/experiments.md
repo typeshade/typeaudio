@@ -1105,5 +1105,26 @@ Render r2: 83 s (layers 79 s, master 5 s; 208 layers). The join is unchanged (0.
 the overlap). Across each cut the level steps by 2.3 dB or less, except at 38.60 s (-4.7 dB), where
 the seat at 38.42 s dies away before the next at 38.72 s.
 
-**Status.** The second render waits for the owner's review. The previews went to the owner privately;
+**Review 2, 2026-11-11.** The owner heard the preparation of the spell (43.96 to 45.67 s) as just
+sparks. The sparks, the small arcs and the breath are gone. The charge is now power that gathers
+over the whole shot, on one shape that grows to a crest at 45.45 s, holds, draws back once from
+45.50 s and stops on the cut, where scene 3's lightning lands:
+
+- mana drawn into the staff tip: swallows that converge on it from 2 to 4 m, faster and faster (2 to
+  11 a second), their band falling from 3 to 5 kHz to 350 to 600 Hz; at 45.40 s one large intake
+  from all round, cut on the cut;
+- a low drone that swells in level and density: noise from 40 to 160 Hz and partials at 55, 82.4
+  and 117 Hz with a breathing level;
+- stored charge: impulses from 300 to 3,000 a second (1.5 to 9 kHz) and a buzz with no period, from
+  many small arcs to one growing hum;
+- the circle's tone: fixed inharmonic partials (311, 466, 659, 987, 1397 Hz) that drift by 0.3 % and
+  grow with the square of the charge; no glide, no beep;
+- the air drawn in under it all, its band climbing.
+
+Measured each 0.25 s from 44.0 s: -29.7, -25.0, -20.9, -19.2, -16.6, -14.0 and -12.7 dB (before:
+-29.5 to -20.9 dB). Over 0.15 s the end measures -12.5 dB, under the fist (-7.9 dB); its highest
+sample is -2.6 dBFS against the fist's -2.1 dBFS. From 2 to 8 kHz no transient stands 6 dB out of
+the 50 ms before it: the crackle is dense, not a row of plinks. The render takes 87 s.
+
+**Status.** The third render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.
