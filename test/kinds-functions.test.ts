@@ -28,6 +28,10 @@ import {
   STONES_SOURCE,
 } from '../src/kinds/functions/stones.ts';
 import { RefBoom, RefImpact, RefRoar, RefStones } from './reference-kinds.ts';
+import { kindNodes } from '../src/kinds/functions/fromEvent.ts';
+import { eventKey, makeLane } from '../src/kinds/make.ts';
+import type { PlanEvent } from '../src/plan/index.ts';
+import wallHit from '../experiments/10-seven-questions/store/wall-hit.json';
 
 function run(doc: FunctionGraphDocument, frames: number): Float32Array {
   const program = compileFunctionGraph(doc);
@@ -312,5 +316,35 @@ describe('the kinds as functions', () => {
       band.set(b.coef, b.damp, b.keep, b.ratio, b.edge, b.gain);
     });
     expectSame(fn, () => ref.tick());
+  });
+
+  it('every event of the accepted wall hit, as function nodes, sounds as its lane does', () => {
+    const sr = 48000;
+    const events = wallHit.events as unknown as PlanEvent[];
+    expect(events.length).toBe(12);
+    for (const e of events) {
+      const key = eventKey(11, e.id);
+      const made = makeLane(e, { sr, key });
+      const nodes = kindNodes(made, 'kind');
+      const doc: FunctionGraphDocument = {
+        schema: 'typeaudio.function-graph',
+        version: 1,
+        modules: nodes.modules,
+        definitions: nodes.definitions,
+        nodes: nodes.nodes,
+        parameters: [],
+        output: nodes.output,
+      };
+      const frames = Math.min(made.length, sr);
+      const fn = run(doc, frames);
+      const fresh = makeLane(e, { sr, key }) as { lane: Record<string, { tick(): number }> };
+      const unit = Object.values(fresh.lane).find(
+        (v) =>
+          typeof v === 'object' &&
+          v !== null &&
+          typeof (v as { tick?: unknown }).tick === 'function',
+      )!;
+      expectSame(fn, () => unit.tick());
+    }
   });
 });
