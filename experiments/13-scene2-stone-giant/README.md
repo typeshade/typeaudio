@@ -5,6 +5,11 @@ giant, and its fist strikes the hall. It is made with the study's models in the 
 (`src/study/`), as scene 1 (experiment 12) is. The mix starts at 28.5 s from scene 1's tail and is
 mastered at scene 1's gain. `docs/experiments.md`, section 13, is the record.
 
+## The owner's rule (review 1, 2026-11-11)
+
+A sound earns its place by its part in the moment (the answer "why"). Small detail of little weight
+that nobody would miss is cut: settling stones, settling ticks, small pebbles that trickle.
+
 ## Run
 
 1. Render scene 1 with experiment 12: `bun experiments/12-scene1-red-seal/run.ts scene --out <dir>`.

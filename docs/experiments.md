@@ -1055,5 +1055,54 @@ at 41.17 s).
 **What is not verified.** Nobody has listened to scene 2. The reference's audio holds music, so its
 level is no target. The low tail at the start of the overlap was not traced to its layer.
 
-**Status.** The first render waits for the owner's review. The preview went to the owner privately;
+**Review 1, 2026-11-11.** The owner asked for three changes and gave a rule.
+
+- A strange trickling plink in the face shot. It was the study coda's two settling stones (`settle0`
+  at 30.62 s and `settle1` at 31.34 s): each a landing and a scatter of 1 to 3 cm pieces. Measured:
+  five transients of 6 dB or more from 2 to 8 kHz between 29.5 and 33.6 s (31.02, 31.45, 31.57,
+  31.96, 32.48 s). They are cut, and so is the coda's cloth (`hair-cloth`: pitched grains); the
+  hair is now a fast flutter of noise (`gravel`). Two transients remain: the barrier's bloom at
+  31.87 s, and at 31.68 s a rise of the noise of the wind whose spectrum is as flat as the wind
+  around it (flatness 0.41 against 0.44 to 0.51), not a pitched grain.
+- The defensive magic. The frames at 12 a second show a field of blue hexagons that blooms in front
+  of her face at 31.85 s and holds to 32.25 s, and again from 32.70 to 32.98 s; it stops what the
+  blast throws at her. Each bloom is now a low whoomp of displaced air with a short glassy shimmer
+  (bright fluttering noise and fixed inharmonic partials, no glide) where the field is. Each stone it
+  stops (31.93, 32.08, 32.77, 32.89 s) is the stone's thud with its attack taken by the field (low
+  passed at 1.4 kHz and softened over 8 ms), the field's own resonance from 120 to 420 Hz, a crackle
+  of its surface and a chip that flies off. Each rises 6 to 8 dB over the moment before it.
+- The forming of the giant. It was one wash of roll, groan and grind from 33.58 to 41.5 s. Now 11
+  blocks slide and seat in sequence from 37.9 to 40.2 s: a scrape that grows, the seat in the timbre
+  of the accepted landing (`slab_fall`) with a deep clunk, some overlapping; two groans of the body;
+  a low rumble from the floor shot that grows as the body completes, one source across the cuts; and
+  the giant's first shift of weight at 40.42 s (a body at 36 Hz with a slow rise, and a groan). The
+  three seats that close on the camera are at the level of the accepted landing, the eight under
+  her 3 dB lower. Over 0.15 s the seats measure -8.5 to -10 dB and the fist -7.9 dB, 3.7 dB over the
+  moment before it.
+
+**The owner's rule (review 1).** A sound earns its place by its part in the moment (the answer
+"why"). Small detail of little weight that nobody would miss is cut: settling stones, settling
+ticks, small pebbles that trickle. In scene 2 that removed `settle0`, `settle1`, `settle-ticks`, her
+steps on stone (2 to 3 cm impacts), the small debris shaken off each seat, and the tail of the debris
+after the strike (now only the stones the wave throws, 0.3 to 0.9 m, for 1 s). The stones that stir
+on the floor are heavier and fewer (0.2 to 0.6 m). The study's patter of small debris under the
+smoke (`debris-rain`), which scene 1 holds to 29.5 s, fades out over 0.3 s after the join.
+
+Such layers in the accepted scene 1 (render r5 at `437fa7d`), listed for the owner and not changed:
+
+| Layer                                               | Time (s)              | Stones                                                                                      | Level (target)      |
+| --------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------- | ------------------- |
+| `far-debris`                                        | 0.3 to 3.9            | small falls, 5 to 20 cm                                                                     | -36 LUFS, 0.4 s     |
+| `pebbles`                                           | 8.1 to 9.9            | 3 to 10 cm                                                                                  | -31 LUFS, 0.4 s     |
+| `leap-debris`                                       | 16.3 to 18.2          | 5 to 25 cm                                                                                  | -27 LUFS, 0.4 s     |
+| `rock-burst` (study)                                | 21.98                 | a 35 cm stone and a scatter of 1 to 3 cm                                                    | -16 LUFS, 0.1 s     |
+| `wall-debris0`, `wall-debris1` (study)              | 26.7 to 29.1          | 15 to 50 cm, behind the ice                                                                 | -24 LUFS, 0.4 s     |
+| `debris-rain0`, `debris-rain1` (study)              | 28.63 to 30.9         | 5 to 20 cm                                                                                  | -28 LUFS, 0.4 s     |
+| inside `block-land`, `ray-debris0` to `ray-debris4` | 15.56; 25.98 to 26.88 | the scatter of 5 to 15 cm pieces in the accepted landing's timbre (`slab_fall`, weight 0.2) | part of the landing |
+
+Render r2: 83 s (layers 79 s, master 5 s; 208 layers). The join is unchanged (0.004 dB apart over
+the overlap). Across each cut the level steps by 2.3 dB or less, except at 38.60 s (-4.7 dB), where
+the seat at 38.42 s dies away before the next at 38.72 s.
+
+**Status.** The second render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.

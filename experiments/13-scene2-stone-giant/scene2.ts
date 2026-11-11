@@ -26,6 +26,7 @@ import {
   fade,
   interp,
   linspace,
+  lp,
   nsamp,
   rng,
   stftShape,
@@ -144,26 +145,6 @@ function drawnAir(
   }) as Stereo;
 }
 
-/** Steps on stone: light impacts at a running pace, each interval drawn. */
-function steps(
-  from: number,
-  to: number,
-  seed: number,
-  size: number,
-): { times: number[]; sig: Float64Array } {
-  const r = rng(seed);
-  const t: number[] = [];
-  for (let x = 0; x < to - from; x += 0.27 + 0.08 * r.random()) t.push(x);
-  return {
-    times: t,
-    sig: ticks(
-      t,
-      () => S.stoneImpact(size * r.uniform(0.7, 1.2), r.uniform(2.0, 3.5), r),
-      to - from + 0.3,
-    ),
-  };
-}
-
 /** Fade a stored layer by a gain that follows (picture seconds, gain) points. */
 function shapeLayer(m: Mix, name: string, points: Points): void {
   const l = m.layers.get(name)!;
@@ -247,10 +228,11 @@ function face(m: Mix): void {
     { target: -26, kind: 'm' },
   );
   const irr = S.irregular(nsamp(3.1), 2003, 2, 9);
+  // review 1: hair as a fast flutter of noise (`gravel`), not cloth's pitched grains
   m.add(
-    'hair2',
+    'hair-flutter',
     fade(
-      S.cloth(3.1, 2002, 300).map((v, i) => v * (0.6 + 0.4 * irr[i]!)),
+      S.gravel(3.1, 2002, 1000, 6000).map((v, i) => v * (0.6 + 0.4 * irr[i]!)),
       0.2,
       0.25,
     ),
@@ -258,26 +240,76 @@ function face(m: Mix): void {
     [0.2, 1.5, -0.8],
     { target: -28, kind: 'm', sendDb: -10 },
   );
-  // the barrier flashes: a soft bright crush and a breath of low air, no pitch
-  [31.83, 32.66].forEach((t, i) => {
-    m.add(`hex${i}`, S.crush(0.3, 2004 + i, 0.05, 1500, 7000), t, [0.0, 1.8, -1.5], {
-      target: -31,
-      kind: 'i',
-      sendDb: -6,
-    });
-    m.add(`hex${i}-air`, S.burst(2006 + i, 60, 300, 0.08, { rise: 0.01 }), t, [0.0, 1.0, -2.0], {
-      target: -32,
-      kind: 'i',
-      sendDb: -8,
-    });
-  });
+  barrier(m);
 }
 
+// ---- Review 1, 2026-11-11: the barrier. The frames (12 a second) show a field of blue hexagons that
+// blooms in front of her face at 31.85 s and holds to 32.25 s, and again from 32.70 to 32.98 s; it
+// stops what the blast throws at her. Each bloom is a low whoomp of displaced air and a short glassy
+// shimmer that blooms and settles: bright noise with a fast irregular flutter and a few fixed,
+// inharmonic partials, no glide. Each stone it stops is a thud with its attack taken by the field
+// (the stone's impact, dulled and softened), the field's own low-mid "thoom", a crackle of its
+// surface and a chip that flies off: not stone on stone.
+
+/** The glassy shimmer of the field: bright fluttering noise and fixed inharmonic partials. */
+function shimmer(dur: number, seed: number): Float64Array {
+  const n = nsamp(dur);
+  const nz = S.tiltedBurst(seed, 2500.0, 11000.0, 0.22, { tilt: 0.5, dur, rise: 0.025 });
+  const fl = S.irregular(n, seed + 1, 20, 90);
+  const r = rng(seed + 2);
+  const y = new Float64Array(n);
+  for (const f of [3150.0, 4410.0, 5230.0, 6870.0, 8120.0]) {
+    const tau = r.uniform(0.12, 0.3);
+    const ph = r.uniform(0, 6.28);
+    const a = r.uniform(0.3, 1.0);
+    for (let i = 0; i < n; i++) {
+      const t = i / SR;
+      y[i] =
+        y[i]! +
+        a * Math.sin(2 * Math.PI * f * t + ph) * Math.exp(-t / tau) * Math.min(1, t / 0.025);
+    }
+  }
+  const yn = S.norm(y);
+  return S.norm(nz.map((v, i) => v * (0.65 + 0.35 * fl[i]!) + 0.3 * yn[i]!));
+}
+
+function barrier(m: Mix): void {
+  const FIELD: Vec3 = [0.0, 1.6, -1.2];
+  [31.85, 32.7].forEach((t, k) => {
+    const bloom = new Float64Array(nsamp(0.8));
+    addAt(bloom, S.burst(2200 + k, 50, 260, 0.14, { rise: 0.018 }), 0, 1.0);
+    addAt(bloom, shimmer(0.7, 2210 + 3 * k), 0, 0.55);
+    m.add(`barrier-bloom${k}`, S.norm(bloom), t, FIELD, { target: -17, kind: 'i', sendDb: -4 });
+  });
+  const r = rng(2230);
+  (
+    [
+      [31.93, [-0.5, 1.7, -1.3]],
+      [32.08, [0.6, 1.4, -1.2]],
+      [32.77, [0.4, 1.8, -1.3]],
+      [32.89, [-0.6, 1.5, -1.2]],
+    ] as [number, Vec3][]
+  ).forEach(([t, pos], k) => {
+    const n = nsamp(0.6);
+    const hit = new Float64Array(n);
+    // the stone's thud, its attack taken by the field: dulled and softened
+    const st = lp(S.norm(S.stoneImpact(0.3, 10.0, r)), 1400);
+    const soft = nsamp(0.008);
+    for (let i = 0; i < Math.min(soft, st.length); i++) st[i] = st[i]! * (i / soft);
+    addAt(hit, S.norm(st).subarray(0, n), 0, 1.0);
+    // the field's own resonance, low-mid, and the crackle of its surface
+    addAt(hit, S.burst(2240 + k, 120, 420, 0.16, { rise: 0.008 }).subarray(0, n), 0, 0.9);
+    addAt(hit, S.sizzle(0.18, 2250 + k, 0.05, 2500, 2500, 9000), 0, 0.3);
+    // a chip that flies off
+    addAt(hit, S.stoneCrack(r, 0.12, 0.4), nsamp(0.03), 0.25);
+    m.add(`barrier-block${k}`, S.norm(hit), t, pos, { target: -16, kind: 'i', sendDb: -5 });
+  });
+}
 /** 33.58 to 36.45: the stones on the floor stir and lift; she runs across. */
 function floor(m: Mix): void {
   m.add(
     'stir',
-    S.tumble(2.9, 2010, (t) => 2.0 + 4.0 * t, [0.05, 0.25], [2.0, 5.0]),
+    S.tumble(2.9, 2010, (t) => 1.0 + 1.5 * t, [0.2, 0.6], [2.0, 4.0]),
     33.6,
     [0.0, 0.0, -8.0],
     { target: -25, kind: 'm', sendDb: -6 },
@@ -301,49 +333,135 @@ function floor(m: Mix): void {
     [-2.0, 0.0, -7.0],
     { target: -26, kind: 'm', sendDb: -6 },
   );
-  const run = steps(35.3, 36.45, 2012, 0.02);
-  m.add('run-steps', run.sig, 35.3, [2.0, 0.0, -9.0], { target: -33, kind: 'i', sendDb: -8 });
 }
 
-/** 33.58 to 41.4: the giant's mass, one source across the cuts: a low roll, a groan, a grind. */
-function mass(m: Mix): void {
+// ---- Review 1, 2026-11-11: the giant's assembly. The owner found the forming of the giant strange:
+// it was one wash of roll, groan and grind. Now it is built as huge stone is built: blocks that
+// slide and slam into place one after another (a scrape, then the seat in the timbre of the accepted
+// landing, then a deep clunk), some overlapping; deep groans of the body; a low rumble that grows
+// as the body completes, one source across the cuts; and its first shift of weight when it stands.
+
+function assembly(m: Mix): void {
+  const seats: [number, number, Vec3][] = [
+    [37.9, 1.6, [-1.0, 1.0, -2.0]],
+    [38.16, 1.4, [1.2, 1.5, -2.5]],
+    [38.42, 1.8, [0.0, 0.5, -2.0]],
+    [38.72, 1.5, [-2.5, -1.2, -3.0]],
+    [38.93, 1.2, [2.0, -1.5, -4.0]],
+    [39.1, 1.7, [-1.5, -1.5, -5.0]],
+    [39.34, 1.3, [3.0, -1.0, -3.5]],
+    [39.52, 1.9, [0.0, -2.0, -2.5]],
+    [39.78, 1.4, [-3.0, -1.2, -4.5]],
+    [39.97, 1.6, [2.5, -1.8, -3.0]],
+    [40.2, 2.0, [0.0, -2.0, -4.0]],
+  ];
+  const r = rng(2300);
+  seats.forEach(([t, size, pos], k) => {
+    // the scrape as it slides in, louder until it seats
+    const d = r.uniform(0.3, 0.6);
+    const g = S.grind(d, 2310 + 7 * k, { rLo: 30, rHi: 120, scrape: 0.6 });
+    const sc = g.map((v, i) => v * (i / g.length) ** 1.5);
+    const cut = nsamp(0.006);
+    for (let i = 0; i < cut; i++)
+      sc[sc.length - cut + i] = sc[sc.length - cut + i]! * (1 - i / cut);
+    const from: Vec3 = [pos[0] * 1.8, pos[1] + 1.5, pos[2] - 2.0];
+    m.add(`seat${k}-scrape`, sc, t - d, line(from, pos, sc.length), {
+      target: -26 + 2 * size,
+      kind: 'm',
+      sendDb: -6,
+    });
+    // the seat: the accepted landing's timbre, with a deep clunk
+    const seat = S.slabFall(2320 + 7 * k, size, 0.35);
+    addAt(
+      seat,
+      S.boom(2321 + 7 * k, { f: 60.0 / size ** 0.3, tau: 0.2 }).subarray(0, seat.length),
+      0,
+      0.8,
+    );
+    m.add(`seat${k}`, S.norm(seat), t, pos, {
+      target: landing(size),
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -5,
+    });
+  });
+  // the body groans as it takes the weight
+  (
+    [
+      [38.7, 1.5],
+      [39.55, 1.4],
+    ] as const
+  ).forEach(([t, d], k) =>
+    m.add(
+      `body-groan${k}`,
+      S.groan(d, 2400 + k, { rLo: 28, rHi: 60, res: [45.0, 80.0, 140.0], q: 3.5 }),
+      t,
+      [0.0, -2.0, -3.0],
+      {
+        target: -22,
+        kind: 'm',
+        sendDb: -4,
+      },
+    ),
+  );
+  // a low rumble that grows as the body completes: one source from the floor shot, across the cuts
   const T0 = 33.58;
-  const T1 = 41.5;
-  const dur = T1 - T0;
-  const n = nsamp(dur);
+  const T1 = 41.4;
+  const roll = S.billow(T1 - T0, 2410, 25.0, 150.0, 2.0);
   const grow = env(
     [
-      [T0, 0.15],
-      [36.45, 0.55],
-      [38.6, 1.0],
+      [T0, 0.1],
+      [37.85, 0.25],
+      [40.2, 1.0],
       [41.18, 1.0],
       [41.4, 0.4],
     ],
     T0,
-    n,
+    nsamp(T1 - T0),
   );
-  const roll = S.billow(dur, 2020, 30.0, 220.0, 2.5);
-  const groan = S.groan(dur, 2021, { rLo: 35, rHi: 80, res: [55.0, 95.0, 170.0], q: 3.0 });
-  const grind = S.grind(dur, 2022, { rLo: 40, rHi: 120, scrape: 0.8 });
-  const body = sum([1.0, roll[0]], [0.9, groan], [0.6, grind]).map((v, i) => v * grow[i]!);
-  const shots: [number, number, Vec3, number][] = [
-    [33.58, 36.45, [0.0, 0.0, -9.0], -25],
-    [36.45, 38.6, [0.0, 1.0, -4.0], -21],
-    [38.6, 40.33, [0.0, -0.5, -2.5], -19],
-    [40.33, 41.42, [3.0, 2.0, -14.0], -22],
-  ];
   across(
     m,
-    'giant-mass',
-    body,
+    'body-rumble',
+    roll[0].map((v, i) => v * grow[i]!),
     T0,
-    shots.map(([from, to, pos, target]) => ({
-      from,
-      to,
-      pos,
-      opts: { target, kind: 'm', sendDb: -4 },
-    })),
+    [
+      {
+        from: T0,
+        to: 38.6,
+        pos: [0.0, 1.0, -3.0] as Vec3,
+        opts: { target: -27, kind: 'm', sendDb: -4 },
+      },
+      {
+        from: 38.6,
+        to: 40.33,
+        pos: [0.0, -1.5, -3.0] as Vec3,
+        opts: { target: -24, kind: 'm', sendDb: -4 },
+      },
+      {
+        from: 40.33,
+        to: 41.4,
+        pos: [3.0, 1.0, -14.0] as Vec3,
+        opts: { target: -26, kind: 'm', sendDb: -4 },
+      },
+    ],
   );
+  // its first shift of weight as it stands in the hall: slow, low, huge
+  const shift = new Float64Array(nsamp(1.4));
+  addAt(shift, S.boom(2420, { f: 36.0, tau: 1.0, dur: 1.4 }), 0, 1.0);
+  const rise = nsamp(0.08);
+  for (let i = 0; i < rise; i++) shift[i] = shift[i]! * (i / rise);
+  addAt(
+    shift,
+    S.groan(0.9, 2421, { rLo: 25, rHi: 50, res: [40.0, 70.0, 120.0], q: 3.5 }),
+    nsamp(0.05),
+    0.5,
+  );
+  m.add('giant-stands', S.norm(shift), 40.42, [3.0, 0.0, -14.0], {
+    target: -13,
+    kind: 'i',
+    focusDb: 3,
+    sendDb: -3,
+  });
 }
 
 /** 36.45 to 38.6: blocks fly at her from all sides and strike one another; at 37.9 they close. */
@@ -378,41 +496,7 @@ function blocks(m: Mix): void {
     });
     i++;
   }
-  // they close on the camera: three heavy seatings and the grind between them
-  (
-    [
-      [37.9, 1.6, [-1.0, 1.0, -2.0]],
-      [38.16, 1.4, [1.2, 1.5, -2.5]],
-      [38.42, 1.8, [0.0, 0.5, -2.0]],
-    ] as [number, number, Vec3][]
-  ).forEach(([tl, size, pos], k) =>
-    m.add(`block-lock${k}`, S.blockHit(2070 + k, size, 6.0), tl, pos, {
-      target: landing(size),
-      kind: 'i',
-      focusDb: 2,
-      sendDb: -5,
-    }),
-  );
-}
-
-/** 38.6 to 40.33: she runs on top of the giant; it settles and cracks under her. */
-function onTop(m: Mix): void {
-  const run = steps(38.7, 40.3, 2080, 0.03);
-  m.add('top-steps', run.sig, 38.7, [0.0, 0.0, -1.5], { target: -30, kind: 'i', sendDb: -8 });
-  [38.95, 39.55, 40.1].forEach((t, k) =>
-    m.add(
-      `top-crack${k}`,
-      S.heavyCrack(2085 + k, { size: 1.5, dur: 0.4, kRate: 6, bright: 0.3 }),
-      t,
-      [(k - 1) * 2.0, -1.0, -3.0],
-      {
-        target: -17,
-        kind: 'i',
-        focusDb: 2,
-        sendDb: -6,
-      },
-    ),
-  );
+  // as they close on the camera (37.9 s) the assembly begins: see `assembly`
 }
 
 /** 40.33 to 41.18: the fist comes down: its air rises with its speed. 41.18: it strikes. */
@@ -537,13 +621,6 @@ function dustWave(m: Mix): void {
       [42.5, 1, 2.0],
     ] as const
   ).forEach(([t, side, near], i) => pass(m, `debris-pass${i}`, t, side, near, 2105 + i, -25, 0.36));
-  m.add(
-    'settle-ticks',
-    S.tumble(1.6, 2110, (t) => 4.0 * Math.exp(-t / 0.8) + 0.5, [0.02, 0.08], [1.5, 4.0]),
-    43.2,
-    [-3.0, 0.0, -9.0],
-    { target: -33, kind: 'm' },
-  );
   m.add('staff-cloth', fade(S.cloth(0.5, 2111, 220), 0.05, 0.1), 43.6, [0.4, 1.4, -1.0], {
     target: -34,
     kind: 'm',
@@ -601,17 +678,34 @@ function charge(m: Mix): void {
   m.add('charge-arcs', arcs, 44.8, [-1.2, 1.6, -6.5], { target: -21, kind: 'i', sendDb: -6 });
 }
 
+/** Leave layers out of a mix. */
+function drop(m: Mix, names: readonly string[]): void {
+  for (const name of names) {
+    m.layers.delete(name);
+    for (let i = m.order.length - 1; i >= 0; i--) if (m.order[i] === name) m.order.splice(i, 1);
+  }
+}
+
 /** Scene 2, the stone giant: from scene 1's tail to the cut before scene 3. */
 export function scene2(): Mix {
   const m = new Mix('scene2', SCENE2_FROM, SCENE2_END, 1.5);
   m.until = SCENE2_END;
   beds(m);
   redLayers(m, { bed: false });
+  // review 1: the two settling stones of the study's coda (a trickle of 1 to 3 cm pieces) and its
+  // cloth (pitched grains) were heard as a pebble that rolls; the face is wind, hair and the barrier
+  drop(m, ['settle0', 'settle1', 'hair-cloth']);
+  // the owner's rule of review 1: small stones that nobody would miss are cut. The study's patter of
+  // small debris under the smoke (scene 1 holds it to 29.5 s) fades out over 0.3 s after the join
+  for (const name of ['debris-rain0', 'debris-rain1'])
+    shapeLayer(m, name, [
+      [SCENE2_JOIN, 1],
+      [SCENE2_JOIN + 0.3, 0],
+    ]);
   face(m);
   floor(m);
-  mass(m);
+  assembly(m);
   blocks(m);
-  onTop(m);
   fist(m);
   dustWave(m);
   charge(m);
