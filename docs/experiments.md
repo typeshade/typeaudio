@@ -1192,5 +1192,33 @@ is to be refined. Nothing else changed. Five checks, and what each changed:
 
 The render takes 76 s (191 layers). The join with scene 1 is unchanged.
 
-**Status.** The sixth render waits for the owner's review. The previews went to the owner privately;
+**Review 6, 2026-11-11.** Two ideas of the owner.
+
+- The forming of the giant: "because it is very advanced magic, the stones gather more quietly than
+  you would expect, but densely". The frame sync and the order of review 5 stay. Each seat is now 8
+  dB under the accepted landing's level, its attack softened (12 ms, low passed at 2.5 kHz) and its
+  crack ring a third of what it was. The four hits of the flying blocks are 9 dB under the landing
+  and softened as well. Under them: soft contacts of large stones (0.8 to 1.4 m, low passed at 1.8
+  kHz, a 15 ms attack) that press into one another, faster as the mass closes (6 to 22 a second);
+  three grinds of stone that thicken until the body is complete; and a faint, steady low pressure of
+  the magic that holds them (20 to 55 Hz, no tone). The weight shift is 3 dB lower. Measured: the
+  seats -16.6, -15.9, -13.8, -13.1 and -12.7 dB over 0.15 s (before: -11.1, -15.6, -11.2, -9.9 and
+  -10.0); the shift -16.7 dB (before -14.8); each 0.25 s from 37.75 to 40.5 s, 2 to 5 dB lower than
+  before; the fist now stands 7.2 dB over the mean of the assembly (before 5.0 dB).
+- The charge: "the high-frequency part short; the low part lasting long; the feeling of gathering
+  fast at high voltage". Each arc is half as long and dies fast; more short bursts (15 to 35 ms) come
+  faster and faster toward the release (4 to 28 a second); the coil's whines last 60 to 80 ms; the
+  corona sounds only with the bursts. The hum starts at 43.6 s, in the shot before, at a quarter of
+  its level, and swells faster and faster to the release; it rings 0.1 s (a time constant) past the
+  cut, under the scene's end fade. Measured from 2 to 12 kHz: 0.42 s in all within 10 dB of its
+  highest (before 0.95 s), 32 ms a burst on average (before 59 ms). From 25 to 150 Hz each 0.25 s
+  from 43.75 s: 9.0, 9.5, 13.1, 13.7, 16.1, 19.6, 21.6, 22.6 dB (before: 6.7, 3.3, 6.6, 9.8, 14.4,
+  18.3, 21.5, 22.1). The true peak stays at -2.05 dBTP.
+
+The render takes 83 s (197 layers). `test/to-web.test.ts` failed in CI on `d2217fb` (run
+43008052624): its test of the passage's master timed out at vitest's default 5 s on a slow runner
+(`test/kinds.test.ts` took 205 s there). It now has the 120 s of the render test before it, as `main`
+gave the wall hit's parity test in `b5ed9be`.
+
+**Status.** The seventh render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.

@@ -328,6 +328,89 @@ function floor(m: Mix): void {
 // fist. Every seat has its own size, ring, body pitch, scrape and place. The groans of the body run
 // across the cut at 38.60 s, so the moment does not sag where one seat dies before the next.
 
+/** A contact of stone made soft by the magic that moves it: low passed at 1.8 kHz, a 15 ms attack. */
+function softened(x: Float64Array): Float64Array {
+  const y = lp(S.norm(x), 1800);
+  const ramp = nsamp(0.015);
+  for (let i = 0; i < Math.min(ramp, y.length); i++) y[i] = y[i]! * (i / ramp);
+  return S.norm(y);
+}
+
+/**
+ * Review 6, 2026-11-11. The owner: because it is very advanced magic, the stones gather more quietly
+ * than you would expect, but densely. Under the seats: many soft contacts of large stones that
+ * press into one another, faster as the mass closes (6 to 22 a second), a grinding mass of stone
+ * that thickens, and a faint, steady low pressure of the magic that holds them (20 to 55 Hz, no tone).
+ */
+function packing(m: Mix): void {
+  const r = rng(2600);
+  const shots: [number, number, Vec3][] = [
+    [37.85, 38.6, [0.0, 1.0, -2.0]],
+    [38.6, 39.6, [0.0, -1.5, -3.0]],
+  ];
+  shots.forEach(([a, b, pos], k) => {
+    const times: number[] = [];
+    let t = a;
+    for (;;) {
+      t += r.exponential(1 / (6.0 + (16.0 * (t - 37.85)) / (39.6 - 37.85)));
+      if (t >= b) break;
+      times.push(t - a);
+    }
+    const presses = ticks(
+      times,
+      (i) =>
+        softened(S.blockHit(2610 + 31 * k + i, r.uniform(0.8, 1.4), 3.0)).map(
+          (v) => v * r.uniform(0.4, 1.0),
+        ),
+      b - a + 0.8,
+    );
+    m.add(`pack${k}`, presses, a, pos, { target: -20, kind: 'm', focusDb: 1, sendDb: -5 });
+  });
+  const grow = (n: number, t0: number) =>
+    env(
+      [
+        [37.85, 0.2],
+        [39.5, 1.0],
+        [40.0, 0.8],
+        [40.33, 0.0],
+      ],
+      t0,
+      n,
+    );
+  (
+    [
+      [-2.0, 0.0, -3.0],
+      [2.0, -1.0, -3.5],
+      [0.0, -2.0, -2.5],
+    ] as Vec3[]
+  ).forEach((pos, k) => {
+    const g = S.grind(2.5, 2650 + k, {
+      rLo: 20 + 5 * k,
+      rHi: 70 + 10 * k,
+      res: [70.0, 150.0, 300.0],
+      scrape: 0.5,
+    });
+    m.add(`pack-grind${k}`, fade(times(g, grow(g.length, 37.85)), 0.2, 0.1), 37.85, pos, {
+      target: -24,
+      kind: 'm',
+      sendDb: -5,
+    });
+  });
+  const hold = S.wideNoise(2.8, 2660, 20, 55, 3, false);
+  const he = env(
+    [
+      [37.85, 0],
+      [38.4, 0.6],
+      [39.5, 1.0],
+      [40.2, 1.0],
+      [40.6, 0],
+    ],
+    37.85,
+    hold[0].length,
+  );
+  m.addWide('magic-hold', shapeSt(hold, he), 37.85, { target: -27, kind: 'm' });
+}
+
 /** 36.45 to 37.95: blocks fly at her and pass; a few touch where they crowd round her. */
 function blocks(m: Mix): void {
   (
@@ -350,8 +433,8 @@ function blocks(m: Mix): void {
       [37.68, 1.0, [-1.0, 1.5, -3.5]],
     ] as [number, number, Vec3][]
   ).forEach(([t, size, pos], i) =>
-    m.add(`block-hit${i}`, S.blockHit(2041 + 7 * i, size, 7.0 + i), t, pos, {
-      target: landing(size) - 2,
+    m.add(`block-hit${i}`, softened(S.blockHit(2041 + 7 * i, size, 7.0 + i)), t, pos, {
+      target: landing(size) - 9,
       kind: 'i',
       focusDb: 2,
       sendDb: -6,
@@ -416,10 +499,15 @@ function assembly(m: Mix): void {
         seat.length,
       ),
       0,
-      0.3 + 0.3 * s.ring,
+      0.1 + 0.1 * s.ring,
     );
-    m.add(`seat${k}`, S.norm(seat), s.t, s.pos, {
-      target: landing(s.size) + s.level,
+    // review 6: precise magic, not a crash: the attack softened (12 ms, low passed at 2.5 kHz) and
+    // the level 8 dB under the accepted landing's
+    const soft = lp(S.norm(seat), 2500);
+    const ramp = nsamp(0.012);
+    for (let i = 0; i < ramp; i++) soft[i] = soft[i]! * (i / ramp);
+    m.add(`seat${k}`, S.norm(soft), s.t, s.pos, {
+      target: landing(s.size) + s.level - 8,
       kind: 'i',
       focusDb: 2,
       sendDb: -5,
@@ -511,7 +599,7 @@ function assembly(m: Mix): void {
     0.5,
   );
   m.add('giant-stands', S.norm(shift), 40.42, [3.0, 0.0, -14.0], {
-    target: -11,
+    target: -14,
     kind: 'i',
     focusDb: 3,
     sendDb: -3,
@@ -686,7 +774,8 @@ function arc(seed: number, strength: number, len: number): Float64Array {
     }
     if (on && r.random() < rate / SR)
       y[i] =
-        y[i]! + r.uniform(0.3, 1.0) * (r.random() < 0.5 ? -1 : 1) * (1 - 0.5 * (i / nsamp(len)));
+        y[i]! +
+        r.uniform(0.3, 1.0) * (r.random() < 0.5 ? -1 : 1) * Math.exp(-i / (0.3 * nsamp(len)));
   }
   return y.map((v) => v * strength);
 }
@@ -699,33 +788,40 @@ function charge(m: Mix): void {
   const TIP: Vec3 = [-1.2, 1.6, -6.5];
   // the crackle: bursts on the frames of the arcs, band from 1 to 12 kHz, saturated
   const raw = new Float64Array(n);
+  // review 6: the high part short: each arc at half its length, decaying fast; and more short bursts
+  // that come faster and faster toward the release (4 to 28 a second)
   ARCS.forEach(([t, strength, len], k) =>
-    addAt(raw, arc(2500 + 7 * k, strength, len), nsamp(t - T0)),
+    addAt(raw, arc(2500 + 7 * k, strength, Math.max(0.03, 0.5 * len)), nsamp(t - T0)),
   );
+  const rb = rng(2530);
+  let tb = 44.55;
+  let kb = 0;
+  for (;;) {
+    tb += rb.exponential(1 / (4.0 + (24.0 * (tb - 44.55)) / (45.62 - 44.55)));
+    if (tb >= 45.62) break;
+    addAt(
+      raw,
+      arc(2560 + 7 * kb, 0.4 + 0.4 * ((tb - 44.55) / 1.07), rb.uniform(0.015, 0.035)),
+      nsamp(tb - T0),
+    );
+    kb++;
+  }
   const shaped = spectral(raw, (f) => bandGain(f, 1000, 12000, 2));
   const pk = Math.max(...shaped.map(Math.abs)) + 1e-12;
   const crackle = shaped.map((v) => Math.tanh((2.5 * v) / pk) / Math.tanh(2.5));
   const stop = nsamp(0.004);
   for (let i = 0; i < stop; i++) crackle[n - stop + i] = crackle[n - stop + i]! * (1 - i / stop);
   m.add('charge-crackle', crackle, T0, TIP, { target: -12.5, kind: 'i', sendDb: -5 });
-  // the hum of the voltage (review 4: deeper, bigger, a "wooo-woong"): 36 Hz with a strong body from
-  // 72 to 144 Hz, steady in pitch; its level and its grit swell in a few slow, irregular surges, as
-  // a line of extra-high voltage throbs; a faint corona buzz rides on its waveform
-  const B = env(
-    [
-      [T0, 0.0],
-      [44.37, 0.2],
-      [44.95, 0.55],
-      [45.53, 1.0],
-      [45.665, 1.0],
-      [45.67, 0.0],
-    ],
-    T0,
-    n,
-  );
+  // the hum of the voltage (review 4: deeper, a "wooo-woong"; review 6: it lasts long, from 43.6 s
+  // across the cut into the wide shot, swells faster and faster to the release, and rings 0.3 s past
+  // the cut): 36 Hz with a body from 72 to 144 Hz, steady in pitch; irregular surges of level and
+  // grit; a faint corona that sounds only with the bursts
+  const H0 = 43.6;
+  const H1 = SCENE2_END + 0.35;
+  const hn = nsamp(H1 - H0);
   const surge = env(
     [
-      [T0, 0.0],
+      [H0, 0.0],
       [44.18, 0.0],
       [44.42, 0.8],
       [44.62, 0.15],
@@ -736,27 +832,49 @@ function charge(m: Mix): void {
       [45.42, 1.0],
       [45.5, 0.7],
       [45.62, 1.0],
-      [45.67, 1.0],
+      [H1, 1.0],
     ],
-    T0,
-    n,
+    H0,
+    hn,
   );
-  const walk = S.levelWalk(n, 2520, 1.5, 0.4, 2.0);
+  const walk = S.levelWalk(hn, 2520, 1.5, 0.4, 2.0);
   const amps = [1.0, 0.95, 0.8, 0.6, 0.4, 0.25, 0.15];
   const ph = amps.map((_, k) => 0.7 * k);
-  const hum = new Float64Array(n);
-  for (let i = 0; i < n; i++) {
-    const t = i / SR;
+  const hum = new Float64Array(hn);
+  const Bh = new Float64Array(hn);
+  for (let i = 0; i < hn; i++) {
+    const t = H0 + i / SR;
+    const u = Math.min(1, (t - H0) / (SCENE2_END - H0));
+    const b =
+      t <= SCENE2_END
+        ? Math.min(1, (t - H0) / 0.15) * (0.25 + 0.75 * u ** 2.2)
+        : Math.exp(-(t - SCENE2_END) / 0.1);
+    Bh[i] = b;
     let x = 0;
-    amps.forEach((a, k) => (x += a * Math.sin(2 * Math.PI * 36.0 * (k + 1) * t + ph[k]!)));
+    amps.forEach((a, k) => (x += a * Math.sin(2 * Math.PI * 36.0 * (k + 1) * (i / SR) + ph[k]!)));
     const sw = 0.55 + 0.45 * surge[i]!;
-    const g = 1 + 3.5 * B[i]! * sw;
-    hum[i] = (Math.tanh((g * x) / 2.5) / Math.tanh(g)) * B[i]! * sw * walk[i]!;
+    const g = 1 + 3.5 * b * sw;
+    hum[i] = (Math.tanh((g * x) / 2.5) / Math.tanh(g)) * b * sw * walk[i]!;
   }
-  const corona = S.norm(spectral(white(n, 2521), (f) => bandGain(f, 2000, 7000, 2)));
+  // the corona follows the bursts: the crackle's envelope over 10 ms
+  const cenv = new Float64Array(hn);
+  const off = nsamp(T0 - H0);
+  const k10 = nsamp(0.01);
+  let acc = 0;
+  for (let i = 0; i < hn; i++) {
+    const j = i - off;
+    acc += j >= 0 && j < n ? Math.abs(raw[j]!) : 0;
+    const jo = j - k10;
+    acc -= jo >= 0 && jo < n ? Math.abs(raw[jo]!) : 0;
+    cenv[i] = acc / k10;
+  }
+  const cm = Math.max(...cenv) + 1e-12;
+  const corona = S.norm(spectral(white(hn, 2521), (f) => bandGain(f, 2000, 7000, 2)));
   const hp = Math.max(...hum.map(Math.abs)) + 1e-12;
-  const body = hum.map((v, i) => v + 0.06 * corona[i]! * Math.abs(v / hp) * B[i]!);
-  m.addWide('charge-hum', [fade(body, 0.05, 0.004), fade(body, 0.05, 0.004)], T0, {
+  const body = hum.map(
+    (v, i) => v + 0.06 * corona[i]! * Math.abs(v / hp) * Math.min(1, (2 * cenv[i]!) / cm),
+  );
+  m.addWide('charge-hum', [fade(body, 0.05, 0.004), fade(body, 0.05, 0.004)], H0, {
     target: -16,
     kind: 'm',
     sendDb: -6,
@@ -764,9 +882,9 @@ function charge(m: Mix): void {
   // the coil sings now and then: faint, short, at a fixed pitch
   (
     [
-      [44.5, 7200.0, 0.18],
-      [45.0, 8600.0, 0.22],
-      [45.33, 9400.0, 0.15],
+      [44.5, 7200.0, 0.07],
+      [45.0, 8600.0, 0.08],
+      [45.33, 9400.0, 0.06],
     ] as const
   ).forEach(([t, f, d], k) => {
     const w = new Float64Array(nsamp(d)).map((_, i) => {
@@ -804,6 +922,7 @@ export function scene2(): Mix {
   face(m);
   floor(m);
   assembly(m);
+  packing(m);
   blocks(m);
   fist(m);
   dustWave(m);
