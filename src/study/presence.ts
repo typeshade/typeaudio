@@ -35,6 +35,8 @@ export interface Lift {
   readonly maxDb: number;
   readonly windowS: number;
   readonly smoothS: number;
+  /** Picture seconds where the lift stays off (a scene keeps the contrast of a moment). */
+  readonly except?: readonly (readonly [number, number])[];
 }
 
 /** The lift of the quiet stretches, for every scene. */
@@ -65,7 +67,7 @@ function centred(x: Float64Array, w: number): Float64Array {
  * under `ceiling` (linear) of the highest sample within twice the smoothing time caps it, so the lift
  * never raises a peak over the ceiling (the cap, smoothed, stays under the headroom of each sample).
  */
-export function liftGainDb(y: Stereo, lift: Lift, ceiling: number): Float64Array {
+export function liftGainDb(y: Stereo, lift: Lift, ceiling: number, t0 = 0): Float64Array {
   const nb = Math.ceil(y[0].length / BLOCK);
   const e = new Float64Array(nb);
   const pk = new Float64Array(nb);
@@ -95,14 +97,21 @@ export function liftGainDb(y: Stereo, lift: Lift, ceiling: number): Float64Array
     for (let j = Math.max(0, k - ks); j <= Math.min(nb - 1, k + ks); j++) p = Math.max(p, pk[j]!);
     cap[k] = Math.max(0, 20 * Math.log10(ceiling / p));
   }
+  for (const [a, b] of lift.except ?? [])
+    for (
+      let k = Math.max(0, Math.floor(((a - t0) * SR) / BLOCK));
+      k < Math.min(nb, Math.ceil(((b - t0) * SR) / BLOCK));
+      k++
+    )
+      g[k] = 0;
   const gs = centred(g, ks);
   const cs = centred(cap, ks);
   return gs.map((v, k) => Math.min(v, cs[k]!));
 }
 
 /** Raise the quiet stretches of a sum, never over `ceiling` (the master's step). */
-export function liftQuiet(y: Stereo, lift: Lift, ceiling: number): Stereo {
-  const g = liftGainDb(y, lift, ceiling);
+export function liftQuiet(y: Stereo, lift: Lift, ceiling: number, t0 = 0): Stereo {
+  const g = liftGainDb(y, lift, ceiling, t0);
   const nb = g.length;
   const at = (i: number) => {
     const u = i / BLOCK - 0.5;

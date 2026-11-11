@@ -383,20 +383,6 @@ function bolt2(m: Mix): void {
         sendDb: -6,
       });
     });
-    (
-      [
-        [50.36, [3.5, 0.0, -13.0], 1.4],
-        [50.71, [5.0, 0.0, -15.0], 1.2],
-      ] as [number, Vec3, number][]
-    ).forEach(([tl, pos, size], k) => {
-      m.add(`b2-chunk-land${k}`, lp2(S.slabFall(3580 + k, size, 0.9), 9000), tl, pos, {
-        target: landing(size) - 3,
-        kind: 'i',
-        focusDb: 2,
-        sendDb: 0,
-      });
-    });
-
     const T1 = 55.4;
     const dur = T1 - B2;
     const n = nsamp(dur);
@@ -464,8 +450,8 @@ function bolt2(m: Mix): void {
     // each beam laid shot by shot: close, wide (both to the giant at the right, apart), from above,
     // behind the pillar, thinning
     shots(m, 'b2a', B2, [
-      { from: B2, to: 49.93, sig: dnA, pos: [-1.8, 2.3, -3.5], target: -16, sendDb: -10 },
-      { from: 49.93, to: 52.93, sig: wideA, pos: [-1.0, 5.0, -11.0], target: -19, sendDb: 0 },
+      { from: B2, to: 49.93, sig: dnA, pos: [-4.0, 2.0, -2.5], target: -13, sendDb: -10 },
+      { from: 49.93, to: 52.93, sig: wideA, pos: [-5.0, 5.0, -9.0], target: -18, sendDb: 0 },
       {
         from: 52.93,
         to: 53.6,
@@ -485,8 +471,8 @@ function bolt2(m: Mix): void {
       { from: 54.2, to: T1, sig: thinA, pos: [-1.0, -3.0, -8.0], target: -22, sendDb: -4 },
     ]);
     shots(m, 'b2b', B2, [
-      { from: B2, to: 49.93, sig: dbn, pos: [1.5, 0.8, -3.0], target: -15, sendDb: -10 },
-      { from: 49.93, to: 52.93, sig: wideB, pos: [3.0, 4.0, -12.0], target: -17, sendDb: 0 },
+      { from: B2, to: 49.93, sig: dbn, pos: [4.0, 0.8, -2.5], target: -12, sendDb: -10 },
+      { from: 49.93, to: 52.93, sig: wideB, pos: [6.0, 4.0, -10.0], target: -17, sendDb: 0 },
       {
         from: 52.93,
         to: 53.6,
@@ -627,7 +613,7 @@ function bolt3(m: Mix): void {
         (_, i) => (0.6 * dis[i]! + 0.6 * ck[i]! + (0.6 + 1.2 * (i / n)) * press[i]!) * climb[i]!,
       );
       m.add(`b3-converge${j}`, fade(conv, 0.004, 0.003), B3, [side * 3.0, 1.5, -3.0], {
-        target: -16,
+        target: -14,
         kind: 'm',
         sendDb: -8,
       });
@@ -733,7 +719,7 @@ function blast(m: Mix): void {
       [roll[0].map((v, i) => v * re[i]!), roll[1].map((v, i) => v * re[i]!)],
       BLAST,
       {
-        target: -12,
+        target: -10,
         kind: 'm',
         sendDb: 0,
       },
@@ -854,19 +840,136 @@ function after(m: Mix): void {
  * strikes from the vault, the gathering, the climax and the blast; not the air, the dust or the wind.
  */
 const MAIN3 =
-  /^(arc-(snap|crawl|hum)|b2-(pillar|weight|vault|stone|chunk)|b2[ab]\d+$|g2-hum|b3-(release|thump|converge|jag|barrier)|blast-(crack|pressure|boom|roll|stone))/;
+  /^(arc-(snap|crawl|hum)|b2-(pillar|weight|vault|stone|chunk)|b2[ab]\d+$|b[23]x-(sub|body|roll|crash|core)|g2-hum|b3-(release|thump|converge|jag|barrier)|blast-(crack|pressure|boom|roll|stone))/;
 function presence3(_m: Mix, name: string, l: Layer): void {
   if (MAIN2.test(name) || MAIN3.test(name)) body(l);
 }
 
+type Crash = readonly [number, Vec3, number];
+
 /**
- * Review 2: the first attack (scene 2's head, accepted) 2 dB lower in this scene, so that the
+ * Review 3, 2026-11-11: the owner asked for the doubled attack and the climax "as if four times as
+ * strong". The limiter holds every peak at one ceiling, so the size comes from weight and length:
+ * a sub-pressure pulse at the onset; a body of 30 to 80 Hz that holds `hold` s and rolls away over
+ * `decay` s; thunder that rolls through the hall; large chunks of the giant that crash down one
+ * after another (1.8 m and more, at the accepted landing's level for their size).
+ */
+function enormity(
+  m: Mix,
+  p: string,
+  t0: number,
+  seed: number,
+  hold: number,
+  decay: number,
+  crashes: readonly Crash[],
+  db = 0,
+): void {
+  const [front, low] = S.whump(seed, 0.035, 1.0);
+  const sub = new Float64Array(nsamp(1.0));
+  addAt(sub, front, 0, 1.0);
+  addAt(sub, low, 0, 0.8);
+  addAt(sub, S.boom(seed + 1, { f: 30.0, tau: 0.2, dur: 1.0 }), 0, 1.0);
+  m.add(`${p}-sub`, S.saturate(sub, 1.5), t0, [0.0, 0.0, -3.0], {
+    target: -9 + db,
+    kind: 'i',
+    focusDb: 3,
+  });
+  const dur = hold + decay;
+  const shape = (n: number, rise: number) =>
+    new Float64Array(n).map((_, i) => {
+      const t = i / SR;
+      return t < rise ? t / rise : t < hold ? 1 : Math.exp(-(t - hold) / (decay / 3));
+    });
+  const body = S.billow(dur, seed + 2, 30.0, 80.0, 3.0);
+  const be = shape(body[0].length, 0.03);
+  m.addWide(
+    `${p}-body`,
+    [body[0].map((v, i) => v * be[i]!), body[1].map((v, i) => v * be[i]!)],
+    t0,
+    { target: -11 + db, kind: 'i', sendDb: -6 },
+  );
+  const roll = S.billow(dur + 0.6, seed + 3, 40.0, 300.0, 4.0);
+  const n = roll[0].length;
+  const r = rng(seed + 4);
+  let t = 0.05;
+  let k = 0;
+  while (t < dur - 0.3) {
+    const c = lp2(
+      S.heavyCrack(seed + 10 + k, { size: 3.0, dur: 0.6, kRate: 5, bright: 0.2 }),
+      2000,
+    );
+    const ch = k % 2;
+    const g = 0.8 * Math.exp(-t / (dur / 2));
+    addAt(roll[ch], c.subarray(0, Math.min(c.length, n - nsamp(t))), nsamp(t), g * 3.0);
+    t += r.uniform(0.25, 0.7);
+    k++;
+  }
+  const re = shape(n, 0.15);
+  m.addWide(
+    `${p}-roll`,
+    [roll[0].map((v, i) => v * re[i]!), roll[1].map((v, i) => v * re[i]!)],
+    t0 + 0.08,
+    { target: -15 + db, kind: 'm', sendDb: 0 },
+  );
+  crashes.forEach(([tc, pos, size], j) =>
+    m.add(`${p}-crash${j}`, lp2(S.slabFall(seed + 40 + j, size, 1.2), 9000), tc, pos, {
+      target: landing(size) + db,
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -2,
+    }),
+  );
+}
+
+/** The doubled attack's weight class, and a core between the two beams for its first two seconds. */
+function size2(m: Mix): void {
+  m.part('size2', () => {
+    enormity(m, 'b2x', B2, 3900, 0.8, 1.7, [
+      [50.15, [4.0, 0.0, -12.0], 2.0],
+      [50.52, [-3.5, 0.0, -14.0], 1.8],
+      [50.98, [6.0, 0.0, -15.0], 2.4],
+    ]);
+    const core = plasma(B2, B2 + 2.2, 3950, [
+      [B2, 1.0],
+      [B2 + 1.5, 0.9],
+      [B2 + 2.2, 0.0],
+    ]);
+    m.add('b2x-core', fade(core, 0.004, 0.1), B2, [0.0, 1.5, -3.0], {
+      target: -17,
+      kind: 'm',
+      sendDb: -8,
+    });
+  });
+}
+
+/** The climax's weight class: the largest, with the longest tail. */
+function size3(m: Mix): void {
+  m.part('size3', () => {
+    enormity(
+      m,
+      'b3x',
+      BLAST,
+      3980,
+      1.2,
+      2.8,
+      [
+        [57.35, [-4.0, 0.0, -10.0], 2.5],
+        [57.8, [5.0, 0.0, -12.0], 3.0],
+        [58.3, [-2.0, 0.0, -14.0], 2.2],
+      ],
+      1,
+    );
+  });
+}
+
+/**
+ * Reviews 2 and 3: the first attack (scene 2's head, accepted) 5 dB lower in this scene, so that the
  * doubled second attack and the climax rise above it. Scene 2 and its join are not touched: their
  * overlap ends before the release at 45.70 s.
  */
 function headDown(_m: Mix, name: string, l: Layer): void {
   if (!name.startsWith('s3-')) return;
-  const g = 10 ** (-2 / 20);
+  const g = 10 ** (-5 / 20);
   for (const part of [l.dry, l.wet])
     for (const ch of part) for (let i = 0; i < ch.length; i++) ch[i] = ch[i]! * g;
 }
@@ -882,9 +985,11 @@ export function scene3(): Mix {
   bolt(m);
   crawl(m);
   bolt2(m);
+  size2(m);
   gather2(m);
   bolt3(m);
   blast(m);
+  size3(m);
   after(m);
   m.finish(tidy3);
   // scene 2's review 9: its noise layers and cracks lose their harsh top
@@ -893,9 +998,21 @@ export function scene3(): Mix {
   m.eachLayer('scene3-head', headDown);
   m.driveDb = 8.8;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
-  m.lift = LIFT;
+  // reviews 2 and 3: no lift over the first attack, so its contrast with the later ones stays
+  m.lift = { ...LIFT, except: [[45.6, 47.6]] };
   m.ceilingDb = CEILING_DBTP;
   m.fixedMaster = SCENE1_MASTER;
+  // review 3: a suck-back of 100 ms before each big attack, so it lands from quiet
+  m.beforeDb = [
+    [49.28, 0],
+    [49.31, -18],
+    [49.41, -18],
+    [49.42, 0],
+    [55.68, 0],
+    [55.71, -18],
+    [55.805, -18],
+    [55.81, 0],
+  ];
   m.afterDb = [
     [SCENE3_FROM, 0],
     [SCENE3_END, 0],
