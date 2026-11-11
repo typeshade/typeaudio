@@ -57,8 +57,8 @@ export const SCENE2_FROM = 28.5;
 export const SCENE2_JOIN = 29.5;
 export const SCENE2_END = 45.67;
 
-/** Scene 1's master (no small stones, `3a95d19`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 29.2 to 29.45 s (`run.ts --join`). */
-export const SCENE1_MASTER = { gainDb: -7.904846219419549, trimDb: 0.841 };
+/** Scene 1's master (no clicks, `00a69d9`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 29.2 to 29.45 s (`run.ts --join`). */
+export const SCENE1_MASTER = { gainDb: -7.904833729780591, trimDb: 0.939 };
 
 type Points = readonly (readonly [number, number])[];
 const env = (points: Points, t0: number, n: number) => curve(points, t0, n);
@@ -842,11 +842,25 @@ function dustWave(m: Mix): void {
     ).forEach(([t, side, near], i) =>
       pass(m, `debris-pass${i}`, t, side, near, 2105 + i, -25, 0.36),
     );
-    m.add('staff-cloth', fade(S.cloth(0.5, 2111, 220), 0.05, 0.1), 43.6, [0.4, 1.4, -1.0], {
-      target: -34,
-      kind: 'm',
-      sendDb: -10,
-    });
+    // the owner's rule (2026-11-11): the cloth model's flutter read as pebbles here (43.6 s); the
+    // sleeve that moves with the staff is a smooth breath of air
+    const sleeve = steady(0.5, 2111, 700, 5000);
+    const sw = S.irregular(sleeve.length, 2112, 2, 9);
+    m.add(
+      'staff-cloth',
+      fade(
+        sleeve.map((v, i) => v * (0.6 + 0.4 * sw[i]!)),
+        0.05,
+        0.1,
+      ),
+      43.6,
+      [0.4, 1.4, -1.0],
+      {
+        target: -34,
+        kind: 'm',
+        sendDb: -10,
+      },
+    );
   });
 }
 
