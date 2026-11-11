@@ -21,7 +21,20 @@ interface Bluestein {
   readonly kernelIm: Float64Array;
 }
 
+// The plans in use, the most recently used last. A plan for a long length holds tens of megabytes
+// (the chirp and the kernel of Bluestein's transform), so the oldest plans go once the plans hold
+// more than PLAN_BYTES. A plan made again is the same plan: its numbers depend only on n.
 const plans = new Map<number, Plan>();
+const PLAN_BYTES = 512 * 2 ** 20;
+let planBytes = 0;
+
+function bytesOf(plan: Plan): number {
+  let b = 0;
+  for (const t of plan.twiddles) b += t.byteLength;
+  const s = plan.bluestein;
+  if (s) b += s.chirpRe.byteLength * 2 + s.kernelRe.byteLength * 2;
+  return b;
+}
 
 function factorize(n: number): number[] | undefined {
   const out: number[] = [];
@@ -41,7 +54,11 @@ function factorize(n: number): number[] | undefined {
 
 function planOf(n: number): Plan {
   let plan = plans.get(n);
-  if (plan) return plan;
+  if (plan) {
+    plans.delete(n);
+    plans.set(n, plan);
+    return plan;
+  }
   const factors = factorize(n);
   if (!factors) {
     let size = 1;
@@ -49,8 +66,9 @@ function planOf(n: number): Plan {
     const chirpRe = new Float64Array(n);
     const chirpIm = new Float64Array(n);
     for (let k = 0; k < n; k++) {
-      // k² mod 2n keeps the angle exact for long transforms.
-      const k2 = Number((BigInt(k) * BigInt(k)) % BigInt(2 * n));
+      // k² mod 2n keeps the angle exact for long transforms. Below 2^53 the product of doubles is
+      // exact, so the remainder is the one BigInt gives, at a fraction of the time.
+      const k2 = k < 94906265 ? (k * k) % (2 * n) : Number((BigInt(k) * BigInt(k)) % BigInt(2 * n));
       const a = (-Math.PI * k2) / n;
       chirpRe[k] = Math.cos(a);
       chirpIm[k] = Math.sin(a);
@@ -88,6 +106,12 @@ function planOf(n: number): Plan {
     plan = { n, factors, twiddles };
   }
   plans.set(n, plan);
+  planBytes += bytesOf(plan);
+  for (const [m, old] of plans) {
+    if (planBytes <= PLAN_BYTES || m === n) break;
+    plans.delete(m);
+    planBytes -= bytesOf(old);
+  }
   return plan;
 }
 
