@@ -33,31 +33,26 @@ function burstStone(m: Mix): void {
   });
 }
 
-/** 26.7 to 28.7 s: behind the ice, only the stones of 0.3 to 0.5 m keep coming down. */
+/**
+ * 26.7 to 28.7 s: behind the ice, stone comes down from the walls. The owner's rule on small stones
+ * that roll (2026-11-11): no tumble of stones; three large blocks land far off, one after another,
+ * with the accepted landing's body and crack and no scatter.
+ */
 function wallStones(m: Mix): void {
   m.part('wall-stones', () => {
     (
       [
-        [-7.5, 0.0, -9.0],
-        [7.0, 0.0, -11.0],
-      ] as Vec3[]
-    ).forEach((pos, i) => {
-      // the share of the study's draws from 0.15 to 0.5 m that lie at 0.3 m or more: log(5/3)/log(10/3)
-      const keep = Math.log(0.5 / 0.3) / Math.log(0.5 / 0.15);
-      const wd = S.tumble(
-        2.0,
-        572 + i,
-        (q) => keep * (6.0 * Math.exp(-q / 0.9) + 0.8),
-        [0.3, 0.5],
-        // review 6: they come down from the vault fast and strike loud
-        [8.0, 14.0],
-      );
-      m.add(`wall-stones${i}`, wd, 26.7, pos, {
-        target: -19,
-        kind: 'm',
+        [27.05, [-7.5, 0.0, -9.0], 0.9],
+        [27.62, [7.0, 0.0, -11.0], 1.1],
+        [28.3, [-6.0, 0.0, -12.0], 0.8],
+      ] as [number, Vec3, number][]
+    ).forEach(([t, pos, size], i) =>
+      m.add(`wall-stones${i}`, lp(S.slabFall(572 + i, size, 0.8, 0), 9000), t, pos, {
+        target: landing(size) - 4,
+        kind: 'i',
         focusDb: 3,
-      });
-    });
+      }),
+    );
   });
 }
 
@@ -162,7 +157,7 @@ export function passBy(
  * with the clack and tick of its speed (`stoneImpact`), driven a little so its front is hard.
  */
 export function fastHit(seed: number, size: number, v: number): Float64Array {
-  const slab = S.slabFall(seed, size, 0.8);
+  const slab = S.slabFall(seed, size, 0.8, 0);
   const k = S.norm(S.stoneImpact(size, v, rng(seed + 1)));
   const y = zeros(Math.max(slab.length, k.length));
   addAt(y, slab, 0, 1.0);

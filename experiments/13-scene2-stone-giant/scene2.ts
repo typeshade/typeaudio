@@ -57,8 +57,8 @@ export const SCENE2_FROM = 28.5;
 export const SCENE2_JOIN = 29.5;
 export const SCENE2_END = 45.67;
 
-/** Scene 1's master (the presence pass, `13d669e`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 29.2 to 29.45 s (`run.ts --join`). */
-export const SCENE1_MASTER = { gainDb: -7.886529581389624, trimDb: 0.844 };
+/** Scene 1's master (no small stones, `3a95d19`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 29.2 to 29.45 s (`run.ts --join`). */
+export const SCENE1_MASTER = { gainDb: -7.904846219419549, trimDb: 0.841 };
 
 type Points = readonly (readonly [number, number])[];
 export const env = (points: Points, t0: number, n: number) => curve(points, t0, n);
@@ -299,8 +299,9 @@ function barrier(m: Mix): void {
       // the field's own resonance, low-mid, and the crackle of its surface
       addAt(hit, S.burst(2240 + k, 120, 420, 0.16, { rise: 0.008 }).subarray(0, n), 0, 0.9);
       addAt(hit, S.sizzle(0.18, 2250 + k, 0.05, 2500, 2500, 9000), 0, 0.3);
-      // a chip that flies off
-      addAt(hit, S.stoneCrack(r, 0.12, 0.4), nsamp(0.03), 0.25);
+      // the chip that flew off is cut (the owner's rule on small stones); its draws are kept, so the
+      // blocks after it stay as the owner accepted them
+      S.stoneCrack(r, CHIP, 0.4);
       m.add(`barrier-block${k}`, S.norm(hit), t, pos, { target: -16, kind: 'i', sendDb: -5 });
     });
   });
@@ -310,7 +311,14 @@ function floor(m: Mix): void {
   m.part('floor', () => {
     m.add(
       'stir',
-      S.tumble(2.9, 2010, (t) => 1.0 + 1.5 * t, [0.2, 0.6], [2.0, 4.0]),
+      // the owner's rule on small stones: only the stones of 0.35 m and more, at their share
+      S.tumble(
+        2.9,
+        2010,
+        (t) => (1.0 + 1.5 * t) * (Math.log(0.6 / 0.35) / Math.log(0.6 / 0.2)),
+        [0.35, 0.6],
+        [2.0, 4.0],
+      ),
       33.6,
       [0.0, 0.0, -8.0],
       { target: -25, kind: 'm', sendDb: -6 },
@@ -513,7 +521,7 @@ function assembly(m: Mix): void {
         sendDb: -6,
       });
       // the seat: the accepted landing's timbre, its own body pitch and length, its own ring
-      const seat = S.slabFall(2320 + 7 * k, s.size, 0.3 + 0.08 * k);
+      const seat = S.slabFall(2320 + 7 * k, s.size, 0.3 + 0.08 * k, 0);
       addAt(
         seat,
         S.boom(2321 + 7 * k, {
@@ -653,7 +661,7 @@ function fist(m: Mix): void {
       kind: 'm',
       sendDb: -4,
     });
-    const hit = S.slabFall(2091, 2.0);
+    const hit = S.slabFall(2091, 2.0, 1.0, 0);
     addAt(hit, S.boom(2092, { f: 48.0, tau: 0.9 }).subarray(0, hit.length), 0, 1.2);
     addAt(
       hit,
@@ -1165,6 +1173,9 @@ export function drop(m: Mix, names: readonly string[]): void {
  * scene 1's (its red passage's layers that sound here) and the giant's (its blocks, seats, body,
  * fist, the wave that arrives, the barrier) and the lightning's (the hum, the bolt, the strike).
  */
+/** The size of the chip the barrier's blocks no longer throw off (its draws only). */
+const CHIP = 0.12;
+
 export const MAIN2 =
   /^(barrier-(block|bloom)|block-hit|body-(creak|groan|rumble)|fist-(hit|pressure|slap)|giant-stands|pack-grind|seat\d+$|wave-arrive|charge-hum|s3-(bolt-(crack|thump|plasma)|barrier-(strike|strain|shatter)))/;
 function presence2(_m: Mix, name: string, l: Layer): void {
