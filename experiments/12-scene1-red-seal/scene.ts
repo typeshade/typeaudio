@@ -203,15 +203,6 @@ export function blackHole(m: Mix): void {
       { target: -27, kind: 'm', sendDb: -2 },
     );
   });
-  m.part('far-debris', () => {
-    m.add(
-      'far-debris',
-      S.tumble(3.2, 1007, (t) => 1.2 + 0.8 * t, [0.05, 0.2], [2.0, 5.0]),
-      0.3,
-      [-6.0, 0.0, -13.0],
-      { target: -36, kind: 'm' },
-    );
-  });
 
   // ---- 3.29 to 4.71: close on the figure; a red glow in its hand grows into the orb.
   m.part('draw-breath', () => {
@@ -301,11 +292,17 @@ export function blackHole(m: Mix): void {
   // ---- 4.71: white frames: the orb is let go. A pressure, a deep body, a tear that falls.
   m.part('launch', () => {
     const [front, low, slp] = S.whump(1030, 0.004, 0.6);
-    m.add('launch', S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])), 4.713, [0.0, 1.4, -2.5], {
-      target: -13,
-      kind: 'i',
-      focusDb: 4,
-    });
+    m.add(
+      'launch',
+      S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])),
+      4.713,
+      [0.0, 1.4, -2.5],
+      {
+        target: -13,
+        kind: 'i',
+        focusDb: 4,
+      },
+    );
   });
   m.part('launch-boom', () => {
     m.add('launch-boom', S.boom(1031, { f: 70.0, tau: 0.6 }), 4.713, [0.0, 0.5, -3.0], {
@@ -399,15 +396,6 @@ export function blackHole(m: Mix): void {
         kind: 'm',
         sendDb: -8,
       },
-    );
-  });
-  m.part('pebbles', () => {
-    m.add(
-      'pebbles',
-      S.tumble(1.4, 1062, (t) => 3.0 + 6.0 * t, [0.03, 0.1], [2.0, 5.0]),
-      8.1,
-      [2.0, 1.0, -5.0],
-      { target: -31, kind: 'm', sendDb: -6 },
     );
   });
 
@@ -522,7 +510,12 @@ export function blackHole(m: Mix): void {
         3.6,
       );
       const P = line([x0, 1.0 + Math.abs(x0) * 0.4, -7.0], CORE, cl.length);
-      m.add(`gather-clump-${side}`, cl, 11.55, P, { target: -19, kind: 'i', focusDb: 3, sendDb: -4 });
+      m.add(`gather-clump-${side}`, cl, 11.55, P, {
+        target: -19,
+        kind: 'i',
+        focusDb: 3,
+        sendDb: -4,
+      });
     });
     m.add(
       'gather-rubble',
@@ -534,7 +527,15 @@ export function blackHole(m: Mix): void {
     [0, 1, 2, 3].forEach((i) => {
       const t = 11.6 + 0.35 * i;
       const src = steady(14.78 - t, 1098 + 13 * i, 100, 1800);
-      const P = spiral(src.length, CORE, 6.0 - 0.5 * i, 2.0, 0.8 + 0.25 * i, (Math.PI * i) / 2, 1.5);
+      const P = spiral(
+        src.length,
+        CORE,
+        6.0 - 0.5 * i,
+        2.0,
+        0.8 + 0.25 * i,
+        (Math.PI * i) / 2,
+        1.5,
+      );
       m.add(`orbit${i}`, src, t, P, { target: -27, kind: 'm', sendDb: -6 });
     });
   });
@@ -675,15 +676,6 @@ export function blackHole(m: Mix): void {
         line([3.0 * (i ? 1 : -1), 1.5, -2.0], [-3.0 * (i ? 1 : -1), 1.6, -1.0], nsamp(0.28)),
         { target: -26, kind: 'i', sendDb: -8 },
       ),
-    );
-  });
-  m.part('leap-debris', () => {
-    m.add(
-      'leap-debris',
-      S.tumble(1.5, 1142, (t) => 10.0 - 4.0 * t, [0.05, 0.25], [3.0, 7.0]),
-      16.3,
-      [0.0, 0.0, -7.0],
-      { target: -27, kind: 'm', focusDb: 2 },
     );
   });
 
@@ -1461,7 +1453,9 @@ function orbAcross(m: Mix): void {
       ['orb-body-voice', voice, 4],
     ] as const) {
       const parts = shots.map(([from, to, pos, tb, tv, send], k) => {
-        const len = nsamp(to - from + (k === 0 ? 0.06 : 0.12) + (k === shots.length - 1 ? 0.14 : 0));
+        const len = nsamp(
+          to - from + (k === 0 ? 0.06 : 0.12) + (k === shots.length - 1 ? 0.14 : 0),
+        );
         const p = typeof pos === 'function' ? (pos as (n: number) => Where)(len) : pos;
         return {
           from,
@@ -1478,6 +1472,61 @@ function orbAcross(m: Mix): void {
       across(m, name, sig, T0, parts);
     }
   });
+}
+
+// ---- The owner's rule, 2026-11-11: a sound earns its place by its part in the moment; small detail
+// of little weight that nobody would miss is cut ("this matters especially in animation"). In
+// scene 1 that removed `far-debris`, `pebbles` and `leap-debris`, the trickle of 1 to 3 cm pieces
+// after the stone that bursts toward the camera (21.98 s), the stones under 0.3 m that fall behind
+// the ice, and the patter of small debris under the smoke. The red passage (`red.ts`) stays the
+// study's; these parts replace its layers in the scene, and `cutSmall` leaves the originals out.
+
+/** The stone that bursts toward the camera at 21.98 s: its 35 cm stone and its crack, no trickle. */
+function burstStone(m: Mix): void {
+  m.part('rock-burst-stone', () => {
+    const rb = zeros(nsamp(0.9));
+    addAt(rb, S.stoneImpact(0.35, Math.sqrt(2 * 9.81 * 1.5), rng(124)), 0);
+    const n = S.norm(rb);
+    addAt(n, S.heavyCrack(126, { size: 0.7, dur: 0.4, kRate: 8 }).subarray(0, n.length), 0, 0.9);
+    m.add('rock-burst-stone', n, 21.98, [-0.8, 1.2, -1.5], { target: -16, kind: 'i', sendDb: -6 });
+  });
+}
+
+/** 26.7 to 28.7 s: behind the ice, only the stones of 0.3 to 0.5 m keep coming down. */
+function wallStones(m: Mix): void {
+  m.part('wall-stones', () => {
+    (
+      [
+        [-7.5, 0.0, -9.0],
+        [7.0, 0.0, -11.0],
+      ] as Vec3[]
+    ).forEach((pos, i) => {
+      // the share of the study's draws from 0.15 to 0.5 m that lie at 0.3 m or more: log(5/3)/log(10/3)
+      const keep = Math.log(0.5 / 0.3) / Math.log(0.5 / 0.15);
+      const wd = S.tumble(
+        2.0,
+        572 + i,
+        (q) => keep * (6.0 * Math.exp(-q / 0.9) + 0.8),
+        [0.3, 0.5],
+        [4.0, 9.0],
+      );
+      m.add(`wall-stones${i}`, wd, 26.7, pos, { target: -24, kind: 'm', focusDb: 3 });
+    });
+  });
+}
+
+/** Leaves out the red passage's layers that the rule cuts or that `burstStone` and `wallStones` replace. */
+function cutSmall(m: Mix): void {
+  for (const name of [
+    'rock-burst',
+    'wall-debris0',
+    'wall-debris1',
+    'debris-rain0',
+    'debris-rain1',
+  ]) {
+    m.layers.delete(name);
+    for (let i = m.order.length - 1; i >= 0; i--) if (m.order[i] === name) m.order.splice(i, 1);
+  }
 }
 
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
@@ -1498,6 +1547,9 @@ export function scene(): Mix {
   blackHole(m);
   orbAcross(m);
   redLayers(m, { bed: false });
+  burstStone(m);
+  wallStones(m);
+  m.finish(cutSmall);
   holeBody(m);
   m.finish(levelCore);
   suction(m);
