@@ -22,6 +22,7 @@ devices yet.
 | 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
 | 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
 | 12  | Scene 1, the red seal, from the study's models             | Whether the study's models, ported, make a scene in practical time            | first render (container, host CPU in Bun); waits for the owner's review                                                                                                                                                                                |
+| 13  | Scene 2, the stone giant, from the study's models          | The second scene in the same scale; the join with the first                   | first render (container, host CPU in Bun); waits for the owner's review                                                                                                                                                                                |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -991,4 +992,68 @@ every cut and between them. The landings lie within 0.16 dB of the first render;
 stay out. The render takes 208 s.
 
 **Status.** The fifth render waits for the owner's review. The previews went to the owner privately;
+the picture, its frames and its audio are not in this repository.
+
+## 13. Scene 2, the stone giant, with the study's models in the engine
+
+The owner accepted scene 1 on 2026-11-11 (experiment 12, render r5 at `437fa7d`) and asked for the
+next scene. Scene 2 runs from 29.5 s to the cut before scene 3's lightning (45.67 s). Blocks fly at
+Frieren, gather into a giant, and its fist strikes the hall. It is made with the same models as
+scene 1 (`src/study/`), and the rules learnt in scene 1 hold: one source for one event across the
+cuts, no fast glide of a pitch, stone that lands at the level of the accepted landing, heavy things
+low, no hollow tube, no period.
+
+**The picture**, read at 6 and 24 frames a second with a cut detector: 29.50 to 30.32 s, scene 1's
+smoke; 30.32 to 33.58 s, her face, the hair blown hard, a blue barrier that flashes at 31.83 and
+32.66 s; 33.58 to 36.45 s, the emblem floor from above, stones that stir, she runs across; 36.45 to
+38.60 s, blocks fly at her and close on the camera at 37.9 s; 38.60 to 40.33 s, she runs on the
+giant's body; 40.33 to 41.42 s, the giant in the hall, its fist strikes at 41.18 s; 41.42 to 43.21
+s, a wave of dust and stones; 43.21 to 43.96 s, her silhouette; 43.96 to 45.67 s, a purple circle at
+her staff, sparks and small arcs.
+
+**What it holds.** `experiments/13-scene2-stone-giant/`: `scene2.ts` (the scene) and `run.ts`
+(`bun experiments/13-scene2-stone-giant/run.ts [--out dir] [--join scene1.wav]`). `src/study/mix.ts`
+gained `fixedMaster` (the gain and the trim of another mix's master) and records `trimDb`; neither is
+the study's, and the study's mixes do not use them.
+
+**The join with scene 1.** The mix of scene 2 starts at 28.5 s. It holds scene 1's bed (the same
+call, crossed over 30.0 to 31.0 s to a bed of its own) and every layer of the red passage that sounds
+there, among them the study's own coda for the face (hair-wind, hair-cloth, wind-tone, two stones
+that settle), which scene 1 leaves out after 29.5 s. It is mastered at scene 1's gain (-8.455 dB),
+with scene 1's trim after the clip (0.98 dB), found as the gain that matches the two over 28.6 to
+29.45 s. Measured: the two lie 0.004 dB apart there; their difference is -30.5 dB under scene 1 over
+the whole overlap and about -39 dB at 29.5 s. It is largest at 28.55 s, under 200 Hz, and dies away
+by 29.3 s: a low tail that scene 1 holds and scene 2 does not. `scene1-2-join.wav` is scene 1 to
+29.5 s and scene 2 after it, crossed over 20 ms.
+
+**The design**, with the study's models:
+
+| Picture          | Sound                                                                                                                                                                             |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Face             | A strong wind (`wind`, 250 Hz to 3.5 kHz) under the study's coda, carried 1 s into the floor shot; cloth in her hair; each barrier flash a soft crush and a breath of low air     |
+| Floor            | Stones that stir faster (`tumble`), a scrape that grows (`grind`), her steps (`stone_impact`, 2 cm)                                                                               |
+| The giant's mass | One source from 33.58 to 41.5 s, laid in four shots with crossfades: a low roll (`billow`, 30 to 220 Hz), a groan (`groan`, 55, 95, 170 Hz) and a grind, growing until the strike |
+| Blocks           | Eight blocks pass the camera on paths (Doppler and pan from the path); blocks strike blocks four times a second (`block_hit`, 0.6 to 1.2 m); three heavy seatings as they close   |
+| On the giant     | Her steps; three cracks of thick stone (`heavy_crack`, 1.5 m)                                                                                                                     |
+| The fist         | Air that rises with its speed (`aero`); at 41.18 s a slab of 2 m (`slab_fall`), a body at 48 Hz (`boom`), a crack, a pressure pulse (`whump`), the answers of two walls           |
+| Dust             | A burst (`puff`), a roll (`billow`) and a hiss (`dust`) across the cuts at 41.42 and 43.21 s; a falling mass (`rubble`); three stones that pass; settling ticks                   |
+| Charge           | Air drawn in, its band climbing (the study's gathering of mana), a breath of formants (`howl`), sparks (`pops`), five small arcs (`sizzle` and a bright burst)                    |
+
+A stone that lands is set at the level of scene 1's accepted landing: -11 LUFS over 0.1 s for 1.6 m,
+lower by 10·log10 of its size against that. The fist is the largest event, at -8.5.
+
+**Run 1, 2026-11-11.** Container, Bun 1.4.4, host CPU, compiler pin `415b276a`. The render takes
+83 s (layers 78 s, master 5 s; 194 layers). Integrated loudness -15.0 LUFS (scene 2 from 28.5 s),
+true peak -2.05 dBTP, the limiter 1.8 dB deep for 2.8 % of the time. RMS each half second: the face
+-23 to -25 dB, the floor -24 dB, the blocks -11 to -14 dB, on the giant -17 to -21 dB, the strike
+-9.8 dB, the dust -13 to -20 dB, the silhouette -25 to -30 dB, the charge -22 to -27 dB. Over 0.15 s
+the seatings measure -10.6 and -9.7 dB, beside scene 1's landing (-10.4 dB over 0.3 s), and the fist
+-7.9 dB over 0.3 s. Across each cut (50 ms windows over 0.5 s on each side) the level steps by 2.5 dB
+or less; the largest steps lie on events (the first block at 36.55 s, a crack at 40.08 s, the strike
+at 41.17 s).
+
+**What is not verified.** Nobody has listened to scene 2. The reference's audio holds music, so its
+level is no target. The low tail at the start of the overlap was not traced to its layer.
+
+**Status.** The first render waits for the owner's review. The preview went to the owner privately;
 the picture, its frames and its audio are not in this repository.

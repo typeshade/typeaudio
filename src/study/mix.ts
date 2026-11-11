@@ -161,6 +161,13 @@ export class Mix {
   masterGainDb = 0;
   limitDb = 0;
   limitedShare = 0;
+  /** The trim after the soft clip that put the true peak at the ceiling, dB (set by `render`). */
+  trimDb = 0;
+  /**
+   * The master of another mix, to continue it: its gain before the drive and its trim after the
+   * clip. Not the study's: experiment 13 starts where experiment 12's scene ends, in its scale.
+   */
+  fixedMaster: { readonly gainDb: number; readonly trimDb: number } | undefined;
 
   constructor(
     readonly name: string,
@@ -312,7 +319,7 @@ export class Mix {
       iir(mix[1], [rbj('hp', 27.0, 0.7071)], 0.5),
     ];
     const tp = truePeakDb(mix);
-    this.masterGainDb = peakDbtp - tp;
+    this.masterGainDb = this.fixedMaster ? this.fixedMaster.gainDb : peakDbtp - tp;
     const drive = this.driveDb;
     this.limitDb = 0;
     this.limitedShare = 0;
@@ -324,7 +331,8 @@ export class Mix {
       const driven: Stereo = [y[0].map((v) => v * dg), y[1].map((v) => v * dg)];
       const gain = limiter(driven, c * lin(4.0), 0.004, 0.06);
       y = driven.map((ch) => ch.map((v, i) => c * Math.tanh((v * gain[i]!) / c))) as Stereo;
-      const g2 = lin(peakDbtp - truePeakDb(y));
+      this.trimDb = this.fixedMaster ? this.fixedMaster.trimDb : peakDbtp - truePeakDb(y);
+      const g2 = lin(this.trimDb);
       y = [y[0].map((v) => v * g2), y[1].map((v) => v * g2)];
       let gmin = Infinity;
       let below = 0;
