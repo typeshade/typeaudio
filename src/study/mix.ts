@@ -143,6 +143,30 @@ export interface AddOptions {
   doppler?: boolean;
 }
 
+/**
+ * What a mix does with its parts and its steps (`Mix.part`, `Mix.finish`, `Mix.eachLayer`). With no
+ * builder a part is made where it is called and a step runs where it is called, as plain code runs.
+ * `build.ts` sets one that collects the parts first, then loads them from its cache or makes them
+ * on several cores.
+ */
+export interface Builder {
+  part(m: Mix, name: string, make: () => void): void;
+  finish(m: Mix, step: (m: Mix) => void): void;
+  eachLayer(m: Mix, name: string, step: LayerStep): void;
+}
+
+/** A step that changes one layer in place and reads no other layer. */
+export type LayerStep = (m: Mix, name: string, layer: Layer) => void;
+
+let builder: Builder | null = null;
+
+/** Sets the builder of the mixes made from now on, or none (`null`). Returns the one it replaces. */
+export function setBuilder(b: Builder | null): Builder | null {
+  const old = builder;
+  builder = b;
+  return old;
+}
+
 export class Mix {
   readonly n: number;
   readonly room: Room;
@@ -282,6 +306,34 @@ export class Mix {
     this.store(name, [Float64Array.from(sig[0]), Float64Array.from(sig[1])], send, t, opts);
   }
 
+  /**
+   * A part of the mix: layers that `make` adds with `add` and `addWide`. A part reads nothing but
+   * its own code, the module's constants and functions, and this mix's settings: no binding of the
+   * function around it and no other layer. So a builder may make it apart from the other parts, on
+   * another core or never (from its cache), and the layers come out the same. The name is a string
+   * literal, unique in the scene (`part-keys.ts` checks both).
+   */
+  part(name: string, make: () => void): void {
+    if (builder) builder.part(this, name, make);
+    else make();
+  }
+
+  /** A step over the whole mix after the parts it reads; it may read and change any layer. */
+  finish(step: (m: Mix) => void): void {
+    if (builder) builder.finish(this, step);
+    else step(this);
+  }
+
+  /**
+   * A step applied to every layer, each on its own; the last thing a scene adds. A builder may apply
+   * it to a part's layers as the part is made, before the `finish` steps, so a `finish` step must
+   * not read what it changes.
+   */
+  eachLayer(name: string, step: LayerStep): void {
+    if (builder) builder.eachLayer(this, name, step);
+    else for (const n of this.order) step(this, n, this.layers.get(n)!);
+  }
+
   /** A layer over the whole mix, its room included. */
   layer(name: string): Stereo {
     const out = stereo(this.n);
@@ -303,6 +355,25 @@ export class Mix {
    * raised by that much, and a look-ahead limiter and a soft clip hold the peaks at the same ceiling.
    */
   render(peakDbtp = -2.0): Stereo {
+    const steps = this.master(peakDbtp);
+    let r = steps.next();
+    while (!r.done) r = steps.next(truePeakDb(r.value));
+    return r.value;
+  }
+
+  /**
+   * `render`, with the true peaks measured by `peakDb` (the same function as `truePeakDb`, on other
+   * threads, for example: `build.ts`, `renderMaster`).
+   */
+  async renderWith(peakDb: (x: Stereo) => Promise<number>, peakDbtp = -2.0): Promise<Stereo> {
+    const steps = this.master(peakDbtp);
+    let r = steps.next();
+    while (!r.done) r = steps.next(await peakDb(r.value));
+    return r.value;
+  }
+
+  /** The master's steps: it yields each signal whose true peak it needs and takes the peak back. */
+  private *master(peakDbtp: number): Generator<Stereo, Stereo, number> {
     let mix = stereo(this.n);
     for (const name of this.order) this.addLayer(mix, this.layers.get(name)!);
     if (this.beforeDb && this.beforeDb.length > 0) {
@@ -318,7 +389,7 @@ export class Mix {
       iir(mix[0], [rbj('hp', 27.0, 0.7071)], 0.5),
       iir(mix[1], [rbj('hp', 27.0, 0.7071)], 0.5),
     ];
-    const tp = truePeakDb(mix);
+    const tp = yield mix;
     this.masterGainDb = this.fixedMaster ? this.fixedMaster.gainDb : peakDbtp - tp;
     const drive = this.driveDb;
     this.limitDb = 0;
@@ -331,7 +402,8 @@ export class Mix {
       const driven: Stereo = [y[0].map((v) => v * dg), y[1].map((v) => v * dg)];
       const gain = limiter(driven, c * lin(4.0), 0.004, 0.06);
       y = driven.map((ch) => ch.map((v, i) => c * Math.tanh((v * gain[i]!) / c))) as Stereo;
-      this.trimDb = this.fixedMaster ? this.fixedMaster.trimDb : peakDbtp - truePeakDb(y);
+      const peak = yield y;
+      this.trimDb = this.fixedMaster ? this.fixedMaster.trimDb : peakDbtp - peak;
       const g2 = lin(this.trimDb);
       y = [y[0].map((v) => v * g2), y[1].map((v) => v * g2)];
       let gmin = Infinity;
