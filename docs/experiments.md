@@ -1160,5 +1160,37 @@ shot, 25 to 60 Hz rose by 2.2 dB and 60 to 150 Hz by 5.8 dB; 1 to 12 kHz (the cr
 measures -12.8 dB over 0.15 s, under the fist (-7.9 dB); the true peak stays at -2.04 dBTP. The
 render takes 85 s.
 
-**Status.** The fifth render waits for the owner's review. The previews went to the owner privately;
+**Review 5, 2026-11-11.** The owner accepted the fifth render except the forming of the giant, which
+is to be refined. Nothing else changed. Five checks, and what each changed:
+
+1. Frame sync. The frames at 12 a second give the contacts. Blocks pass at 36.57, 36.98, 37.15,
+   37.40, 37.73 and 37.95 s, and crowd and touch at 37.15 to 37.68 s. They slam shut over the camera
+   at 38.10 s and shift at 38.52 s. Blocks slide into the body at 38.72 and 38.82 s. The head slides
+   up from 39.10 s and seats at 39.45 s. Nothing moves from 39.5 to 40.33 s. The giant shifts its
+   weight at 40.42 s. The passes, the four hits (37.15, 37.40, 37.57, 37.68 s) and the five seats
+   (38.10, 38.52, 38.72, 38.82, 39.45 s) lie on these frames. The random hits of the earlier renders
+   and the seats with no visible contact (from 38.93 to 40.20 s) are gone.
+2. Scale and progression. Few, near and distinct first (38.10 and 38.52 s), then deeper and heavier
+   ones (38.72 and 38.82 s, 1.4 and 1.7 m), then the head, the largest and deepest (2.3 m, its body
+   at 0.8 of its size's pitch). Over 0.3 s from 30 to 120 Hz the seats measure 23.9, 21.8, 25.9, 25.6
+   and 27.0 dB. The weight shift at 40.42 s now has its body at 46 Hz (36 Hz fell partly under the
+   master's high pass). Over 0.8 s it is the largest low moment of the assembly: 29.2 dB from 30 to
+   120 Hz and 28.6 dB from 20 to 80 Hz, against 28.3 to 29.0 dB for the seats. The fist stays the
+   loudest moment: -8.0 dB over 0.15 s against -14.8 dB, and 30.8 dB from 30 to 120 Hz. Under 80 Hz
+   the shift lies 1.4 dB over the fist.
+3. Variation. Each seat has its own size (1.1 to 2.3 m), its own body pitch (0.8 to 1.12 of its
+   size's) and length, its own ring (a crack, bright 0.25 to 0.6), its own scrape (0.1 to 0.35 s) and
+   its own place (near the camera, right, below, high on the head). Its level is the accepted
+   landing's for its size, -4 to 0 dB.
+4. Continuity. The first groan of the body starts at 38.40 s and runs across the cut at 38.60 s, and
+   the rumble grows from 37.85 s. Across that cut the level now steps by +0.8 dB (before: -4.7 dB).
+   Each cut of scene 2 steps by 2.3 dB or less. The largest steps lie on events: the slam at 38.10 s,
+   the shift at 40.42 s and an arc at 44.36 s.
+5. Weight. Stone under stress: two groans of the body (slips at 24 to 65 a second through resonances
+   at 38 to 140 Hz), and a low creak as the completed body takes the weight (39.5 to 40.35 s). The
+   rumble stays under them. No small debris.
+
+The render takes 76 s (191 layers). The join with scene 1 is unchanged.
+
+**Status.** The sixth render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.
