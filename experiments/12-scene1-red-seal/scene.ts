@@ -519,11 +519,7 @@ export function blackHole(m: Mix): void {
     });
     m.add(
       'gather-rubble',
-      S.rubble(3.2, 1097, (t) => 8.0 + 6.0 * t, {
-        sizes: [0.15, 0.6],
-        bright: 0.2,
-        body: 0.6,
-      }),
+      S.rubble(3.2, 1097, (t) => 8.0 + 6.0 * t, { sizes: [0.15, 0.6], bright: 0.2, body: 0.6 }),
       11.6,
       [0.5, 2.5, -9.0],
       { target: -25, kind: 'm', focusDb: 2, sendDb: -4 },
@@ -748,11 +744,7 @@ export function blackHole(m: Mix): void {
       18.6,
       ap.length,
     );
-    m.add('orb-approach', times(ap, apEnv), 18.6, apPath, {
-      target: -22,
-      kind: 'm',
-      sendDb: -8,
-    });
+    m.add('orb-approach', times(ap, apEnv), 18.6, apPath, { target: -22, kind: 'm', sendDb: -8 });
     m.add('orb-approach-voice', times(S.voice(1.45, 1161, ORB), apEnv), 18.6, apPath, {
       target: -22,
       kind: 'm',
@@ -1202,12 +1194,7 @@ function character(m: Mix): void {
     const prox = curve(PROXIMITY, HOLE_FROM, n);
     // the mana: inharmonic partials that sink slowly, two clusters that drift against each other
     const ratios = [1.0, 1.41, 1.87, 2.63, 3.31];
-    const a = S.glide(dur, 1400, 233, 147, {
-      ratios,
-      wander: 0.012,
-      shape: 1.0,
-      tilt: 0.6,
-    });
+    const a = S.glide(dur, 1400, 233, 147, { ratios, wander: 0.012, shape: 1.0, tilt: 0.6 });
     const b = S.glide(dur, 1401, 236, 149, {
       ratios: ratios.map((q) => q * 1.013),
       wander: 0.012,
@@ -1254,10 +1241,7 @@ function character(m: Mix): void {
       0.1,
       0.03,
     );
-    m.addWide('hole-growl', [gr, gr.slice()], HOLE_FROM, {
-      target: -20,
-      kind: 'm',
-    });
+    m.addWide('hole-growl', [gr, gr.slice()], HOLE_FROM, { target: -20, kind: 'm' });
   });
   m.part('hole-ring', () => {
     const dur = HOLE_TO - HOLE_FROM;
@@ -1381,21 +1365,12 @@ function gathering(m: Mix): void {
     const CORE: Vec3 = [0.0, 3.0, -10.0];
     m.add(
       'pile-crunch',
-      S.rubble(3.2, 1580, (t) => 6.0 + 9.0 * t, {
-        sizes: [0.2, 0.8],
-        bright: 0.2,
-        body: 0.8,
-      }),
+      S.rubble(3.2, 1580, (t) => 6.0 + 9.0 * t, { sizes: [0.2, 0.8], bright: 0.2, body: 0.8 }),
       11.6,
       CORE,
       { target: -23, kind: 'm', focusDb: 2, sendDb: -4 },
     );
-    const groan = S.groan(3.2, 1581, {
-      rLo: 40,
-      rHi: 90,
-      res: [60.0, 110.0, 190.0],
-      q: 3.0,
-    });
+    const groan = S.groan(3.2, 1581, { rLo: 40, rHi: 90, res: [60.0, 110.0, 190.0], q: 3.0 });
     m.add(
       'pile-groan',
       times(
