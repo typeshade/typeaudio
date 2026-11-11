@@ -697,6 +697,60 @@ function fist(m: Mix): void {
   });
 }
 
+/**
+ * Review 10, 2026-11-11: the owner did not feel the wind pressure as the giant comes down. The
+ * frames at 24 a second: it stands and shifts to 40.80 s, goes down from 40.84 s, fastest from 41.05
+ * to 41.18 s, and touches at 41.20 s. The air the mass pushes: a low body (30 to 200 Hz) and broad air
+ * above it (to 8 kHz) that grow with the speed and the nearness, to the contact; there a short gust
+ * out; at 41.43 s, when the dust wall reaches the camera, a low push and a rush of air.
+ */
+function descentAir(m: Mix): void {
+  m.part('descent-air', () => {
+    const T0 = 40.84;
+    const HIT = 41.2;
+    const d = HIT - T0;
+    const n = nsamp(d + 0.04);
+    const grow = new Float64Array(n).map((_, i) => {
+      const u = Math.min(1, i / nsamp(d));
+      return i <= nsamp(d) ? u ** 3 : 1 - (i - nsamp(d)) / (n - nsamp(d));
+    });
+    const walk = S.levelWalk(n, 2900, 1.0, 0.3, 3.0);
+    const low = spectral(white(n, 2901), (f) => bandGain(f, 30, 200, 2));
+    const air = spectral(
+      white(n, 2902),
+      (f) => bandGain(f, 200, 8000, 2) * (200 / Math.max(f, 200)) ** 0.5,
+    );
+    const ln = S.norm(low);
+    const an = S.norm(air);
+    const push = ln.map((v, i) => (1.6 * v + 0.6 * an[i]!) * grow[i]! * walk[i]!);
+    m.add('descent-push', push, T0, line([3.0, 5.0, -10.0], [1.0, 1.0, -4.0], n), {
+      target: -10,
+      kind: 'm',
+      sendDb: -6,
+    });
+    const gust = new Float64Array(nsamp(0.4));
+    addAt(gust, S.burst(2903, 30, 160, 0.15, { rise: 0.006 }), 0, 1.0);
+    addAt(gust, S.burst(2904, 150, 8000, 0.1, { rise: 0.01 }), 0, 0.7);
+    m.add('descent-gust', S.norm(gust), HIT, [1.0, 0.5, -4.0], {
+      target: -11,
+      kind: 'i',
+      sendDb: -6,
+    });
+    const rush = S.puff(0.9, 2905, 150.0, 8000.0, 0.06, 0.35);
+    const pushLow = S.burst(2906, 30, 150, 0.25, { rise: 0.03, dur: 0.9 }).map((v) => 1.6 * v);
+    m.addWide(
+      'wave-air',
+      [rush[0].map((v, i) => v + pushLow[i]!), rush[1].map((v, i) => v + pushLow[i]!)],
+      41.4,
+      {
+        target: -10,
+        kind: 'i',
+        sendDb: -6,
+      },
+    );
+  });
+}
+
 /** 41.2 to 44.4: the wave of dust and stones, across the cuts at 41.42 and 43.21; then it settles. */
 function dustWave(m: Mix): void {
   m.part('dustWave', () => {
@@ -704,7 +758,7 @@ function dustWave(m: Mix): void {
     // builds from the contact and peaks there, with a pressure that arrives with it. The ring of shock
     // lines crosses the foreground at 41.72 s. Stones fly at the camera at 42.26 and 42.65 s.
     m.addWide('dust-burst', S.puff(2.5, 2100, 150.0, 4000.0, 0.2, 0.9), 41.23, {
-      target: -15,
+      target: -18,
       kind: 'i',
       sendDb: -4,
     });
@@ -1123,6 +1177,7 @@ export function scene2(): Mix {
   packing(m);
   blocks(m);
   fist(m);
+  descentAir(m);
   dustWave(m);
   charge(m);
   scene3Head(m);
