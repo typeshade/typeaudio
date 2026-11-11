@@ -50,14 +50,15 @@ import {
   times,
 } from '../../src/study/passage.ts';
 import * as S from '../../src/study/sources.ts';
-import { redLayers } from '../12-scene1-red-seal/red.ts';
+import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
+import { MAIN, redTail } from '../12-scene1-red-seal/tail.ts';
 
 export const SCENE2_FROM = 28.5;
 export const SCENE2_JOIN = 29.5;
 export const SCENE2_END = 45.67;
 
-/** Scene 1's master (render r5 at `437fa7d`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 28.6 to 29.45 s (`run.ts --join`). */
-export const SCENE1_MASTER = { gainDb: -8.454930856303939, trimDb: 0.98 };
+/** Scene 1's master (the presence pass, `13d669e`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 29.2 to 29.45 s (`run.ts --join`). */
+export const SCENE1_MASTER = { gainDb: -7.886529581389624, trimDb: 0.844 };
 
 type Points = readonly (readonly [number, number])[];
 export const env = (points: Points, t0: number, n: number) => curve(points, t0, n);
@@ -169,19 +170,14 @@ export function beds(m: Mix): void {
 /**
  * The steps over the whole mix after its parts: scene 1's bed crosses to scene 2's over 30.0 to 31.0
  * s; the study coda's settling stones and its cloth are left out (review 1: heard as a pebble that
- * rolls; small stones that nobody would miss are cut); the study's patter of small debris under the
- * smoke (scene 1 holds it to 29.5 s) fades out over 0.3 s after the join.
+ * rolls; small stones that nobody would miss are cut). Scene 1 leaves out the study's patter of
+ * small debris under the smoke, so scene 2 does too (`redTail`).
  */
 function tidy(m: Mix): void {
   for (const name of ['bed', 'bed-low', 'bed-high']) shapeLayer(m, name, xfade(30.0, 31.0, true));
   for (const name of ['bed2', 'bed2-low', 'bed2-high'])
     shapeLayer(m, name, xfade(30.0, 31.0, false));
   drop(m, ['settle0', 'settle1', 'hair-cloth']);
-  for (const name of ['debris-rain0', 'debris-rain1'])
-    shapeLayer(m, name, [
-      [SCENE2_JOIN, 1],
-      [SCENE2_JOIN + 0.3, 0],
-    ]);
 }
 
 /** 30.32 to 33.58: her face; the wind of scene 1 goes on in her hair. */
@@ -1164,13 +1160,24 @@ export function drop(m: Mix, names: readonly string[]): void {
   }
 }
 
+/**
+ * The presence pass (`src/study/presence.ts`): the main events get the body of 120 Hz to 2 kHz:
+ * scene 1's (its red passage's layers that sound here) and the giant's (its blocks, seats, body,
+ * fist, the wave that arrives, the barrier) and the lightning's (the hum, the bolt, the strike).
+ */
+const MAIN2 =
+  /^(barrier-(block|bloom)|block-hit|body-(creak|groan|rumble)|fist-(hit|pressure|slap)|giant-stands|pack-grind|seat\d+$|wave-arrive|charge-hum|s3-(bolt-(crack|thump|plasma)|barrier-(strike|strain|shatter)))/;
+function presence2(_m: Mix, name: string, l: Layer): void {
+  if (MAIN.test(name) || MAIN2.test(name)) body(l);
+}
+
 /** Scene 2, the stone giant: from scene 1's tail to the cut before scene 3. */
 export function scene2(): Mix {
   const m = new Mix('scene2', SCENE2_FROM, SCENE2_END, 2.6);
   // the head of scene 3 (the release at 45.70 s and the bolt to the barrier that shatters at 47.46 s)
   m.until = 47.47;
   beds(m);
-  redLayers(m, { bed: false });
+  redTail(m);
   face(m);
   barrier(m);
   floor(m);
@@ -1186,7 +1193,11 @@ export function scene2(): Mix {
   m.finish(tidy);
   // review 9: the noise layers lose their harsh top; the cracks keep their snap below 12 kHz
   m.eachLayer('low-pass', lowPass);
+  m.eachLayer('scene2-presence', presence2);
   m.driveDb = 8.8;
+  // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
+  m.lift = LIFT;
+  m.ceilingDb = CEILING_DBTP;
   m.fixedMaster = SCENE1_MASTER;
   m.afterDb = [
     [SCENE2_FROM, 0],

@@ -53,8 +53,9 @@ import {
   ticks,
   times,
 } from '../../src/study/passage.ts';
+import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
 import * as S from '../../src/study/sources.ts';
-import { redLayers } from './red.ts';
+import { MAIN, fastHit, hitDb, huuk, huukDb, passBy, redTail } from './tail.ts';
 
 export const SCENE_END = 29.5;
 const ORB = [185.0, 311.0, 466.0, 740.0, 1109.0];
@@ -203,15 +204,6 @@ export function blackHole(m: Mix): void {
       { target: -27, kind: 'm', sendDb: -2 },
     );
   });
-  m.part('far-debris', () => {
-    m.add(
-      'far-debris',
-      S.tumble(3.2, 1007, (t) => 1.2 + 0.8 * t, [0.05, 0.2], [2.0, 5.0]),
-      0.3,
-      [-6.0, 0.0, -13.0],
-      { target: -36, kind: 'm' },
-    );
-  });
 
   // ---- 3.29 to 4.71: close on the figure; a red glow in its hand grows into the orb.
   m.part('draw-breath', () => {
@@ -301,11 +293,17 @@ export function blackHole(m: Mix): void {
   // ---- 4.71: white frames: the orb is let go. A pressure, a deep body, a tear that falls.
   m.part('launch', () => {
     const [front, low, slp] = S.whump(1030, 0.004, 0.6);
-    m.add('launch', S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])), 4.713, [0.0, 1.4, -2.5], {
-      target: -13,
-      kind: 'i',
-      focusDb: 4,
-    });
+    m.add(
+      'launch',
+      S.saturate(sum([0.55, front], [0.9, low], [0.6, slp])),
+      4.713,
+      [0.0, 1.4, -2.5],
+      {
+        target: -13,
+        kind: 'i',
+        focusDb: 4,
+      },
+    );
   });
   m.part('launch-boom', () => {
     m.add('launch-boom', S.boom(1031, { f: 70.0, tau: 0.6 }), 4.713, [0.0, 0.5, -3.0], {
@@ -401,15 +399,6 @@ export function blackHole(m: Mix): void {
       },
     );
   });
-  m.part('pebbles', () => {
-    m.add(
-      'pebbles',
-      S.tumble(1.4, 1062, (t) => 3.0 + 6.0 * t, [0.03, 0.1], [2.0, 5.0]),
-      8.1,
-      [2.0, 1.0, -5.0],
-      { target: -31, kind: 'm', sendDb: -6 },
-    );
-  });
 
   // ---- 9.47 to 11.55: the orb tears through the hall; stones fly past and at it.
   m.part('orb-tear-sparks', () => {
@@ -435,16 +424,10 @@ export function blackHole(m: Mix): void {
       [10.98, -1, 1.6, -24],
       [11.3, 1, 2.0, -25],
     ];
-    tearPasses.forEach(([t, side, near, tg], i) => {
-      const src = steady(0.4, 1074 + i, 120, 2600);
-      const k = src.length;
-      const h = Math.floor(k / 2);
-      const P = concat(
-        line([side * 0.8, 1.6, -10.0], [side * near, 1.5, 0.0], h),
-        line([side * near, 1.5, 0.0], [side * (near + 1.0), 1.4, 9.0], k - h),
-      );
-      m.add(`tear-pass${i}`, src, t - 0.2, P, { target: tg, kind: 'i', sendDb: -10 });
-    });
+    // review 6: each stone tears the air as it passes (`passBy`); the old target gives its size
+    tearPasses.forEach(([t, side, near, tg], i) =>
+      passBy(m, `tear-pass${i}`, t, side, near, 30, 0.5 * 10 ** ((tg + 24) / 10), 1074 + i),
+    );
   });
   m.part('tear-hit', () => {
     const rt = rng(1085);
@@ -463,7 +446,13 @@ export function blackHole(m: Mix): void {
         0.6,
       );
       addAt(hit, S.sizzle(0.7, 1088 + i, 0.14), 0, 0.3);
-      m.add(`tear-hit${i}`, hit, t, pos, { target: -18 + i, kind: 'i', sendDb: -6 });
+      // review 6: the orb strikes the stone hard (about 20 m/s), and the stone tears away past us
+      m.add(`tear-hit${i}`, lp(S.saturate(S.norm(hit), 1.5), 12000), t, pos, {
+        target: Math.round(hitDb(size, 20)),
+        kind: 'i',
+        sendDb: -6,
+      });
+      passBy(m, `tear-hit${i}-huuk`, t + 0.2, i ? -1 : 1, 1.4, 22, size, 1095 + i, 0.4);
       m.add(`tear-hit${i}-slap`, S.slap(hit, 1200), t + 0.21, [8.5 * (i ? -1 : 1), 2.0, -8.0], {
         target: -27 + i,
         kind: 'i',
@@ -522,7 +511,12 @@ export function blackHole(m: Mix): void {
         3.6,
       );
       const P = line([x0, 1.0 + Math.abs(x0) * 0.4, -7.0], CORE, cl.length);
-      m.add(`gather-clump-${side}`, cl, 11.55, P, { target: -19, kind: 'i', focusDb: 3, sendDb: -4 });
+      m.add(`gather-clump-${side}`, cl, 11.55, P, {
+        target: -19,
+        kind: 'i',
+        focusDb: 3,
+        sendDb: -4,
+      });
     });
     m.add(
       'gather-rubble',
@@ -534,7 +528,15 @@ export function blackHole(m: Mix): void {
     [0, 1, 2, 3].forEach((i) => {
       const t = 11.6 + 0.35 * i;
       const src = steady(14.78 - t, 1098 + 13 * i, 100, 1800);
-      const P = spiral(src.length, CORE, 6.0 - 0.5 * i, 2.0, 0.8 + 0.25 * i, (Math.PI * i) / 2, 1.5);
+      const P = spiral(
+        src.length,
+        CORE,
+        6.0 - 0.5 * i,
+        2.0,
+        0.8 + 0.25 * i,
+        (Math.PI * i) / 2,
+        1.5,
+      );
       m.add(`orbit${i}`, src, t, P, { target: -27, kind: 'm', sendDb: -6 });
     });
   });
@@ -656,14 +658,20 @@ export function blackHole(m: Mix): void {
         [17.4, 'block', 0.5, [-0.5, 1.0, -3.0], -19],
         [17.57, 'fall', 0.2, [1.5, 0.0, -5.5], -23],
       ] as [number, string, number, Vec3, number][]
-    ).forEach(([t, kind, size, pos, tg], i) => {
-      const s =
-        kind === 'block'
-          ? S.blockHit(1130 + i, size, 7.0)
-          : kind === 'crack'
-            ? S.heavyCrack(1130 + i, { size, dur: 0.4, kRate: 8, bright: 0.5 })
-            : S.rockFall(size, 2.0, 1130 + i);
-      m.add(`leap-hit${i}`, s, t, pos, { target: tg, kind: 'i', focusDb: 2, sendDb: -6 });
+    ).forEach(([t, kind, size, pos], i) => {
+      // review 6: the stones come down fast (12 to 15 m/s) and strike loud and hard, at the
+      // accepted landing's timbre and the level of their size and speed
+      const v = kind === 'fall' ? 15 : 12;
+      const s = kind === 'block' ? S.blockHit(1130 + i, size, v) : fastHit(1130 + i, size, v);
+      m.add(`leap-hit${i}`, s, t, pos, {
+        target: hitDb(size, v, Math.hypot(pos[0], pos[1] - 1.5, pos[2])),
+        kind: 'i',
+        focusDb: 2,
+        sendDb: -6,
+      });
+      // a falling stone tears the air on its way down
+      if (kind === 'fall')
+        passBy(m, `leap-hit${i}-huuk`, t - 0.05, pos[0] > 0 ? 1 : -1, 1.5, 15, size, 1145 + i, 0.3);
     });
   });
   m.part('leap-whoosh', () => {
@@ -677,15 +685,6 @@ export function blackHole(m: Mix): void {
       ),
     );
   });
-  m.part('leap-debris', () => {
-    m.add(
-      'leap-debris',
-      S.tumble(1.5, 1142, (t) => 10.0 - 4.0 * t, [0.05, 0.25], [3.0, 7.0]),
-      16.3,
-      [0.0, 0.0, -7.0],
-      { target: -27, kind: 'm', focusDb: 2 },
-    );
-  });
 
   // ---- 17.73 to 18.60: dark. Slabs pass; the draw rumbles far.
   m.part('slab-pass', () => {
@@ -695,16 +694,10 @@ export function blackHole(m: Mix): void {
         [18.12, 1, 1.6],
         [18.38, -1, 2.4],
       ] as const
-    ).forEach(([t, side, near], i) => {
-      const src = steady(0.5, 1150 + i, 80, 1500);
-      const k = src.length;
-      const h = Math.floor(k / 2);
-      const P = concat(
-        line([side * 1.0, 2.0, -9.0], [side * near, 1.8, 0.0], h),
-        line([side * near, 1.8, 0.0], [side * (near + 1.0), 1.6, 8.0], k - h),
-      );
-      m.add(`slab-pass${i}`, src, t - 0.25, P, { target: -24, kind: 'i', sendDb: -8 });
-    });
+    ).forEach(([t, side, near], i) =>
+      // review 6: a heavy slab tears the air low as it passes
+      passBy(m, `slab-pass${i}`, t, side, near, 18, 1.4, 1150 + i, 0.5, 1.8),
+    );
   });
   m.part('dark-draw', () => {
     m.add(
@@ -768,16 +761,21 @@ export function blackHole(m: Mix): void {
         [19.55, -1, 1.4, -24],
         [19.82, 1, 2.2, -26],
       ] as [number, number, number, number][]
-    ).forEach(([t, side, near, tg], i) => {
-      const src = steady(0.36, 1162 + i, 150, 3000);
-      const k = src.length;
-      const h = Math.floor(k / 2);
-      const P = concat(
-        line([side * 0.6, 1.5, -9.0], [side * near, 1.5, 0.0], h),
-        line([side * near, 1.5, 0.0], [side * (near + 0.8), 1.5, 9.0], k - h),
+    )
+      // review 6: each stone tears the air as it passes; the old target gives its size
+      .forEach(([t, side, near, tg], i) =>
+        passBy(
+          m,
+          `approach-pass${i}`,
+          t,
+          side,
+          near,
+          30,
+          0.5 * 10 ** ((tg + 24) / 10),
+          1162 + i,
+          0.36,
+        ),
       );
-      m.add(`approach-pass${i}`, src, t - 0.18, P, { target: tg, kind: 'i', sendDb: -10 });
-    });
   });
   m.part('approach-air', () => {
     const aa = S.wind(1.45, 1168, 150, 1500);
@@ -1321,7 +1319,16 @@ function gathering(m: Mix): void {
         target: -11 + 10 * Math.log10(size / 1.2),
         kind: 'i',
         focusDb: 2,
-        sendDb: -5,
+        // review 6: drier, so the strike reads as a stone and not as a wash of the hall
+        sendDb: -9,
+      });
+      // review 6: the last quarter second of its flight tears the air into the core
+      const tear = huuk(0.25, 1530 + 11 * i, 25, size, 0.9);
+      const mid: Vec3 = [(from[0] + core[0]) / 2, (from[1] + core[1]) / 2, (from[2] + core[2]) / 2];
+      m.add(`drag-${i}-huuk`, tear, ta - 0.25, line(mid, core, tear.length), {
+        target: -11 + 10 * Math.log10(size / 1.2) - 8,
+        kind: 'i',
+        sendDb: -9,
       });
     });
   });
@@ -1339,13 +1346,19 @@ function gathering(m: Mix): void {
         [19.5, -1],
       ] as const
     ).forEach(([t, side], i) => {
-      const src = steady(0.6, 1560 + i, 90, 1800);
+      // review 6: each tears the air as it passes, closest a third of the way, then on into the core
+      const src = huuk(0.6, 1560 + i, 28, 0.5, 0.3);
       const core = orbAt(t + 0.3);
+      const k = Math.floor(src.length * 0.3);
       const P = concat(
-        line([side * 2.5, 1.2, 6.0], [side * 1.0, 1.4, 0.0], Math.floor(src.length / 2)),
-        line([side * 1.0, 1.4, 0.0], core, src.length - Math.floor(src.length / 2)),
+        line([side * 2.5, 1.2, 5.0], [side * 1.0, 1.4, 0.0], k),
+        line([side * 1.0, 1.4, 0.0], core, src.length - k),
       );
-      m.add(`fly-past${i}`, src, t - 0.3, P, { target: -21, kind: 'i', sendDb: -8 });
+      m.add(`fly-past${i}`, src, t - 0.18, P, {
+        target: huukDb(28, 0.5),
+        kind: 'i',
+        sendDb: -10,
+      });
     });
   });
   // the pile at the core: crunching and grinding more as they arrive, and the groan of large masses
@@ -1461,7 +1474,9 @@ function orbAcross(m: Mix): void {
       ['orb-body-voice', voice, 4],
     ] as const) {
       const parts = shots.map(([from, to, pos, tb, tv, send], k) => {
-        const len = nsamp(to - from + (k === 0 ? 0.06 : 0.12) + (k === shots.length - 1 ? 0.14 : 0));
+        const len = nsamp(
+          to - from + (k === 0 ? 0.06 : 0.12) + (k === shots.length - 1 ? 0.14 : 0),
+        );
         const p = typeof pos === 'function' ? (pos as (n: number) => Where)(len) : pos;
         return {
           from,
@@ -1478,6 +1493,30 @@ function orbAcross(m: Mix): void {
       across(m, name, sig, T0, parts);
     }
   });
+}
+
+/**
+ * Around 13 s the black hole leads (review 6: only the wind was heard). From the cut at 11.55 s to
+ * the cut at 14.81 s the layers of drawn air go 6 dB down, the torrent of the hole 3 dB, and the
+ * hole's voice (its swallows, growl, mana, ring and core) 4 dB up. A layer step.
+ */
+const DRAWN_AIR =
+  /^(draw|draw-low|hole-inrush|orbit|gather-grind|gather-rubble|gather-low|gather-clump)/;
+const HOLE_VOICE = /^(hole-swallow|hole-growl|hole-mana|hole-ring|hole-core|orb-body-voice)/;
+function foreHole(m: Mix, name: string, l: Layer): void {
+  const db = name === 'hole-roar' ? -3 : DRAWN_AIR.test(name) ? -6 : HOLE_VOICE.test(name) ? 4 : 0;
+  if (!db) return;
+  const ts = [11.45, 11.65, 14.71, 14.91];
+  const vs = [0, db, db, 0];
+  for (const part of [l.dry, l.wet])
+    for (const ch of part)
+      for (let i = 0; i < ch.length; i++)
+        ch[i] = ch[i]! * lin(interp(m.t0 + (l.start + i) / SR, ts, vs));
+}
+
+/** The presence pass (`src/study/presence.ts`): the main events (`MAIN`) get their body. */
+function presence1(_m: Mix, name: string, l: Layer): void {
+  if (MAIN.test(name)) body(l);
 }
 
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
@@ -1497,14 +1536,19 @@ export function scene(): Mix {
   );
   blackHole(m);
   orbAcross(m);
-  redLayers(m, { bed: false });
+  redTail(m);
   holeBody(m);
   m.finish(levelCore);
   suction(m);
   character(m);
   gathering(m);
   m.eachLayer('carve', carve);
+  m.eachLayer('fore-hole', foreHole);
+  m.eachLayer('presence', presence1);
   m.driveDb = 8.8;
+  // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
+  m.lift = LIFT;
+  m.ceilingDb = CEILING_DBTP;
   // review 3: 1 dB less into the master where the black hole is near, so the soft clip's final trim
   // of the true peak no longer lowers the whole scene; the landings lie within 0.2 dB of review 0
   m.beforeDb = [
@@ -1520,6 +1564,12 @@ export function scene(): Mix {
     [19.2, -1],
     [22.3, -1],
     [22.4, 0],
+    // review 6: the stones the rays throw out add to the block's break at 26.6 s, where the
+    // limiter works 5 dB deep; 1.3 dB less into the master there keeps the master's gain of r6
+    [26.45, 0],
+    [26.55, -1.3],
+    [26.75, -1.3],
+    [26.85, 0],
   ];
   // the end of the scene: the sound fades over the first second of the next shot
   m.afterDb = [

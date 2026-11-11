@@ -320,6 +320,23 @@ they are one sound. The rule says which event leads; it does not lower that coun
 for a silence before an impact and for build-ups: they are the hints of the future. No analyzer
 measures the rule. The plan tests of experiment 9 (`test/plan.test.ts`) hold it for one plan.
 
+## A sound earns its place
+
+This is a rule of the owner's, given on 2026-11-11 in the reviews of scenes 1 and 2 of the reference
+video (`docs/experiments.md`, sections 12 and 13). It is design, not measurement.
+
+The owner, on the settling stones of scene 2: "The settling stones are really not needed. They are
+too small and carry no weight. They seem to violate the design principle." Asked whether the same
+holds for scene 1: "Yes — this matters especially in animation."
+
+- A sound earns its place by its part in the moment: its answer to "why" (the section "One sound
+  leads"). A sound with no part is out.
+- Small detail of little weight that nobody would miss is cut: settling stones, settling ticks, small
+  pebbles that trickle, steps that the picture does not ask for. Density is not detail: many contacts
+  of large stones can carry a moment; a trickle of small ones does not.
+- In animation the picture draws only what it means, so the sound follows it: what the drawing leaves
+  out, the sound leaves out too.
+
 ## The vocabulary
 
 The vocabulary is units and presets made by experts. It is versioned as code. `explain` explains
