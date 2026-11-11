@@ -13,7 +13,8 @@ import {
   NOISE_MODULE,
   NOISE_SOURCE,
 } from '../src/kinds/functions/impact.ts';
-import { RefImpact } from './reference-kinds.ts';
+import { BOOM_DEFINITION, BOOM_MODULE, BOOM_SOURCE } from '../src/kinds/functions/boom.ts';
+import { RefBoom, RefImpact } from './reference-kinds.ts';
 
 function run(doc: FunctionGraphDocument, frames: number): Float32Array {
   const program = compileFunctionGraph(doc);
@@ -27,6 +28,45 @@ function run(doc: FunctionGraphDocument, frames: number): Float32Array {
     pcm.set(out.subarray(0, n), at);
   }
   return pcm;
+}
+
+/** A document of one kind with its shape as constants. */
+function document(
+  module: string,
+  source: string,
+  definition: FunctionGraphDocument['definitions'][number],
+  shape: Record<string, number>,
+): FunctionGraphDocument {
+  return {
+    schema: 'typeaudio.function-graph',
+    version: 1,
+    modules: { [NOISE_MODULE]: NOISE_SOURCE, [module]: source },
+    definitions: [definition],
+    nodes: [
+      {
+        id: 'kind',
+        definition: definition.id,
+        inputs: Object.fromEntries(
+          Object.entries(shape).map(([k, v]) => [k, { kind: 'constant', value: v }]),
+        ),
+      },
+    ],
+    parameters: [],
+    output: { node: 'kind', port: 'out' },
+  };
+}
+
+/** The function's output against the reference, within 1e-4 of the reference's peak. */
+function expectSame(fn: Float32Array, tick: () => number): void {
+  let worst = 0;
+  let peak = 0;
+  for (let i = 0; i < fn.length; i++) {
+    const r = tick();
+    worst = Math.max(worst, Math.abs(fn[i]! - r));
+    peak = Math.max(peak, Math.abs(r));
+  }
+  expect(peak).toBeGreaterThan(0.01);
+  expect(worst / peak).toBeLessThan(1e-4);
 }
 
 describe('the kinds as functions', () => {
@@ -86,5 +126,35 @@ describe('the kinds as functions', () => {
     }
     expect(peak).toBeGreaterThan(0.1);
     expect(worst / peak).toBeLessThan(1e-4);
+  });
+
+  it('boom sounds as the kind does, sample for sample', () => {
+    const sr = 48000;
+    const shape = {
+      key: 0x1234567,
+      coef: Math.min(2 * Math.sin((Math.PI * 95) / sr), 1.2),
+      damp: 0.35,
+      base: 95 / sr,
+      glide: 0.08,
+      glideRate: 1 / (0.4 * sr),
+      decay: 1 / (0.6 * sr),
+      rise: 288,
+      aNoise: 0.9,
+      aTone: 0.25,
+    };
+    const fn = run(document(BOOM_MODULE, BOOM_SOURCE, BOOM_DEFINITION, shape), sr);
+    const ref = new RefBoom().shape(
+      shape.key,
+      shape.coef,
+      shape.damp,
+      shape.base,
+      shape.glide,
+      shape.glideRate,
+      shape.decay,
+      shape.rise,
+      shape.aNoise,
+      shape.aTone,
+    );
+    expectSame(fn, () => ref.tick());
   });
 });
