@@ -735,103 +735,47 @@ function dustWave(m: Mix): void {
   });
 }
 
-// ---- Review 3, 2026-11-11: the charge is lightning. The frames (12 a second) show purple electricity
-// at her staff tip: small sparks at 44.03 and 44.20 s, a ball of crackle from 44.37 to 44.62 s, arcs
-// that reach the floor from 44.70 to 45.12 s, large arcs at 45.28, 45.37 and 45.53 s, and no arcs at
-// 45.20, 45.45 and 45.62 s. The bolt fires on the first frame of scene 3 (45.70 s). The owner: "a
-// fast, powerful crackle for the preparation; the low hum, lower than you would expect, that ultra-
-// high voltage gives; an occasional high tone; the attack only short and intense". So: bursts of
-// crackle on the frames of the arcs (a snap, then a jittering train, saturated), a steady hum at 48
-// Hz with strong low harmonics whose level and grit grow (its pitch does not move), and three faint
-// whines of a coil at fixed pitches. It crests on the last arc and stops on the cut.
+// ---- The charge (reviews 2 to 7, 2026-11-11). The spell is lightning; the bolt fires on the first
+// frame of scene 3 (45.70 s). The owner, review 7: the mage is skilled, so not a crackle; "the
+// gathering quietly; the gathering is the ultra-high-voltage 'wooo-woong'; the firing is spat out at
+// ultra-high output". So the gathering is only the hum of the voltage and a faint, smooth corona: no
+// crackle, no arc, no whine. It stays restrained until the last 0.4 s, then its low body swells; 80 ms
+// before the release it drops by 20 dB, a held breath.
 
-/** The bursts of the arcs: (picture seconds, strength 0..1, length in seconds). */
-const ARCS: readonly (readonly [number, number, number])[] = [
-  [44.03, 0.25, 0.05],
-  [44.2, 0.3, 0.05],
-  [44.37, 0.5, 0.26],
-  [44.7, 0.65, 0.07],
-  [44.78, 0.7, 0.07],
-  [44.87, 0.75, 0.07],
-  [44.95, 0.85, 0.2],
-  [45.28, 0.95, 0.16],
-  [45.53, 1.0, 0.13],
-];
-
-/** One burst of an arc: a snap, then a train of impulses gated on and off at random. */
-function arc(seed: number, strength: number, len: number): Float64Array {
-  const r = rng(seed);
-  const n = nsamp(len + 0.02);
-  const y = new Float64Array(n);
-  addAt(y, S.tiltedBurst(seed + 1, 800.0, 9000.0, 0.003, { tilt: 0.3 }), 0, 1.5);
-  let on = true;
-  let next = r.exponential(0.008) * SR;
-  const rate = 4000 + 4000 * strength;
-  for (let i = 0; i < nsamp(len); i++) {
-    if (i >= next) {
-      on = !on;
-      next = i + r.exponential(on ? 0.008 : 0.004) * SR;
-    }
-    if (on && r.random() < rate / SR)
-      y[i] =
-        y[i]! +
-        r.uniform(0.3, 1.0) * (r.random() < 0.5 ? -1 : 1) * Math.exp(-i / (0.3 * nsamp(len)));
-  }
-  return y.map((v) => v * strength);
-}
+/** The release: the first frame of scene 3. */
+export const RELEASE = 45.7;
 
 function charge(m: Mix): void {
-  const T0 = 43.96;
-  const T1 = SCENE2_END;
-  const dur = T1 - T0;
-  const n = nsamp(dur);
   const TIP: Vec3 = [-1.2, 1.6, -6.5];
-  // the crackle: bursts on the frames of the arcs, band from 1 to 12 kHz, saturated
-  const raw = new Float64Array(n);
-  // review 6: the high part short: each arc at half its length, decaying fast; and more short bursts
-  // that come faster and faster toward the release (4 to 28 a second)
-  ARCS.forEach(([t, strength, len], k) =>
-    addAt(raw, arc(2500 + 7 * k, strength, Math.max(0.03, 0.5 * len)), nsamp(t - T0)),
-  );
-  const rb = rng(2530);
-  let tb = 44.55;
-  let kb = 0;
-  for (;;) {
-    tb += rb.exponential(1 / (4.0 + (24.0 * (tb - 44.55)) / (45.62 - 44.55)));
-    if (tb >= 45.62) break;
-    addAt(
-      raw,
-      arc(2560 + 7 * kb, 0.4 + 0.4 * ((tb - 44.55) / 1.07), rb.uniform(0.015, 0.035)),
-      nsamp(tb - T0),
-    );
-    kb++;
-  }
-  const shaped = spectral(raw, (f) => bandGain(f, 1000, 12000, 2));
-  const pk = Math.max(...shaped.map(Math.abs)) + 1e-12;
-  const crackle = shaped.map((v) => Math.tanh((2.5 * v) / pk) / Math.tanh(2.5));
-  const stop = nsamp(0.004);
-  for (let i = 0; i < stop; i++) crackle[n - stop + i] = crackle[n - stop + i]! * (1 - i / stop);
-  m.add('charge-crackle', crackle, T0, TIP, { target: -12.5, kind: 'i', sendDb: -5 });
-  // the hum of the voltage (review 4: deeper, a "wooo-woong"; review 6: it lasts long, from 43.6 s
-  // across the cut into the wide shot, swells faster and faster to the release, and rings 0.3 s past
-  // the cut): 36 Hz with a body from 72 to 144 Hz, steady in pitch; irregular surges of level and
-  // grit; a faint corona that sounds only with the bursts
+  // the hum of the voltage: 36 Hz with a body from 72 to 144 Hz, steady in pitch; irregular surges of
+  // level and grit (the "wooo-woong"), from 43.6 s across the cut into the wide shot
   const H0 = 43.6;
-  const H1 = SCENE2_END + 0.35;
+  const H1 = RELEASE;
   const hn = nsamp(H1 - H0);
-  const surge = env(
+  const level = env(
     [
       [H0, 0.0],
-      [44.18, 0.0],
-      [44.42, 0.8],
-      [44.62, 0.15],
-      [44.78, 0.2],
-      [45.0, 1.0],
-      [45.16, 0.3],
-      [45.24, 0.35],
-      [45.42, 1.0],
-      [45.5, 0.7],
-      [45.62, 1.0],
+      [43.75, 0.22],
+      [45.27, 0.35],
+      [45.45, 0.65],
+      [45.6, 1.0],
+      [45.62, 0.1],
+      [RELEASE - 0.002, 0.1],
+      [RELEASE, 0.0],
+    ],
+    H0,
+    hn,
+  );
+  const surge = env(
+    [
+      [H0, 0.3],
+      [44.18, 0.3],
+      [44.5, 0.9],
+      [44.75, 0.3],
+      [44.95, 0.4],
+      [45.2, 1.0],
+      [45.35, 0.5],
+      [45.6, 1.0],
       [H1, 1.0],
     ],
     H0,
@@ -841,58 +785,87 @@ function charge(m: Mix): void {
   const amps = [1.0, 0.95, 0.8, 0.6, 0.4, 0.25, 0.15];
   const ph = amps.map((_, k) => 0.7 * k);
   const hum = new Float64Array(hn);
-  const Bh = new Float64Array(hn);
   for (let i = 0; i < hn; i++) {
-    const t = H0 + i / SR;
-    const u = Math.min(1, (t - H0) / (SCENE2_END - H0));
-    const b =
-      t <= SCENE2_END
-        ? Math.min(1, (t - H0) / 0.15) * (0.25 + 0.75 * u ** 2.2)
-        : Math.exp(-(t - SCENE2_END) / 0.1);
-    Bh[i] = b;
+    const b = level[i]!;
     let x = 0;
     amps.forEach((a, k) => (x += a * Math.sin(2 * Math.PI * 36.0 * (k + 1) * (i / SR) + ph[k]!)));
-    const sw = 0.55 + 0.45 * surge[i]!;
+    const sw = 0.6 + 0.4 * surge[i]!;
     const g = 1 + 3.5 * b * sw;
     hum[i] = (Math.tanh((g * x) / 2.5) / Math.tanh(g)) * b * sw * walk[i]!;
   }
-  // the corona follows the bursts: the crackle's envelope over 10 ms
-  const cenv = new Float64Array(hn);
-  const off = nsamp(T0 - H0);
-  const k10 = nsamp(0.01);
-  let acc = 0;
-  for (let i = 0; i < hn; i++) {
-    const j = i - off;
-    acc += j >= 0 && j < n ? Math.abs(raw[j]!) : 0;
-    const jo = j - k10;
-    acc -= jo >= 0 && jo < n ? Math.abs(raw[jo]!) : 0;
-    cenv[i] = acc / k10;
-  }
-  const cm = Math.max(...cenv) + 1e-12;
-  const corona = S.norm(spectral(white(hn, 2521), (f) => bandGain(f, 2000, 7000, 2)));
-  const hp = Math.max(...hum.map(Math.abs)) + 1e-12;
-  const body = hum.map(
-    (v, i) => v + 0.06 * corona[i]! * Math.abs(v / hp) * Math.min(1, (2 * cenv[i]!) / cm),
-  );
-  m.addWide('charge-hum', [fade(body, 0.05, 0.004), fade(body, 0.05, 0.004)], H0, {
+  m.addWide('charge-hum', [fade(hum, 0.05, 0.002), fade(hum, 0.05, 0.002)], H0, {
     target: -16,
     kind: 'm',
     sendDb: -6,
   });
-  // the coil sings now and then: faint, short, at a fixed pitch
-  (
+  // a very faint, smooth corona: hiss from 2 to 7 kHz that follows the hum's level, no transients
+  const cor = S.wideNoise(H1 - H0, 2521, 2000, 7000, 2, false);
+  const ce = level.map((v) => Math.sqrt(v));
+  m.addWide(
+    'charge-corona',
     [
-      [44.5, 7200.0, 0.07],
-      [45.0, 8600.0, 0.08],
-      [45.33, 9400.0, 0.06],
-    ] as const
-  ).forEach(([t, f, d], k) => {
-    const w = new Float64Array(nsamp(d)).map((_, i) => {
-      const tt = i / SR;
-      return Math.sin(2 * Math.PI * f * tt) * Math.min(1, tt / 0.01) * Math.exp(-tt / (d / 3));
-    });
-    m.add(`charge-whine${k}`, w, t, TIP, { target: -31, kind: 'i', sendDb: -8 });
+      fade(
+        cor[0].map((v, i) => v * ce[i]!),
+        0.1,
+        0.002,
+      ),
+      fade(
+        cor[1].map((v, i) => v * ce[i]!),
+        0.1,
+        0.002,
+      ),
+    ],
+    H0,
+    {
+      target: -36,
+      kind: 'm',
+    },
+  );
+  void TIP;
+}
+
+/**
+ * The head of scene 3: the release of the bolt at 45.70 s, here until scene 3 is made, so the owner
+ * hears the gathering and the release together. The owner's rule for lightning: short and intense.
+ * One instant: a full-band tearing crack with a saturated body, a low pressure thump at the same
+ * instant (the stored hum let go), a very short push of air; heard for no more than about 0.3 s.
+ */
+function scene3Head(m: Mix): void {
+  const n = nsamp(0.45);
+  const crack = new Float64Array(n);
+  addAt(crack, S.tiltedBurst(2700, 300.0, 14000.0, 0.03, { tilt: 0.25, rise: 0.0003 }), 0, 1.0);
+  addAt(
+    crack,
+    S.heavyCrack(2701, { size: 2.0, dur: 0.15, kRate: 14, bright: 1.0 }).subarray(0, n),
+    0,
+    0.8,
+  );
+  const snap = S.saturate(crack, 3.0);
+  const [front, low] = S.whump(2702, 0.008, 0.45);
+  const thump = new Float64Array(n);
+  addAt(thump, front, 0, 0.8);
+  addAt(thump, low, 0, 0.8);
+  addAt(thump, S.boom(2703, { f: 40.0, tau: 0.1, dur: 0.45 }), 0, 1.0);
+  const air = S.puff(0.25, 2704, 200.0, 6000.0, 0.004, 0.06);
+  const cut = (x: Float64Array, keep: number) => {
+    const k0 = nsamp(keep);
+    const k1 = nsamp(keep + 0.08);
+    return x.map((v, i) => (i < k0 ? v : i < k1 ? v * (1 - (i - k0) / (k1 - k0)) : 0));
+  };
+  const at = RELEASE;
+  m.add('s3-bolt-crack', cut(S.norm(snap), 0.12), at, [-0.5, 1.8, -6.0], {
+    target: -5,
+    kind: 'i',
+    focusDb: 3,
+    sendDb: -14,
   });
+  m.add('s3-bolt-thump', cut(S.saturate(thump, 2.0), 0.12), at, [0.0, 0.5, -4.0], {
+    target: -9,
+    kind: 'i',
+    focusDb: 3,
+    sendDb: -16,
+  });
+  m.addWide('s3-bolt-air', [cut(air[0], 0.1), cut(air[1], 0.1)], at, { target: -14, kind: 'i' });
 }
 
 /** Leave layers out of a mix. */
@@ -906,7 +879,8 @@ function drop(m: Mix, names: readonly string[]): void {
 /** Scene 2, the stone giant: from scene 1's tail to the cut before scene 3. */
 export function scene2(): Mix {
   const m = new Mix('scene2', SCENE2_FROM, SCENE2_END, 1.5);
-  m.until = SCENE2_END;
+  // the release (the head of scene 3) starts 30 ms after the cut
+  m.until = RELEASE + 0.01;
   beds(m);
   redLayers(m, { bed: false });
   // review 1: the two settling stones of the study's coda (a trickle of 1 to 3 cm pieces) and its
@@ -927,12 +901,13 @@ export function scene2(): Mix {
   fist(m);
   dustWave(m);
   charge(m);
+  scene3Head(m);
   m.driveDb = 8.8;
   m.fixedMaster = SCENE1_MASTER;
   m.afterDb = [
     [SCENE2_FROM, 0],
-    [SCENE2_END, 0],
-    [SCENE2_END + 1.0, -60],
+    [RELEASE + 0.35, 0],
+    [SCENE2_END + 1.3, -60],
   ];
   return m;
 }

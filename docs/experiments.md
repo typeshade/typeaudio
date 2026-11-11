@@ -1220,5 +1220,26 @@ The render takes 83 s (197 layers). `test/to-web.test.ts` failed in CI on `d2217
 (`test/kinds.test.ts` took 205 s there). It now has the 120 s of the render test before it, as `main`
 gave the wall hit's parity test in `b5ed9be`.
 
-**Status.** The seventh render waits for the owner's review. The previews went to the owner privately;
+**Review 7, 2026-11-11.** The owner: the first crackle of the preparation is too big; the mage is
+skilled, so a sound other than crackle is better. Then the owner decided: the gathering is quiet; the
+gathering is the "wooo-woong" of extra-high voltage; the firing is spat out at extra-high output.
+
+- The gathering (43.6 to 45.70 s): every crackle, arc, whine and corona that followed the bursts is
+  gone. What stays is the hum (36 Hz and six harmonics, steady in pitch, irregular surges of level
+  and grit) and a very faint, smooth corona from 2 to 7 kHz that follows its level. It stays
+  restrained (-24 to -23 dB each 0.25 s from 43.5 to 45.0 s) until the last 0.4 s, when its low body
+  swells (-12.3 dB from 45.45 to 45.60 s). From 45.62 s it is 20 dB lower, a held breath: -29.2 dB
+  from 45.63 to 45.69 s. No transient stands 6 dB out from 2 to 8 kHz between 44.0 and 45.6 s.
+- The release, on the first frame of scene 3 (45.70 s), made here as the head of scene 3 (`s3-bolt-`
+  layers) so that the gathering and the release are heard together: one instant of a full-band
+  tearing crack with a saturated body, a low pressure thump at the same instant (the Friedlander
+  pulse, a low burst and a body at 40 Hz), and a push of air of 0.1 s; each cut after 0.12 s with a
+  fade of 80 ms, with little of it sent to the hall. It measures -9.1 dB over 0.15 s (the fist -8.1
+  dB; the limiter holds both at one ceiling) and stays within 20 dB of its peak for 0.35 s; 0.3 s
+  after it the level is 20.1 dB lower. The true peak of the render is -1.31 dBTP.
+- Scene 2's end fade starts at 46.05 s, after the release, and the preview runs to 46.7 s.
+
+The render takes 82 s (197 layers).
+
+**Status.** The eighth render waits for the owner's review. The previews went to the owner privately;
 the picture, its frames and its audio are not in this repository.
