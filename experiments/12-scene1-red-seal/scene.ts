@@ -1779,10 +1779,25 @@ function replaceRed(m: Mix): void {
  * The hole's voice and body, the orb, every stone that strikes, lands, grinds or breaks, the shell,
  * the lock, the rays and the ice; not the air, the wind, the dust or the tears of passing stones.
  */
-const MAIN =
+export const MAIN =
   /^(hole-(swallow|growl|mana|ring|core|roar|pressure)|orb-(body|voice|flight|approach|far|form)|launch|block-|leap-hit\d+$|tear-hit\d+$|drag-\d+-arrive|pile-|gather-grind|clump-grind|face-(grind|groan)|flame-(close|crumble|cracks)|shell|crack-|release|lock|ray-(hit|sear|lance|stone\d+$)|rock-burst-stone|wall-stones|spark-hit|ice-(boom|crack|crush|slab|groan)|whip|target-strike)/;
 function presence1(_m: Mix, name: string, l: Layer): void {
   if (MAIN.test(name)) body(l);
+}
+
+/**
+ * The study's red passage as this scene holds it: its layers, less what the rule cuts, with the
+ * stones that replace them. Scene 2 starts from it (experiment 13).
+ */
+export function redTail(m: Mix): void {
+  redLayers(m, { bed: false });
+  burstStone(m);
+  wallStones(m);
+  m.finish(cutSmall);
+  rockHuuk(m);
+  sparkSpray(m);
+  rayStones(m);
+  m.finish(replaceRed);
 }
 
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
@@ -1802,14 +1817,7 @@ export function scene(): Mix {
   );
   blackHole(m);
   orbAcross(m);
-  redLayers(m, { bed: false });
-  burstStone(m);
-  wallStones(m);
-  m.finish(cutSmall);
-  rockHuuk(m);
-  sparkSpray(m);
-  rayStones(m);
-  m.finish(replaceRed);
+  redTail(m);
   holeBody(m);
   m.finish(levelCore);
   suction(m);
