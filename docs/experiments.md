@@ -793,10 +793,11 @@ function-graph profile.
 | `src/study/dsp.ts`                          | `dsp.py`: filters, zero-phase and time-varying shaping of noise, modes, placement with reflections and Doppler, the late field, loudness |
 | `src/study/sources.ts`                      | `sources.py`: every model, with its parameters, its defaults and the order of its draws                                                  |
 | `src/study/mix.ts`, `src/study/passage.ts`  | `mix.py` (layers by loudness target, drive, look-ahead limiter, soft clip) and the helpers of `passages.py`                              |
+| `src/study/build.ts`, `src/study/part-keys.ts` | A mix built from its parts (`Mix.part`): a cache of parts keyed by the code each part reaches, worker threads for the others, the same samples |
 | `src/kinds/functions/study.ts`              | `studyBurst`, `studyBoom`, `studySlip` (groan and grind), `redRumble`, `redRoar`, `redCrackle`, `redMaterial` as typed functions         |
 | `experiments/12-scene1-red-seal/red.ts`     | The study's `red()`, statement by statement in the study's order                                                                         |
 | `experiments/12-scene1-red-seal/scene.ts`   | Scene 1: the black hole (0.0 to 20.0 s) and the red passage, in one mix                                                                  |
-| `experiments/12-scene1-red-seal/run.ts`     | `bun experiments/12-scene1-red-seal/run.ts red\|scene [--out dir] [--against r11.wav] [--parity study.f64]`                              |
+| `experiments/12-scene1-red-seal/run.ts`     | `bun experiments/12-scene1-red-seal/run.ts red\|scene [--out dir] [--against r11.wav] [--parity study.f64] [--workers n] [--no-cache] [--plain]` |
 | `experiments/12-scene1-red-seal/measure.ts` | The level each two frames, five bands in each section, the lag of the energy at each anchor                                              |
 | `experiments/12-scene1-red-seal/parity/`    | The shared generator in numpy, the study's red passage rendered with it, and the writers of the two test fixtures                        |
 | `test/study.test.ts`                        | Each model and each step of the mix against the study's script: 53 signatures, each sample within 1e-9 of its peak                       |

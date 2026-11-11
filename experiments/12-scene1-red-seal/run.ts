@@ -6,9 +6,10 @@
 //
 // The layers are built from their parts (`src/study/build.ts`): a part whose code and settings did
 // not change since a render is read from the cache (`.cache/scene-parts/`), and the others are made
-// on worker threads, one for each core. The samples are the same either way. `--workers N` sets the
-// threads (0 makes the parts in this thread), `--no-cache` reads and writes no cache, and `--plain`
-// runs the scene's code as written, with no builder.
+// on worker threads, one for each core. The samples are the same either way. `--workers N` sets
+// the threads (0 makes the parts in this thread), `--cache <dir>` puts the cache elsewhere,
+// `--no-cache` reads and writes no cache, and `--plain` runs the scene's code as written, with no
+// builder.
 //
 // `red` is the study's red passage (20.0 to 30.0 s, 2.5 s of tail). `scene` is scene 1, the red
 // seal, 0.0 to 29.5 s. Each writes a 24-bit stereo WAV at 48 kHz and a JSON of its layers. With
@@ -43,15 +44,17 @@ if (process.argv.includes('--plain')) m = what === 'red' ? red() : scene();
 else {
   const r = await build(join(here, what === 'red' ? 'red.ts' : 'scene.ts'), {
     exportName: what === 'red' ? 'red' : 'scene',
-    cacheDir: process.argv.includes('--no-cache') ? null : undefined,
+    cacheDir: process.argv.includes('--no-cache') ? null : arg('cache'),
     workers: workers === undefined ? undefined : Number(workers),
   });
   m = r.mix;
   built = r.report;
 }
 const t1 = performance.now();
-const y: Stereo = built ? await renderMaster(m) : m.render();
+const master = built ? await renderMaster(m) : null;
+const y: Stereo = master ? master.y : m.render();
 const t2 = performance.now();
+const outPeak = master ? master.peakDb : truePeakDb(y);
 const file = join(out, `${what}.wav`);
 writeFileSync(file, wav24(y));
 writeFileSync(
@@ -84,7 +87,7 @@ if (built)
     `${what}: ${built.parts} parts, ${built.loaded} from the cache, ${built.made} made on ${built.workers} workers (collect ${built.seconds.collect.toFixed(1)} s, keys ${built.seconds.keys.toFixed(1)} s, parts ${built.seconds.parts.toFixed(1)} s, finish ${built.seconds.finish.toFixed(1)} s), cache ${(built.cacheBytes / 2 ** 20).toFixed(0)} MiB`,
   );
 console.log(
-  `${what}: ${m.order.length} layers, master ${m.masterGainDb.toFixed(2)} dB, drive ${m.driveDb} dB (limiter ${m.limitDb.toFixed(1)} dB deep, ${(100 * m.limitedShare).toFixed(1)} % of the time), integrated ${integratedLufs(y).toFixed(1)} LUFS, true peak ${truePeakDb(y).toFixed(2)} dBTP; layers ${((t1 - t0) / 1000).toFixed(1)} s, master ${((t2 - t1) / 1000).toFixed(1)} s -> ${file}`,
+  `${what}: ${m.order.length} layers, master ${m.masterGainDb.toFixed(2)} dB, drive ${m.driveDb} dB (limiter ${m.limitDb.toFixed(1)} dB deep, ${(100 * m.limitedShare).toFixed(1)} % of the time), integrated ${integratedLufs(y).toFixed(1)} LUFS, true peak ${outPeak.toFixed(2)} dBTP; layers ${((t1 - t0) / 1000).toFixed(1)} s, master ${((t2 - t1) / 1000).toFixed(1)} s -> ${file}`,
 );
 const against = arg('against');
 if (against && what === 'red') console.log(report(compare(y, readWav(against)), 'engine', 'study'));

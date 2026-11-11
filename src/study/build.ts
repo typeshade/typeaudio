@@ -524,26 +524,52 @@ export async function build(
   };
 }
 
-/**
- * The mix's master (`Mix.render`), with the true peak of each channel measured on its own worker.
- * The largest of the channels' peaks in dB is the peak in dB of both, so the samples are the ones
- * `render` gives.
- */
-export async function renderMaster(m: Mix, peakDbtp = -2.0): Promise<Stereo> {
-  const url = new URL('./peak-worker.ts', import.meta.url);
-  const ws = [new Worker(url), new Worker(url)];
-  const peakOf = (w: Worker, x: Float64Array) =>
-    new Promise<number>((ok, fail) => {
+/** Two workers that measure the true peak of one channel each. */
+class PeakWorkers {
+  private readonly ws: Worker[];
+
+  private constructor() {
+    const url = new URL('./peak-worker.ts', import.meta.url);
+    this.ws = [new Worker(url), new Worker(url)];
+  }
+
+  static async with<T>(f: (p: PeakWorkers) => Promise<T>): Promise<T> {
+    const p = new PeakWorkers();
+    try {
+      return await f(p);
+    } finally {
+      for (const w of p.ws) w.terminate();
+    }
+  }
+
+  private one(w: Worker, x: Float64Array): Promise<number> {
+    return new Promise<number>((ok, fail) => {
       w.onmessage = (e: MessageEvent) => ok(e.data as number);
       w.onerror = (e) => fail(new Error(`a peak worker failed: ${e.message}`));
       w.postMessage(x);
     });
-  try {
-    return await m.renderWith(
-      async (x) => Math.max(...(await Promise.all(x.map((ch, c) => peakOf(ws[c]!, ch))))),
-      peakDbtp,
-    );
-  } finally {
-    for (const w of ws) w.terminate();
   }
+
+  /**
+   * The largest of the channels' peaks in dB is the peak in dB of both (`truePeakDb` takes the
+   * largest sample before the logarithm, which keeps the order), so the value is the same.
+   */
+  async peakDb(x: Stereo): Promise<number> {
+    return Math.max(...(await Promise.all(x.map((ch, c) => this.one(this.ws[c]!, ch)))));
+  }
+}
+
+/**
+ * The mix's master (`Mix.render`), with the true peak of each channel measured on its own worker:
+ * the samples are the ones `render` gives. `peakDb` is the true peak of the result, measured on
+ * the same workers.
+ */
+export async function renderMaster(
+  m: Mix,
+  peakDbtp = -2.0,
+): Promise<{ y: Stereo; peakDb: number }> {
+  return PeakWorkers.with(async (p) => {
+    const y = await m.renderWith((x) => p.peakDb(x), peakDbtp);
+    return { y, peakDb: await p.peakDb(y) };
+  });
 }

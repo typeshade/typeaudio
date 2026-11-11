@@ -11,7 +11,7 @@
 
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { dirname, resolve, sep } from 'node:path';
+import { dirname, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
 
 /** What the parts and the layer steps of a scene depend on. */
@@ -196,14 +196,19 @@ export function sceneKeys(entry: string): SceneKeys {
     return seen;
   };
 
+  // a file by its place from the entry, so that a copy of the scene elsewhere has the same keys
+  const root = resolve(entry);
+  const label = (file: string): string => (file === root ? '' : relative(dirname(root), file));
   const keyOf = (file: string, kind: string, name: string, node: ts.Node): string => {
     const h = createHash('sha256');
     const info = files.get(file)!;
     h.update(`${kind}\0${name}\0${node.getText(info.src)}\0`);
-    const deps = [...reach(file, node).entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
+    const deps = [...reach(file, node).values()]
+      .map((d) => [`${label(d.file)}:${d.name}`, d] as const)
+      .sort((a, b) => (a[0] < b[0] ? -1 : 1));
     for (const [k, d] of deps) h.update(`${k}\0${d.node.getText(files.get(d.file)!.src)}\0`);
     // statements that run on import, in every file
-    for (const f of files.values()) h.update(`${f.path}\0${f.loose}\0`);
+    for (const f of files.values()) h.update(`${label(f.path)}\0${f.loose}\0`);
     return h.digest('hex');
   };
 
