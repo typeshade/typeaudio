@@ -1165,7 +1165,7 @@ export function drop(m: Mix, names: readonly string[]): void {
  * scene 1's (its red passage's layers that sound here) and the giant's (its blocks, seats, body,
  * fist, the wave that arrives, the barrier) and the lightning's (the hum, the bolt, the strike).
  */
-const MAIN2 =
+export const MAIN2 =
   /^(barrier-(block|bloom)|block-hit|body-(creak|groan|rumble)|fist-(hit|pressure|slap)|giant-stands|pack-grind|seat\d+$|wave-arrive|charge-hum|s3-(bolt-(crack|thump|plasma)|barrier-(strike|strain|shatter)))/;
 function presence2(_m: Mix, name: string, l: Layer): void {
   if (MAIN.test(name) || MAIN2.test(name)) body(l);

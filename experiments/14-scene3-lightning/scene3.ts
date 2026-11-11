@@ -40,10 +40,12 @@ import {
   type Stereo,
   type Vec3,
 } from '../../src/study/dsp.ts';
-import { Mix } from '../../src/study/mix.ts';
+import { Mix, type Layer } from '../../src/study/mix.ts';
+import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
 import { concat, line } from '../../src/study/passage.ts';
 import * as S from '../../src/study/sources.ts';
 import {
+  MAIN2,
   SCENE1_MASTER,
   across,
   beds,
@@ -740,6 +742,17 @@ function after(m: Mix): void {
   });
 }
 
+/**
+ * The presence pass (`src/study/presence.ts`): the main events get the body of 120 Hz to 2 kHz:
+ * scene 2's that sound here (its charge and its bolt) and this scene's arcs, bolts, thunder, the
+ * strikes from the vault, the gathering, the climax and the blast; not the air, the dust or the wind.
+ */
+const MAIN3 =
+  /^(arc-(snap|crawl|hum)|b2-(pillar|weight|vault)|b2\d+$|g2-hum|b3-(release|thump|converge|jag|barrier)|blast-(crack|pressure|boom|roll|stone))/;
+function presence3(_m: Mix, name: string, l: Layer): void {
+  if (MAIN2.test(name) || MAIN3.test(name)) body(l);
+}
+
 /** Scene 3, the lightning: from scene 2's tail to the cut before the next attack. */
 export function scene3(): Mix {
   const m = new Mix('scene3', SCENE3_FROM, SCENE3_END, 2.0);
@@ -758,7 +771,11 @@ export function scene3(): Mix {
   m.finish(tidy3);
   // scene 2's review 9: its noise layers and cracks lose their harsh top
   m.eachLayer('scene3-low-pass', lowPass);
+  m.eachLayer('scene3-presence', presence3);
   m.driveDb = 8.8;
+  // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
+  m.lift = LIFT;
+  m.ceilingDb = CEILING_DBTP;
   m.fixedMaster = SCENE1_MASTER;
   m.afterDb = [
     [SCENE3_FROM, 0],
