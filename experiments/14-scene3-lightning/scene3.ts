@@ -21,7 +21,8 @@
 //                56.62 and 56.78
 //   56.95-57.22  the white blast
 //   57.22-57.72  the blast clears: a burnt shape; dark arcs crawl over the floor
-//   57.72-60.31  she stands in the settling dust; at 59.0 to 60.2 white streaks of wind whirl round her
+//   57.72-60.31  she stands in the settling dust, motes of mana floating round her; at 58.92 to 60.2
+//                white streaks swirl in and converge on a point just above her: the mana re-absorbed
 //   60.31-62.27  her face, close; her hair blows; the next attack follows at 62.27
 //
 // The rules of scenes 1 and 2 hold: one source for one event across the cuts, laid shot by shot with
@@ -825,6 +826,41 @@ function blast(m: Mix): void {
       [0.5, 1.0, -5.0],
       { target: -12, kind: 'i', sendDb: -6 },
     );
+    // review 9, 2026-11-12 (the owner: "at 13 s the barrier breaks"): the small hex barrier shatters
+    // in the blast, in the language of scene 2's barrier break: a bright rupture, the field's
+    // resonances (180 and 310 Hz) collapsing in 0.15 s, and a smooth spray that widens outward
+    const HEX: Vec3 = [0.0, 1.5, -3.5];
+    const rp = new Float64Array(nsamp(0.3));
+    addAt(rp, S.tiltedBurst(3820, 500.0, 11000.0, 0.015, { tilt: 0.3, rise: 0.0003 }), 0, 1.0);
+    m.add('hex-rupture', lp2(S.saturate(rp, 1.8), 11000), BLAST, HEX, {
+      target: -9,
+      kind: 'i',
+      sendDb: -8,
+    });
+    const cr = iir(S.norm(steady(0.25, 3821, 100, 600)), [
+      rbj('peak', 180, 2.0, 8),
+      rbj('peak', 310, 2.5, 6),
+    ]).map((v, i) => v * Math.exp(-i / SR / 0.05));
+    m.add('hex-collapse', lp2(fade(cr, 0.002, 0.02), 2000), BLAST, HEX, {
+      target: -13,
+      kind: 'i',
+      sendDb: -8,
+    });
+    ([-1, 1] as const).forEach((side, k) => {
+      const sn = nsamp(0.6);
+      const se = new Float64Array(sn).map((_, i) => {
+        const t = i / SR;
+        return Math.min(1, t / 0.01) * Math.exp(-t / 0.18);
+      });
+      const spray = lp2(steady(0.6, 3822 + k, 300, 9000), 9000).map((v, i) => v * se[i]!);
+      m.add(
+        `hex-spray${k}`,
+        spray,
+        BLAST,
+        line(HEX, [HEX[0] + side * 6.0, 1.6, HEX[2] + 2.0], sn),
+        { target: -13, kind: 'i', sendDb: -8, doppler: false },
+      );
+    });
   });
 }
 
@@ -875,30 +911,39 @@ function after(m: Mix): void {
         sendDb: -8,
       },
     );
-    (
-      [
-        [59.05, -1, 0.5],
-        [59.57, 1, 0.45],
-        [60.12, -1, 0.55],
-      ] as const
-    ).forEach(([t, side, d], k) => {
-      const g = S.wind(d, 4010 + 2 * k, 800, 6000);
-      const sh = env(
-        [
-          [0, 0],
-          [0.45 * d, 1],
-          [d, 0],
-        ],
-        0,
-        g[0].length,
+    // review 9 (the owner: "from 14 s the scattered mana is re-absorbed"): the frames at 24 a second
+    // show the motes of mana floating round her (57.6 to 58.8 s, the dust's smooth hiss carries
+    // them), then white streaks that swirl in and converge on a point just above her head (58.92 to
+    // 60.2 s). In the language of scene 2's gathering: two streams drawn in from wide around her,
+    // swirling, denser and a little brighter as they come (the band steps up; nothing glides),
+    // settling into her by the cut (in place of the three gusts of wind)
+    const POINT: Vec3 = [-0.3, 2.6, -6.0];
+    ([-1, 1] as const).forEach((side, k) => {
+      const r0 = 58.9;
+      const r1 = 60.28;
+      const gd = r1 - r0;
+      const gn = nsamp(gd);
+      const lo = S.norm(steady(gd, 4030 + k, 600, 4000));
+      const hi = S.norm(steady(gd, 4032 + k, 1200, 6500));
+      const fl = S.irregular(gn, 4034 + k, 6, 30);
+      const inrush = new Float64Array(gn).map((_, i) => {
+        const u = i / gn;
+        const settle = u < 0.85 ? 1 : Math.max(0, 1 - (u - 0.85) / 0.15);
+        return (
+          ((1 - u) * lo[i]! + u * hi[i]!) * (0.2 + 0.8 * u ** 1.3) * settle * (0.75 + 0.25 * fl[i]!)
+        );
+      });
+      const a = Math.floor(gn * 0.45);
+      m.add(
+        `mana-reabsorb${k}`,
+        lp2(fade(inrush, 0.08, 0.02), 9000),
+        r0,
+        concat(
+          line([side * 5.0, 2.0, -3.0], [-side * 3.0, 3.0, -8.0], a),
+          line([-side * 3.0, 3.0, -8.0], POINT, gn - a),
+        ),
+        { target: -18, kind: 'm', sendDb: -8, doppler: false },
       );
-      const x = g[0].map((v, i) => v * sh[i]!);
-      const h = Math.floor(x.length / 2);
-      const P = concat(
-        line([side * 3.0, 1.5, -3.0], [0.0, 1.6, -1.2], h),
-        line([0.0, 1.6, -1.2], [-side * 3.0, 1.7, -2.5], x.length - h),
-      );
-      m.add(`whirl${k}`, x, t - 0.45 * d, P, { target: -27 + 2 * k, kind: 'i', sendDb: -8 });
     });
     const hw = S.wind(SCENE3_END + 1.0 - 59.9, 4020, 600, 6500);
     hw[1] = hw[1].map((v, i) => 0.4 * v + 0.6 * hw[0][i]!);
