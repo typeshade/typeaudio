@@ -336,6 +336,11 @@ holds for scene 1: "Yes — this matters especially in animation."
   of large stones can carry a moment; a trickle of small ones does not.
 - In animation the picture draws only what it means, so the sound follows it: what the drawing leaves
   out, the sound leaves out too.
+- No small stones that roll, trickle or scatter, and no clicks that read as pebbles (the owner,
+  2026-11-11 and 2026-11-12: "It seems the sound of small stones rolling keeps being added"; "It's
+  there in the first scene around 7 s too"). A landing keeps its body, its crack and its thud, with
+  no scatter of pieces; a texture of fabric, dust or sparks is smooth, not a run of clicks.
+  `test/small-stones.test.ts` reads the scenes' sources and refuses the models that make them.
 
 ## The attack's level holds while it is on screen
 
