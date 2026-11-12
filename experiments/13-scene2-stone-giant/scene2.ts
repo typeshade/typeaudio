@@ -68,12 +68,12 @@ export const SCENE2_END = 45.67;
 export const SCENE1_MASTER = { gainDb: -9.458641855483506, trimDb: 0.967 };
 
 type Points = readonly (readonly [number, number])[];
-const env = (points: Points, t0: number, n: number) => curve(points, t0, n);
+export const env = (points: Points, t0: number, n: number) => curve(points, t0, n);
 
 /** The level of a stone that lands, from the accepted landing: -11 for 1.6 m, lower by its size. */
-const landing = (size: number) => -11 + 10 * Math.log10(size / 1.6);
+export const landing = (size: number) => -11 + 10 * Math.log10(size / 1.6);
 
-interface Part {
+export interface Part {
   readonly from: number;
   readonly to: number;
   readonly pos: Where;
@@ -81,7 +81,7 @@ interface Part {
 }
 
 /** One continuous signal (from `t0`), laid shot by shot with an equal-power crossfade of `xf` s at each cut. */
-function across(
+export function across(
   m: Mix,
   name: string,
   sig: Float64Array,
@@ -112,7 +112,7 @@ function across(
 }
 
 /** A block that passes the camera: steady low noise on a path that comes in, passes and goes on. */
-function pass(
+export function pass(
   m: Mix,
   name: string,
   t: number,
@@ -132,7 +132,7 @@ function pass(
 }
 
 /** Fade a stored layer by a gain that follows (picture seconds, gain) points. */
-function shapeLayer(m: Mix, name: string, points: Points): void {
+export function shapeLayer(m: Mix, name: string, points: Points): void {
   const l = m.layers.get(name)!;
   const ts = points.map((p) => p[0]);
   const vs = points.map((p) => p[1]);
@@ -143,7 +143,7 @@ function shapeLayer(m: Mix, name: string, points: Points): void {
 }
 
 /** Equal-power gain points from 1 to 0 (or 0 to 1) between a and b. */
-const xfade = (a: number, b: number, out: boolean): Points =>
+export const xfade = (a: number, b: number, out: boolean): Points =>
   Array.from({ length: 9 }, (_, k) => {
     const u = k / 8;
     const g = out ? Math.cos((Math.PI / 2) * u) : Math.sin((Math.PI / 2) * u);
@@ -151,7 +151,7 @@ const xfade = (a: number, b: number, out: boolean): Points =>
   });
 
 /** The hall's bed: scene 1's own bed to 31 s, crossed over 30.0 to 31.0 s to a bed of its own. */
-function beds(m: Mix): void {
+export function beds(m: Mix): void {
   m.part('bed', () =>
     fullBed(m, 0.0, 31.0, 101, -41.0, [
       [0, -30],
@@ -257,7 +257,7 @@ function face(m: Mix): void {
 // surface and a chip that flies off: not stone on stone.
 
 /** The glassy shimmer of the field: bright fluttering noise and fixed inharmonic partials. */
-function shimmer(dur: number, seed: number): Float64Array {
+export function shimmer(dur: number, seed: number): Float64Array {
   const n = nsamp(dur);
   const nz = S.tiltedBurst(seed, 2500.0, 11000.0, 0.22, { tilt: 0.5, dur, rise: 0.025 });
   const fl = S.irregular(n, seed + 1, 20, 90);
@@ -901,7 +901,7 @@ function tipPath(t0: number, n: number): ReturnType<typeof line> {
   );
 }
 
-function charge(m: Mix): void {
+export function charge(m: Mix): void {
   m.part('charge', () => {
     // the hum of the voltage: 36 Hz with a body from 72 to 144 Hz, steady in pitch; irregular surges of
     // level and grit (the "wooo-woong"), from 43.6 s across the cut into the wide shot
@@ -1084,7 +1084,7 @@ function charge(m: Mix): void {
  * One instant: a full-band tearing crack with a saturated body, a low pressure thump at the same
  * instant (the stored hum let go), a very short push of air; heard for no more than about 0.3 s.
  */
-function scene3Head(m: Mix): void {
+export function scene3Head(m: Mix): void {
   m.part('scene3Head', () => {
     const n = nsamp(0.45);
     const crack = new Float64Array(n);
@@ -1135,7 +1135,7 @@ function scene3Head(m: Mix): void {
  * strike on the barrier (the field's resonance and a harsh splash of electricity); the strain of the
  * field while the bolt presses; the barrier that shatters.
  */
-function bolt(m: Mix): void {
+export function bolt(m: Mix): void {
   m.part('bolt', () => {
     const T0 = RELEASE;
     const T1 = 47.6;
@@ -1266,11 +1266,12 @@ function bolt(m: Mix): void {
  * (24 dB an octave), its dry part and its hall together: the noise layers at 9 kHz, the cracks at
  * 12 kHz.
  */
-const LOW_9K =
+export const LOW_9K =
   /^(hair-|gust2|face-wind|stir|pack|seat\d+-scrape|dust-|wave-arrive|charge-corona|barrier-bloom|barrier-block|s3-bolt-plasma|s3-bolt-air|s3-barrier-strain|block-pass|debris-pass)/;
-const LOW_12K = /^(s3-bolt-crack|s3-barrier-strike|s3-barrier-shatter|fist-hit|seat\d+$|block-hit)/;
+export const LOW_12K =
+  /^(s3-bolt-crack|s3-barrier-strike|s3-barrier-shatter|fist-hit|seat\d+$|block-hit)/;
 
-function lowPass(_m: Mix, name: string, l: Layer): void {
+export function lowPass(_m: Mix, name: string, l: Layer): void {
   const fc = LOW_9K.test(name) ? 9000 : LOW_12K.test(name) ? 12000 : 0;
   if (!fc) return;
   for (const part of [l.dry, l.wet])
@@ -1281,7 +1282,7 @@ function lowPass(_m: Mix, name: string, l: Layer): void {
 }
 
 /** Leave layers out of a mix. */
-function drop(m: Mix, names: readonly string[]): void {
+export function drop(m: Mix, names: readonly string[]): void {
   for (const name of names) {
     m.layers.delete(name);
     for (let i = m.order.length - 1; i >= 0; i--) if (m.order[i] === name) m.order.splice(i, 1);
@@ -1296,7 +1297,7 @@ function drop(m: Mix, names: readonly string[]): void {
 /** The size of the chip the barrier's blocks no longer throw off (its draws only). */
 const CHIP = 0.12;
 
-const MAIN2 =
+export const MAIN2 =
   /^(barrier-(block|bloom)|block-hit|body-(creak|groan|rumble)|fist-(hit|pressure|slap)|giant-stands|pack-grind|seat\d+$|wave-arrive|charge-hum|s3-(bolt-(crack|thump|plasma)|barrier-(strike|strain|shatter)))/;
 function presence2(_m: Mix, name: string, l: Layer): void {
   if (MAIN.test(name) || MAIN2.test(name)) body(l);
