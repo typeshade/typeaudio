@@ -22,6 +22,7 @@ devices yet.
 | 9   | The force passage of a study, as a plan on the engine      | The kinds a scene of stone and force needs; a silence in the plan             | ended; container runs recorded (`docs/records/09-force-passage-container.md` to `docs/records/09-force-passage-container-5.md`); a block that lands was not reached; device runs not made                                                              |
 | 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
 | 12  | Scene 1, the red seal, from the study's models             | Whether the study's models, ported, make a scene in practical time            | accepted 2026-11-11 (render r5); reworked to 2026-11-12 by the owner's later rules, the presence and bolder passes (`823ef30`)                                                                                                                         |
+| 13  | Scene 2, the stone giant, from the study's models          | The second scene in the same scale; the join with the first                   | accepted 2026-11-11 (render r11, `261a41c`); reworked to 2026-11-12 (`3ace626`)                                                                                                                                                                        |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -1015,6 +1016,355 @@ The delivered render (`823ef30`, with `536f8a2` adding `Lift.except`, unused her
 -9.459 dB, integrated -10.5 LUFS, true peak -1.00 dBTP, the limiter 3.8 dB deep for 6.2 % of the time.
 `bun run check`, `test/study.test.ts`, `test/study-functions.test.ts`, `test/study-build.test.ts` and
 `test/small-stones.test.ts` pass. Scene 2 masters at this gain (`SCENE1_MASTER`, trim 0.967 dB).
+
+**Status.** Accepted; the owner said "Merge" for #80, #79 and #81 on 2026-11-12. The previews went to
+the owner privately; the picture, its frames and its audio are not in this repository.
+
+## 13. Scene 2, the stone giant, with the study's models in the engine
+
+The owner accepted scene 1 on 2026-11-11 (experiment 12, render r5 at `437fa7d`) and asked for the
+next scene. Scene 2 runs from 29.5 s to the cut before scene 3's lightning (45.67 s). Blocks fly at
+Frieren, gather into a giant, and its fist strikes the hall. It is made with the same models as
+scene 1 (`src/study/`), and the rules learnt in scene 1 hold: one source for one event across the
+cuts, no fast glide of a pitch, stone that lands at the level of the accepted landing, heavy things
+low, no hollow tube, no period.
+
+**The picture**, read at 6 and 24 frames a second with a cut detector: 29.50 to 30.32 s, scene 1's
+smoke; 30.32 to 33.58 s, her face, the hair blown hard, a blue barrier that flashes at 31.83 and
+32.66 s; 33.58 to 36.45 s, the emblem floor from above, stones that stir, she runs across; 36.45 to
+38.60 s, blocks fly at her and close on the camera at 37.9 s; 38.60 to 40.33 s, she runs on the
+giant's body; 40.33 to 41.42 s, the giant in the hall, its fist strikes at 41.18 s; 41.42 to 43.21
+s, a wave of dust and stones; 43.21 to 43.96 s, her silhouette; 43.96 to 45.67 s, a purple circle at
+her staff, sparks and small arcs.
+
+**What it holds.** `experiments/13-scene2-stone-giant/`: `scene2.ts` (the scene) and `run.ts`
+(`bun experiments/13-scene2-stone-giant/run.ts [--out dir] [--join scene1.wav]`). `src/study/mix.ts`
+gained `fixedMaster` (the gain and the trim of another mix's master) and records `trimDb`; neither is
+the study's, and the study's mixes do not use them.
+
+**The join with scene 1.** The mix of scene 2 starts at 28.5 s. It holds scene 1's bed (the same
+call, crossed over 30.0 to 31.0 s to a bed of its own) and every layer of the red passage that sounds
+there, among them the study's own coda for the face (hair-wind, hair-cloth, wind-tone, two stones
+that settle), which scene 1 leaves out after 29.5 s. It is mastered at scene 1's gain (-8.455 dB),
+with scene 1's trim after the clip (0.98 dB), found as the gain that matches the two over 28.6 to
+29.45 s. Measured: the two lie 0.004 dB apart there; their difference is -30.5 dB under scene 1 over
+the whole overlap and about -39 dB at 29.5 s. It is largest at 28.55 s, under 200 Hz, and dies away
+by 29.3 s: a low tail that scene 1 holds and scene 2 does not. `scene1-2-join.wav` is scene 1 to
+29.5 s and scene 2 after it, crossed over 20 ms.
+
+**The design**, with the study's models:
+
+| Picture          | Sound                                                                                                                                                                             |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Face             | A strong wind (`wind`, 250 Hz to 3.5 kHz) under the study's coda, carried 1 s into the floor shot; cloth in her hair; each barrier flash a soft crush and a breath of low air     |
+| Floor            | Stones that stir faster (`tumble`), a scrape that grows (`grind`), her steps (`stone_impact`, 2 cm)                                                                               |
+| The giant's mass | One source from 33.58 to 41.5 s, laid in four shots with crossfades: a low roll (`billow`, 30 to 220 Hz), a groan (`groan`, 55, 95, 170 Hz) and a grind, growing until the strike |
+| Blocks           | Eight blocks pass the camera on paths (Doppler and pan from the path); blocks strike blocks four times a second (`block_hit`, 0.6 to 1.2 m); three heavy seatings as they close   |
+| On the giant     | Her steps; three cracks of thick stone (`heavy_crack`, 1.5 m)                                                                                                                     |
+| The fist         | Air that rises with its speed (`aero`); at 41.18 s a slab of 2 m (`slab_fall`), a body at 48 Hz (`boom`), a crack, a pressure pulse (`whump`), the answers of two walls           |
+| Dust             | A burst (`puff`), a roll (`billow`) and a hiss (`dust`) across the cuts at 41.42 and 43.21 s; a falling mass (`rubble`); three stones that pass; settling ticks                   |
+| Charge           | Air drawn in, its band climbing (the study's gathering of mana), a breath of formants (`howl`), sparks (`pops`), five small arcs (`sizzle` and a bright burst)                    |
+
+A stone that lands is set at the level of scene 1's accepted landing: -11 LUFS over 0.1 s for 1.6 m,
+lower by 10·log10 of its size against that. The fist is the largest event, at -8.5.
+
+**Run 1, 2026-11-11.** Container, Bun 1.4.4, host CPU, compiler pin `415b276a`. The render takes
+83 s (layers 78 s, master 5 s; 194 layers). Integrated loudness -15.0 LUFS (scene 2 from 28.5 s),
+true peak -2.05 dBTP, the limiter 1.8 dB deep for 2.8 % of the time. RMS each half second: the face
+-23 to -25 dB, the floor -24 dB, the blocks -11 to -14 dB, on the giant -17 to -21 dB, the strike
+-9.8 dB, the dust -13 to -20 dB, the silhouette -25 to -30 dB, the charge -22 to -27 dB. Over 0.15 s
+the seatings measure -10.6 and -9.7 dB, beside scene 1's landing (-10.4 dB over 0.3 s), and the fist
+-7.9 dB over 0.3 s. Across each cut (50 ms windows over 0.5 s on each side) the level steps by 2.5 dB
+or less; the largest steps lie on events (the first block at 36.55 s, a crack at 40.08 s, the strike
+at 41.17 s).
+
+**What is not verified.** Nobody has listened to scene 2. The reference's audio holds music, so its
+level is no target. The low tail at the start of the overlap was not traced to its layer.
+
+**Review 1, 2026-11-11.** The owner asked for three changes and gave a rule.
+
+- A strange trickling plink in the face shot. It was the study coda's two settling stones (`settle0`
+  at 30.62 s and `settle1` at 31.34 s): each a landing and a scatter of 1 to 3 cm pieces. Measured:
+  five transients of 6 dB or more from 2 to 8 kHz between 29.5 and 33.6 s (31.02, 31.45, 31.57,
+  31.96, 32.48 s). They are cut, and so is the coda's cloth (`hair-cloth`: pitched grains); the
+  hair is now a fast flutter of noise (`gravel`). Two transients remain: the barrier's bloom at
+  31.87 s, and at 31.68 s a rise of the noise of the wind whose spectrum is as flat as the wind
+  around it (flatness 0.41 against 0.44 to 0.51), not a pitched grain.
+- The defensive magic. The frames at 12 a second show a field of blue hexagons that blooms in front
+  of her face at 31.85 s and holds to 32.25 s, and again from 32.70 to 32.98 s; it stops what the
+  blast throws at her. Each bloom is now a low whoomp of displaced air with a short glassy shimmer
+  (bright fluttering noise and fixed inharmonic partials, no glide) where the field is. Each stone it
+  stops (31.93, 32.08, 32.77, 32.89 s) is the stone's thud with its attack taken by the field (low
+  passed at 1.4 kHz and softened over 8 ms), the field's own resonance from 120 to 420 Hz, a crackle
+  of its surface and a chip that flies off. The blooms rise 7 to 8 dB over the 0.15 s before
+  them; the stones lie at -15.5 to -17 dB over 0.15 s, 0 to 4 dB over the bloom they follow.
+- The forming of the giant. It was one wash of roll, groan and grind from 33.58 to 41.5 s. Now 11
+  blocks slide and seat in sequence from 37.9 to 40.2 s: a scrape that grows, the seat in the timbre
+  of the accepted landing (`slab_fall`) with a deep clunk, some overlapping; two groans of the body;
+  a low rumble from the floor shot that grows as the body completes, one source across the cuts; and
+  the giant's first shift of weight at 40.42 s (a body at 36 Hz with a slow rise, and a groan). The
+  three seats that close on the camera are at the level of the accepted landing, the eight under
+  her 3 dB lower. Over 0.15 s the seats measure -8.5 to -10 dB and the fist -7.9 dB, 3.7 dB over the
+  moment before it.
+
+**The owner's rule (review 1).** A sound earns its place by its part in the moment (the answer
+"why"). Small detail of little weight that nobody would miss is cut: settling stones, settling
+ticks, small pebbles that trickle. In scene 2 that removed `settle0`, `settle1`, `settle-ticks`, her
+steps on stone (2 to 3 cm impacts), the small debris shaken off each seat, and the tail of the debris
+after the strike (now only the stones the wave throws, 0.3 to 0.9 m, for 1 s). The stones that stir
+on the floor are heavier and fewer (0.2 to 0.6 m). The study's patter of small debris under the
+smoke (`debris-rain`), which scene 1 holds to 29.5 s, fades out over 0.3 s after the join.
+
+Such layers in the accepted scene 1 (render r5 at `437fa7d`), listed for the owner and not changed:
+
+| Layer                                               | Time (s)              | Stones                                                                                      | Level (target)      |
+| --------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------- | ------------------- |
+| `far-debris`                                        | 0.3 to 3.9            | small falls, 5 to 20 cm                                                                     | -36 LUFS, 0.4 s     |
+| `pebbles`                                           | 8.1 to 9.9            | 3 to 10 cm                                                                                  | -31 LUFS, 0.4 s     |
+| `leap-debris`                                       | 16.3 to 18.2          | 5 to 25 cm                                                                                  | -27 LUFS, 0.4 s     |
+| `rock-burst` (study)                                | 21.98                 | a 35 cm stone and a scatter of 1 to 3 cm                                                    | -16 LUFS, 0.1 s     |
+| `wall-debris0`, `wall-debris1` (study)              | 26.7 to 29.1          | 15 to 50 cm, behind the ice                                                                 | -24 LUFS, 0.4 s     |
+| `debris-rain0`, `debris-rain1` (study)              | 28.63 to 30.9         | 5 to 20 cm                                                                                  | -28 LUFS, 0.4 s     |
+| inside `block-land`, `ray-debris0` to `ray-debris4` | 15.56; 25.98 to 26.88 | the scatter of 5 to 15 cm pieces in the accepted landing's timbre (`slab_fall`, weight 0.2) | part of the landing |
+
+Render r2: 83 s (layers 79 s, master 5 s; 208 layers). The join is unchanged (0.004 dB apart over
+the overlap). Across each cut the level steps by 2.3 dB or less, except at 38.60 s (-4.7 dB), where
+the seat at 38.42 s dies away before the next at 38.72 s.
+
+**Review 2, 2026-11-11.** The owner heard the preparation of the spell (43.96 to 45.67 s) as just
+sparks. The sparks, the small arcs and the breath are gone. The charge is now power that gathers
+over the whole shot, on one shape that grows to a crest at 45.45 s, holds, draws back once from
+45.50 s and stops on the cut, where scene 3's lightning lands:
+
+- mana drawn into the staff tip: swallows that converge on it from 2 to 4 m, faster and faster (2 to
+  11 a second), their band falling from 3 to 5 kHz to 350 to 600 Hz; at 45.40 s one large intake
+  from all round, cut on the cut;
+- a low drone that swells in level and density: noise from 40 to 160 Hz and partials at 55, 82.4
+  and 117 Hz with a breathing level;
+- stored charge: impulses from 300 to 3,000 a second (1.5 to 9 kHz) and a buzz with no period, from
+  many small arcs to one growing hum;
+- the circle's tone: fixed inharmonic partials (311, 466, 659, 987, 1397 Hz) that drift by 0.3 % and
+  grow with the square of the charge; no glide, no beep;
+- the air drawn in under it all, its band climbing.
+
+Measured each 0.25 s from 44.0 s: -29.7, -25.0, -20.9, -19.2, -16.6, -14.0 and -12.7 dB (before:
+-29.5 to -20.9 dB). Over 0.15 s the end measures -12.5 dB, under the fist (-7.9 dB); its highest
+sample is -2.6 dBFS against the fist's -2.1 dBFS. From 2 to 8 kHz no transient stands 6 dB out of
+the 50 ms before it: the crackle is dense, not a row of plinks. The render takes 87 s.
+
+**Review 3, 2026-11-11.** The spell is lightning. The frames at 12 a second show purple electricity
+at her staff tip: small sparks at 44.03 and 44.20 s, a ball of crackle from 44.37 to 44.62 s, arcs
+that reach the floor from 44.70 to 45.12 s, large arcs at 45.28, 45.37 and 45.53 s, and none at
+45.20, 45.45 and 45.62 s. The bolt fires on the first frame of scene 3 (45.70 s), after the cut at
+45.67 s. The owner: "a fast, powerful crackle for the preparation; the low hum, lower than you would
+expect, that ultra-high voltage gives; an occasional high tone; but the attack only short and
+intense". The swallows, the intake, the drone and the circle's tone of review 2 are gone. Now:
+
+- bursts of crackle on the frames of the arcs: a snap, then a train of impulses (4,000 to 8,000 a
+  second) gated on and off at random, from 1 to 12 kHz, saturated; stronger toward the release;
+- the hum of the voltage: 48 Hz and five harmonics, steady in pitch, its level and its grit (a soft
+  clip from 1 to 4) growing to the last arc;
+- three faint whines of a coil at fixed pitches (7.2, 8.6 and 9.4 kHz, 0.15 to 0.22 s);
+- a crest on the last arc, a hold, and a stop on the cut.
+
+Measured each 0.25 s from 44.0 s: -26.8, -24.1, -22.6, -18.4, -17.5, -16.3, -15.1 dB. Each arc rises
+0.6 to 6.3 dB over the 0.1 s before it. Under 120 Hz lies 40 % of the energy of the shot, from 1 to
+12 kHz 46 %. The last arc measures -15.0 dB over 0.15 s and the fist -7.9 dB; the true peak of scene
+2 stays at -2.04 dBTP. The render takes 79 s.
+
+**The owner's rule for lightning (review 3).** An attack of lightning is short and intense: one sharp,
+violent crack with a short low thump, no long tail, no glide. The bolt at 45.70 s lies in scene 3,
+which follows this rule.
+
+**Review 4, 2026-11-11.** The owner found the fourth render good and asked for a lower hum with the
+"wooo-woong" of extra-high voltage. Only the hum changed: 36 Hz and six harmonics (its body from 72 to
+144 Hz), steady in pitch; four slow surges at irregular intervals (0.58, 0.42 and 0.20 s apart) raise
+its level and its grit together, under a slow wander of the level with no period; a faint corona
+buzz from 2 to 7 kHz rides on its waveform; its level is 4 dB higher (-16 LUFS over 0.4 s). Over the
+shot, 25 to 60 Hz rose by 2.2 dB and 60 to 150 Hz by 5.8 dB; 1 to 12 kHz (the crackle) stayed within
+0.1 dB. Each 0.25 s from 44.0 s: -26.8, -23.7, -22.4, -17.9, -16.4, -14.3, -12.6 dB. The crest
+measures -12.8 dB over 0.15 s, under the fist (-7.9 dB); the true peak stays at -2.04 dBTP. The
+render takes 85 s.
+
+**Review 5, 2026-11-11.** The owner accepted the fifth render except the forming of the giant, which
+is to be refined. Nothing else changed. Five checks, and what each changed:
+
+1. Frame sync. The frames at 12 a second give the contacts. Blocks pass at 36.57, 36.98, 37.15,
+   37.40, 37.73 and 37.95 s, and crowd and touch at 37.15 to 37.68 s. They slam shut over the camera
+   at 38.10 s and shift at 38.52 s. Blocks slide into the body at 38.72 and 38.82 s. The head slides
+   up from 39.10 s and seats at 39.45 s. Nothing moves from 39.5 to 40.33 s. The giant shifts its
+   weight at 40.42 s. The passes, the four hits (37.15, 37.40, 37.57, 37.68 s) and the five seats
+   (38.10, 38.52, 38.72, 38.82, 39.45 s) lie on these frames. The random hits of the earlier renders
+   and the seats with no visible contact (from 38.93 to 40.20 s) are gone.
+2. Scale and progression. Few, near and distinct first (38.10 and 38.52 s), then deeper and heavier
+   ones (38.72 and 38.82 s, 1.4 and 1.7 m), then the head, the largest and deepest (2.3 m, its body
+   at 0.8 of its size's pitch). Over 0.3 s from 30 to 120 Hz the seats measure 23.9, 21.8, 25.9, 25.6
+   and 27.0 dB. The weight shift at 40.42 s now has its body at 46 Hz (36 Hz fell partly under the
+   master's high pass). Over 0.8 s it is the largest low moment of the assembly: 29.2 dB from 30 to
+   120 Hz and 28.6 dB from 20 to 80 Hz, against 28.3 to 29.0 dB for the seats. The fist stays the
+   loudest moment: -8.0 dB over 0.15 s against -14.8 dB, and 30.8 dB from 30 to 120 Hz. Under 80 Hz
+   the shift lies 1.4 dB over the fist.
+3. Variation. Each seat has its own size (1.1 to 2.3 m), its own body pitch (0.8 to 1.12 of its
+   size's) and length, its own ring (a crack, bright 0.25 to 0.6), its own scrape (0.1 to 0.35 s) and
+   its own place (near the camera, right, below, high on the head). Its level is the accepted
+   landing's for its size, -4 to 0 dB.
+4. Continuity. The first groan of the body starts at 38.40 s and runs across the cut at 38.60 s, and
+   the rumble grows from 37.85 s. Across that cut the level now steps by +0.8 dB (before: -4.7 dB).
+   Each cut of scene 2 steps by 2.3 dB or less. The largest steps lie on events: the slam at 38.10 s,
+   the shift at 40.42 s and an arc at 44.36 s.
+5. Weight. Stone under stress: two groans of the body (slips at 24 to 65 a second through resonances
+   at 38 to 140 Hz), and a low creak as the completed body takes the weight (39.5 to 40.35 s). The
+   rumble stays under them. No small debris.
+
+The render takes 76 s (191 layers). The join with scene 1 is unchanged.
+
+**Review 6, 2026-11-11.** Two ideas of the owner.
+
+- The forming of the giant: "because it is very advanced magic, the stones gather more quietly than
+  you would expect, but densely". The frame sync and the order of review 5 stay. Each seat is now 8
+  dB under the accepted landing's level, its attack softened (12 ms, low passed at 2.5 kHz) and its
+  crack ring a third of what it was. The four hits of the flying blocks are 9 dB under the landing
+  and softened as well. Under them: soft contacts of large stones (0.8 to 1.4 m, low passed at 1.8
+  kHz, a 15 ms attack) that press into one another, faster as the mass closes (6 to 22 a second);
+  three grinds of stone that thicken until the body is complete; and a faint, steady low pressure of
+  the magic that holds them (20 to 55 Hz, no tone). The weight shift is 3 dB lower. Measured: the
+  seats -16.6, -15.9, -13.8, -13.1 and -12.7 dB over 0.15 s (before: -11.1, -15.6, -11.2, -9.9 and
+  -10.0); the shift -16.7 dB (before -14.8); each 0.25 s from 37.75 to 40.5 s, 2 to 5 dB lower than
+  before; the fist now stands 7.2 dB over the mean of the assembly (before 5.0 dB).
+- The charge: "the high-frequency part short; the low part lasting long; the feeling of gathering
+  fast at high voltage". Each arc is half as long and dies fast; more short bursts (15 to 35 ms) come
+  faster and faster toward the release (4 to 28 a second); the coil's whines last 60 to 80 ms; the
+  corona sounds only with the bursts. The hum starts at 43.6 s, in the shot before, at a quarter of
+  its level, and swells faster and faster to the release; it rings 0.1 s (a time constant) past the
+  cut, under the scene's end fade. Measured from 2 to 12 kHz: 0.42 s in all within 10 dB of its
+  highest (before 0.95 s), 32 ms a burst on average (before 59 ms). From 25 to 150 Hz each 0.25 s
+  from 43.75 s: 9.0, 9.5, 13.1, 13.7, 16.1, 19.6, 21.6, 22.6 dB (before: 6.7, 3.3, 6.6, 9.8, 14.4,
+  18.3, 21.5, 22.1). The true peak stays at -2.05 dBTP.
+
+The render takes 83 s (197 layers). `test/to-web.test.ts` failed in CI on `d2217fb` (run
+43008052624): its test of the passage's master timed out at vitest's default 5 s on a slow runner
+(`test/kinds.test.ts` took 205 s there). It now has the 120 s of the render test before it, as `main`
+gave the wall hit's parity test in `b5ed9be`.
+
+**Review 7, 2026-11-11.** The owner: the first crackle of the preparation is too big; the mage is
+skilled, so a sound other than crackle is better. Then the owner decided: the gathering is quiet; the
+gathering is the "wooo-woong" of extra-high voltage; the firing is spat out at extra-high output.
+
+- The gathering (43.6 to 45.70 s): every crackle, arc, whine and corona that followed the bursts is
+  gone. What stays is the hum (36 Hz and six harmonics, steady in pitch, irregular surges of level
+  and grit) and a very faint, smooth corona from 2 to 7 kHz that follows its level. It stays
+  restrained (-24 to -23 dB each 0.25 s from 43.5 to 45.0 s) until the last 0.4 s, when its low body
+  swells (-12.3 dB from 45.45 to 45.60 s). From 45.62 s it is 20 dB lower, a held breath: -29.2 dB
+  from 45.63 to 45.69 s. No transient stands 6 dB out from 2 to 8 kHz between 44.0 and 45.6 s.
+- The release, on the first frame of scene 3 (45.70 s), made here as the head of scene 3 (`s3-bolt-`
+  layers) so that the gathering and the release are heard together: one instant of a full-band
+  tearing crack with a saturated body, a low pressure thump at the same instant (the Friedlander
+  pulse, a low burst and a body at 40 Hz), and a push of air of 0.1 s; each cut after 0.12 s with a
+  fade of 80 ms, with little of it sent to the hall. It measures -9.1 dB over 0.15 s (the fist -8.1
+  dB; the limiter holds both at one ceiling) and stays within 20 dB of its peak for 0.35 s; 0.3 s
+  after it the level is 20.1 dB lower. The true peak of the render is -1.31 dBTP.
+- Scene 2's end fade starts at 46.05 s, after the release, and the preview runs to 46.7 s.
+
+The render takes 82 s (197 layers).
+
+**Review 8, 2026-11-11.** Three changes.
+
+- The gathering: the low part is good; a little of the lightning beside it, here and there. The hum
+  is unchanged. Soft, short fizzes (20 to 50 ms, 1.5 to 6 kHz, a 5 ms attack) lie on ten frames of the
+  arcs between 44.03 and 45.53 s, 14.9 to 18.7 dB under the hum (measured on the layers, 50 ms from
+  each fizz); the last, inside the swell, 22.9 dB under it. The held breath stays.
+- The firing does not continue. The frames at 12 a second: the bolt streams from the staff from 45.70
+  s; at 46.05 s the picture cuts to the giant's side, where a barrier of blue hexagons forms (46.18
+  s); at 46.35 s the bolt strikes it in a white flash (46.40 s) and presses on it until 47.43 s; at
+  47.46 s (a cut) the barrier shatters. After the instant of the release, the bolt is now one
+  discharge to the shattering, laid shot by shot with crossfades: a torrent on the spectrum of the
+  study's beam (`turbulence`), a dense saturated crackle and a heavy low body (35 to 160 Hz), at a
+  level that wanders with no period (1.7 dB of deviation in 20 ms frames, no strong rate). The strike
+  on the barrier at 46.40 s is the field's resonance (120 to 420 Hz), a harsh splash of electricity
+  and a crack; the field strains while the bolt presses; at 47.46 s it shatters (crushed brightness,
+  a crack and the field's shimmer). Each 0.1 s: -8.0 dB at the release, -11 to -15 dB while it
+  streams and on the giant's side, -9.3 dB at the strike, -10 to -14 dB while it presses, then the
+  shatter and the fall. The render runs to 48.3 s and the preview to 47.6 s.
+- The shockwave does not arrive with the picture. The frames at 24 a second: the giant is lowest at
+  41.18 s and the first dust shows at 41.22 s, so the contact is at 41.20 s; the dust wall reaches
+  the camera at 41.43 s (it fills the frame to 41.51 s); a ring of shock lines crosses the foreground
+  at 41.72 s; stones fly at the camera at 42.26 and 42.65 s. Before, the loudest 20 ms lay at 41.34
+  s and 41.43 s and the ring at 41.62 s. Now the strike is at 41.20 s (2 dB smaller, its pressure 3 dB
+  smaller: it is 12 m away); the dust builds from 41.23 s and arrives with a pressure pulse at 41.43
+  s (+4 dB); the ring sweeps to 41.72 s; the stones pass at 42.26, 42.55 and 42.65 s. Measured: the
+  loudest 20 ms at 41.24 s (-6.4 dB), a fall to -9.6 dB at 41.30 s, a second rise to -7.9 dB from
+  41.40 to 41.46 s (30 to 150 Hz up by 3.4 dB), the ring at 41.67 s. The debris after the strike is
+  now the stones the wave throws (0.3 to 0.9 m for 1 s): review 1 recorded that change, but it had
+  not reached the code.
+
+True peak -1.33 dBTP. The render takes 89 s (206 layers).
+
+**Review 9, 2026-11-11.** The owner: "it feels like there is a lot of junk noise; a tearing; high
+frequency noise, like wind coming into a microphone with no windscreen". `clean.ts` measured where.
+The master adds little: the soft clip at most 1.3 dB above 8 kHz; the limiter worked 23 % of the time
+in the bolt and 13 % in the dust, and nothing clipped before it. The noise layers carried it: the
+bolt's crack, its saturated plasma and the strike on the barrier held 64 % of the energy above 8 kHz,
+and the hair's fast flutter (8 to 60 Hz) in the face shot sounded as wind on a microphone. The noise
+layers now pass a low pass at 9 kHz and the cracks one at 12 kHz (24 dB an octave); the hair is a slow
+flutter of band noise; the bolt is less saturated, its crackle ends at 9 kHz, and it goes 2 dB less
+into the limiter (now 15 % of the time). Above 8 kHz, before and after: the face -17.4 and -26.0 dB,
+the blocks -21.4 and -32.8, the giant -21.9 and -31.6, the bolt -15.5 and -21.7. Scene 1's tail
+(26.6 to 29.5 s) measures -27.4 dB above 8 kHz.
+
+**Parts, 2026-11-11.** After `main` took pull requests #77 and #78, scene 2 was cut into 18 parts
+(`Mix.part`), with the crossfade of the beds and the layers left out as a `finish` step (`tidy`) and
+the low pass as a layer step. The hall's thin high air of scene 2 ends at 8 kHz where it is made,
+since the layer step may not change what `tidy` reads. Plain, cold and warm renders are byte-identical:
+101 s plain, 45 s cold on workers, 8 s warm (the layers 0.9 s, the master 6.6 s); a change to one part
+renders in 10 to 13 s.
+
+**Review 10, 2026-11-11.** The owner: "I don't feel the wind pressure when the golem comes down to the
+ground". The frames at 24 a second: it goes down from 40.84 s, fastest from 41.05 to 41.18 s, and
+touches at 41.20 s. A new part, `descent-air`: the air the mass pushes, a low body (30 to 200 Hz) and
+broad air to 8 kHz that grow with the descent to the contact; a short gust out at the contact; a low
+push and a rush of air when the dust wall reaches the camera (41.43 s). The dust burst is 3 dB lower,
+so that the air is heard. Just before the contact the level rises by 3.0 dB, and from 200 Hz to 8 kHz
+by about 10 dB; the master's limiter holds the contact and the arrival at the ceiling, so they rise
+by 0.3 and 0.5 dB.
+
+**Accepted, 2026-11-11.** The owner accepted render r11 ("Good"), at commit `261a41c`, and said of
+the rule of review 1 that it applies to scene 1 too: "this matters especially in animation".
+
+| Section    | Seconds        | RMS (dB) | Above 8 kHz (dB) | Above 12 kHz (dB) |
+| ---------- | -------------- | -------- | ---------------- | ----------------- |
+| Face       | 29.50 to 33.58 | -21.3    | -26.0            | -39.6             |
+| Floor      | 33.58 to 36.45 | -27.1    | -31.1            | -38.6             |
+| Blocks     | 36.45 to 38.60 | -20.1    | -32.8            | -43.0             |
+| Giant      | 38.60 to 40.33 | -14.5    | -31.6            | -40.0             |
+| Fist       | 40.33 to 41.42 | -11.8    | -25.3            | -30.9             |
+| Dust       | 41.42 to 43.21 | -12.7    | -31.0            | -37.8             |
+| Silhouette | 43.21 to 43.96 | -23.1    | -27.8            | -32.8             |
+| Charge     | 43.96 to 45.70 | -19.5    | -30.4            | -36.1             |
+| Bolt       | 45.70 to 47.46 | -12.7    | -21.7            | -33.6             |
+
+The join with scene 1: over 28.6 to 29.45 s the two renders lie 0.004 dB apart. Across the cuts (50 ms
+windows over 0.5 s on each side) the level steps by 2.3 dB or less, except at 40.33 s (-4.0 dB, from
+the giant's back to the wide hall). Integrated loudness -14.9 LUFS from 28.5 s, true peak -2.04 dBTP,
+the limiter 6.1 dB deep for 4.5 % of the time. The release and the bolt (45.70 to 47.6 s, the `s3-`
+layers) are the head of scene 3 and stay in this experiment until scene 3 is made.
+
+### After the acceptance (pull request #79, 2026-11-11 and 2026-11-12)
+
+Scene 2 follows scene 1 at the join (pull request #80, merged in), and the owner reviewed it again.
+
+| Round     | The owner                                                                                                                                       | Change                                                                                                                                                                                                                                                                                                | Measured                                                                                                                                                |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| presence  | approved the pass for scenes 1 to 3                                                                                                             | the main events (the giant's blocks, seats, body, fist, the wave, the barrier, the hum, the bolt) get the body of 120 Hz to 2 kHz; the lift; -1 dBTP; scene 2 starts from scene 1's tail as scene 1 holds it (`redTail`)                                                                              | integrated -14.9 -> -11.4 LUFS; 500 Hz to 2 kHz -10.9 -> -8.8 dB of the whole (the reference video: -8.0)                                               |
+| no-roll   | "It seems the sound of small stones rolling keeps being added"                                                                                  | the guard found the seats' and the fist's scatter, `stir` (a tumble from 0.2 m, 1.5 dB under the mix at 33.6 to 36.5 s) and the chip of each barrier block; all gone (the chip's draws kept, so the blocks stay as accepted)                                                                          | the landings within 0.1 dB                                                                                                                              |
+| no-roll 2 | "In the second video around 15 s it's there too"                                                                                                | `staff-cloth` (43.6 s, the `cloth` model, 10 clicks a second) is a smooth breath of air                                                                                                                                                                                                               | no transient, kurtosis 170 -> 21                                                                                                                        |
+| bold      | "It would be good if the golem landing on the ground made a bigger sound - and in that sense, the whole sound design is too restrained overall" | the contact (41.20 s) a sized impact 6 dB over a large key event, with a crack of the floor of 4 m and the hall's answer; the weight shift (40.42 s) a smaller one; the fist +3 dB; the descent's and the wave's air -3 dB; continuous layers -3 dB; the drive 7.5 dB; the seats stay soft (review 7) | at the contact 30-80 Hz over 0.3 s -13.9 -> -9.9 dB; its 0.1 s peak -5.7 dB, every other event -8.0 dB or under; over the 3 s before it +4.4 -> +6.4 dB |
+| join      | -                                                                                                                                               | no lift over 45.0 to 47.6 s, as in scene 3 (`Lift.except`), so the two lift the same before the join                                                                                                                                                                                                  | the join within 0.004 dB                                                                                                                                |
+| position  | "During the preparation of the first single magic attack, the sound's position feels separate (as if parts play on their own)"                  | every layer of the charge and of the release on the staff's tip, close and right to 43.96 s, far and left of centre after, moving with it across the cut (`TIP_WIDE`)                                                                                                                                 | the spread of the layers' balance 4.8 -> 0.5 dB (close), 5.9 -> 2.6 dB (wide)                                                                           |
+| barrier   | "She uses mana as a protective barrier, and as the barrier breaks, she gathers the scattered mana again. Just redo that part." Then: "Good."    | at the tip: the held field (44.03 to 44.70 s, two soft resonances), the break at 44.70 s (a bright burst, a low thump, the field collapsing, a spray that widens), the gathering from 45.0 s (two streams drawn in, wide to narrow, the band stepping up), no held breath before the release          | 0.1 s levels 44.6 to 45.7 s: -15 -9 -11 -14 -15 -18 -19 -19 -18 -15 -14 -8 dB; the spray's L/R correlation 0.35, the gathering 0.02 -> 0.46             |
+
+The delivered render (`3ace626`): scene 1's master (gain -9.4586 dB, trim 0.967 dB, the join within
+0.002 dB over 29.2 to 29.45 s), integrated -12.4 LUFS, true peak -1.03 dBTP, the limiter 6.1 dB deep
+for 6.1 % of the time. `bun run check` and the study tests and the guard pass.
 
 **Status.** Accepted; the owner said "Merge" for #80, #79 and #81 on 2026-11-12. The previews went to
 the owner privately; the picture, its frames and its audio are not in this repository.
