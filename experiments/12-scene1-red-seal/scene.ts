@@ -53,7 +53,14 @@ import {
   ticks,
   times,
 } from '../../src/study/passage.ts';
-import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
+import {
+  BOLD,
+  CEILING_DBTP,
+  LIFT,
+  body,
+  impactSize,
+  scaleLayer,
+} from '../../src/study/presence.ts';
 import * as S from '../../src/study/sources.ts';
 import { MAIN, fastHit, hitDb, huuk, huukDb, passBy, redTail } from './tail.ts';
 
@@ -1530,6 +1537,44 @@ function presence1(_m: Mix, name: string, l: Layer): void {
   if (MAIN.test(name)) body(l);
 }
 
+/**
+ * The bolder pass (`src/study/presence.ts`, the owner on 2026-11-12: "the whole sound design is too
+ * restrained overall"): the key events get the size of an animation impact, the key layers 2 dB
+ * more, the continuous layers (beds, drawn air, torrents) 3 dB less.
+ */
+function bold1(m: Mix): void {
+  m.part('bold1', () => {
+    impactSize(m, 'k-launch', 4.713, 4100, { hold: 0.5, decay: 1.5, db: 0, pos: [0.0, 1.5, -4.0] });
+    impactSize(m, 'k-block', 15.56, 4110, {
+      hold: 0.6,
+      decay: 1.8,
+      db: 1,
+      pos: [0.5, 0.0, -6.0],
+      crack: 2.0,
+    });
+    impactSize(m, 'k-tear', 22.31, 4120, {
+      hold: 0.4,
+      decay: 1.2,
+      db: -1,
+      pos: [0.6, 1.2, -2.0],
+      crack: 1.5,
+    });
+    impactSize(m, 'k-release', 25.776, 4130, {
+      hold: 0.7,
+      decay: 2.0,
+      db: -1,
+      pos: [0.0, 2.0, -5.0],
+    });
+  });
+}
+const KEY1 = /^(launch|block-land|whip|flame-close)/;
+const CONT1 =
+  /^(bed|hole-roar|hole-inrush|hole-pressure|draw|far-draw|dark-draw|orbit|swirl|fly-air|flight-air|approach-air|orb-flight|dust-roll|dust-hiss|smoke|face-wind)/;
+function boldLevels1(_m: Mix, name: string, l: Layer): void {
+  if (KEY1.test(name)) scaleLayer(l, 2);
+  else if (CONT1.test(name)) scaleLayer(l, BOLD.continuousDb);
+}
+
 /** Scene 1, the red seal: the black hole, then the study's red passage. */
 export function scene(): Mix {
   const m = new Mix('scene1', 0.0, SCENE_END, 1.5);
@@ -1553,10 +1598,12 @@ export function scene(): Mix {
   suction(m);
   character(m);
   gathering(m);
+  bold1(m);
   m.eachLayer('carve', carve);
   m.eachLayer('fore-hole', foreHole);
   m.eachLayer('presence', presence1);
-  m.driveDb = 8.8;
+  m.eachLayer('bold', boldLevels1);
+  m.driveDb = BOLD.driveDb;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
   m.lift = LIFT;
   m.ceilingDb = CEILING_DBTP;
