@@ -43,7 +43,7 @@ import {
   type Vec3,
 } from '../../src/study/dsp.ts';
 import { Mix, type Layer } from '../../src/study/mix.ts';
-import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
+import { BOLD, CEILING_DBTP, LIFT, body, scaleLayer } from '../../src/study/presence.ts';
 import { concat, line, steady } from '../../src/study/passage.ts';
 import * as S from '../../src/study/sources.ts';
 import {
@@ -1118,6 +1118,17 @@ function headDown(_m: Mix, name: string, l: Layer): void {
     for (const ch of part) for (let i = 0; i < ch.length; i++) ch[i] = ch[i]! * g;
 }
 
+/**
+ * The bolder pass (`src/study/presence.ts`, the owner on 2026-11-12): the continuous layers 3 dB
+ * less, to give the attacks room (scene 2's list, so the overlap with it stays exact, and this
+ * scene's beds, hums between the attacks, the corona of the charged stone and the settling dust).
+ */
+const CONT3 =
+  /^(bed|hole-roar|hole-inrush|hole-pressure|draw|far-draw|dark-draw|orbit|swirl|fly-air|flight-air|approach-air|orb-flight|dust-roll|dust-hiss|smoke|face-wind|hair-wind|gust|arc-hum|arc-ticks|g2-hum|settle-dust)/;
+function boldLevels3(_m: Mix, name: string, l: Layer): void {
+  if (CONT3.test(name)) scaleLayer(l, BOLD.continuousDb);
+}
+
 /** Scene 3, the lightning: from scene 2's tail to the cut before the next attack. */
 export function scene3(): Mix {
   const m = new Mix('scene3', SCENE3_FROM, SCENE3_END, 2.0);
@@ -1142,7 +1153,8 @@ export function scene3(): Mix {
   m.eachLayer('scene3-low-pass', lowPass);
   m.eachLayer('scene3-presence', presence3);
   m.eachLayer('scene3-head', headDown);
-  m.driveDb = 8.8;
+  m.eachLayer('scene3-bold', boldLevels3);
+  m.driveDb = BOLD.driveDb;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
   // reviews 2 and 3: no lift over the first attack, so its contrast with the later ones stays
   m.lift = { ...LIFT, except: [[45.6, 47.6]] };
