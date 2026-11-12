@@ -14,8 +14,9 @@
 //   valleys stay, less deep.
 // - `CEILING_DBTP`: the highest true peak of the master, -1 dBTP (the owner's release ceiling).
 
-import { SR, iir, rbj, type Stereo } from './dsp.ts';
-import type { Layer } from './mix.ts';
+import { SR, addAt, iir, lp, nsamp, rbj, type Stereo, type Vec3 } from './dsp.ts';
+import type { Layer, Mix } from './mix.ts';
+import * as S from './sources.ts';
 
 /** The body of the main events: a broad bell from about 150 Hz to 1.7 kHz. */
 export const BODY = { hz: 650, q: 0.55, gainDb: 3.0 } as const;
@@ -121,4 +122,92 @@ export function liftQuiet(y: Stereo, lift: Lift, ceiling: number, t0 = 0): Stere
     return 10 ** (((1 - f) * g[k]! + f * g[k1]!) / 20);
   };
   return [y[0].map((v, i) => v * at(i)), y[1].map((v, i) => v * at(i))];
+}
+
+// ---- The bolder pass, the owner's go-ahead of 2026-11-12 ("the whole sound design is too restrained
+// overall"), shared by the scenes: the key events hit harder and bigger, the continuous layers make
+// room for them, and less drive into the soft clip keeps the attacks' punch.
+
+/** The bolder pass: the drive into the limiter and the soft clip, and the level of the continuous layers. */
+export const BOLD = { driveDb: 7.5, continuousDb: -3 } as const;
+
+/** Scale a layer (its dry part and its hall) by `db` (a layer step's work). */
+export function scaleLayer(l: Layer, db: number): void {
+  const g = 10 ** (db / 20);
+  for (const part of [l.dry, l.wet])
+    for (const ch of part) for (let i = 0; i < ch.length; i++) ch[i] = ch[i]! * g;
+}
+
+export interface Size {
+  /** Seconds the low body holds, and seconds it rolls away over. */
+  readonly hold: number;
+  readonly decay: number;
+  /** dB on every part (0: a large key event). */
+  readonly db: number;
+  /** Where the event is. */
+  readonly pos: Vec3;
+  /** The size in metres of a crack of the floor under it (0: none). */
+  readonly crack?: number;
+}
+
+/**
+ * The size of a key event, in animation style: a sub-pressure pulse at its onset, a body of 30 to 80
+ * Hz that holds and rolls away, a deep crack of the floor, and the hall that answers from both
+ * walls 0.17 and 0.26 s later. Each part is a layer named after `p`; under 10 kHz.
+ */
+export function impactSize(m: Mix, p: string, t0: number, seed: number, z: Size): void {
+  const [front, low] = S.whump(seed, 0.03, 1.2);
+  const sub = new Float64Array(nsamp(1.2));
+  addAt(sub, front, 0, 1.0);
+  addAt(sub, low, 0, 0.8);
+  addAt(sub, S.boom(seed + 1, { f: 32.0, tau: 0.25, dur: 1.2 }), 0, 1.0);
+  m.add(`${p}-sub`, S.saturate(sub, 1.3), t0, [z.pos[0], 0.0, z.pos[2]], {
+    target: -10 + z.db,
+    kind: 'i',
+    focusDb: 3,
+  });
+  const dur = z.hold + z.decay;
+  const body = S.billow(dur, seed + 2, 30.0, 80.0, 3.0);
+  const be = new Float64Array(body[0].length).map((_, i) => {
+    const t = i / SR;
+    return t < 0.02 ? t / 0.02 : t < z.hold ? 1 : Math.exp(-(t - z.hold) / (z.decay / 3));
+  });
+  m.addWide(
+    `${p}-body`,
+    [body[0].map((v, i) => v * be[i]!), body[1].map((v, i) => v * be[i]!)],
+    t0,
+    {
+      target: -12 + z.db,
+      kind: 'i',
+      sendDb: -6,
+    },
+  );
+  let crack: Float64Array | undefined;
+  if (z.crack) {
+    crack = lp(
+      lp(S.heavyCrack(seed + 3, { size: z.crack, dur: 0.7, kRate: 4, bright: 0.35 }), 10000),
+      10000,
+    );
+    m.add(`${p}-crack`, crack, t0 + 0.005, [z.pos[0], 0.0, z.pos[2]], {
+      target: -12 + z.db,
+      kind: 'i',
+      focusDb: 2,
+      sendDb: -6,
+    });
+  }
+  const src = new Float64Array(sub.length);
+  addAt(src, S.norm(sub), 0, 1.0);
+  if (crack) addAt(src, S.norm(crack).subarray(0, src.length), 0, 0.6);
+  (
+    [
+      [0.17, [-9.0, 2.5, -7.0]],
+      [0.26, [9.0, 2.5, -11.0]],
+    ] as const
+  ).forEach(([d, pos], j) =>
+    m.add(`${p}-room${j}`, S.slap(src, 1500), t0 + d, pos as Vec3, {
+      target: -17 + z.db - 2 * j,
+      kind: 'i',
+      sendDb: 0,
+    }),
+  );
 }
