@@ -577,7 +577,7 @@ function bolt3(m: Mix): void {
       );
     });
     m.add('b3-thump', S.boom(3705, { f: 34.0, tau: 0.3, dur: 0.8 }), B3, [0.0, 0.0, -3.0], {
-      target: -8,
+      target: -10,
       kind: 'i',
       focusDb: 3,
     });
@@ -705,21 +705,23 @@ function blast(m: Mix): void {
       focusDb: 3,
       sendDb: -10,
     });
-    m.add('blast-boom', S.boom(3802, { f: 38.0, tau: 0.7, dur: 2.5 }), BLAST, [0.0, 0.0, -5.0], {
+    m.add('blast-boom', S.boom(3802, { f: 38.0, tau: 0.5, dur: 1.8 }), BLAST, [0.0, 0.0, -5.0], {
       target: -9,
       kind: 'i',
       sendDb: -4,
     });
     const roll0 = S.billow(4.6, 3803, 25.0, 160.0, 3.0);
     // review 5 (clarity): mostly the same in both channels
-    const roll: Stereo = [roll0[0], roll0[0].map((v, i) => 0.7 * v + 0.3 * roll0[1][i]!)];
+    // reviews 5 and 6 (clarity): mono, and without its 150-500 Hz mud
+    const r0 = iir(roll0[0], [rbj('peak', 300, 0.7, -5)]);
+    const roll: Stereo = [r0, r0];
     const re = env(
       [
         [BLAST, 0.0],
         [BLAST + 0.1, 1.0],
-        [BLAST + 1.0, 0.55],
-        [BLAST + 2.5, 0.2],
-        [BLAST + 4.6, 0.0],
+        [BLAST + 0.8, 0.5],
+        [BLAST + 1.6, 0.15],
+        [BLAST + 2.4, 0.0],
       ],
       BLAST,
       roll[0].length,
@@ -731,12 +733,13 @@ function blast(m: Mix): void {
       {
         target: -10,
         kind: 'm',
-        sendDb: -6,
+        sendDb: -10,
       },
     );
-    const air = S.puff(1.6, 3804, 150.0, 6000.0, 0.01, 0.45);
+    // review 6 (clarity): the blast's air carries its detail, 600 Hz to 8 kHz
+    const air = S.puff(1.6, 3804, 600.0, 8000.0, 0.01, 0.45);
     m.addWide('blast-air', [lp2(air[0], 9000), lp2(air[1], 9000)], BLAST, {
-      target: -16,
+      target: -13,
       kind: 'i',
     });
     m.add(
@@ -769,7 +772,12 @@ function after(m: Mix): void {
     });
     const t0 = 57.8;
     const dur = SCENE3_END + 1.0 - t0;
-    const ds = S.dust(dur, 4000, { lo: 800.0, hi: 6500.0, sd: 2.0, grain: 0.3 });
+    // review 6 (clarity): the dust settles as a smooth, clear hiss of 2 to 9 kHz (no grain)
+    const ds = S.dust(dur, 4000, { lo: 2000.0, hi: 9000.0, sd: 2.0, grain: 0.0 }).map((c) =>
+      lp2(c, 9000),
+    ) as Stereo;
+    // partly the same in both channels, so the image stays clear
+    ds[1] = ds[1].map((v, i) => 0.4 * v + 0.6 * ds[0][i]!);
     const de = env(
       [
         [t0, 0.0],
@@ -786,9 +794,9 @@ function after(m: Mix): void {
       [ds[0].map((v, i) => v * de[i]!), ds[1].map((v, i) => v * de[i]!)],
       t0,
       {
-        target: -36,
+        target: -30,
         kind: 'm',
-        sendDb: -4,
+        sendDb: -8,
       },
     );
     (
@@ -798,7 +806,7 @@ function after(m: Mix): void {
         [60.12, -1, 0.55],
       ] as const
     ).forEach(([t, side, d], k) => {
-      const g = S.wind(d, 4010 + 2 * k, 300, 3500);
+      const g = S.wind(d, 4010 + 2 * k, 800, 6000);
       const sh = env(
         [
           [0, 0],
@@ -816,7 +824,8 @@ function after(m: Mix): void {
       );
       m.add(`whirl${k}`, x, t - 0.45 * d, P, { target: -27 + 2 * k, kind: 'i', sendDb: -8 });
     });
-    const hw = S.wind(SCENE3_END + 1.0 - 59.9, 4020, 400, 4000);
+    const hw = S.wind(SCENE3_END + 1.0 - 59.9, 4020, 600, 6500);
+    hw[1] = hw[1].map((v, i) => 0.4 * v + 0.6 * hw[0][i]!);
     const he = env(
       [
         [59.9, 0.0],
@@ -937,11 +946,11 @@ function enormity(
     { target: -15 + db, kind: 'm', sendDb: -6 },
   );
   crashes.forEach(([tc, pos, size], j) =>
-    m.add(`${p}-crash${j}`, lp2(S.slabFall(seed + 40 + j, size, 1.2, 0), 9000), tc, pos, {
+    m.add(`${p}-crash${j}`, lp2(S.slabFall(seed + 40 + j, size, 0.6, 0), 9000), tc, pos, {
       target: landing(size) + db - 4,
       kind: 'i',
       focusDb: 2,
-      sendDb: -8,
+      sendDb: -12,
     }),
   );
 }
@@ -1061,7 +1070,7 @@ function overlap3(m: Mix): void {
         9000,
       );
       m.add(`b3x-sizzle${j}`, fade(sz, 0.002, 0.003), t0, [side * 3.0, 1.8, -2.5], {
-        target: -13,
+        target: -11,
         kind: 'm',
         sendDb: -8,
       });
@@ -1099,11 +1108,10 @@ function size3(m: Mix): void {
       BLAST,
       3980,
       0.8,
-      1.8,
+      1.2,
       [
         [57.35, [-4.0, 0.0, -10.0], 2.5],
         [57.8, [5.0, 0.0, -12.0], 3.0],
-        [58.3, [-2.0, 0.0, -14.0], 2.2],
       ],
       1,
     );
