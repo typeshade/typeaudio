@@ -1157,7 +1157,7 @@ export function scene3(): Mix {
   m.driveDb = BOLD.driveDb;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
   // reviews 2 and 3: no lift over the first attack, so its contrast with the later ones stays
-  m.lift = { ...LIFT, except: [[45.6, 47.6]] };
+  m.lift = { ...LIFT, except: [[45.0, 47.6]] };
   m.ceilingDb = CEILING_DBTP;
   m.fixedMaster = SCENE1_MASTER;
   // review 3: a suck-back of 100 ms before each big attack, so it lands from quiet
