@@ -50,15 +50,22 @@ import {
   times,
 } from '../../src/study/passage.ts';
 import * as S from '../../src/study/sources.ts';
-import { CEILING_DBTP, LIFT, body } from '../../src/study/presence.ts';
+import {
+  BOLD,
+  CEILING_DBTP,
+  LIFT,
+  body,
+  impactSize,
+  scaleLayer,
+} from '../../src/study/presence.ts';
 import { MAIN, redTail } from '../12-scene1-red-seal/tail.ts';
 
 export const SCENE2_FROM = 28.5;
 export const SCENE2_JOIN = 29.5;
 export const SCENE2_END = 45.67;
 
-/** Scene 1's master (no clicks, `00a69d9`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 29.2 to 29.45 s (`run.ts --join`). */
-export const SCENE1_MASTER = { gainDb: -7.904833729780591, trimDb: 0.939 };
+/** Scene 1's master (the bolder pass, `823ef30`): its gain, and the trim after its clip, measured as the gain that matches scene 2 to scene 1 over 29.2 to 29.45 s (`run.ts --join`). */
+export const SCENE1_MASTER = { gainDb: -9.458641855483506, trimDb: 0.967 };
 
 type Points = readonly (readonly [number, number])[];
 const env = (points: Points, t0: number, n: number) => curve(points, t0, n);
@@ -1195,6 +1202,38 @@ function presence2(_m: Mix, name: string, l: Layer): void {
   if (MAIN.test(name) || MAIN2.test(name)) body(l);
 }
 
+/**
+ * The bolder pass (`src/study/presence.ts`, the owner on 2026-11-12: "the golem landing on the
+ * ground should make a bigger sound ... the whole sound design is too restrained overall"). The
+ * contact at 41.20 s is the largest moment of the scene: a sized impact 6 dB over a large key
+ * event, a crack of the floor of 4 m, the hall's answer; the weight shift at 40.42 s a smaller one.
+ * The fist's layers 3 dB more; the continuous layers 3 dB less (scene 1's, so the overlap with it
+ * stays exact, and this scene's beds, dust hiss and winds). The seats stay soft: the owner's review
+ * 7 asked the stones to gather quietly.
+ */
+function bold2(m: Mix): void {
+  m.part('bold2', () => {
+    impactSize(m, 'k-land', 41.2, 4200, {
+      hold: 1.2,
+      decay: 2.4,
+      db: 6,
+      pos: [0.0, 0.0, -6.0],
+      crack: 4.0,
+    });
+    impactSize(m, 'k-shift', 40.42, 4210, { hold: 0.4, decay: 1.2, db: -4, pos: [1.0, 0.0, -8.0] });
+  });
+}
+const KEY2 = /^(fist-(hit|pressure|slap)|giant-stands)/;
+// the air the giant pushes down and the wave's air make room for the contact
+const ROOM2 = /^(descent-(push|gust)|wave-air)/;
+const CONT2 =
+  /^(bed|hole-roar|hole-inrush|hole-pressure|draw|far-draw|dark-draw|orbit|swirl|fly-air|flight-air|approach-air|orb-flight|dust-roll|dust-hiss|smoke|face-wind|hair-wind|gust)/;
+function boldLevels2(_m: Mix, name: string, l: Layer): void {
+  if (KEY2.test(name)) scaleLayer(l, 3);
+  else if (ROOM2.test(name)) scaleLayer(l, -3);
+  else if (CONT2.test(name)) scaleLayer(l, BOLD.continuousDb);
+}
+
 /** Scene 2, the stone giant: from scene 1's tail to the cut before scene 3. */
 export function scene2(): Mix {
   const m = new Mix('scene2', SCENE2_FROM, SCENE2_END, 2.6);
@@ -1211,6 +1250,7 @@ export function scene2(): Mix {
   fist(m);
   descentAir(m);
   dustWave(m);
+  bold2(m);
   charge(m);
   scene3Head(m);
   bolt(m);
@@ -1218,7 +1258,8 @@ export function scene2(): Mix {
   // review 9: the noise layers lose their harsh top; the cracks keep their snap below 12 kHz
   m.eachLayer('low-pass', lowPass);
   m.eachLayer('scene2-presence', presence2);
-  m.driveDb = 8.8;
+  m.eachLayer('scene2-bold', boldLevels2);
+  m.driveDb = BOLD.driveDb;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
   m.lift = LIFT;
   m.ceilingDb = CEILING_DBTP;
