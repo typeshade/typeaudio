@@ -256,7 +256,7 @@ function crawl(m: Mix): void {
     const dw = S.levelWalk(n, 3410, 5.0, 1.0, 8.0);
     // the owner's rule (2026-11-11): sparse ticks read as pebbles; the charged stone is a faint,
     // smooth corona (2 to 7 kHz) at a level that wanders
-    const cor = S.wideNoise(t1 - t0, 3400, 2000, 7000, 2, false)[0];
+    const cor = lp2(S.wideNoise(t1 - t0, 3400, 2000, 7000, 2, false)[0], 7500);
     const d = new Float64Array(n).map((_, i) => cor[i]! * Math.min(1.5, dw[i]!));
     m.add('arc-ticks', fade(d, 0.05, 0.05), t0, GIANT, {
       target: -27,
@@ -351,14 +351,14 @@ function bolt2(m: Mix): void {
       addAt(w, S.boom(seed + 1, { f, tau, dur }), 0, 1.0);
       return S.saturate(w, 1.8);
     };
-    m.add('b2-weight', weight(3502, 32.0, 0.45, 1.2), B2, [-1.5, 1.5, -4.0], {
+    m.add('b2-weight', weight(3502, 32.0, 0.3, 0.7), B2, [-1.5, 1.5, -4.0], {
       target: -9,
       kind: 'i',
       focusDb: 3,
       sendDb: -8,
     });
     const BB = B2 + 0.04;
-    m.add('b2-weight-b', weight(3504, 27.0, 0.7, 1.8), BB, [1.2, 0.5, -3.5], {
+    m.add('b2-weight-b', weight(3504, 27.0, 0.4, 0.9), BB, [1.2, 0.5, -3.5], {
       target: -10,
       kind: 'i',
       focusDb: 3,
@@ -410,7 +410,7 @@ function bolt2(m: Mix): void {
     const lowB = S.norm(lp2(rawB, 3000));
     // the lower beam lands 40 ms after the upper
     const dB = new Float64Array(n).map((_, i) =>
-      i < nsamp(0.04) ? 0 : lowB[i]! + 0.7 * bodyB[i]!,
+      i < nsamp(0.04) ? 0 : lowB[i]! + 0.25 * bodyB[i]!,
     );
     // the thunder: a low roll with no period, and cracks at irregular times that grow fewer
     const roll = S.billow(dur, 3520, 25.0, 180.0, 4.0)[0];
@@ -459,14 +459,14 @@ function bolt2(m: Mix): void {
     // behind the pillar, thinning
     shots(m, 'b2a', B2, [
       { from: B2, to: 49.93, sig: dnA, pos: [-4.0, 2.0, -2.5], target: -13, sendDb: -10 },
-      { from: 49.93, to: 52.93, sig: wideA, pos: [-5.0, 5.0, -9.0], target: -18, sendDb: 0 },
+      { from: 49.93, to: 52.93, sig: wideA, pos: [-5.0, 5.0, -9.0], target: -18, sendDb: -8 },
       {
         from: 52.93,
         to: 53.6,
         sig: lp2(wideA, 900),
         pos: [-1.5, -3.0, -5.0],
         target: -20,
-        sendDb: -6,
+        sendDb: -10,
       },
       {
         from: 53.6,
@@ -474,20 +474,20 @@ function bolt2(m: Mix): void {
         sig: lp2(wideA, 300),
         pos: [-1.5, -3.0, -9.0],
         target: -30,
-        sendDb: -3,
+        sendDb: -10,
       },
-      { from: 54.2, to: T1, sig: thinA, pos: [-1.0, -3.0, -8.0], target: -22, sendDb: -4 },
+      { from: 54.2, to: T1, sig: thinA, pos: [-1.0, -3.0, -8.0], target: -22, sendDb: -10 },
     ]);
     shots(m, 'b2b', B2, [
       { from: B2, to: 49.93, sig: dbn, pos: [4.0, 0.8, -2.5], target: -12, sendDb: -10 },
-      { from: 49.93, to: 52.93, sig: wideB, pos: [6.0, 4.0, -10.0], target: -17, sendDb: 0 },
+      { from: 49.93, to: 52.93, sig: wideB, pos: [6.0, 4.0, -10.0], target: -17, sendDb: -8 },
       {
         from: 52.93,
         to: 53.6,
         sig: lp2(wideB, 600),
         pos: [1.5, -3.0, -5.0],
         target: -17,
-        sendDb: -6,
+        sendDb: -10,
       },
       {
         from: 53.6,
@@ -495,9 +495,9 @@ function bolt2(m: Mix): void {
         sig: lp2(wideB, 300),
         pos: [1.5, -3.0, -9.0],
         target: -27,
-        sendDb: -3,
+        sendDb: -10,
       },
-      { from: 54.2, to: 55.0, sig: wideB, pos: [1.0, -3.0, -8.0], target: -24, sendDb: -4 },
+      { from: 54.2, to: 55.0, sig: wideB, pos: [1.0, -3.0, -8.0], target: -24, sendDb: -10 },
     ]);
     // the two strikes from the vault
     const far = new Float64Array(nsamp(1.4));
@@ -705,12 +705,14 @@ function blast(m: Mix): void {
       focusDb: 3,
       sendDb: -10,
     });
-    m.add('blast-boom', S.boom(3802, { f: 38.0, tau: 1.4, dur: 4.5 }), BLAST, [0.0, 0.0, -5.0], {
+    m.add('blast-boom', S.boom(3802, { f: 38.0, tau: 0.7, dur: 2.5 }), BLAST, [0.0, 0.0, -5.0], {
       target: -9,
       kind: 'i',
       sendDb: -4,
     });
-    const roll = S.billow(4.6, 3803, 25.0, 160.0, 3.0);
+    const roll0 = S.billow(4.6, 3803, 25.0, 160.0, 3.0);
+    // review 5 (clarity): mostly the same in both channels
+    const roll: Stereo = [roll0[0], roll0[0].map((v, i) => 0.7 * v + 0.3 * roll0[1][i]!)];
     const re = env(
       [
         [BLAST, 0.0],
@@ -729,7 +731,7 @@ function blast(m: Mix): void {
       {
         target: -10,
         kind: 'm',
-        sendDb: 0,
+        sendDb: -6,
       },
     );
     const air = S.puff(1.6, 3804, 150.0, 6000.0, 0.01, 0.45);
@@ -901,7 +903,9 @@ function enormity(
       const t = i / SR;
       return t < rise ? t / rise : t < hold ? 1 : Math.exp(-(t - hold) / (decay / 3));
     });
-  const body = S.billow(dur, seed + 2, 30.0, 80.0, 3.0);
+  // review 5 (clarity): the low body mono, so it does not smear the image
+  const b0 = S.billow(dur, seed + 2, 30.0, 80.0, 3.0)[0];
+  const body: Stereo = [b0, b0];
   const be = shape(body[0].length, 0.03);
   m.addWide(
     `${p}-body`,
@@ -930,14 +934,14 @@ function enormity(
     `${p}-roll`,
     [roll[0].map((v, i) => v * re[i]!), roll[1].map((v, i) => v * re[i]!)],
     t0 + 0.08,
-    { target: -15 + db, kind: 'm', sendDb: 0 },
+    { target: -15 + db, kind: 'm', sendDb: -6 },
   );
   crashes.forEach(([tc, pos, size], j) =>
     m.add(`${p}-crash${j}`, lp2(S.slabFall(seed + 40 + j, size, 1.2, 0), 9000), tc, pos, {
-      target: landing(size) + db,
+      target: landing(size) + db - 4,
       kind: 'i',
       focusDb: 2,
-      sendDb: -2,
+      sendDb: -8,
     }),
   );
 }
@@ -976,8 +980,8 @@ function overlap2(m: Mix): void {
       9000,
     );
     shots(m, 'b2x-sizzle', t0, [
-      { from: t0, to: 49.93, sig: sz, pos: [0.0, 1.6, -2.5], target: -11, sendDb: -10 },
-      { from: 49.93, to: t0 + dur - 0.2, sig: sz, pos: [1.0, 4.5, -9.0], target: -15, sendDb: -4 },
+      { from: t0, to: 49.93, sig: sz, pos: [0.0, 1.6, -2.5], target: -8, sendDb: -10 },
+      { from: 49.93, to: t0 + dur - 0.2, sig: sz, pos: [1.0, 4.5, -9.0], target: -12, sendDb: -10 },
     ]);
     (
       [
@@ -999,7 +1003,7 @@ function overlap2(m: Mix): void {
         t,
         [side * 3.0, 2.0, -2.5],
         {
-          target: -10,
+          target: -8,
           kind: 'i',
           sendDb: -12,
         },
@@ -1068,7 +1072,7 @@ function overlap3(m: Mix): void {
 /** The doubled attack's weight class, and a core between the two beams for its first two seconds. */
 function size2(m: Mix): void {
   m.part('size2', () => {
-    enormity(m, 'b2x', B2, 3900, 0.8, 1.7, [
+    enormity(m, 'b2x', B2, 3900, 0.6, 1.3, [
       [50.15, [4.0, 0.0, -12.0], 2.0],
       [50.52, [-3.5, 0.0, -14.0], 1.8],
       [50.98, [6.0, 0.0, -15.0], 2.4],
@@ -1094,8 +1098,8 @@ function size3(m: Mix): void {
       'b3x',
       BLAST,
       3980,
-      1.2,
-      2.8,
+      0.8,
+      1.8,
       [
         [57.35, [-4.0, 0.0, -10.0], 2.5],
         [57.8, [5.0, 0.0, -12.0], 3.0],
@@ -1129,6 +1133,52 @@ function boldLevels3(_m: Mix, name: string, l: Layer): void {
   if (CONT3.test(name)) scaleLayer(l, BOLD.continuousDb);
 }
 
+/**
+ * Review 5, 2026-11-12: the owner, "from the golem attack scene on, it feels like the resolution
+ * drops". From 49.4 s the scene was bottom-heavy, short of 1 to 6 kHz, smeared by the hall (its share
+ * up to -1.4 dB) and by low bodies that differ left and right, flat (its onsets rose half as fast),
+ * with up to 21 layers at once. Separation, not level: the roars, the thunder and the rolls lose 4 dB
+ * at 350 Hz (the mud) and 5 dB under 150 Hz (the sized bodies carry the low end); the sustained layers duck 6 dB under each new transient (5 ms in, 0.25 s
+ * out), so one event's tail does not bury the next.
+ */
+const MUD3 = /^(b2[ab]\d+$|b2x-(core|roll)|b3x-roll|blast-roll|b3-converge)/;
+const SUSTAIN3 =
+  /^(b2[ab]\d+$|b2x-(body|roll|core|sizzle)|b2-weight|b3-converge|b3x-(body|roll|sizzle)|blast-(boom|roll)|bed3)/;
+const HITS3 = [
+  49.42, 49.48, 49.58, 49.7, 50.05, 50.15, 50.52, 50.59, 50.98, 52.72, 55.81, 56.62, 56.95, 57.35,
+  57.8, 58.3,
+];
+function clear3(m: Mix, name: string, l: Layer): void {
+  const mud = MUD3.test(name);
+  const duck = SUSTAIN3.test(name);
+  if (!mud && !duck) return;
+  // a layer is not ducked by its own onset
+  const own = m.t0 + l.start / SR;
+  const hits = HITS3.filter((h) => Math.abs(h - own) > 0.1);
+  for (const part of [l.dry, l.wet])
+    for (const ch of part) {
+      if (mud) {
+        const y = iir(Float64Array.from(ch), [
+          rbj('peak', 350, 0.8, -4),
+          rbj('ls', 150, 0.7071, -5),
+        ]);
+        for (let i = 0; i < ch.length; i++) ch[i] = y[i]!;
+      }
+      if (duck)
+        for (let i = 0; i < ch.length; i++) {
+          const t = m.t0 + (l.start + i) / SR;
+          let g = 1;
+          for (const h of hits) {
+            const u = t - h;
+            if (u < -0.005 || u > 1.2) continue;
+            const e = u < 0 ? (u + 0.005) / 0.005 : Math.exp(-u / 0.25);
+            g *= 1 - 0.5 * e;
+          }
+          ch[i] = ch[i]! * g;
+        }
+    }
+}
+
 /** Scene 3, the lightning: from scene 2's tail to the cut before the next attack. */
 export function scene3(): Mix {
   const m = new Mix('scene3', SCENE3_FROM, SCENE3_END, 2.0);
@@ -1154,6 +1204,7 @@ export function scene3(): Mix {
   m.eachLayer('scene3-presence', presence3);
   m.eachLayer('scene3-head', headDown);
   m.eachLayer('scene3-bold', boldLevels3);
+  m.eachLayer('scene3-clear', clear3);
   m.driveDb = BOLD.driveDb;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
   // reviews 2 and 3: no lift over the first attack, so its contrast with the later ones stays
