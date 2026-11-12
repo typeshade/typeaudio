@@ -23,6 +23,7 @@ devices yet.
 | 10  | A sound from seven questions, by a model with better tools | The form of a plan; materials, gestures and effects; a measure built here     | statement only; not started                                                                                                                                                                                                                            |
 | 12  | Scene 1, the red seal, from the study's models             | Whether the study's models, ported, make a scene in practical time            | accepted 2026-11-11 (render r5); reworked to 2026-11-12 by the owner's later rules, the presence and bolder passes (`823ef30`)                                                                                                                         |
 | 13  | Scene 2, the stone giant, from the study's models          | The second scene in the same scale; the join with the first                   | accepted 2026-11-11 (render r11, `261a41c`); reworked to 2026-11-12 (`3ace626`)                                                                                                                                                                        |
+| 14  | Scene 3, the lightning, from the study's models            | Three attacks that climb; the joins with scene 2                              | accepted 2026-11-12 (render reabsorb, `7631831`)                                                                                                                                                                                                       |
 
 The asks are the rows of `docs/compiler-asks.md`.
 
@@ -1368,3 +1369,64 @@ for 6.1 % of the time. `bun run check` and the study tests and the guard pass.
 
 **Status.** Accepted; the owner said "Merge" for #80, #79 and #81 on 2026-11-12. The previews went to
 the owner privately; the picture, its frames and its audio are not in this repository.
+
+## 14. Scene 3, the lightning, with the study's models in the engine
+
+Scene 3 of the reference video, 45.67 to 62.27 s (the next attack follows at 62.27 s), made with the
+study's models in the engine (`experiments/14-scene3-lightning/`), as scenes 1 and 2 are. Its mix
+starts at 44.67 s with scene 2's hall and charge, holds scene 2's head of this scene (the release at
+45.70 s, the bolt, the barrier that shatters at 47.46 s, the `s3-` layers of `scene2.ts`) and masters at
+scene 2's gain, so the two join at 45.67 s within 0.004 dB (over 45.40 to 45.62 s).
+
+**The shots** (the frames at 4, 12 and 24 a second, with a cut detector): the release across the hall
+(45.70 s); the giant's hex barrier forms, is struck (46.40 s) and shatters (47.46 s); the stone stays
+charged and arcs crawl over it (to 49.42 s); the second attack, doubled: a bolt from above and two thick
+beams (49.42 s), close, wide with branches from the vault (50.59 to 52.83 s), from above (52.93 s),
+behind a pillar (53.67 to 54.17 s), from above to the climax's cut; the third attack: beams from both
+sides converge on a small hex barrier (55.81 s), walls of jagged lightning (56.62 s), the white blast
+that shatters it (56.95 s); motes of mana float round her and are drawn back into her (57.6 to 60.2 s);
+her face (60.31 s).
+
+**The rules of this scene**, besides those of scenes 1 and 2:
+
+- Lightning: the attack short and intense; the bolt goes on for as long as it is seen.
+- The magic attack's level must not drop while it is on screen; contrast comes from the hit, not from
+  a gap before it (`docs/sound-design-loop.md`).
+- The three attacks climb: the first a whip; the second doubled, "as if four times as strong", two
+  beams that go toward the highs where they overlap; the third and the blast the largest.
+- Clarity: frequency slots, mono lows, short tails, little hall on dense layers; no small stones or
+  clicks (the guard).
+
+**The reviews** (each line one render; the previews went to the owner privately):
+
+| Render, commit                         | The owner                                                                                                                   | Change                                                                                                                                                                                                  |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| r1 `6d6205b`                           | - (first render)                                                                                                            | the scene from the frames: the release, the barrier, the crawl, the second bolt across five shots, the gathering, the third, the blast, the aftermath                                                   |
+| r2 `33cc063`                           | "I can tell it's attacking, but it feels too repetitive, and it's boring."                                                  | each attack its own colour, climbing; repeats with no new picture event cut; valleys between the attacks; a quiet aftermath                                                                             |
+| presence `1f1ea21`                     | (the pass for scenes 1 to 3)                                                                                                | the body, the lift, -1 dBTP; scene 2's master                                                                                                                                                           |
+| r3 `f7ca2bd`                           | "Scene 3 still feels repetitive. The magic attack goes out doubled, but the sound and the destructive power feel the same." | the doubled attack as two beams (two sources, 40 ms apart, each its weight), the giant's stone splitting and chunks breaking off; the climax from both sides; the first attack 2 dB lower in this scene |
+| r4 `022d384`                           | "It should sound more powerful. Not twice as strong - it should be exaggerated, as if four times as strong."                | `enormity`: a sub-pressure pulse, a 30-80 Hz body that rolls away, thunder through the hall, large chunks that crash; the first attack 5 dB lower and not lifted (`Lift.except`)                        |
+| r5 `df14047`                           | "The second attack a bit higher in sound? When they overlap, the wave grows - it should go toward the high frequencies."    | the upper beam 7 dB brighter above 2.5 kHz; a sizzle of 2 to 8 kHz where the beams overlap; harsh onsets; the climax as bright                                                                          |
+| no-roll `f3b07ef`, no-roll 2 `43a539b` | the rule on small stones and clicks                                                                                         | the crashes without scatter; the charged stone's ticks a smooth corona; the dying arcs a fizz; her hair smooth air                                                                                      |
+| bold `c545aab`                         | "The whole sound design is too restrained overall."                                                                         | continuous layers -3 dB; the drive 7.5 dB; no lift from 45.0 s, as in scene 2                                                                                                                           |
+| clear `26a4870`                        | "From the golem attack scene on, it feels like the resolution drops."                                                       | mono lows, shorter tails, less hall, 4 dB less at 350 Hz and 5 dB under 150 Hz on the roars, the sustained layers ducked under each new hit                                                             |
+| clear 2 `a53dcc5`                      | "From 14 s on, the resolution drops a bit too."                                                                             | the aftermath clear: the blast's roll and boom shorter and mono, a crash cut, the dust a smooth clear hiss                                                                                              |
+| clear 3 `080bef8`                      | "Watching from the scene change at 8 to 9 s, many sounds are missing."                                                      | the beams go on through every shot; the branches, the flash, the arcs in the cloud, the streak and the leaping figure get their sounds                                                                  |
+| clear 4 `40d9cd8`                      | "When it goes from 11 s to 12 s, the magic attack's volume must not get smaller."                                           | no suck-back before the climax or the doubled attack; the beams grow into the climax; no lift where the climax's peak would cap it                                                                      |
+| position, barrier (from scene 2)       | "The sound's position feels separate"; "she uses mana as a protective barrier ... she gathers the scattered mana again"     | the charge and the release on the staff's tip; the mana barrier, its break and its gathering (`scene2.ts`)                                                                                              |
+| reabsorb `7631831`                     | "At 13 s the barrier breaks, and from 14 s the scattered mana is re-absorbed - what about that?" Then: "Good."              | the hex barrier shatters on top of the blast (a rupture, the field's resonances collapsing, a spray); the streaks after it are the mana drawn back into her, in the language of scene 2's gathering     |
+
+**Accepted, 2026-11-12.** The owner accepted render reabsorb ("Good."), at `7631831`, and said "Merge"
+for #80, #79 and #81. Over 2 s from each onset:
+
+| Attack                    | 0.1 s peak (dB) | 30-150 Hz (dB) | Energy (dB) | Side against mid (dB) |
+| ------------------------- | --------------- | -------------- | ----------- | --------------------- |
+| 1, the whip (45.70 s)     | -10.4           | -22.4          | -17.3       | -7.5                  |
+| 2, doubled (49.42 s)      | -7.6            | -15.1          | -10.5       | -4.1                  |
+| 3 and the blast (55.81 s) | -6.8            | -13.6          | -10.0       | -5.1                  |
+
+Integrated -11.0 LUFS, true peak -1.01 dBTP, the limiter 6.5 dB deep for 6.1 % of the time; above
+12 kHz 34 dB or more under the whole in every shot. `bun run check`, the study tests and the guard pass.
+
+**Status.** Accepted. The previews went to the owner privately; the picture, its frames and its audio
+are not in this repository.
