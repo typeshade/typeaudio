@@ -861,8 +861,9 @@ function dustWave(m: Mix): void {
         0.1,
       ),
       43.6,
-      [0.4, 1.4, -1.0],
+      tipPath(43.6, sleeve.length),
       {
+        doppler: false,
         target: -34,
         kind: 'm',
         sendDb: -10,
@@ -881,9 +882,27 @@ function dustWave(m: Mix): void {
 /** The release: the first frame of scene 3. */
 export const RELEASE = 45.7;
 
+/**
+ * Review 12 (2026-11-12, the owner on scene 3: during the charge "the sound's position feels
+ * separate, as if parts play on their own"). The staff's tip in the frames: in her profile, close
+ * (43.21 to 43.96 s), at the right of the frame, about 1.5 m off; in the wide shot (43.96 to 45.67
+ * s, and the release at 45.70 s), left of centre, about 8 m off. Every layer of the charge and of the
+ * release sits on that one point and moves with it across the cut (0.1 s, no Doppler).
+ */
+const TIP_CLOSE: Vec3 = [0.45, 1.6, -1.5];
+export const TIP_WIDE: Vec3 = [-1.6, 1.8, -8.0];
+const TIP_CUT = 43.96;
+function tipPath(t0: number, n: number): ReturnType<typeof line> {
+  const k1 = Math.max(0, Math.min(n, nsamp(TIP_CUT - 0.05 - t0)));
+  const k2 = Math.max(k1, Math.min(n, nsamp(TIP_CUT + 0.05 - t0)));
+  return concat(
+    line(TIP_CLOSE, TIP_CLOSE, k1),
+    concat(line(TIP_CLOSE, TIP_WIDE, k2 - k1), line(TIP_WIDE, TIP_WIDE, n - k2)),
+  );
+}
+
 function charge(m: Mix): void {
   m.part('charge', () => {
-    const TIP: Vec3 = [-1.2, 1.6, -6.5];
     // the hum of the voltage: 36 Hz with a body from 72 to 144 Hz, steady in pitch; irregular surges of
     // level and grit (the "wooo-woong"), from 43.6 s across the cut into the wide shot
     const H0 = 43.6;
@@ -930,34 +949,26 @@ function charge(m: Mix): void {
       const g = 1 + 3.5 * b * sw;
       hum[i] = (Math.tanh((g * x) / 2.5) / Math.tanh(g)) * b * sw * walk[i]!;
     }
-    m.addWide('charge-hum', [fade(hum, 0.05, 0.002), fade(hum, 0.05, 0.002)], H0, {
+    m.add('charge-hum', fade(hum, 0.05, 0.002), H0, tipPath(H0, hn), {
       target: -16,
       kind: 'm',
       sendDb: -6,
+      doppler: false,
     });
     // a very faint, smooth corona: hiss from 2 to 7 kHz that follows the hum's level, no transients
     const cor = S.wideNoise(H1 - H0, 2521, 2000, 7000, 2, false);
     const ce = level.map((v) => Math.sqrt(v));
-    m.addWide(
-      'charge-corona',
-      [
-        fade(
-          cor[0].map((v, i) => v * ce[i]!),
-          0.1,
-          0.002,
-        ),
-        fade(
-          cor[1].map((v, i) => v * ce[i]!),
-          0.1,
-          0.002,
-        ),
-      ],
-      H0,
-      {
-        target: -36,
-        kind: 'm',
-      },
+    const corona = fade(
+      cor[0].map((v, i) => v * ce[i]!),
+      0.1,
+      0.002,
     );
+    m.add('charge-corona', corona, H0, tipPath(H0, corona.length), {
+      target: -36,
+      kind: 'm',
+      sendDb: -6,
+      doppler: false,
+    });
     // review 8: a little of the lightning beside the hum, here and there: soft, short fizzes on the
     // frames of the arcs, from 1.5 to 6 kHz, a 5 ms attack, 12 to 18 dB under the hum; no first crackle
     const fz = rng(2530);
@@ -975,7 +986,12 @@ function charge(m: Mix): void {
       },
       H1 - H0,
     );
-    m.add('charge-fizz', fizz, H0, TIP, { target: -30, kind: 'i', sendDb: -8 });
+    m.add('charge-fizz', fizz, H0, tipPath(H0, fizz.length), {
+      target: -30,
+      kind: 'i',
+      sendDb: -6,
+      doppler: false,
+    });
   });
 }
 
@@ -1009,19 +1025,20 @@ function scene3Head(m: Mix): void {
       return x.map((v, i) => (i < k0 ? v : i < k1 ? v * (1 - (i - k0) / (k1 - k0)) : 0));
     };
     const at = RELEASE;
-    m.add('s3-bolt-crack', cut(S.norm(snap), 0.12), at, [-0.5, 1.8, -6.0], {
+    // review 12: the release leaves from the staff's tip, where the charge was
+    m.add('s3-bolt-crack', cut(S.norm(snap), 0.12), at, TIP_WIDE, {
       target: -5,
       kind: 'i',
       focusDb: 3,
       sendDb: -14,
     });
-    m.add('s3-bolt-thump', cut(S.saturate(thump, 2.0), 0.12), at, [0.0, 0.5, -4.0], {
+    m.add('s3-bolt-thump', cut(S.saturate(thump, 2.0), 0.12), at, [TIP_WIDE[0], 0.5, TIP_WIDE[2]], {
       target: -9,
       kind: 'i',
       focusDb: 3,
       sendDb: -16,
     });
-    m.addWide('s3-bolt-air', [cut(air[0], 0.1), cut(air[1], 0.1)], at, { target: -14, kind: 'i' });
+    m.add('s3-bolt-air', cut(air[0], 0.1), at, TIP_WIDE, { target: -14, kind: 'i' });
   });
 }
 
@@ -1085,7 +1102,7 @@ function bolt(m: Mix): void {
         {
           from: T0,
           to: 46.05,
-          pos: [0.5, 1.8, -5.0] as Vec3,
+          pos: TIP_WIDE,
           opts: { target: -14, kind: 'm', sendDb: -8 },
         },
         {
