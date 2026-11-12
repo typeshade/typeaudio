@@ -915,8 +915,8 @@ function charge(m: Mix): void {
         [45.27, 0.35],
         [45.45, 0.65],
         [45.6, 1.0],
-        [45.62, 0.1],
-        [RELEASE - 0.002, 0.1],
+        // review 13: no held breath; the gathered charge is at its crest when it is let go
+        [RELEASE - 0.002, 1.0],
         [RELEASE, 0.0],
       ],
       H0,
@@ -991,6 +991,89 @@ function charge(m: Mix): void {
       kind: 'i',
       sendDb: -6,
       doppler: false,
+    });
+
+    // ---- Review 13, 2026-11-12. The owner: "she uses mana as a protective barrier, and as the
+    // barrier breaks, she gathers the scattered mana again." The frames at 24 a second: a knot of
+    // mana forms at the staff's tip and grows, flickering (44.03 to 44.66 s); at 44.70 s it ruptures
+    // and arcs burst outward and down to the floor, spreading wide across the frame to 45.16 s; from
+    // 45.24 s they draw back to the tip, the gathered core bright at 45.41 and at 45.6 s; the release
+    // at 45.70 s. One story at the staff's tip.
+    const BREAK = 44.7;
+    // the gathering starts while the arcs still spread (45.0 s), so the level does not sag
+    const G0 = 45.0;
+    // (1) the held field: low, steady pressure through two soft resonances, growing to the break
+    const fd = BREAK + 0.06 - 44.03;
+    const fn = nsamp(fd);
+    const fieldNoise = S.norm(steady(fd, 2600, 100, 600));
+    const res = iir(fieldNoise, [rbj('peak', 180, 2.0, 8), rbj('peak', 310, 2.5, 6)]);
+    const ff = S.irregular(fn, 2601, 2, 7);
+    const field = res.map((v, i) => {
+      const t = 44.03 + i / SR;
+      const grow = Math.min(1, (t - 44.03) / 0.5);
+      const end = t < BREAK ? 1 : Math.max(0, 1 - (t - BREAK) / 0.06);
+      return v * grow * end * (0.8 + 0.2 * ff[i]!);
+    });
+    m.add('mana-field', lp(lp(fade(field, 0.05, 0.005), 2000), 2000), 44.03, TIP_WIDE, {
+      target: -21,
+      kind: 'm',
+      sendDb: -6,
+    });
+    // (2) the break: a bright, short burst and a low thump; the mana bursts outward on both sides, a
+    // smooth spray that widens (no shards)
+    const bk = new Float64Array(nsamp(0.3));
+    addAt(bk, S.tiltedBurst(2610, 500.0, 11000.0, 0.015, { tilt: 0.3, rise: 0.0003 }), 0, 1.0);
+    m.add('mana-break', lp(lp(S.saturate(bk, 1.8), 11000), 11000), BREAK, TIP_WIDE, {
+      target: -13,
+      kind: 'i',
+      sendDb: -8,
+    });
+    const [bf, bl] = S.whump(2611, 0.006, 0.5);
+    const bt = new Float64Array(nsamp(0.5));
+    addAt(bt, bf, 0, 0.8);
+    addAt(bt, bl, 0, 0.8);
+    addAt(bt, S.boom(2612, { f: 45.0, tau: 0.12, dur: 0.5 }), 0, 1.0);
+    m.add('mana-break-thump', S.saturate(bt, 1.6), BREAK, [TIP_WIDE[0], 0.5, TIP_WIDE[2]], {
+      target: -17,
+      kind: 'i',
+    });
+    ([-1, 1] as const).forEach((side, k) => {
+      const sd = 0.5;
+      const sn = nsamp(sd);
+      const se = new Float64Array(sn).map((_, i) => {
+        const t = i / SR;
+        return Math.min(1, t / 0.01) * Math.exp(-t / 0.16);
+      });
+      const spray = lp(lp(steady(sd, 2620 + k, 300, 9000), 9000), 9000).map((v, i) => v * se[i]!);
+      m.add(
+        `mana-spray${k}`,
+        spray,
+        BREAK,
+        line(TIP_WIDE, [TIP_WIDE[0] + side * 5.0, 1.6, TIP_WIDE[2] + 2.0], sn),
+        { target: -18, kind: 'i', sendDb: -8, doppler: false },
+      );
+    });
+    // (3) the gathering: the scattered mana is drawn back into the tip from both sides, from wide to
+    // narrow, denser and a little brighter as it comes (the band steps up; nothing glides), into the
+    // hum's crest
+    ([-1, 1] as const).forEach((side, k) => {
+      const gd = RELEASE - G0;
+      const gn = nsamp(gd);
+      const lo = S.norm(steady(gd, 2630 + k, 600, 4000));
+      const hi = S.norm(steady(gd, 2632 + k, 1200, 6500));
+      const fl = S.irregular(gn, 2634 + k, 6, 30);
+      const inrush = new Float64Array(gn).map((_, i) => {
+        const u = i / gn;
+        const body = (1 - u) * lo[i]! + u * hi[i]!;
+        return body * (0.25 + 0.75 * u ** 1.2) * (0.75 + 0.25 * fl[i]!);
+      });
+      m.add(
+        `mana-inrush${k}`,
+        lp(lp(fade(inrush, 0.05, 0.004), 9000), 9000),
+        G0,
+        line([TIP_WIDE[0] + side * 5.0, 1.8, TIP_WIDE[2] + 2.0], TIP_WIDE, gn),
+        { target: -17, kind: 'm', sendDb: -6, doppler: false },
+      );
     });
   });
 }
