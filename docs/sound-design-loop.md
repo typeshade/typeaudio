@@ -337,6 +337,18 @@ holds for scene 1: "Yes — this matters especially in animation."
 - In animation the picture draws only what it means, so the sound follows it: what the drawing leaves
   out, the sound leaves out too.
 
+## The attack's level holds while it is on screen
+
+This is a rule of the owner's, given on 2026-11-12 in the review of scene 3 (experiment 14). It is
+design, not measurement.
+
+The owner, on the stretch into the climax: "When it goes from 11 s to 12 s, the magic attack's
+volume must not get smaller."
+
+- The magic attack's level must not drop while it is on screen. Contrast comes from the hit, not
+  from a gap before it.
+- A held breath or a suck-back before a hit is allowed only where the attack is not yet on screen.
+
 ## The vocabulary
 
 The vocabulary is units and presets made by experts. It is versioned as code. `explain` explains

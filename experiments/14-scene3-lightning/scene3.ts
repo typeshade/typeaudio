@@ -389,7 +389,8 @@ function bolt2(m: Mix): void {
       });
     });
     // review 7 (2026-11-12): the beams stream on to the climax's cut (the frames: steady to 55.75 s)
-    const T1 = 55.72;
+    // review 8: they hold and grow to the climax and hand straight into it
+    const T1 = 55.83;
     const dur = T1 - B2;
     const n = nsamp(dur);
     const lv: Points = [
@@ -397,7 +398,7 @@ function bolt2(m: Mix): void {
       [49.9, 0.9],
       [52.9, 0.8],
       [54.2, 0.75],
-      [55.62, 0.7],
+      [55.81, 0.9],
       [T1, 0.0],
     ];
     // the two beams: the upper a brighter roar with more crackle, the lower a dark heavy roar
@@ -434,7 +435,7 @@ function bolt2(m: Mix): void {
       [
         [B2, 1.0],
         [54.2, 0.85],
-        [55.62, 0.8],
+        [55.81, 1.0],
         [T1, 0.0],
       ],
       B2,
@@ -450,7 +451,7 @@ function bolt2(m: Mix): void {
       3541,
       new Float64Array(n).map((_, i) => {
         const tt = B2 + i / SR;
-        const e = tt < 54.5 ? 0 : tt < 55.65 ? 0.5 : 0;
+        const e = tt < 54.5 ? 0 : tt < 55.81 ? 0.5 : 0;
         return Math.min(1, e * fd[i]! ** 2);
       }),
     );
@@ -459,6 +460,15 @@ function bolt2(m: Mix): void {
     const thinA = new Float64Array(n).map((_, i) => aboveA0[i]! + 0.6 * fray[i]!);
     // each beam laid shot by shot: close, wide (both to the giant at the right, apart), from above,
     // behind the pillar, thinning
+    // review 8: the attack grows into the climax (its thunder decays, so the last shot rises by
+    // 3 dB from 54.9 s to the cut, and the level does not drop while the bolt is on screen)
+    const grow = (x: Float64Array) =>
+      x.map((v, i) => {
+        const tt = B2 + i / SR;
+        const u = Math.min(1, Math.max(0, (tt - 54.9) / (55.81 - 54.9)));
+        return v * 10 ** ((3 * u) / 20);
+      });
+    const lastA = grow(thinA);
     shots(m, 'b2a', B2, [
       { from: B2, to: 49.93, sig: dnA, pos: [-4.0, 2.0, -2.5], target: -13, sendDb: -10 },
       { from: 49.93, to: 52.93, sig: wideA, pos: [-5.0, 5.0, -9.0], target: -18, sendDb: -8 },
@@ -469,12 +479,13 @@ function bolt2(m: Mix): void {
         to: 54.2,
         sig: lp2(wideA, 500),
         pos: [-1.5, -3.0, -9.0],
-        target: -22,
+        target: -18,
         sendDb: -10,
       },
-      { from: 54.2, to: T1, sig: thinA, pos: [-1.5, -3.0, -6.0], target: -18, sendDb: -10 },
+      { from: 54.2, to: T1, sig: lastA, pos: [-1.5, -3.0, -6.0], target: -7, sendDb: -10 },
     ]);
     const aboveB = lp2(wideB, 1500);
+    const lastB = grow(aboveB);
     shots(m, 'b2b', B2, [
       { from: B2, to: 49.93, sig: dbn, pos: [4.0, 0.8, -2.5], target: -12, sendDb: -10 },
       { from: 49.93, to: 52.93, sig: wideB, pos: [6.0, 4.0, -10.0], target: -17, sendDb: -8 },
@@ -484,10 +495,10 @@ function bolt2(m: Mix): void {
         to: 54.2,
         sig: lp2(wideB, 500),
         pos: [1.5, -3.0, -9.0],
-        target: -21,
+        target: -17,
         sendDb: -10,
       },
-      { from: 54.2, to: T1, sig: aboveB, pos: [1.5, -3.0, -6.0], target: -17, sendDb: -10 },
+      { from: 54.2, to: T1, sig: lastB, pos: [1.5, -3.0, -6.0], target: -6, sendDb: -10 },
     ]);
     // the two strikes from the vault
     const far = new Float64Array(nsamp(1.4));
@@ -594,8 +605,8 @@ function vault2(m: Mix): void {
   });
 }
 
-// ---- 55.30 to 55.81: near silence. Only the voltage gathers, low and close, and is held for the
-// last 60 ms before the third release.
+// ---- 55.00 to 55.81: the voltage gathers under the second bolt, low and close, up to the third
+// release (review 8: no held breath; the attack's level does not drop while it is on screen).
 function gather2(m: Mix): void {
   m.part('gather2', () => {
     const t0 = 55.0;
@@ -603,9 +614,7 @@ function gather2(m: Mix): void {
       [t0, 0.0],
       [55.3, 0.25],
       [55.62, 0.6],
-      [55.74, 0.9],
-      [55.75, 0.05],
-      [B3 - 0.002, 0.05],
+      [55.79, 1.0],
       [B3, 0.0],
     ]);
     m.addWide('g2-hum', [h, h] as Stereo, t0, { target: -22, kind: 'm', sendDb: -10 });
@@ -1284,20 +1293,20 @@ export function scene3(): Mix {
   m.driveDb = BOLD.driveDb;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
   // reviews 2 and 3: no lift over the first attack, so its contrast with the later ones stays
-  m.lift = { ...LIFT, except: [[45.0, 47.6]] };
+  // review 8: nor over the end of the second bolt into the climax (54.0 to 56.5 s): the lift's cap
+  // reads the climax's peak and would lift the bolt less as the climax nears, a dip before the hit
+  m.lift = {
+    ...LIFT,
+    except: [
+      [45.0, 47.6],
+      [54.0, 56.5],
+    ],
+  };
   m.ceilingDb = CEILING_DBTP;
   m.fixedMaster = SCENE1_MASTER;
-  // review 3: a suck-back of 100 ms before each big attack, so it lands from quiet
-  m.beforeDb = [
-    [49.28, 0],
-    [49.31, -18],
-    [49.41, -18],
-    [49.42, 0],
-    [55.68, 0],
-    [55.71, -18],
-    [55.805, -18],
-    [55.81, 0],
-  ];
+  // review 8: no suck-back before any attack. The owner's rule: "the magic attack's level must not
+  // drop while it is on screen; contrast comes from the hit, not from a gap". Before the doubled
+  // attack (49.31 to 49.41 s) the arcs still crawl on the giant, so a gap there would read as a drop.
   m.afterDb = [
     [SCENE3_FROM, 0],
     [SCENE3_END, 0],
