@@ -1262,7 +1262,9 @@ export function scene2(): Mix {
   m.eachLayer('scene2-bold', boldLevels2);
   m.driveDb = BOLD.driveDb;
   // the presence pass: the quiet stretches lifted, the true peak at -1 dBTP
-  m.lift = LIFT;
+  // no lift over the release and the bolt (45.0 to 47.6 s): scene 3 plays them and keeps the lift
+  // off there, so the two lift the same and their join stays exact
+  m.lift = { ...LIFT, except: [[45.0, 47.6]] };
   m.ceilingDb = CEILING_DBTP;
   m.fixedMaster = SCENE1_MASTER;
   m.afterDb = [
