@@ -399,7 +399,7 @@ export class Mix {
       const c = lin(peakDbtp - 0.3);
       const dg = lin(drive);
       // the presence pass: the quiet stretches lifted, never into the limiter
-      if (this.lift) y = liftQuiet(y, this.lift, (c * lin(4.0)) / dg);
+      if (this.lift) y = liftQuiet(y, this.lift, (c * lin(4.0)) / dg, this.t0);
       const driven: Stereo = [y[0].map((v) => v * dg), y[1].map((v) => v * dg)];
       const gain = limiter(driven, c * lin(4.0), 0.004, 0.06);
       y = driven.map((ch) => ch.map((v, i) => c * Math.tanh((v * gain[i]!) / c))) as Stereo;
