@@ -388,16 +388,16 @@ function bolt2(m: Mix): void {
         sendDb: -6,
       });
     });
-    const T1 = 55.4;
+    // review 7 (2026-11-12): the beams stream on to the climax's cut (the frames: steady to 55.75 s)
+    const T1 = 55.72;
     const dur = T1 - B2;
     const n = nsamp(dur);
     const lv: Points = [
       [B2, 1.0],
       [49.9, 0.9],
       [52.9, 0.8],
-      [54.2, 0.7],
-      [54.7, 0.35],
-      [55.1, 0.1],
+      [54.2, 0.75],
+      [55.62, 0.7],
       [T1, 0.0],
     ];
     // the two beams: the upper a brighter roar with more crackle, the lower a dark heavy roar
@@ -433,8 +433,8 @@ function bolt2(m: Mix): void {
     const level = env(
       [
         [B2, 1.0],
-        [54.2, 0.8],
-        [54.8, 0.3],
+        [54.2, 0.85],
+        [55.62, 0.8],
         [T1, 0.0],
       ],
       B2,
@@ -450,54 +450,44 @@ function bolt2(m: Mix): void {
       3541,
       new Float64Array(n).map((_, i) => {
         const tt = B2 + i / SR;
-        const e = tt < 54.2 ? 0 : tt < 55.25 ? 0.5 * (1 - (tt - 54.2) / 1.05) : 0;
+        const e = tt < 54.5 ? 0 : tt < 55.65 ? 0.5 : 0;
         return Math.min(1, e * fd[i]! ** 2);
       }),
     );
-    const thinA = new Float64Array(n).map((_, i) => 0.5 * dnA[i]! + 0.8 * fray[i]!);
+    // from above again: the beams go on, and arcs flicker in the cloud
+    const aboveA0 = lp2(wideA, 3000);
+    const thinA = new Float64Array(n).map((_, i) => aboveA0[i]! + 0.6 * fray[i]!);
     // each beam laid shot by shot: close, wide (both to the giant at the right, apart), from above,
     // behind the pillar, thinning
     shots(m, 'b2a', B2, [
       { from: B2, to: 49.93, sig: dnA, pos: [-4.0, 2.0, -2.5], target: -13, sendDb: -10 },
       { from: 49.93, to: 52.93, sig: wideA, pos: [-5.0, 5.0, -9.0], target: -18, sendDb: -8 },
-      {
-        from: 52.93,
-        to: 53.6,
-        sig: lp2(wideA, 900),
-        pos: [-1.5, -3.0, -5.0],
-        target: -20,
-        sendDb: -10,
-      },
+      // from above, behind the pillar (muffled, about 5 dB lower), from above again
+      { from: 52.93, to: 53.6, sig: aboveA0, pos: [-1.5, -3.0, -5.0], target: -17, sendDb: -10 },
       {
         from: 53.6,
         to: 54.2,
-        sig: lp2(wideA, 300),
+        sig: lp2(wideA, 500),
         pos: [-1.5, -3.0, -9.0],
-        target: -30,
+        target: -22,
         sendDb: -10,
       },
-      { from: 54.2, to: T1, sig: thinA, pos: [-1.0, -3.0, -8.0], target: -22, sendDb: -10 },
+      { from: 54.2, to: T1, sig: thinA, pos: [-1.5, -3.0, -6.0], target: -18, sendDb: -10 },
     ]);
+    const aboveB = lp2(wideB, 1500);
     shots(m, 'b2b', B2, [
       { from: B2, to: 49.93, sig: dbn, pos: [4.0, 0.8, -2.5], target: -12, sendDb: -10 },
       { from: 49.93, to: 52.93, sig: wideB, pos: [6.0, 4.0, -10.0], target: -17, sendDb: -8 },
-      {
-        from: 52.93,
-        to: 53.6,
-        sig: lp2(wideB, 600),
-        pos: [1.5, -3.0, -5.0],
-        target: -17,
-        sendDb: -10,
-      },
+      { from: 52.93, to: 53.6, sig: aboveB, pos: [1.5, -3.0, -5.0], target: -16, sendDb: -10 },
       {
         from: 53.6,
         to: 54.2,
-        sig: lp2(wideB, 300),
+        sig: lp2(wideB, 500),
         pos: [1.5, -3.0, -9.0],
-        target: -27,
+        target: -21,
         sendDb: -10,
       },
-      { from: 54.2, to: 55.0, sig: wideB, pos: [1.0, -3.0, -8.0], target: -24, sendDb: -10 },
+      { from: 54.2, to: T1, sig: aboveB, pos: [1.5, -3.0, -6.0], target: -17, sendDb: -10 },
     ]);
     // the two strikes from the vault
     const far = new Float64Array(nsamp(1.4));
@@ -524,6 +514,83 @@ function bolt2(m: Mix): void {
       focusDb: 2,
       sendDb: -10,
     });
+  });
+}
+
+/**
+ * Review 7, 2026-11-12: the owner, "from the scene change at 8 to 9 s (52.93 s), many sounds are
+ * missing". The frames at 12 a second: in the wide shot more branches strike from the vault
+ * (51.83, 52.17, 52.58, 52.83 s) and a white flash bursts at 52.0 s; from above, arcs crackle where
+ * the beams meet the cloud (52.95 to 53.45 s) and a thick streak passes close (53.48 s); after the
+ * pillar a dark figure leaps across the foreground (54.33 s). Each gets its sound, each its own
+ * distance, side and size (the strike at 52.72 s and the far one at 50.59 s are in `bolt2`).
+ */
+function vault2(m: Mix): void {
+  m.part('vault2', () => {
+    (
+      [
+        [51.83, [4.0, 6.0, -10.0], 1.2, -11],
+        [52.17, [5.5, 7.0, -14.0], 0.6, -16],
+        [52.58, [-3.0, 6.0, -10.0], 0.9, -13],
+        [52.83, [-1.0, 7.0, -13.0], 0.6, -15],
+      ] as [number, Vec3, number, number][]
+    ).forEach(([t, pos, size, tg], k) => {
+      const [c, th] = strike(3600 + 10 * k, size, 0.1);
+      m.add(`b2-branch${k}`, c, t, pos, { target: tg, kind: 'i', focusDb: 2, sendDb: -8 });
+      m.add(`b2-branch${k}-thump`, th, t, pos, { target: tg - 5, kind: 'i', sendDb: -8 });
+    });
+    // 52.0 s: the white flash on the left, a burst of the discharge into the cloud
+    const fl = new Float64Array(nsamp(0.7));
+    addAt(fl, S.tiltedBurst(3650, 300.0, 10000.0, 0.05, { tilt: 0.5, rise: 0.002 }), 0, 1.0);
+    addAt(fl, S.boom(3651, { f: 45.0, tau: 0.18, dur: 0.7 }), 0, 0.7);
+    m.add('b2-flash', lp2(S.saturate(fl, 1.6), 10000), 52.0, [-4.0, 3.0, -9.0], {
+      target: -11,
+      kind: 'i',
+      sendDb: -8,
+    });
+    // 52.95 to 53.45 s: arcs crackle where the beams meet the cloud, dense, not ticks
+    const an = nsamp(0.5);
+    const aw = S.levelWalk(an, 3661, 3.0, 2.0, 8.0);
+    const arcs = arcCrackle(
+      0.5,
+      3660,
+      new Float64Array(an).map((_, i) => Math.min(1, 0.7 * aw[i]!)),
+    );
+    m.add('b2-cloud-arcs', fade(arcs, 0.03, 0.08), 52.95, [0.5, -2.0, -6.0], {
+      target: -19,
+      kind: 'm',
+      sendDb: -10,
+    });
+    // 53.48 s: a thick streak of the discharge passes close over the camera
+    const sn = nsamp(0.3);
+    const sb = new Float64Array(sn).map((_, i) => Math.sin((Math.PI * i) / sn) ** 2);
+    const streak = lp2(steady(0.3, 3670, 400, 7000), 9000).map((v, i) => v * sb[i]!);
+    const sh = Math.floor(sn / 2);
+    m.add(
+      'b2-streak',
+      streak,
+      53.48 - 0.15,
+      concat(
+        line([-2.5, 2.5, -2.0], [0.0, 2.0, -1.0], sh),
+        line([0.0, 2.0, -1.0], [2.5, 2.5, -2.0], sn - sh),
+      ),
+      { target: -16, kind: 'i', sendDb: -12 },
+    );
+    // 54.33 s: a dark figure leaps across the foreground: a smooth rush of air with its cloth
+    const fn = nsamp(0.35);
+    const fb = new Float64Array(fn).map((_, i) => Math.sin((Math.PI * i) / fn) ** 2);
+    const rush = lp2(steady(0.35, 3680, 300, 4000), 8000).map((v, i) => v * fb[i]!);
+    const fh = Math.floor(fn / 2);
+    m.add(
+      'b2-leap',
+      rush,
+      54.33 - 0.15,
+      concat(
+        line([2.5, 1.5, -1.5], [0.0, 1.5, -0.8], fh),
+        line([0.0, 1.5, -0.8], [-2.5, 1.5, -1.5], fn - fh),
+      ),
+      { target: -20, kind: 'i', sendDb: -12 },
+    );
   });
 }
 
@@ -1198,6 +1265,7 @@ export function scene3(): Mix {
   bolt(m);
   crawl(m);
   bolt2(m);
+  vault2(m);
   size2(m);
   overlap2(m);
   gather2(m);
