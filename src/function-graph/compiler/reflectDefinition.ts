@@ -58,7 +58,7 @@ export function reflectDefinition(
       fail(`${p.name}: assign exactly one input, context or state binding.`);
     if (state) {
       if (p.type.kind !== "struct" || p.mode !== "inout")
-        fail(`${p.name}: state must be an inout<State> parameter.`);
+        fail(`${p.name}: state must be an @inout parameter of a state struct: write "@inout ${p.name}: State".`);
       const name = p.type.kind === "struct" ? p.type.name : "";
       const fields = module.structs.find((s) => s.name === name)?.fields;
       const initializer = module.funcs.find(

@@ -122,7 +122,7 @@ ${fields(['h1', 'h2', 'l1', 'l2'])}
 }
 export function createBurst(): BurstState { return new BurstState(); }
 /** burst: noise between lo and hi Hz (second order) under a raised-cosine rise and a decay of tau seconds. */
-export function studyBurst(state: inout<BurstState>, key: u32, lo: f32, hi: f32, tau: f32, rise: f32, gain: f32): f32 {
+export function studyBurst(@inout state: BurstState, key: u32, lo: f32, hi: f32, tau: f32, rise: f32, gain: f32): f32 {
   const age: u32 = state.age;
   state.age = age + 1;
   const a: f32 = f32(age);
@@ -141,7 +141,7 @@ ${fields(['hp', 'hs1', 'hs2', 'lp', 'ls1', 'ls2', 'ph0', 'ph1'])}
 }
 export function createBoom(): BoomState { return new BoomState(); }
 /** boom: noise around f Hz (third order, 0.55 f to 1.5 f) and two modes at f and 0.72 f that sink by 8 %. */
-export function studyBoom(state: inout<BoomState>, key: u32, f: f32, tau: f32, aNoise: f32, aTone: f32): f32 {
+export function studyBoom(@inout state: BoomState, key: u32, f: f32, tau: f32, aNoise: f32, aTone: f32): f32 {
   const age: u32 = state.age;
   state.age = age + 1;
   const a: f32 = f32(age);
@@ -174,7 +174,7 @@ export function createSlip(): SlipState { return new SlipState(); }
  * (grind), through three wide resonances. scrape > 0 adds noise from 500 Hz to 4 kHz that follows
  * the level of the resonances. len is the length in frames, for the study's fades.
  */
-export function studySlip(state: inout<SlipState>, key: u32, rLo: f32, rHi: f32, f0: f32, f1: f32, f2: f32, q: f32, jitter: f32, burst: f32, scrape: f32, len: f32, gain: f32): f32 {
+export function studySlip(@inout state: SlipState, key: u32, rLo: f32, rHi: f32, f0: f32, f1: f32, f2: f32, q: f32, jitter: f32, burst: f32, scrape: f32, len: f32, gain: f32): f32 {
   const age: u32 = state.age;
   state.age = age + 1;
   const a: f32 = f32(age);
@@ -213,7 +213,7 @@ ${fields(['p0', 'p1', 'p2', 'h1', 'h2', 'l1', 'l2', ...modFields('ms'), ...modFi
 }
 export function createRumble(): RumbleState { return new RumbleState(); }
 /** The red material's rumble: pink noise from 38 to 150 Hz, unit deviation, under its irregular level. */
-export function redRumble(state: inout<RumbleState>, key: u32, tension: f32, gain: f32): f32 {
+export function redRumble(@inout state: RumbleState, key: u32, tension: f32, gain: f32): f32 {
   const age: u32 = state.age;
   state.age = age + 1;
   const w: f32 = noise(key, age) * 1.7320508;
@@ -235,7 +235,7 @@ export function createRoar(): RoarState { return new RoarState(); }
  * rises (two band passes in series in place of the study's band, Gaussian on a log axis), at unit
  * deviation, under its irregular level.
  */
-export function redRoar(state: inout<RoarState>, key: u32, tension: f32, gain: f32): f32 {
+export function redRoar(@inout state: RoarState, key: u32, tension: f32, gain: f32): f32 {
   const age: u32 = state.age;
   state.age = age + 1;
   const x: f32 = noise(key ^ 1, age) * 1.7320508;
@@ -254,7 +254,7 @@ ${fields(['h1', 'h2', 'l1', 'l2', ...modFields('mc')])}
 }
 export function createCrackle(): CrackleState { return new CrackleState(); }
 /** The red material's crackle: sparse impulses, 250 to 900 a second with the tension, from 2.2 to 9 kHz. */
-export function redCrackle(state: inout<CrackleState>, key: u32, tension: f32, gain: f32): f32 {
+export function redCrackle(@inout state: CrackleState, key: u32, tension: f32, gain: f32): f32 {
   const age: u32 = state.age;
   state.age = age + 1;
   const word: u32 = hash32(key ^ 0x2c1b ^ hash32(age));

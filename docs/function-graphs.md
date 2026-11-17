@@ -27,12 +27,12 @@ export function initialize(): Memory {
   return new Memory();
 }
 
-function smooth(state: inout<Memory>, input: f32, amount: f32): f32 {
+function smooth(@inout state: Memory, input: f32, amount: f32): f32 {
   state.value += (input - state.value) * amount;
   return state.value;
 }
 
-export function process(state: inout<Memory>, input: f32, amount: f32): f32 {
+export function process(@inout state: Memory, input: f32, amount: f32): f32 {
   return smooth(state, input, amount);
 }
 ```
@@ -134,7 +134,7 @@ The host must arrange those policies before exposing live edits to listeners.
 | Output | One mono `f32` sample output; 1–128 frames per synchronous call. |
 | Sample rate | Integer 8,000–192,000 Hz; default 48,000 Hz. |
 | Port values | `f32`, `i32`, `u32`, `bool`; audio ports require sample-rate `f32`. |
-| State | One `inout<Struct>` argument with 1–32 scalar fields and a zero-argument initializer. |
+| State | One `@inout state: Struct` parameter with 1–32 scalar fields and a zero-argument initializer. |
 | Context | Explicit `f32` time in seconds and/or sample rate; time requires sample-rate processing. |
 | Document | 32 modules, 32 definitions, 64 instances, 64 controls, 16 input pins per definition. |
 | Source bounds | 1,000,000 serialized characters; 131,072 characters per module. |
@@ -224,7 +224,7 @@ inside the composition entry produce located diagnostics; move that processing i
 TypeShade language checking and TypeAudio connection validation. It never evaluates project
 source as JavaScript. It can add/remove call instances and change connections/constants/output.
 New controls and definition metadata are supplied through the graph document. State parameters
-must have the matching `inout<Class>` type; each stateful instance owns a distinct argument.
+must be written `@inout name: Class` with the matching class; each stateful instance owns a distinct argument.
 Classes used in the composition signature must be exported. Private state classes still work
 in ordinary node playback; export them to enable composition projection.
 

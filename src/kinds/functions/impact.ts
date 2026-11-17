@@ -51,7 +51,7 @@ export class ImpactState {
 }
 export function createImpact(): ImpactState { return new ImpactState(); }
 export function impact(
-  state: inout<ImpactState>,
+  @inout state: ImpactState,
   key: u32,
   base: f32,
   drop: f32,
