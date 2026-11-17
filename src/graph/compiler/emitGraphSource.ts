@@ -6,7 +6,7 @@ export function emitGraphSource(graph: SoundGraph) {
     index = new Map(nodes.map((n, i) => [n.id, i]));
   const lines = [
     '"use typeshade";',
-    "export function graphBlock(__out: array<f32>, __state: array<f32>, __clock: array<u32>, __p: array<f32>, __frames: u32): void {",
+    "export function graphBlock(@inout __out: array<f32>, @inout __state: array<f32>, @inout __clock: array<u32>, __p: array<f32>, __frames: u32): void {",
     "const sampleRate: f32 = 48000; const p0: f32 = __p[0]; const p1: f32 = __p[1]; const p2: f32 = __p[2]; const p3: f32 = __p[3];",
     "let __age: u32 = __clock[0]; for (let __i: u32 = 0; __i < __frames; __i++) { const time: f32 = f32(__age) / sampleRate;",
   ];
