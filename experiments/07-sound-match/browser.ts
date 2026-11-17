@@ -2,7 +2,7 @@
 // of each parameter count beside it (`program.ts`), opens it in headless Chromium and calls
 // `runMatch` with the tier. The page loads each program with `typeshade/runtime` alone.
 
-import { createRuntime, resident, type Pack } from 'typeshade/runtime';
+import { array, createRuntime, type Pack } from 'typeshade/runtime';
 import { Adam, timedAsync, type Repeats, type Timing } from './match.ts';
 import { ENTRY, FORWARD_LANES, FRAMES, startOf, truthOf } from './patch.ts';
 
@@ -91,7 +91,7 @@ async function runCount(o: PageOptions, count: number): Promise<PageCount & { re
     const firstCallMs: Record<string, number> = {};
     result.firstCallMs = firstCallMs;
     const target = Float32Array.from(o.targets[String(count)]!);
-    const out = resident(new Float32Array(Math.max(FRAMES, count)));
+    const out = array(new Float32Array(Math.max(FRAMES, count)));
     const reached = (entry: string): readonly string[] =>
       pack.entries.find((e) => e.name === entry)?.bindings?.map((b) => b.name) ?? [];
     type Pipe = Awaited<ReturnType<typeof program.compute>>;
@@ -185,7 +185,7 @@ async function runCount(o: PageOptions, count: number): Promise<PageCount & { re
         result.descent = { losses, final: params };
       });
     }
-    if (stuck === undefined) out.destroy();
+    if (stuck === undefined) out.dispose();
     if (failures.length > 0) result.refused = failures.join('; ');
     return { ...(result as PageCount), renderer, ...(stuck === undefined ? {} : { stuck, unfinished: stuck }) };
   } finally {

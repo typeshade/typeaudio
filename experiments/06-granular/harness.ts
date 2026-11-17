@@ -19,6 +19,7 @@
 import { createDevice, type Device, type DeviceInfo, type FuseReport } from 'typeshade/runtime';
 import { Cloud, Grain } from '../../src/units/grain.shade.ts';
 import { cull, play, spawn } from '../../src/kernels/grains.shade.ts';
+import { bank } from '../../src/bank.ts';
 import { explain } from '../../src/explain.ts';
 import { keep, tally } from './measure.shade.ts';
 import { CLOUD, statsOf, tiersOf, type Arm, type Options, type Row } from './options.ts';
@@ -66,7 +67,7 @@ export async function runArm(o: Options, arm: Arm, probes: Probes = {}): Promise
     const total = o.warmup + o.blocks;
     const cloud = cloudOf(o);
     const blank = (): Grain[] => Array.from({ length: o.capacity }, () => new Grain(0, 1, 0, 0));
-    const lists = [dev.array(blank()), dev.array(blank())] as const;
+    const lists = [bank(dev, blank()).instances, bank(dev, blank()).instances] as const;
     const counts = [dev.array(new Uint32Array(1)), dev.array(new Uint32Array(1))] as const;
     const tape = dev.array(total * o.block, 'f32');
     const log = dev.array(2 * total, 'u32');
@@ -262,17 +263,17 @@ export async function refusals(o: Options): Promise<Record<string, string>> {
   try {
     await attempt('cull', async () => {
       const count = dev.array(new Uint32Array(1));
-      cull(dev.array(blank()), count, dev.array(blank()), dev.array(new Uint32Array(1)), 0);
+      cull(bank(dev, blank()).instances, count, bank(dev, blank()).instances, dev.array(new Uint32Array(1)), 0);
       await count.read();
     });
     await attempt('spawn', async () => {
       const count = dev.array(new Uint32Array(1));
-      spawn({ array: dev.array(blank()), length: count }, cloud, 0, o.block);
+      spawn({ array: bank(dev, blank()).instances, length: count }, cloud, 0, o.block);
       await count.read();
     });
     await attempt('play', async () => {
       const out = dev.array(o.block, 'f32');
-      play(out, dev.array(blank()), dev.array(new Uint32Array(1)), 0);
+      play(out, bank(dev, blank()).instances, dev.array(new Uint32Array(1)), 0);
       await out.read();
     });
     await attempt('keep', async () => {
@@ -286,7 +287,7 @@ export async function refusals(o: Options): Promise<Record<string, string>> {
       await log.read();
     });
     await attempt('plan', async () => {
-      const lists = [dev.array(blank()), dev.array(blank())] as const;
+      const lists = [bank(dev, blank()).instances, bank(dev, blank()).instances] as const;
       const counts = [dev.array(new Uint32Array(1)), dev.array(new Uint32Array(1))] as const;
       const tape = dev.array(o.block, 'f32');
       const log = dev.array(2, 'u32');

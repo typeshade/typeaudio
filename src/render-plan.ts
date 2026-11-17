@@ -5,7 +5,7 @@
 // The master (`src/master.ts`) then measures the mix, scales it to the plan's loudness target and
 // limits its true peak. The render is deterministic: the same plan gives the same bits on a tier.
 
-import type { Device, FuseReport, Resident } from 'typeshade/runtime';
+import type { Buffer, Device, f32, FuseReport } from 'typeshade/runtime';
 import { bank } from './bank.ts';
 import {
   LAYERS,
@@ -169,7 +169,7 @@ export function snapped(plan: SoundPlan, t: number): number {
   return best;
 }
 
-type Floats = Resident<Float32Array>;
+type Floats = Buffer<f32>;
 
 /**
  * Renders `raw` (validated first) on `dev` and resolves to the stems, the reverb's return and the
@@ -284,7 +284,7 @@ export async function renderPlan(
   // until a block needs more; the guards off, always all ones.
   const duckGain = make(5 * BLOCK);
   const ones = new Float32Array(5 * BLOCK).fill(1);
-  duckGain.write(ones);
+  duckGain.set(ones);
   const duck = guards
     ? duckSources(
         events,
@@ -331,14 +331,14 @@ export async function renderPlan(
           const to = Math.min(at + BLOCK - s.start, s.data.length);
           fill.set(s.data.subarray(from, to), s.slot * BLOCK + (s.start + from - at));
         }
-        inputs.write(fill);
+        inputs.set(fill);
         fed = live.length > 0;
       }
       // The gain of the layers for this block, written only while a duck is in or near the block.
       const active = duckActive(duck, at, sr);
       if (active || ducked) {
         if (active) duckGains(gainBlock, duck, at, sr);
-        duckGain.write(active ? gainBlock : ones);
+        duckGain.set(active ? gainBlock : ones);
         ducked = active;
       }
       [hist, prev] = [prev, hist];

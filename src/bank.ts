@@ -1,4 +1,4 @@
-import type { Device, Resident } from 'typeshade/runtime';
+import { array, type Buffer, type Device } from 'typeshade/runtime';
 
 /**
  * A bank: the instances of one unit class on a device, one lane each, as a kernel's `array<T>`
@@ -9,8 +9,8 @@ import type { Device, Resident } from 'typeshade/runtime';
 export interface Bank<T extends object> {
   /** The device that holds the bank. */
   readonly device: Device;
-  /** The instances on the device: the `Resident` a kernel takes for its `array<T>` parameter. */
-  readonly instances: Resident<T[]>;
+  /** The instances on the device: the `Buffer` a kernel takes for its `array<T>` parameter. */
+  readonly instances: Buffer<T>;
   /** How many lanes the bank holds. */
   readonly size: number;
   /**
@@ -34,11 +34,20 @@ export function bank<T extends object>(dev: Device, instances: readonly T[]): Ba
   if (instances.length === 0) {
     throw new RangeError('bank(): takes at least one instance; got an empty array.');
   }
-  const resident = dev.array([...instances]);
+  // A `Buffer` of structs is made by `array(Class, data)` on the device in use (compiler change
+  // 0138, R3 and R9): the unit class is the constructor of the instances.
+  const structs = array as (cls: unknown, data: readonly T[]) => Buffer<T>;
+  const use = dev.use();
+  let buffer: Buffer<T>;
+  try {
+    buffer = structs(instances[0]!.constructor, instances);
+  } finally {
+    use.dispose();
+  }
   return {
     device: dev,
-    instances: resident,
+    instances: buffer,
     size: instances.length,
-    read: () => resident.read(),
+    read: () => buffer.read() as Promise<T[]>,
   };
 }

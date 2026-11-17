@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { createDevice, type Device, type Resident } from 'typeshade/runtime';
+import { createDevice, type Device, type Buffer, type f32, type u32 } from 'typeshade/runtime';
+import { bank } from '../src/bank.ts';
 import {
   Spatial,
   Strip,
@@ -31,7 +32,7 @@ import {
   refStrips,
 } from './reference-spatial.ts';
 
-// Each stage of the spatial chain on the CPU tier, called as a kernel function over `Resident`s and
+// Each stage of the spatial chain on the CPU tier, called as a kernel function over `Buffer`s and
 // held to the plain-JavaScript reference bit for bit; then the properties the stages exist for: the
 // pan law, the distance law, the air, the reflections, the far ear, the ducking, the transform and
 // the convolution.
@@ -57,8 +58,10 @@ const noise = (n: number, seed: number, amp = 1): Float32Array => {
   return Float32Array.from({ length: n }, () => amp * (2 * r() - 1));
 };
 const f32 = (x: Float32Array): Float32Array => x;
-const resident = (x: Float32Array): Resident<Float32Array> => dev.array(x);
-const zeros = (n: number): Resident<Float32Array> => dev.array(n, 'f32');
+const resident = (x: Float32Array): Buffer<f32> => dev.array(x);
+const zeros = (n: number): Buffer<f32> => dev.array(n, 'f32');
+// A `Buffer` of structs, as a bank holds them (compiler change 0138, R9).
+const structs = <T extends object>(xs: readonly T[]): Buffer<T> => bank(dev, xs).instances;
 const energy = (x: ArrayLike<number>, from = 0, to = x.length): number => {
   let s = 0;
   for (let i = from; i < to; i++) s += x[i]! * x[i]!;
@@ -105,7 +108,7 @@ describe('place', () => {
     test(`is the reference, binaural ${binaural}, over two blocks that carry the filters' state`, async () => {
       const hosts = lanesOf();
       const states = hosts.map((h) => new RefPlace(h));
-      const bankLanes = dev.array(hosts);
+      const bankLanes = structs(hosts);
       let hist = noise(hosts.length * WIDTH, 7, 0.5);
       for (let b = 0; b < 2; b++) {
         const l = zeros(hosts.length * BLOCK);
@@ -133,7 +136,7 @@ describe('place', () => {
     hist[HIST] = 1;
     const l = zeros(BLOCK);
     const r = zeros(BLOCK);
-    await place(l, r, zeros(BLOCK), resident(hist), dev.array([host]), binaural);
+    await place(l, r, zeros(BLOCK), resident(hist), structs([host]), binaural);
     return { l: await l.read(), r: await r.read() };
   }
   /** A noise burst, for energy ratios. */
@@ -144,7 +147,7 @@ describe('place', () => {
     hist.set(noise(BLOCK, 3), HIST);
     const l = zeros(BLOCK);
     const r = zeros(BLOCK);
-    await place(l, r, zeros(BLOCK), resident(hist), dev.array([host]), binaural);
+    await place(l, r, zeros(BLOCK), resident(hist), structs([host]), binaural);
     return { l: await l.read(), r: await r.read() };
   }
 
@@ -191,7 +194,7 @@ describe('place', () => {
     hist[HIST + 100] = 1;
     const l = zeros(BLOCK);
     const r = zeros(BLOCK);
-    await place(l, r, zeros(BLOCK), resident(hist), dev.array([host]), 0);
+    await place(l, r, zeros(BLOCK), resident(hist), structs([host]), 0);
     const L = await l.read();
     const R = await r.read();
     const taps: [number, number][] = [
@@ -290,7 +293,7 @@ describe('layers, strips, sendSum and pack', () => {
     ].map((e) => lane(e));
     const [a, b, c] = [noise(4 * BLOCK, 1), noise(4 * BLOCK, 2), noise(4 * BLOCK, 3)];
     const [ol, or, os] = [zeros(5 * BLOCK), zeros(5 * BLOCK), zeros(5 * BLOCK)];
-    await layers(ol, or, os, resident(a), resident(b), resident(c), dev.array(hosts));
+    await layers(ol, or, os, resident(a), resident(b), resident(c), structs(hosts));
     expect(await ol.read()).toEqual(refLayers(hosts, a));
     expect(await or.read()).toEqual(refLayers(hosts, b));
     expect(await os.read()).toEqual(refLayers(hosts, c));
@@ -309,7 +312,7 @@ describe('layers, strips, sendSum and pack', () => {
         hi: s.left.hi,
       });
     });
-    const bankStrips = dev.array(hosts);
+    const bankStrips = structs(hosts);
     for (let b = 0; b < 2; b++) {
       const [l, r, s] = [
         noise(5 * BLOCK, 10 + b, 0.3),
@@ -329,7 +332,7 @@ describe('layers, strips, sendSum and pack', () => {
 
   test('speech ducks the other layers by their depth, and the dialogue layer not at all', async () => {
     const hosts = [0, 1, 2, 3, 4].map((i) => stripOf(i, SR, true));
-    const bankStrips = dev.array(hosts);
+    const bankStrips = structs(hosts);
     const loud = (layer: number): Float32Array => {
       // A 100 Hz tone, under every shelf's corner or the same through it, in every layer, and speech in layer 0.
       const x = new Float32Array(5 * BLOCK);
@@ -343,7 +346,7 @@ describe('layers, strips, sendSum and pack', () => {
     // Many blocks, so the follower settles.
     let tailQuiet = 0;
     let tailLoud = 0;
-    const run = async (input: Float32Array, bankOf: Resident<Strip[]>): Promise<Float32Array> => {
+    const run = async (input: Float32Array, bankOf: Buffer<Strip>): Promise<Float32Array> => {
       let out = new Float32Array(0);
       for (let b = 0; b < 40; b++) {
         const [ol, or, os] = [zeros(5 * BLOCK), zeros(5 * BLOCK), zeros(5 * BLOCK)];
@@ -362,7 +365,7 @@ describe('layers, strips, sendSum and pack', () => {
       return out;
     };
     const withSpeech = await run(loud(0), bankStrips);
-    const without = await run(quiet, dev.array([0, 1, 2, 3, 4].map((i) => stripOf(i, SR, true))));
+    const without = await run(quiet, structs([0, 1, 2, 3, 4].map((i) => stripOf(i, SR, true))));
     for (const l of [1, 2, 3, 4]) {
       tailLoud = energy(withSpeech, l * BLOCK, (l + 1) * BLOCK);
       tailQuiet = energy(without, l * BLOCK, (l + 1) * BLOCK);
@@ -463,7 +466,7 @@ describe('the transform and the convolution', () => {
     const gotR: number[] = [];
     const input = zeros(1024);
     for (let b = 0; b < 5; b++) {
-      await input.write(send.slice(b * 1024, (b + 1) * 1024));
+      await input.set(send.slice(b * 1024, (b + 1) * 1024));
       await dev.fuse(() => reverb.block(input));
       const wet = await reverb.wet.read();
       gotL.push(...wet.slice(0, 1024));
