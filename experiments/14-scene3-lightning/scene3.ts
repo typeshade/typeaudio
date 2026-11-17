@@ -70,10 +70,10 @@ export const SCENE3_END = 62.27;
 type Points = readonly (readonly [number, number])[];
 
 /** Two low-pass sections at `fc` (24 dB an octave): the cleanliness rule of scene 2's review 9. */
-const lp2 = (x: Float64Array, fc: number) => lp(lp(x, fc), fc);
+export const lp2 = (x: Float64Array, fc: number) => lp(lp(x, fc), fc);
 
 /** Keep `keep` s of a sound, then fade it out over 80 ms. */
-function cut(x: Float64Array, keep: number): Float64Array {
+export function cut(x: Float64Array, keep: number): Float64Array {
   const k0 = nsamp(keep);
   const k1 = nsamp(keep + 0.08);
   return x.map((v, i) => (i < k0 ? v : i < k1 ? v * (1 - (i - k0) / (k1 - k0)) : 0));
@@ -83,7 +83,7 @@ function cut(x: Float64Array, keep: number): Float64Array {
  * A bolt that strikes: one instant, as scene 2's release is. A full-band tearing crack with a
  * saturated body, and at the same instant a low pressure thump, each heard for about 0.12 s.
  */
-function strike(seed: number, size = 1.0, keep = 0.12): [Float64Array, Float64Array] {
+export function strike(seed: number, size = 1.0, keep = 0.12): [Float64Array, Float64Array] {
   const n = nsamp(0.45);
   const c = new Float64Array(n);
   addAt(c, S.tiltedBurst(seed, 300.0, 14000.0, 0.03, { tilt: 0.25, rise: 0.0003 }), 0, 1.0);
@@ -119,7 +119,13 @@ function strike(seed: number, size = 1.0, keep = 0.12): [Float64Array, Float64Ar
  * The discharge while a bolt is seen: scene 2's bolt (a torrent of noise on a deep spectrum, a dense
  * saturated crackle, a heavy low body, at levels that wander with no period), shaped by `points`.
  */
-function plasma(t0: number, t1: number, seed: number, points: Points, rate = 4500): Float64Array {
+export function plasma(
+  t0: number,
+  t1: number,
+  seed: number,
+  points: Points,
+  rate = 4500,
+): Float64Array {
   const dur = t1 - t0;
   const n = nsamp(dur);
   const level = env(points, t0, n);
@@ -153,7 +159,7 @@ function plasma(t0: number, t1: number, seed: number, points: Points, rate = 450
  * The hum of the voltage, as in scene 2's charge: 36 Hz with a body to 252 Hz, steady in pitch,
  * driven harder as its level rises, at a level that wanders with no period.
  */
-function hum(t0: number, t1: number, seed: number, points: Points): Float64Array {
+export function hum(t0: number, t1: number, seed: number, points: Points): Float64Array {
   const n = nsamp(t1 - t0);
   const level = env(points, t0, n);
   const walk = S.levelWalk(n, seed, 1.5, 0.4, 2.0);
@@ -170,7 +176,7 @@ function hum(t0: number, t1: number, seed: number, points: Points): Float64Array
 }
 
 /** A crackle of arcs: dense saturated impulses from 1.5 to 7 kHz in bursts of irregular density. */
-function arcCrackle(dur: number, seed: number, density: Float64Array): Float64Array {
+export function arcCrackle(dur: number, seed: number, density: Float64Array): Float64Array {
   const n = nsamp(dur);
   const r = rng(seed);
   const u = r.randomN(n);
@@ -183,7 +189,7 @@ function arcCrackle(dur: number, seed: number, density: Float64Array): Float64Ar
 }
 
 // ---- The hall: scene 2's bed to 47.2 s, crossed under the bolt to a bed of this scene's own.
-function bed3(m: Mix): void {
+export function bed3(m: Mix): void {
   m.part('bed3', () => {
     const t0 = 45.9;
     const dur = SCENE3_END + 2.0 - t0;
@@ -209,7 +215,7 @@ function tidy3(m: Mix): void {
 // level drops into valleys, and before the climax it holds its breath. What repeated with no new
 // picture event is cut: two of five strikes from the vault, two of five snaps, one of three zips.
 
-interface Shot {
+export interface Shot {
   readonly from: number;
   readonly to: number;
   readonly sig: Float64Array;
@@ -222,7 +228,7 @@ interface Shot {
  * One event laid shot by shot, as `across` does, but each shot hears its own version of the same
  * signal (all start at `t0` and run together): the perspective changes, the source does not.
  */
-function shots(m: Mix, name: string, t0: number, parts: readonly Shot[], xf = 0.12): void {
+export function shots(m: Mix, name: string, t0: number, parts: readonly Shot[], xf = 0.12): void {
   parts.forEach((p, k) => {
     const first = k === 0;
     const last = k === parts.length - 1;
@@ -867,7 +873,7 @@ function blast(m: Mix): void {
 // ---- 57.22 to 62.27: the relief. The blast's roll goes away; a few dark arcs die on the floor;
 // the dust settles, quiet; three streaks of wind sweep round her; in the close shot the wind in
 // her hair.
-function after(m: Mix): void {
+export function after(m: Mix): void {
   m.part('after', () => {
     const rn = nsamp(0.6);
     // the dark arcs die on the floor as a fizz (no isolated ticks, which read as pebbles): noise of
