@@ -863,6 +863,32 @@ restored with `git checkout src`.
   set the status to `fixed #1137`, then retire the one-kind-at-a-time form if the compiler accepts
   the kernel.
 
+### AF. A `Buffer` of structs recorded inside today's `fuse()`
+
+- Pressure: the pin `f149b403` (pull request #83) removes `Resident` (compiler change 0138,
+  milestone 4 slice 1). A bank becomes a `Buffer` of structs, `array(Class, instances)`. A kernel
+  call on it inside the body of today's `fuse()` throws. Every engine path that steps a bank in one
+  `fuse` scope a block throws at its first block: `render` (`synth`), `renderPlan` (each kind's
+  kernel), the lane kernels and the grain scheduler (`cull`).
+- Smallest program, on a CPU device at the pin `f149b403`:
+  `render(plan(bank(dev, [new Voice(220, 1200, 0.7, 48000)])), { frames: 512 })` throws
+  `TypeError: synth(): parameter "voices" is a Buffer of structs or a Uniform, which the body of
+today's fuse() does not record; call the function outside it, or pass a Buffer of scalars made
+with array(xs).` (`src/core/host-kernel.ts:683`).
+- Compiler: change 0138, Amendment A10, the slices of milestone 4: "A call on a `Buffer` of structs
+  inside today's body stays refused" until slice 5 switches `fuse`. The `Resident<T[]>` of
+  instances at the pin `415b276a` was recorded. Ask: record a `Buffer` of structs in today's
+  `fuse()` body, as a `Buffer` of scalars is recorded, or land slice 5 first. The compiler side
+  decides which.
+- Workaround: none taken. Moving the bank calls out of `fuse` would change the plan and the fuse
+  reports that `explain` reads.
+- Measured by: pull request #84 (`ca4c5ea`) and pull request #85 (`ab9f76e`), `bun run test` in
+  the container and in CI, 2026-11-17: 26 failures in `test/render.test.ts`,
+  `test/render-plan.test.ts`, `test/lanes.test.ts` and `test/grains.test.ts`, each this refusal.
+- Status: issue #1340 filed 2026-11-17, open. The owner decided on 2026-11-17 that the pin stays at
+  `415b276a` until the compiler meets #1340. Pull requests #83, #84 and #85 are on hold. Next
+  action: when the compiler meets #1340, move the pin past it and finish #83, #84 and #85.
+
 ## 3. Issues raised on the compiler
 
 The issues found while the proposals were implemented, on 2026-11-02, the issues the first code
@@ -910,6 +936,7 @@ The states are those of 2026-11-03, at the pin `87af4eb0`. A row that names the 
 | #1130 | A `.shade.ts` module is not rebuilt when a `.shade.ts` module it imports changes (Vitest's fsModuleCache key)        | AB                                                                         | Open; reproduced 2026-11-09 at the pin `415b276a`, see ask AB                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | #1136 | Admit a store at `(base + v) * block + n` when `base` is loop-invariant                                              | AD                                                                         | Open; filed 2026-11-09; reproduced at the pin `415b276a`, see ask AD                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | #1137 | A kernel over WebGPU's storage-buffer limit passes `tshc check` and fails on the device                              | AE                                                                         | Open; filed 2026-11-09; reproduced at the pin `415b276a`, see ask AE                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| #1340 | typeaudio needs a Buffer of structs recorded inside today's fuse() before 0138 slice 5                               | AF                                                                         | Open; filed 2026-11-17; blocks the pin `f149b403` (#83, #84, #85), see ask AF                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 ## 4. How a row moves
 
