@@ -157,7 +157,7 @@ export class HostPartial extends PartialBase {
  * cutoff to `sweep` times its own, then writes its `block` frames to `out[v * block + n]`. Its state
  * stays in `partials[v]` for the next block.
  */
-export function additive(out: array<f32>, partials: array<Partial>, block: u32, sweep: f32) {
+export function additive(@inout out: array<f32>, @inout partials: array<Partial>, block: u32, sweep: f32) {
   for (let v: u32 = 0; v < partials.length; v++) {
     partials[v].retune(sweep);
     for (let n: u32 = 0; n < block; n++) {
@@ -167,7 +167,7 @@ export function additive(out: array<f32>, partials: array<Partial>, block: u32, 
 }
 
 /** `additive` over partials whose filters design their coefficients in the emulated `f64`. */
-export function additive64(out: array<f32>, partials: array<Partial64>, block: u32, sweep: f32) {
+export function additive64(@inout out: array<f32>, @inout partials: array<Partial64>, block: u32, sweep: f32) {
   for (let v: u32 = 0; v < partials.length; v++) {
     partials[v].retune(sweep);
     for (let n: u32 = 0; n < block; n++) {
@@ -180,7 +180,7 @@ export function additive64(out: array<f32>, partials: array<Partial64>, block: u
  * `additive` over partials whose filters take the coefficients the host designed for this block:
  * lane `v` reads its five from `coefficients[v * 5]` on.
  */
-export function additiveHost(out: array<f32>, partials: array<HostPartial>, coefficients: array<f32>, block: u32) {
+export function additiveHost(@inout out: array<f32>, @inout partials: array<HostPartial>, coefficients: array<f32>, block: u32) {
   for (let v: u32 = 0; v < partials.length; v++) {
     const at = v * 5;
     partials[v].retune(coefficients[at], coefficients[at + 1], coefficients[at + 2], coefficients[at + 3], coefficients[at + 4]);

@@ -17,7 +17,7 @@ import { Cloud, Grain } from "../units/grain.shade.ts";
  * pushes over a trip count read from an array runs on the CPU tier at the compiler pin (surface
  * §65), and over the capacity it runs on the GPU.
  */
-export function cull(next: array<Grain>, nextCount: array<u32>, grains: array<Grain>, count: array<u32>, start: u32) {
+export function cull(@inout next: array<Grain>, @inout nextCount: array<u32>, grains: array<Grain>, count: array<u32>, start: u32) {
   for (let g: u32 = 0; g < grains.length; g++) {
     if (g < count[0] && grains[g].soundsFrom(start)) {
       next.push(grains[g]);
@@ -31,7 +31,7 @@ export function cull(next: array<Grain>, nextCount: array<u32>, grains: array<Gr
  * order of their frames. Pass the list with its held length, `{ array, length }`: the grains go
  * after the length the `Resident` holds, and the call leaves the new length there.
  */
-export function spawn(grains: array<Grain>, cloud: Cloud, start: u32, block: u32) {
+export function spawn(@inout grains: array<Grain>, cloud: Cloud, start: u32, block: u32) {
   for (let n: u32 = 0; n < block; n++) {
     const word = cloud.draw(start + n);
     if (cloud.starts(word)) {
@@ -45,7 +45,7 @@ export function spawn(grains: array<Grain>, cloud: Cloud, start: u32, block: u32
  * first `count[0]` grains at the frame `start + n`. A count past the list's capacity reads the
  * grains the list holds.
  */
-export function play(out: array<f32>, grains: array<Grain>, count: array<u32>, start: u32) {
+export function play(@inout out: array<f32>, grains: array<Grain>, count: array<u32>, start: u32) {
   for (let n: u32 = 0; n < out.length; n++) {
     const live = min(count[0], grains.length);
     let s = 0.;

@@ -18,7 +18,7 @@
 import { Cue } from './cue.shade.ts';
 import { Whoosh } from '../../src/kinds/whoosh.shade.ts';
 
-export function cuesHoisted(out: array<f32>, lanes: array<Cue>, inputs: array<f32>, block: u32) {
+export function cuesHoisted(@inout out: array<f32>, @inout lanes: array<Cue>, inputs: array<f32>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -28,7 +28,7 @@ export function cuesHoisted(out: array<f32>, lanes: array<Cue>, inputs: array<f3
   }
 }
 
-export function cuesWide(out: array<f32>, lanes: array<Cue>, block: u32) {
+export function cuesWide(@inout out: array<f32>, @inout lanes: array<Cue>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     for (let n: u32 = 0; n < block; n++) {
       out[v * block + n] = lanes[v].whoosh.tick();
@@ -36,7 +36,7 @@ export function cuesWide(out: array<f32>, lanes: array<Cue>, block: u32) {
   }
 }
 
-export function cuesOneBranch(out: array<f32>, lanes: array<Cue>, block: u32) {
+export function cuesOneBranch(@inout out: array<f32>, @inout lanes: array<Cue>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     for (let n: u32 = 0; n < block; n++) {
       const t = lanes[v].t;
@@ -50,7 +50,7 @@ export function cuesOneBranch(out: array<f32>, lanes: array<Cue>, block: u32) {
   }
 }
 
-export function cuesInlined(out: array<f32>, lanes: array<Cue>, inputs: array<f32>, block: u32) {
+export function cuesInlined(@inout out: array<f32>, @inout lanes: array<Cue>, inputs: array<f32>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     for (let n: u32 = 0; n < block; n++) {
       const t = lanes[v].t;
@@ -99,7 +99,7 @@ export class NarrowCue {
   }
 }
 
-export function cuesNarrow(out: array<f32>, lanes: array<NarrowCue>, block: u32) {
+export function cuesNarrow(@inout out: array<f32>, @inout lanes: array<NarrowCue>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     for (let n: u32 = 0; n < block; n++) {
       out[v * block + n] = lanes[v].tick();

@@ -236,88 +236,95 @@ function mediumStore(lid: u32, base: u32) {
 }
 
 /** The 1,024-point transform of each workgroup's points, the twiddles from `sin` and `cos` (variant A). */
-export const fftSmallDevice = compute([THREADS], function fftSmallDevice(
-  lid: builtin<"local_invocation_id", vec3u>,
-  wid: builtin<"workgroup_id", vec3u>,
+@compute([THREADS])
+export function fftSmallDevice(
+  lid: builtin<"local_invocation_id">,
+  wid: builtin<"workgroup_id">,
 ) {
   const base = wid.x * SMALL;
   const step = transform.sign * SMALL_STEP;
   smallLoad(lid.x, base);
   smallStages(lid.x, (t) => onDevice(t, step));
   smallStore(lid.x, base);
-});
+}
 
 /** The 1,024-point transform of each workgroup's points, the twiddles from the host's table (variant B). */
-export const fftSmallTable = compute([THREADS], function fftSmallTable(
-  lid: builtin<"local_invocation_id", vec3u>,
-  wid: builtin<"workgroup_id", vec3u>,
+@compute([THREADS])
+export function fftSmallTable(
+  lid: builtin<"local_invocation_id">,
+  wid: builtin<"workgroup_id">,
 ) {
   const base = wid.x * SMALL;
   const sign = transform.sign;
   smallLoad(lid.x, base);
   smallStages(lid.x, (t) => fromTable(t, sign));
   smallStore(lid.x, base);
-});
+}
 
 /** The 1,024-point transform of each workgroup's points, the twiddles from `sin` and `cos` of a double (variant C). */
-export const fftSmallDouble = compute([THREADS], function fftSmallDouble(
-  lid: builtin<"local_invocation_id", vec3u>,
-  wid: builtin<"workgroup_id", vec3u>,
+@compute([THREADS])
+export function fftSmallDouble(
+  lid: builtin<"local_invocation_id">,
+  wid: builtin<"workgroup_id">,
 ) {
   const base = wid.x * SMALL;
   const turn = transform.sign * SMALL_TURN;
   smallLoad(lid.x, base);
   smallStages(lid.x, (t) => inDouble(t, turn));
   smallStore(lid.x, base);
-});
+}
 
 /** The 4,096-point transform of each workgroup's points, the twiddles from `sin` and `cos` (variant A). */
-export const fftLargeDevice = compute([THREADS], function fftLargeDevice(
-  lid: builtin<"local_invocation_id", vec3u>,
-  wid: builtin<"workgroup_id", vec3u>,
+@compute([THREADS])
+export function fftLargeDevice(
+  lid: builtin<"local_invocation_id">,
+  wid: builtin<"workgroup_id">,
 ) {
   const base = wid.x * LARGE;
   const step = transform.sign * LARGE_STEP;
   largeLoad(lid.x, base);
   largeStages(lid.x, base, (t) => onDevice(t, step));
   largeScale(lid.x, base);
-});
+}
 
 /** The 4,096-point transform of each workgroup's points, the twiddles from the host's table (variant B). */
-export const fftLargeTable = compute([THREADS], function fftLargeTable(
-  lid: builtin<"local_invocation_id", vec3u>,
-  wid: builtin<"workgroup_id", vec3u>,
+@compute([THREADS])
+export function fftLargeTable(
+  lid: builtin<"local_invocation_id">,
+  wid: builtin<"workgroup_id">,
 ) {
   const base = wid.x * LARGE;
   const sign = transform.sign;
   largeLoad(lid.x, base);
   largeStages(lid.x, base, (t) => fromTable(t, sign));
   largeScale(lid.x, base);
-});
+}
 
 /** The 4,096-point transform of each workgroup's points, the twiddles from `sin` and `cos` of a double (variant C). */
-export const fftLargeDouble = compute([THREADS], function fftLargeDouble(
-  lid: builtin<"local_invocation_id", vec3u>,
-  wid: builtin<"workgroup_id", vec3u>,
+@compute([THREADS])
+export function fftLargeDouble(
+  lid: builtin<"local_invocation_id">,
+  wid: builtin<"workgroup_id">,
 ) {
   const base = wid.x * LARGE;
   const turn = transform.sign * LARGE_TURN;
   largeLoad(lid.x, base);
   largeStages(lid.x, base, (t) => inDouble(t, turn));
   largeScale(lid.x, base);
-});
+}
 
 /**
  * The 2,048-point transform of each workgroup's points, the twiddles from the host's table
  * (variant B): the transform of experiment 5's partitioned convolution.
  */
-export const fftMediumTable = compute([THREADS], function fftMediumTable(
-  lid: builtin<"local_invocation_id", vec3u>,
-  wid: builtin<"workgroup_id", vec3u>,
+@compute([THREADS])
+export function fftMediumTable(
+  lid: builtin<"local_invocation_id">,
+  wid: builtin<"workgroup_id">,
 ) {
   const base = wid.x * MEDIUM;
   const sign = transform.sign;
   mediumLoad(lid.x, base);
   mediumStages(lid.x, (t) => fromTable(t, sign));
   mediumStore(lid.x, base);
-});
+}

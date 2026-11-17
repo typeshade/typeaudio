@@ -40,7 +40,7 @@ function cmul(a: vec2, b: vec2): vec2 {
  * before it ran (`pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0
  * to 2047.`), and this kernel looped over the frames.
  */
-export function pad(padded: array<vec2>, input: array<f32>) {
+export function pad(@inout padded: array<vec2>, input: array<f32>) {
   for (let j: u32 = 0; j < POINTS; j++) {
     if (j < FRAMES) {
       padded[j] = vec2(input[j], 0.);
@@ -55,7 +55,7 @@ export function pad(padded: array<vec2>, input: array<f32>) {
  * `415b276a` (compiler issue #983, fixed by #994). Earlier pins refused it with TS8070 and this
  * kernel wrote `j * 1 + slot * POINTS`.
  */
-export function store(line: array<vec2>, spectrum: array<vec2>, slot: u32) {
+export function store(@inout line: array<vec2>, spectrum: array<vec2>, slot: u32) {
   for (let j: u32 = 0; j < POINTS; j++) {
     line[slot * POINTS + j] = spectrum[j];
   }
@@ -67,7 +67,7 @@ export function store(line: array<vec2>, spectrum: array<vec2>, slot: u32) {
  * the spectrum of partition `p`. `head` is the slot of the newest block.
  */
 export function accumulate(
-  sum: array<vec2>,
+  @inout sum: array<vec2>,
   line: array<vec2>,
   spectra: array<vec2>,
   head: u32,
@@ -88,7 +88,7 @@ export function accumulate(
  * `block` plus frame `n` of `tail`, which the block before left; then `tail` keeps the second half
  * of `block` for the block after.
  */
-export function overlapAdd(out: array<f32>, tail: array<f32>, block: array<vec2>) {
+export function overlapAdd(@inout out: array<f32>, @inout tail: array<f32>, block: array<vec2>) {
   for (let n: u32 = 0; n < FRAMES; n++) {
     out[n] = block[n].x + tail[n];
     tail[n] = block[n + FRAMES].x;

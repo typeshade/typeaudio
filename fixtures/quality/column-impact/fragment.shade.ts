@@ -11,7 +11,7 @@ export function createFragment(): FragmentState {
 }
 
 export function fragment(
-  state: inout<FragmentState>,
+  @inout state: FragmentState,
   onset: f32,
   spacing: f32,
   frequency: f32,
