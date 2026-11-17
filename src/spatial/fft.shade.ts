@@ -29,7 +29,7 @@ function cmul(a: vec2, b: vec2): vec2 {
  * the array the stage before wrote, the result is in natural order.
  */
 export function fftStage(
-  out: array<vec2>,
+  @inout out: array<vec2>,
   inp: array<vec2>,
   tw: array<vec2>,
   stride: u32,
@@ -61,7 +61,7 @@ export function fftStage(
  * partitions, then the right ones, `partitions * 2048` points each.
  */
 export function accumulate2(
-  sum: array<vec2>,
+  @inout sum: array<vec2>,
   line: array<vec2>,
   spectra: array<vec2>,
   head: u32,
@@ -84,7 +84,7 @@ export function accumulate2(
  * output is the real part of point `n` of the channel's inverse transform plus `tail[i]`, and
  * `tail[i]` then keeps point `n + 1,024`.
  */
-export function overlap2(out: array<f32>, tail: array<f32>, frames: array<vec2>) {
+export function overlap2(@inout out: array<f32>, @inout tail: array<f32>, frames: array<vec2>) {
   for (let i: u32 = 0; i < out.length; i++) {
     const c = i / FRAMES;
     const n = i % FRAMES;
@@ -107,7 +107,7 @@ export function overlap2(out: array<f32>, tail: array<f32>, frames: array<vec2>)
  * before it ran (`pad(): parameter "input" holds 1024 elements, and loop 1 reads it at indices 0
  * to 2047.`), and this kernel looped over the frames.
  */
-export function pad(padded: array<vec2>, input: array<f32>) {
+export function pad(@inout padded: array<vec2>, input: array<f32>) {
   for (let j: u32 = 0; j < POINTS; j++) {
     if (j < FRAMES) {
       padded[j] = vec2(input[j], 0.);
@@ -122,7 +122,7 @@ export function pad(padded: array<vec2>, input: array<f32>) {
  * `415b276a` (compiler issue #983, fixed by #994). Earlier pins refused it with TS8070 and this
  * kernel wrote `j * 1 + slot * POINTS`.
  */
-export function store(line: array<vec2>, spectrum: array<vec2>, slot: u32) {
+export function store(@inout line: array<vec2>, spectrum: array<vec2>, slot: u32) {
   for (let j: u32 = 0; j < POINTS; j++) {
     line[slot * POINTS + j] = spectrum[j];
   }

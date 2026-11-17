@@ -18,13 +18,14 @@ declare const ys: storage<array<f32>, "read_write">;
  * a normal input below 2^-106 times 2^-20 is a subnormal result, which is 0 only where the tier
  * flushes a subnormal it writes.
  */
-export const scaleProbe = compute([64], function scaleProbe(
-  gid: builtin<"global_invocation_id", vec3u>,
+@compute([64])
+export function scaleProbe(
+  gid: builtin<"global_invocation_id">,
 ) {
   if (gid.x < ys.length) {
     ys[gid.x] = xs[gid.x] * probe.factor;
   }
-});
+}
 
 /**
  * A length read inside an index (docs/compiler-asks.md, J): `ys[i] = xs[i % xs.length]`. This is the
@@ -32,10 +33,11 @@ export const scaleProbe = compute([64], function scaleProbe(
  * `87af4eb0` (compiler issue #900), and at the pin `415b276a` it runs on all three tiers. The FFT
  * entries read no length; this probe keeps the form, to measure it.
  */
-export const wrapProbe = compute([64], function wrapProbe(
-  gid: builtin<"global_invocation_id", vec3u>,
+@compute([64])
+export function wrapProbe(
+  gid: builtin<"global_invocation_id">,
 ) {
   if (gid.x < ys.length) {
     ys[gid.x] = xs[gid.x % xs.length];
   }
-});
+}

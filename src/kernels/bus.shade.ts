@@ -5,14 +5,14 @@
 // writes a new array: a chain never processes in place (fact F4).
 
 /** Scales a bus by the linear gain `g`: `out[i] = x[i] * g`. */
-export function gain(out: array<f32>, x: array<f32>, g: f32) {
+export function gain(@inout out: array<f32>, x: array<f32>, g: f32) {
   for (let i: u32 = 0; i < out.length; i++) {
     out[i] = x[i] * g;
   }
 }
 
 /** Soft-clips a bus: `out[i] = tanh(x[i] * amount)`. */
-export function drive(out: array<f32>, x: array<f32>, amount: f32) {
+export function drive(@inout out: array<f32>, x: array<f32>, amount: f32) {
   for (let i: u32 = 0; i < out.length; i++) {
     out[i] = tanh(x[i] * amount);
   }

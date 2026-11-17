@@ -71,7 +71,7 @@ export class Spatial {
  * for the first 4,096 frames of a lane, and the lane's frame `k + 1,024 - 5,120` of `fresh` (the
  * block `cues` wrote, `v * 1,024 + n`) for the last 1,024. Call it with the pair swapped each block.
  */
-export function history(next: array<f32>, prev: array<f32>, fresh: array<f32>) {
+export function history(@inout next: array<f32>, prev: array<f32>, fresh: array<f32>) {
   for (let i: u32 = 0; i < next.length; i++) {
     const v = i / WIDTH;
     const k = i % WIDTH;
@@ -90,11 +90,11 @@ export function history(next: array<f32>, prev: array<f32>, fresh: array<f32>) {
  * sound times `send`. Lane `v` writes `outL`, `outR` and `send` at `v * 1,024 + n`.
  */
 export function place(
-  outL: array<f32>,
-  outR: array<f32>,
-  send: array<f32>,
+  @inout outL: array<f32>,
+  @inout outR: array<f32>,
+  @inout send: array<f32>,
   hist: array<f32>,
-  lanes: array<Spatial>,
+  @inout lanes: array<Spatial>,
   binaural: u32,
 ) {
   for (let v: u32 = 0; v < lanes.length; v++) {
@@ -133,9 +133,9 @@ export function place(
  * `i = l * 1,024 + n`, the lane's own index) is the sum, in lane order, of the lanes whose `layer` is `l`.
  */
 export function layers(
-  outL: array<f32>,
-  outR: array<f32>,
-  outS: array<f32>,
+  @inout outL: array<f32>,
+  @inout outR: array<f32>,
+  @inout outS: array<f32>,
   inL: array<f32>,
   inR: array<f32>,
   inS: array<f32>,
@@ -213,14 +213,14 @@ export class Strip {
  * Dialogue's `depth` is 1.
  */
 export function strips(
-  outL: array<f32>,
-  outR: array<f32>,
-  outS: array<f32>,
+  @inout outL: array<f32>,
+  @inout outR: array<f32>,
+  @inout outS: array<f32>,
   inL: array<f32>,
   inR: array<f32>,
   inS: array<f32>,
   gain: array<f32>,
-  bank: array<Strip>,
+  @inout bank: array<Strip>,
 ) {
   for (let l: u32 = 0; l < bank.length; l++) {
     for (let n: u32 = 0; n < BLOCK; n++) {
@@ -234,7 +234,7 @@ export function strips(
 }
 
 /** The reverb's input: the sum over the layers of their sends, `out[n]`. */
-export function sendSum(out: array<f32>, inS: array<f32>) {
+export function sendSum(@inout out: array<f32>, inS: array<f32>) {
   for (let n: u32 = 0; n < BLOCK; n++) {
     let s = 0;
     for (let l: u32 = 0; l < LAYERS; l++) {
@@ -248,7 +248,7 @@ export function sendSum(out: array<f32>, inS: array<f32>) {
  * Packs a block for one read: rows of 1,024 frames, 0 to 4 the layers' left channels, 5 to 9
  * their right channels, 10 and 11 the reverb's left and right.
  */
-export function pack(out: array<f32>, stemL: array<f32>, stemR: array<f32>, wet: array<f32>) {
+export function pack(@inout out: array<f32>, stemL: array<f32>, stemR: array<f32>, wet: array<f32>) {
   for (let i: u32 = 0; i < out.length; i++) {
     const row = i / BLOCK;
     const n = i % BLOCK;

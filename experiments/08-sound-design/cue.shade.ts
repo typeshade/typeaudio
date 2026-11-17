@@ -79,7 +79,7 @@ export class Cue {
  * Renders one block of every cue of the bank, one lane per cue (shape V): lane `v` writes its
  * `block` frames to `out[v * block + n]`. `inputs` holds the stems, laid out the same way.
  */
-export function cues(out: array<f32>, lanes: array<Cue>, inputs: array<f32>, block: u32) {
+export function cues(@inout out: array<f32>, @inout lanes: array<Cue>, inputs: array<f32>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     for (let n: u32 = 0; n < block; n++) {
       out[v * block + n] = lanes[v].tick(inputs[v * block + n]);

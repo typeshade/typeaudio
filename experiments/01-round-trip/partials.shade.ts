@@ -14,7 +14,7 @@ const TAU: f32 = 6.283185307179586;
  * harmonics of `f0` hertz at the sample rate `sr`, harmonic `k` at the level `1 / k`. The time
  * wraps each second, which a whole number of hertz does not hear.
  */
-export function partials(out: array<f32>, start: u32, f0: f32, sr: u32) {
+export function partials(@inout out: array<f32>, start: u32, f0: f32, sr: u32) {
   for (let n: u32 = 0; n < out.length; n++) {
     const t = f32((start + n) % sr) / f32(sr);
     let s = 0.;

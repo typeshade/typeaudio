@@ -32,7 +32,7 @@ export class Voice {
  * Renders one block of every voice of the bank, one lane per voice: lane `v` writes its `block`
  * frames to `out[v * block + n]`, and its state stays in `voices[v]` for the next block.
  */
-export function synth(out: array<f32>, voices: array<Voice>, block: u32) {
+export function synth(@inout out: array<f32>, @inout voices: array<Voice>, block: u32) {
   for (let v: u32 = 0; v < voices.length; v++) {
     for (let n: u32 = 0; n < block; n++) {
       out[v * block + n] = voices[v].tick();

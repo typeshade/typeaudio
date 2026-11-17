@@ -9,7 +9,7 @@ export function createContact(): ContactState {
 }
 
 export function contact(
-  state: inout<ContactState>,
+  @inout state: ContactState,
   hardness: f32,
   level: f32,
   time: f32,

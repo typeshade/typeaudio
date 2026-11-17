@@ -9,7 +9,7 @@ export function createMode(): ModeState {
 }
 
 export function mode(
-  state: inout<ModeState>,
+  @inout state: ModeState,
   input: f32,
   frequency: f32,
   mass: f32,

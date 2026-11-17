@@ -52,7 +52,7 @@ export class WhooshLane extends Lane {
 }
 
 /** Renders one block of every whoosh lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function whooshes(out: array<f32>, lanes: array<WhooshLane>, block: u32) {
+export function whooshes(@inout out: array<f32>, @inout lanes: array<WhooshLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -75,7 +75,7 @@ export class ImpactLane extends Lane {
 }
 
 /** Renders one block of every impact lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function impacts(out: array<f32>, lanes: array<ImpactLane>, block: u32) {
+export function impacts(@inout out: array<f32>, @inout lanes: array<ImpactLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -98,7 +98,7 @@ export class ShimmerLane extends Lane {
 }
 
 /** Renders one block of every shimmer lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function shimmers(out: array<f32>, lanes: array<ShimmerLane>, block: u32) {
+export function shimmers(@inout out: array<f32>, @inout lanes: array<ShimmerLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -121,7 +121,7 @@ export class RiserLane extends Lane {
 }
 
 /** Renders one block of every riser lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function risers(out: array<f32>, lanes: array<RiserLane>, block: u32) {
+export function risers(@inout out: array<f32>, @inout lanes: array<RiserLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -144,7 +144,7 @@ export class WindLane extends Lane {
 }
 
 /** Renders one block of every wind lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function winds(out: array<f32>, lanes: array<WindLane>, block: u32) {
+export function winds(@inout out: array<f32>, @inout lanes: array<WindLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -167,7 +167,7 @@ export class DroneLane extends Lane {
 }
 
 /** Renders one block of every drone lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function drones(out: array<f32>, lanes: array<DroneLane>, block: u32) {
+export function drones(@inout out: array<f32>, @inout lanes: array<DroneLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -190,7 +190,7 @@ export class FootstepLane extends Lane {
 }
 
 /** Renders one block of every footstep lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function footsteps(out: array<f32>, lanes: array<FootstepLane>, block: u32) {
+export function footsteps(@inout out: array<f32>, @inout lanes: array<FootstepLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -213,7 +213,7 @@ export class ClothLane extends Lane {
 }
 
 /** Renders one block of every cloth lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function cloths(out: array<f32>, lanes: array<ClothLane>, block: u32) {
+export function cloths(@inout out: array<f32>, @inout lanes: array<ClothLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -236,7 +236,7 @@ export class VoiceLane extends Lane {
 }
 
 /** Renders one block of every voice lane of the bank; `inputs` holds the lanes' stems, laid out as `out` is. */
-export function voices(out: array<f32>, lanes: array<VoiceLane>, inputs: array<f32>, block: u32) {
+export function voices(@inout out: array<f32>, @inout lanes: array<VoiceLane>, inputs: array<f32>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -259,7 +259,7 @@ export class CrackLane extends Lane {
 }
 
 /** Renders one block of every crack lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function cracks(out: array<f32>, lanes: array<CrackLane>, block: u32) {
+export function cracks(@inout out: array<f32>, @inout lanes: array<CrackLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -282,7 +282,7 @@ export class BoomLane extends Lane {
 }
 
 /** Renders one block of every boom lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function booms(out: array<f32>, lanes: array<BoomLane>, block: u32) {
+export function booms(@inout out: array<f32>, @inout lanes: array<BoomLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -305,7 +305,7 @@ export class RubbleLane extends Lane {
 }
 
 /** Renders one block of every rubble lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function rubbles(out: array<f32>, lanes: array<RubbleLane>, block: u32) {
+export function rubbles(@inout out: array<f32>, @inout lanes: array<RubbleLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -328,7 +328,7 @@ export class RoarLane extends Lane {
 }
 
 /** Renders one block of every roar lane of the bank: lane `v` writes its `block` frames to `out[v * block + n]`. */
-export function roars(out: array<f32>, lanes: array<RoarLane>, block: u32) {
+export function roars(@inout out: array<f32>, @inout lanes: array<RoarLane>, block: u32) {
   for (let v: u32 = 0; v < lanes.length; v++) {
     let c = lanes[v];
     for (let n: u32 = 0; n < block; n++) {
@@ -346,7 +346,7 @@ export function roars(out: array<f32>, lanes: array<RoarLane>, block: u32) {
  * than WebGPU's eight for a compute stage.
  */
 export function gather(
-  raws: array<f32>,
+  @inout raws: array<f32>,
   kinds: array<u32>,
   slots: array<u32>,
   src: array<f32>,

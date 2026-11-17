@@ -8,7 +8,7 @@
         "@types/node": "25.6.0",
         "playwright-core": "1.64.1",
         "typescript": "5.6.3",
-        "typeshade": "https://github.com/typeshade/typeshade/archive/415b276a7408936cb483d05ca8bb39e797b05966.tar.gz",
+        "typeshade": "https://github.com/typeshade/typeshade/archive/f149b4039e061b2a925fe33aaaad6da3d7f372c9.tar.gz",
         "vite": "7.3.7",
         "vitest": "5.0.5",
       },
@@ -183,7 +183,7 @@
 
     "typescript": ["typescript@5.6.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw=="],
 
-    "typeshade": ["typeshade@https://github.com/typeshade/typeshade/archive/415b276a7408936cb483d05ca8bb39e797b05966.tar.gz", { "peerDependencies": { "typescript": ">=5.0.0 <7" }, "bin": { "tshc": "./src/cli/bin.ts" } }, "sha512-9paRmjn8FA9rs69FYJnGMSuDttajTG3J/N/GGzaA6I6v2j44YfAPpZN6Yf6EQTS462QrIQcE+3k+cu6INrUG4Q=="],
+    "typeshade": ["typeshade@https://github.com/typeshade/typeshade/archive/f149b4039e061b2a925fe33aaaad6da3d7f372c9.tar.gz", { "peerDependencies": { "typescript": ">=5.0.0 <7" }, "bin": { "tshc": "./src/cli/bin.ts" } }, "sha512-lP2ZM62dA0P13EdzNnBA5hgAlFr1zwYk1nNymFBPBUIcGeyMD4EDUhmT660hV0W4tSVLI0lMKmaib/V2BWDVPA=="],
 
     "undici-types": ["undici-types@7.19.2", "", {}, "sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg=="],
 
