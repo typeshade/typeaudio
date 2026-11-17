@@ -4,7 +4,7 @@
 // The partitions' spectra are made once. Each block is `pad`, the forward stages, `store`,
 // `accumulate2`, the inverse stages and `overlap2`: 28 calls inside the block's `fuse` scope.
 
-import type { Device, Resident } from 'typeshade/runtime';
+import type { Buffer, Device, f32 } from 'typeshade/runtime';
 import { twiddleTable } from '../analyze/fft.ts';
 import { accumulate2, fftStage, overlap2, pad, store } from './fft.shade.ts';
 
@@ -12,7 +12,7 @@ const FRAMES = 1024;
 const POINTS = 2048;
 const STAGES = 11;
 
-type Floats = Resident<Float32Array>;
+type Floats = Buffer<f32>;
 
 export class Reverb {
   /** The partitions in each channel's impulse response. */

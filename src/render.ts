@@ -1,4 +1,4 @@
-import type { FuseReport, Resident } from 'typeshade/runtime';
+import type { Buffer, f32, FuseReport } from 'typeshade/runtime';
 import type { Bank } from './bank.ts';
 import { synth, type Voice } from './kernels/synth.shade.ts';
 import { mixdown } from './kernels/mixdown.shade.ts';
@@ -71,7 +71,7 @@ export function plan(voices: Bank<Voice>, options: PlanOptions = {}): Plan {
  * `dev.fuse()` scope (docs/architecture.md, section 3): the voices write their lanes (shape V),
  * the lanes are mixed to a bus (shape G), the bus is driven and scaled into the master (shape F,
  * each stage into a new array) and metered (shape R). The intermediates are scratch arrays, which
- * a fused group holds as locals; the master is a `Resident`, read once per block. The voices'
+ * a fused group holds as locals; the master is a `Buffer`, read once per block. The voices'
  * state stays on the device, so a second `render` continues where the first stopped.
  *
  * @throws `RangeError` for a `frames` or a `block` that is not a whole number of 1 or more.
@@ -84,7 +84,7 @@ export async function render(plan: Plan, options: RenderOptions): Promise<Float3
   const dev = voices.device;
   const out = new Float32Array(frames);
   const reports: FuseReport[] = [];
-  const masters = new Map<number, Resident<Float32Array>>();
+  const masters = new Map<number, Buffer<f32>>();
   let loudest = 0;
   try {
     for (let at = 0; at < frames; at += block) {
@@ -104,7 +104,10 @@ export async function render(plan: Plan, options: RenderOptions): Promise<Float3
         mixdown(mixed, lanes, voices.size, n);
         drive(driven, mixed, state.drive);
         gain(bus, driven, state.gain);
-        meter = peak(bus);
+        // Inside today's `fuse()` a value-returning call still returns a promise of its value,
+        // which the host view types as a `Buffer` (compiler change 0138, deviation D-m, open until
+        // milestone 4 slice 5).
+        meter = peak(bus) as unknown as Promise<number>;
       });
       out.set(await bus.read(), at);
       loudest = Math.max(loudest, await meter!);

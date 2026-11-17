@@ -1,12 +1,13 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { createDevice, type Device, type FuseReport, type Resident } from 'typeshade/runtime';
+import { createDevice, type Device, type FuseReport, type Buffer, type f32, type u32 } from 'typeshade/runtime';
+import { bank } from '../src/bank.ts';
 import { Cloud, Grain } from '../src/units/grain.shade.ts';
 import { cull, play, spawn } from '../src/kernels/grains.shade.ts';
 import { RefCloud, RefGrain, RefScheduler, refHash32, refUniform } from './reference.ts';
 
 // The grains on the CPU tier, with no device: the units built with `new` on the host and held to
-// the plain-JavaScript reference bit for bit, and the scheduler's three kernels over Resident
-// lists whose counts stay in Residents, block after block, held to the reference scheduler.
+// the plain-JavaScript reference bit for bit, and the scheduler's three kernels over Buffer
+// lists whose counts stay in Buffers, block after block, held to the reference scheduler.
 
 const SR = 48000;
 
@@ -85,10 +86,10 @@ describe('a cloud built with new and its setters', () => {
 });
 
 /** Two lists of `capacity` grains and their counts, on `dev`, as the scheduler swaps them. */
-function lists(capacity: number): { grains: Resident<Grain[]>[]; counts: Resident<Uint32Array>[] } {
+function lists(capacity: number): { grains: Buffer<Grain>[]; counts: Buffer<u32>[] } {
   const empty = (): Grain[] => Array.from({ length: capacity }, () => new Grain(0, 1, 0, 0));
   return {
-    grains: [dev.array(empty()), dev.array(empty())],
+    grains: [bank(dev, empty()).instances, bank(dev, empty()).instances],
     counts: [dev.array(new Uint32Array(1)), dev.array(new Uint32Array(1))],
   };
 }

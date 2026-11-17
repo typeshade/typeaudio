@@ -1,10 +1,10 @@
 // Experiment 5 on one tier of the host face (compiler surface §64 to §71): the partitioned
-// convolution as the engine would run it, each array a `Resident` of one device and each block
+// convolution as the engine would run it, each array a `Buffer` of one device and each block
 // one `dev.fuse` plan of six calls. The page (`browser.ts`) runs it on WebGPU and on WebGL2, and
 // Node (`node.ts`) on the CPU tier, where the pin refuses the FFT entry, which reaches a barrier
 // (change 0092 is accepted, not implemented): there it runs the kernel check alone.
 
-import { configure, createDevice, type Device, type DeviceInfo, type DeviceStatistics, type FuseReport, type Resident } from 'typeshade/runtime';
+import { configure, createDevice, type Device, type DeviceInfo, type DeviceStatistics, type FuseReport, type Buffer, type f32, type u32 } from 'typeshade/runtime';
 import { fftMediumTable } from '../03-fft/fft.shade.ts';
 import { toBase64, twiddleTable } from '../03-fft/signals.ts';
 import { accumulate, overlapAdd, pad, store } from './convolution.shade.ts';
@@ -133,22 +133,22 @@ class Timeout extends Error {}
 
 /** The engine's arrays on one device: the spectra, the delay line, the overlap-add's tail, scratch. */
 class Engine {
-  readonly line: Resident<Float32Array>;
-  readonly tail: Resident<Float32Array>;
-  readonly input: Resident<Float32Array>;
-  readonly padded: Resident<Float32Array>;
-  readonly spectrum: Resident<Float32Array>;
-  readonly sum: Resident<Float32Array>;
-  readonly frames: Resident<Float32Array>;
-  readonly out: Resident<Float32Array>;
+  readonly line: Buffer<f32>;
+  readonly tail: Buffer<f32>;
+  readonly input: Buffer<f32>;
+  readonly padded: Buffer<f32>;
+  readonly spectrum: Buffer<f32>;
+  readonly sum: Buffer<f32>;
+  readonly frames: Buffer<f32>;
+  readonly out: Buffer<f32>;
   /** Whether a block runs as one fuse plan; false once fuse refused one. */
   fused = true;
   refusal: string | undefined;
 
   constructor(
     readonly dev: Device,
-    readonly spectra: Resident<Float32Array>,
-    readonly twiddles: Resident<Float32Array>,
+    readonly spectra: Buffer<f32>,
+    readonly twiddles: Buffer<f32>,
   ) {
     this.line = dev.array(PARTITIONS * POINTS * 2, 'f32');
     this.tail = dev.array(FRAMES, 'f32');
@@ -160,16 +160,22 @@ class Engine {
     this.out = dev.array(FRAMES, 'f32');
   }
 
-  /** Zeros the delay line and the overlap-add's tail, as a new engine holds them. */
-  reset(): void {
-    this.line.write(new Float32Array(PARTITIONS * POINTS * 2));
-    this.tail.write(new Float32Array(FRAMES));
+  /**
+   * Zeros the delay line and the overlap-add's tail, as a new engine holds them. A `Buffer` that a
+   * call wrote takes no `set` until `read()` brings its values back (compiler change 0138, R9), so
+   * each is read first.
+   */
+  async reset(): Promise<void> {
+    await this.line.read();
+    await this.tail.read();
+    this.line.set(new Float32Array(PARTITIONS * POINTS * 2));
+    this.tail.set(new Float32Array(FRAMES));
   }
 
   /**
    * The six calls of a block whose newest spectrum goes to slot `slot`, in order, and what each
    * returned: the promise a call gives inside a fuse scope and outside one (surface §71). The view
-   * types a call whose written arrays are all Residents as returning nothing.
+   * types a call whose written arrays are all Buffers as returning nothing.
    */
   calls(slot: number): unknown[] {
     return [
@@ -186,7 +192,7 @@ class Engine {
   async block(k: number, x: Float32Array): Promise<{ y: Float32Array; ms: number; report?: FuseReport }> {
     const slot = k % PARTITIONS;
     const start = performance.now();
-    this.input.write(x);
+    this.input.set(x);
     let report: FuseReport | undefined;
     if (this.fused) {
       let pending: unknown[] = [];
@@ -216,12 +222,12 @@ class Engine {
 /** The GPU time of each group of a report, null where the device did not measure it. */
 const gpuOf = (r: FuseReport): (number | null)[] => r.groups.map((g) => g.gpuTime ?? null);
 
-/** The transform of the partitions on `dev`, once: the spectra and the twiddles, as Residents. */
+/** The transform of the partitions on `dev`, once: the spectra and the twiddles, as Buffers. */
 async function prepareOn(
   dev: Device,
   o: Options,
   read: boolean,
-): Promise<{ spectra: Resident<Float32Array>; twiddles: Resident<Float32Array>; ms: number; bits?: string }> {
+): Promise<{ spectra: Buffer<f32>; twiddles: Buffer<f32>; ms: number; bits?: string }> {
   const partitions = dev.array(paddedPartitions(impulseResponse()));
   const spectra = dev.array(PARTITIONS * POINTS * 2, 'f32');
   const twiddles = dev.array(twiddleTable(POINTS));
@@ -338,7 +344,7 @@ export async function runTier(o: Options, progress: (line: string) => void = () 
           tails.push({ level, tail, blocks: 0, failed: `not run: ${unfinished ?? failed}` });
           continue;
         }
-        engine.reset();
+        await engine.reset();
         const order = tail === 'full'
           ? Array.from({ length: TAIL_BLOCKS }, (_, k) => k)
           : [0, ...Array.from({ length: TAIL_BLOCKS - JUMP_FROM }, (_, i) => JUMP_FROM + i)];
@@ -478,7 +484,7 @@ export async function kernelChecks(progress: (line: string) => void, cpuPlan: bo
       const cpu = await createDevice({ prefer: ['cpu'], poolBytes: 0 });
       try {
         const engine = new Engine(cpu, cpu.array(i.spectra), cpu.array(twiddleTable(POINTS)));
-        engine.input.write(i.input);
+        engine.input.set(i.input);
         const report = await cpu.fuse(() => engine.calls(0));
         out.push({ name: 'fuse', report });
         progress(`check fuse: ran, ${JSON.stringify(report)}`);

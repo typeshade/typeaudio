@@ -9,12 +9,12 @@
 //   gain(master, mixed, MASTER)           shape F
 //   peak(master)                          shape R, a reduction at the end of the scope
 //
-// `lanes` and `mixed` are scratch arrays of the scope (`resident` keeps the lanes in a `Resident`
-// the device makes once); the master is a `Resident`, read once per block. A block is timed with
+// `lanes` and `mixed` are scratch arrays of the scope (`resident` keeps the lanes in a `Buffer`
+// the device makes once); the master is a `Buffer`, read once per block. A block is timed with
 // `performance.now()` from the `fuse` call to the host's read of the master and of the peak. The
 // bank of partials stays on the device for the whole run.
 
-import { createDevice, type Device, type DeviceInfo, type FuseReport, type Resident } from 'typeshade/runtime';
+import { createDevice, type Device, type DeviceInfo, type FuseReport, type Buffer, type f32, type u32 } from 'typeshade/runtime';
 import { bank } from '../../src/bank.ts';
 import { mixdown } from '../../src/kernels/mixdown.shade.ts';
 import { gain } from '../../src/kernels/bus.shade.ts';
@@ -87,12 +87,12 @@ async function run(
       : variant === 'host'
         ? bank(dev, specs.map((s) => new HostPartial(...args(s))))
         : bank(dev, specs.map((s) => new Partial(...args(s))));
-  const master: Resident<Float32Array> = dev.array(B, 'f32');
+  const master: Buffer<f32> = dev.array(B, 'f32');
   // `host`: the coefficients of each block, designed on the host and written before the scope.
   const designed = new Float32Array(P * 5);
-  const coefficients: Resident<Float32Array> | undefined = variant === 'host' ? dev.array(P * 5, 'f32') : undefined;
+  const coefficients: Buffer<f32> | undefined = variant === 'host' ? dev.array(P * 5, 'f32') : undefined;
   // `resident`: the lanes on the device for the whole run, written again by every block.
-  const held: Resident<Float32Array> | undefined = variant === 'resident' ? dev.array(P * B, 'f32') : undefined;
+  const held: Buffer<f32> | undefined = variant === 'resident' ? dev.array(P * B, 'f32') : undefined;
   const total = o.warmup + o.blocks;
   const out = new Float32Array(total * B);
   const times: number[] = [];
@@ -103,7 +103,7 @@ async function run(
     const sweep = sweepAt(b);
     let meter: Promise<number> | undefined;
     const start = performance.now();
-    if (coefficients !== undefined) coefficients.write(hostCoefficients(specs, sweep, designed));
+    if (coefficients !== undefined) coefficients.set(hostCoefficients(specs, sweep, designed));
     const report = await dev.fuse((scope) => {
       const lanes = held ?? scope.scratch(P * B);
       const mixed = scope.scratch(B);
@@ -113,11 +113,11 @@ async function run(
       // proposal 0116, item 3 (decision D7), implemented after the pin, spells the parameter with
       // the class. The casts stand in until the pin moves.
       if (variant === 'f64') {
-        additive64(lanes, partials.instances as unknown as Extract<Parameters<typeof additive64>[1], Resident<unknown>>, B, sweep);
+        additive64(lanes, partials.instances as unknown as Extract<Parameters<typeof additive64>[1], Buffer<any>>, B, sweep);
       } else if (variant === 'host') {
-        additiveHost(lanes, partials.instances as unknown as Extract<Parameters<typeof additiveHost>[1], Resident<unknown>>, coefficients!, B);
+        additiveHost(lanes, partials.instances as unknown as Extract<Parameters<typeof additiveHost>[1], Buffer<any>>, coefficients!, B);
       } else {
-        additive(lanes, partials.instances as Resident<Partial[]>, B, sweep);
+        additive(lanes, partials.instances as Buffer<Partial>, B, sweep);
       }
       if (variant === 'tree') {
         for (let n = 0; n < B; n++) sumFrame(mixed, lanes, n, P, B);
@@ -127,7 +127,10 @@ async function run(
         mixdown(mixed, lanes, P, B);
       }
       gain(master, mixed, MASTER);
-      meter = peak(master);
+      // Inside today's `fuse()` a value-returning call still returns a promise of its value,
+      // which the host view types as a `Buffer` (compiler change 0138, deviation D-m, open until
+      // milestone 4 slice 5).
+      meter = peak(master) as unknown as Promise<number>;
     });
     const block = await master.read();
     const loudest = await meter!;
@@ -216,7 +219,7 @@ export async function sumCheck(o: Pick<Options, 'tier' | 'partials' | 'frames'>)
   const dev = await createDevice({ prefer: tiersOf(o.tier) });
   try {
     const lanes = dev.array(lanesInput(P, B));
-    const sum = async (body: (out: Resident<Float32Array>) => void): Promise<[Float32Array, FuseReport]> => {
+    const sum = async (body: (out: Buffer<f32>) => void): Promise<[Float32Array, FuseReport]> => {
       const out = dev.array(B, 'f32');
       const report = await dev.fuse(() => body(out));
       const got = await out.read();
@@ -258,9 +261,9 @@ export async function tierProbe(o: Pick<Options, 'tier'>): Promise<Record<string
     const calls: Record<string, () => void> = {
       additive: () => additive(out, partials.instances, B, 1),
       additive64: () =>
-        additive64(out, partials64.instances as unknown as Extract<Parameters<typeof additive64>[1], Resident<unknown>>, B, 1),
+        additive64(out, partials64.instances as unknown as Extract<Parameters<typeof additive64>[1], Buffer<any>>, B, 1),
       additiveHost: () =>
-        additiveHost(out, host.instances as unknown as Extract<Parameters<typeof additiveHost>[1], Resident<unknown>>, coefficients, B),
+        additiveHost(out, host.instances as unknown as Extract<Parameters<typeof additiveHost>[1], Buffer<any>>, coefficients, B),
       mixdown: () => mixdown(bus, lanes, P, B),
       sumFrame: () => sumFrame(bus, lanes, 0, P, B),
       sumScatter: () => sumScatter(bus, lanes, P, B),
