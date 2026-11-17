@@ -18,15 +18,13 @@ export function stateReference(
       ts.isIdentifier(p.name) && p.name.text === definition.state!.parameter,
   )!;
   const type = parameter.type;
-  if (!type || !ts.isTypeReferenceNode(type) || !type.typeArguments?.[0])
+  if (!type || !ts.isTypeReferenceNode(type) || type.typeArguments?.length)
     compositionFailure(
       file,
       parameter,
-      "Composition needs an explicit inout<State> type.",
+      'Composition needs an explicit state type: write "@inout state: State".',
     );
-  const at = file.getLineAndCharacterOfPosition(
-    type.typeArguments[0]!.getStart(file),
-  );
+  const at = file.getLineAndCharacterOfPosition(type.typeName.getStart(file));
   const targets = language.getDefinition(`file://${definition.module}`, {
     line: at.line,
     character: at.character,

@@ -16,7 +16,7 @@ it("projects genuine TypeShade calls, typed context/state and stable node IDs wi
   expect(projection.source).toContain(
     "resonator(bodyState, noise, pitch, damping, sampleRate)",
   );
-  expect(projection.source).toContain("noiseState: inout<NoiseState>");
+  expect(projection.source).toContain("@inout noiseState: NoiseState");
   const applied = applyFunctionComposition(program, projection.source);
   expect(applied.program.document).toEqual(g);
   expect(
@@ -137,7 +137,7 @@ it("renames a connected source parameter through TypeShade while preserving its 
     "excitationInput * 0.015",
   );
   expect(next.modules["/resonator.shade.ts"]).toContain(
-    "function advance(state: inout<ResonatorState>, input: f32",
+    "function advance(@inout state: ResonatorState, input: f32",
   );
   const previous = new FunctionGraphDsp(install(g));
   render(previous, 128);
@@ -177,7 +177,7 @@ it("projects duplicate state instances and distinct modules exporting the same c
     added,
     source.replace("sampleRate: f32\n", "sampleRate: f32,\n"),
   );
-  expect(projected.source).toContain(`secondBodyState: inout<${alias}>`);
+  expect(projected.source).toContain(`@inout secondBodyState: ${alias}`);
   const applied = applyFunctionComposition(added, projected.source);
   expect(applied.program.document.nodes).toHaveLength(4);
   expect(

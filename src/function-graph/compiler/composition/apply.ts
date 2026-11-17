@@ -185,7 +185,7 @@ export function applyFunctionComposition(
         controls.has(arg.text) ||
         contexts.has(arg.text)
       )
-        fail(arg, "Pass a dedicated inout state parameter for this instance.");
+        fail(arg, "Pass a dedicated @inout state parameter for this instance.");
       const name = (arg as ts.Identifier).text,
         parameter = parameters.get(name)!;
       const compiledParameter =
@@ -195,7 +195,7 @@ export function applyFunctionComposition(
         compiledParameter.mode !== "inout" ||
         compiledParameter.type.kind !== "struct"
       )
-        fail(parameter, "Instance state must use inout<State>.");
+        fail(parameter, 'Instance state must be written "@inout state: State".');
       if (
         stateOwners.has(name) ||
         (declaredId !== undefined && declaredId !== id)

@@ -22,7 +22,7 @@ export class BandState {
 }
 export function createBand(): BandState { return new BandState(); }
 export function roarBand(
-  state: inout<BandState>,
+  @inout state: BandState,
   key: u32,
   coef: f32,
   damp: f32,
@@ -45,7 +45,7 @@ export function roarBand(
 export class MixState { age: u32 = 0; }
 export function createMix(): MixState { return new MixState(); }
 export function roarMix(
-  state: inout<MixState>,
+  @inout state: MixState,
   b0: f32,
   b1: f32,
   b2: f32,

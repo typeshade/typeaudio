@@ -17,7 +17,7 @@ import { noise, hash32, uniform } from "./noise.shade.ts";
 export class ClockState { age: u32 = 0; }
 export function createClock(): ClockState { return new ClockState(); }
 export function stoneClock(
-  state: inout<ClockState>,
+  @inout state: ClockState,
   part: u32,
   key: u32,
   len: f32,
@@ -59,7 +59,7 @@ export class BandState {
 }
 export function createBand(): BandState { return new BandState(); }
 export function stoneBand(
-  state: inout<BandState>,
+  @inout state: BandState,
   amp: f32,
   size: f32,
   key: u32,

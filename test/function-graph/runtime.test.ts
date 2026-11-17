@@ -195,7 +195,7 @@ describe("prepared function execution", () => {
       { value: control("value") },
     );
     g.modules["/control.shade.ts"] =
-      '"use typeshade"; export class Counter { n:f32=0; } export function init():Counter { return new Counter(); } export function control(state:inout<Counter>):f32 { state.n+=1; return state.n; }';
+      '"use typeshade"; export class Counter { n:f32=0; } export function init():Counter { return new Counter(); } export function control(@inout state:Counter):f32 { state.n+=1; return state.n; }';
     g.definitions.push({
       id: "counter",
       version: 1,

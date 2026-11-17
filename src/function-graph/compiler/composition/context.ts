@@ -46,7 +46,13 @@ export function compositionContext(
       if (id !== undefined) oldParameters.set(`${kind}:${id}`, p);
     }
   const parameters = new Map<string, { name: string; text: string }>();
-  function parameter(kind: string, id: string, name: string, type: string) {
+  function parameter(
+    kind: string,
+    id: string,
+    name: string,
+    type: string,
+    qualifier = "",
+  ) {
     const key = `${kind}:${id}`,
       old = oldParameters.get(key);
     const chosen =
@@ -54,12 +60,20 @@ export function compositionContext(
         ? old.name.text
         : safeName(name, `value_${parameters.size}`, used);
     used.add(chosen);
-    let text = `\n  /** @typeaudio${kind} ${id} */ ${chosen}: ${type}`;
+    const prefix = qualifier ? `@${qualifier} ` : "";
+    let text = `\n  /** @typeaudio${kind} ${id} */ ${prefix}${chosen}: ${type}`;
     if (old?.type) {
       text = old.getFullText(previous!.file);
       const start = old.type.getStart(previous!.file) - old.pos,
         end = old.type.end - old.pos;
       text = text.slice(0, start) + type + text.slice(end);
+      const qualified = ts
+        .getDecorators(old)
+        ?.some((d) => d.expression.getText(previous!.file) === qualifier);
+      if (qualifier && !qualified) {
+        const at = old.name.getStart(previous!.file) - old.pos;
+        text = text.slice(0, at) + prefix + text.slice(at);
+      }
     }
     parameters.set(key, { name: chosen, text });
   }
@@ -72,7 +86,8 @@ export function compositionContext(
         "State",
         n.id,
         `${n.id}State`,
-        `inout<${states.get(n.definition)!.alias}>`,
+        states.get(n.definition)!.alias,
+        "inout",
       );
   for (const c of g.parameters) parameter("Control", c.id, c.id, c.type);
   const contexts = new Set(

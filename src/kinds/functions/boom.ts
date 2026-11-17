@@ -23,7 +23,7 @@ export class BoomState {
 }
 export function createBoom(): BoomState { return new BoomState(); }
 export function boom(
-  state: inout<BoomState>,
+  @inout state: BoomState,
   key: u32,
   coef: f32,
   damp: f32,

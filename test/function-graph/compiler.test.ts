@@ -101,7 +101,7 @@ describe('typed function authoring', () => {
   it('requires typed inout state and an initializer with the same result type', () => {
     const g = accumulator();
     g.modules['/unit.shade.ts'] = g.modules['/unit.shade.ts']!.replace(
-      'state: inout<State>, input: f32): f32 { return advance',
+      '@inout state: State, input: f32): f32 { return advance',
       'state: State, input: f32): f32 { return advance',
     );
     expect(() => compileFunctionGraph(g)).toThrow();
@@ -143,7 +143,7 @@ describe('integer products', () => {
     const g = one(`"use typeshade";
 export class S { age: u32 = 1; }
 export function initialize(): S { return new S(); }
-export function process(state: inout<S>): f32 {
+export function process(@inout state: S): f32 {
   const h: u32 = state.age * 0x7feb352d;
   state.age = state.age + 1;
   return f32(h >> 8) * (1. / 16777216.);

@@ -63,9 +63,9 @@ export function accumulator() {
     `"use typeshade";
 export class State { value: f32 = 0; }
 export function initialize(): State { return new State(); }
-function bump(value: inout<f32>, increment: f32): f32 { value += increment; return value; }
-function advance(state: inout<State>, input: f32): f32 { const first: f32 = bump(state.value, input); return first + bump(state.value, input); }
-export function process(state: inout<State>, input: f32): f32 { return advance(state, input); }
+function bump(@inout value: f32, increment: f32): f32 { value += increment; return value; }
+function advance(@inout state: State, input: f32): f32 { const first: f32 = bump(state.value, input); return first + bump(state.value, input); }
+export function process(@inout state: State, input: f32): f32 { return advance(state, input); }
 `,
     { input: { ...audio("in"), default: 0.125 } },
   );
